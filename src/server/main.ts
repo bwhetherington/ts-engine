@@ -1,9 +1,10 @@
 import { square } from "../shared/util/util";
 
-import EM from "../shared/event/EventManager";
+import scheduler from "../shared/event/Scheduler";
 import { GameEvent } from "../shared/event/util";
 import { Queue, SizedQueue } from "../shared/util/queue";
 import Timer from "./util/Timer";
+import logger from "./util/Logger";
 
 type DamageEvent = {
   amount: number;
@@ -14,11 +15,8 @@ type StepEvent = {
 };
 
 async function main() {
-  EM.addListener("StepEvent", (step: StepEvent) => {
-    console.log("Step: " + step.dt);
-  });
-  EM.addListener("DamageEvent", (e: DamageEvent) => {
-    console.log("Damage: " + e.amount);
+  scheduler.addListener("StepEvent", (step: StepEvent) => {
+    logger.info("Step: " + step.dt);
   });
   const events = [
     {
@@ -31,11 +29,11 @@ async function main() {
     },
   ];
   for (const event of events) {
-    EM.emit(event);
+    scheduler.emit(event);
   }
 
   const timer = new Timer((dt) => {
-    EM.step(dt);
+    scheduler.step(dt);
   });
   timer.start();
 }

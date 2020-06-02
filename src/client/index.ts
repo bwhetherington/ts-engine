@@ -1,10 +1,11 @@
 import { square } from "../shared/util/util";
 
-import EM from "../shared/event/EventManager";
+import scheduler from "../shared/event/Scheduler";
 import { GameEvent } from "../shared/event/util";
 import { Queue, SizedQueue } from "../shared/util/queue";
 import Timer from "./util/Timer";
 import { HDCanvas } from "./util/canvas";
+import logger from "../server/util/Logger";
 
 class DamageEvent {
   public amount: number;
@@ -57,7 +58,8 @@ async function main() {
     console.log("foo");
     let x = 10;
     let y = 10;
-    EM.addListener("StepEvent", (step: StepEvent) => {
+    scheduler.addListener("StepEvent", (step: StepEvent) => {
+      logger.info("" + step.dt);
       canvas.begin();
       x += 20 * step.dt;
       y += 10 * step.dt;
@@ -68,11 +70,10 @@ async function main() {
     });
     const events = [DamageEvent.create(10), DamageEvent.create(5)];
     for (const event of events) {
-      EM.emit(event);
+      scheduler.emit(event);
     }
     const timer = new Timer((dt) => {
-      console.log(dt);
-      EM.step(dt);
+      scheduler.step(dt);
     });
     timer.start();
   }
