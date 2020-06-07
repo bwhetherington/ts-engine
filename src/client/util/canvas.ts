@@ -1,3 +1,5 @@
+import { Color, toCss, reshade } from "../../shared/util/color";
+
 interface Options {
   width: number;
   height: number;
@@ -9,6 +11,18 @@ const DEFAULT_OPTIONS: Options = {
   height: 400,
   isFullScreen: false,
 };
+
+// type DrawOptions = {
+//   stroke: Color;
+//   fill: Color;
+//   lineWidth: number;
+// };
+
+// const DEFAULT_DRAW_OPTIONS = {
+//   stroke: "grey",
+//   fill: "lightgrey",
+//   lineWidth: 5,
+// };
 
 export class HDCanvas {
   private element?: HTMLCanvasElement;
@@ -39,7 +53,7 @@ export class HDCanvas {
     }
   }
 
-  private setSize(w: number, h: number): void {
+  public setSize(w: number, h: number) {
     this.width = w;
     this.height = h;
     const { element } = this;
@@ -54,9 +68,8 @@ export class HDCanvas {
     }
   }
 
-  public attachTo(parent: HTMLElement): void {
+  public attachTo(parent: HTMLElement) {
     if (this.element) {
-      console.log("bar");
       parent.appendChild(this.element);
     }
   }
@@ -65,41 +78,65 @@ export class HDCanvas {
     return this.element?.getContext("2d") ?? undefined;
   }
 
-  public begin(): boolean {
+  public begin() {
     this.curContext = this.getContext();
+    this.resetTransform();
     this.clear();
-    return this.curContext !== undefined;
   }
 
-  public clear(): boolean {
+  public clear() {
     const ctx = this.curContext;
     if (ctx) {
       ctx.clearRect(0, 0, this.width, this.height);
-      return true;
     }
-    return false;
   }
 
-  public rect(x: number, y: number, w: number, h: number): boolean {
+  public ellipse(x: number, y: number, w: number, h: number, color: Color) {
     const ctx = this.curContext;
     if (ctx) {
       ctx.beginPath();
-      ctx.strokeStyle = this.stroke ?? "black";
-      ctx.fillStyle = this.fill ?? "black";
-      ctx.lineWidth = this.lineWidth ?? 1;
+      ctx.fillStyle = toCss(color);
+      ctx.strokeStyle = toCss(reshade(color, 0));
+      ctx.lineWidth = 5;
+      ctx.ellipse(x, y, w, h, 0, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+
+  public rect(x: number, y: number, w: number, h: number, color: Color) {
+    const ctx = this.curContext;
+    if (ctx) {
+      ctx.beginPath();
+
+      ctx.fillStyle = toCss(color);
+      ctx.strokeStyle = toCss(reshade(color));
+      // console.log(ctx.fillStyle, ctx.strokeStyle);
+      ctx.lineWidth = 5;
       ctx.rect(x, y, w, h);
       ctx.fill();
       ctx.stroke();
-      return true;
     }
-    return false;
   }
 
-  public ellipse(x: number, y: number, w: number, h: number): boolean {
+  public translate(x: number, y: number) {
     const ctx = this.curContext;
     if (ctx) {
-      return true;
+      ctx.translate(x, y);
     }
-    return false;
+  }
+
+  public rotate(angle: number) {
+    const ctx = this.curContext;
+    if (ctx) {
+      ctx.rotate(angle);
+    }
+  }
+
+  public resetTransform() {
+    const ctx = this.curContext;
+    if (ctx) {
+      ctx.setTransform(this.ratio, 0, 0, this.ratio, 0, 0);
+    }
   }
 }

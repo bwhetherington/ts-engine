@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:client": "webpack",
+    "watch:client": "webpack --watch",
     "build:server": "tsc --project config/server/tsconfig.json",
     "server": "ts-node src/server/main.ts",
     "start": "npm run build && node build/main.js"

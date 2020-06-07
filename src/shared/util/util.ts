@@ -15,3 +15,10 @@ export abstract class AbstractTimer {
 
   public abstract async stop(): Promise<void>;
 }
+
+export async function sleep(time: number): Promise<void> {
+  const ms = time * 1000;
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}

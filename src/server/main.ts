@@ -1,4 +1,4 @@
-import { square } from "../shared/util/util";
+import { square, sleep } from "../shared/util/util";
 
 import scheduler from "../shared/event/Scheduler";
 import { GameEvent } from "../shared/event/util";
@@ -36,6 +36,10 @@ async function main() {
     scheduler.step(dt);
   });
   timer.start();
+
+  await sleep(3);
+
+  await timer.stop();
 }
 
 main().catch(console.error);

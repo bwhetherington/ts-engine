@@ -1,4 +1,4 @@
-import { TimerHandler, AbstractTimer } from "../../shared/util/util";
+import { TimerHandler, AbstractTimer, sleep } from "../../shared/util/util";
 
 function toSeconds(seconds: number, nanoseconds: number): number {
   return seconds + nanoseconds * 0.000000001;
@@ -8,13 +8,6 @@ function now(): number {
   const [seconds, nanoseconds] = process.hrtime();
   const time = toSeconds(seconds, nanoseconds);
   return time;
-}
-
-async function sleep(time: number): Promise<void> {
-  const ms = time * 1000;
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
 }
 
 const DEFAULT_INTERVAL = 1 / 60;

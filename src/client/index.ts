@@ -50,23 +50,29 @@ function draw(
 
 async function main() {
   const game = document.getElementById("game");
+
+  window.addEventListener("resize", console.log);
   console.log(game);
   if (game) {
     const canvas = new HDCanvas();
     canvas.attachTo(game);
+    canvas.setSize(window.innerWidth, window.innerHeight);
 
-    console.log("foo");
     let x = 10;
     let y = 10;
     scheduler.addListener("StepEvent", (step: StepEvent) => {
-      logger.info("" + step.dt);
+      // logger.info("" + step.dt);
       canvas.begin();
+      canvas.resetTransform();
       x += 20 * step.dt;
       y += 10 * step.dt;
-      canvas.fill = "lightgrey";
-      canvas.stroke = "grey";
-      canvas.lineWidth = 5;
-      canvas.rect(x, y, 60, 60);
+      // canvas.translate(x + 30, y + 30);
+      canvas.rotate(x / 20);
+      canvas.rect(0, 0, 60, 60, {
+        red: 0.8,
+        green: 0.1,
+        blue: 0.1,
+      });
     });
     const events = [DamageEvent.create(10), DamageEvent.create(5)];
     for (const event of events) {
