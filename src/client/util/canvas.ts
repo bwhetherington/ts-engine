@@ -6,6 +6,16 @@ interface Options {
   isFullScreen: boolean;
 }
 
+interface TextStyle {
+  font?: string;
+  size?: string;
+  color?: Color;
+}
+
+function createFontString(font: string, size: string): string {
+  return `${size} ${font}`;
+}
+
 const DEFAULT_OPTIONS: Options = {
   width: 600,
   height: 400,
@@ -88,6 +98,21 @@ export class HDCanvas {
     const ctx = this.curContext;
     if (ctx) {
       ctx.clearRect(0, 0, this.width, this.height);
+    }
+  }
+
+  public text(x: number, y: number, text: string, style: TextStyle) {
+    const ctx = this.curContext;
+    if (ctx) {
+      const { font = "sans-serif", size = "12px", color } = style;
+      const colorCss = color ? toCss(color) : "black";
+
+      ctx.beginPath();
+      // ctx.lineWidth = 1;
+      // ctx.fillStyle = "black";
+      ctx.fillStyle = colorCss;
+      ctx.font = createFontString(font, size);
+      ctx.fillText(text, x, y);
     }
   }
 

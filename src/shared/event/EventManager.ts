@@ -12,9 +12,14 @@ function convertHandler<E extends EventData>(handler: Proc<E>): Handler {
   };
 }
 
-class Scheduler {
+class EventManager {
   private handlers: Record<string, Handler[]> = {};
   private events: Queue<GameEvent> = new Queue();
+
+  public registerEventType<T extends GameEvent>(
+    type: T,
+    check: (x: T) => x is T
+  ) {}
 
   public emit<E extends GameEvent>(event: E): void {
     this.events.enqueue(event);
@@ -68,5 +73,5 @@ class Scheduler {
   }
 }
 
-const scheduler = new Scheduler();
-export default scheduler;
+const EM = new EventManager();
+export default EM;
