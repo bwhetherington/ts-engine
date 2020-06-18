@@ -1,15 +1,10 @@
 import { Color, toCss, reshade } from "../../shared/util/color";
+import { TextStyle, GraphicsContext } from "../../shared/graphics/util";
 
 interface Options {
   width: number;
   height: number;
   isFullScreen: boolean;
-}
-
-interface TextStyle {
-  font?: string;
-  size?: string;
-  color?: Color;
 }
 
 function createFontString(font: string, size: string): string {
@@ -34,7 +29,7 @@ const DEFAULT_OPTIONS: Options = {
 //   lineWidth: 5,
 // };
 
-export class HDCanvas {
+export class HDCanvas implements GraphicsContext {
   private element?: HTMLCanvasElement;
   private width: number = 1;
   private height: number = 1;
@@ -134,10 +129,11 @@ export class HDCanvas {
     if (ctx) {
       ctx.beginPath();
 
-      ctx.fillStyle = toCss(color);
+      // ctx.fillStyle = toCss(color);
+      ctx.fillStyle = "rgba(0, 0, 0, 0)";
       ctx.strokeStyle = toCss(reshade(color));
       // console.log(ctx.fillStyle, ctx.strokeStyle);
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 1;
       ctx.rect(x, y, w, h);
       ctx.fill();
       ctx.stroke();

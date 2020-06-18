@@ -19,13 +19,15 @@ type StepEvent = {
   dt: number;
 };
 
-async function main() {
+async function main(): Promise<void> {
   LM.initialize(new ServerLogger());
   LM.info("Hello, world!");
+
   const httpServer = await createServer({
     dir: "./",
     index: "./index.html",
   });
+
   const server = new Server();
   server.initialize(httpServer);
   NM.initialize(server);
@@ -39,11 +41,10 @@ async function main() {
     NM.send({ foo: "foo", bar: "bar" });
     scheduler.step(dt);
   });
-  timer.start();
 
-  // await sleep(3);
-
-  // await timer.stop();
+  await timer.start();
 }
 
-main().catch(console.error);
+main().catch(ex => {
+  LM.error("error occurred");
+});

@@ -1,4 +1,5 @@
 import { TimerHandler, AbstractTimer, sleep } from "../../shared/util/util";
+import LM from "../../shared/util/LogManager";
 
 function toSeconds(seconds: number, nanoseconds: number): number {
   return seconds + nanoseconds * 0.000000001;
@@ -39,7 +40,7 @@ class Timer extends AbstractTimer {
         await sleep(remaining);
       } else {
         const remainingMS = Math.round(remaining * -1000);
-        console.log(`Can't keep up! Frame took ${remainingMS}ms`);
+        LM.warn(`Can't keep up! Frame took ${remainingMS}ms`);
       }
     }
   }

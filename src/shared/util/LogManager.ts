@@ -5,6 +5,7 @@ class LogManager extends AbstractLogger {
 
   public initialize(logger: AbstractLogger) {
     this.logger = logger;
+    this.debug("LogManager initialized");
   }
 
   public logRaw(content: string) {

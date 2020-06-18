@@ -80,8 +80,9 @@ class Server extends Node {
     this.wsServer.on("request", (req) => {
       this.accept(req);
     });
-    this.wsServer.on("close", (connection) => {});
-    LM.debug(JSON.stringify(this));
+    this.wsServer.on("close", (connection) => {
+
+    });
   }
 
   private sendRaw(data: string, socket: Socket) {
@@ -105,6 +106,7 @@ class Server extends Node {
 
   public start(port: number = 8080) {
     this.httpServer?.listen(port);
+    LM.info(`listening on port ${port}`);
   }
 }
 

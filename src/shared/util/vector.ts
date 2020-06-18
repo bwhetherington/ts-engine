@@ -14,12 +14,23 @@ class Vector {
     return Math.atan2(this.y, this.x);
   }
 
-  set(v: Vector) {
+  set(v: Vector): void {
     this.setXY(v.x, v.y);
   }
 
-  setXY(x: number, y: number) {
+  setXY(x: number, y: number): void {
     this.x = x;
     this.y = y;
   }
+
+  add(v: Vector, scale: number = 1): void {
+    this.addXY(v.x, v.y, scale);
+  }
+
+  addXY(dx: number, dy: number, scale: number = 1): void {
+    this.x += dx * scale;
+    this.y += dy * scale;
+  }
 }
+
+export default Vector;
