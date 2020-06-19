@@ -15,6 +15,10 @@ class Rectangle {
     return this.x + this.width / 2;
   }
 
+  public get centerY(): number {
+    return this.y + this.height / 2;
+  }
+
   public get farX(): number {
     return this.x + this.width;
   }
@@ -23,12 +27,12 @@ class Rectangle {
     return this.y + this.height;
   }
 
-  public get centerY(): number {
-    return this.y + this.height / 2;
+  public get diagonal(): number {
+    return Math.sqrt(this.width * this.width + this.height * this.height);
   }
 
   public containsPointXY(x: number, y: number): boolean {
-    return (this.x < x && x < this.farX) && (this.y < y && y < this.farY);
+    return this.x < x && x < this.farX && this.y < y && y < this.farY;
   }
 
   public intersects(other: Rectangle): boolean {

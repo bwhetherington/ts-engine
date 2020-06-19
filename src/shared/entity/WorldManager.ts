@@ -4,9 +4,12 @@ import { GraphicsContext } from "../graphics/util";
 import Entity from "./Entity";
 import { BLACK, WHITE } from "../util/color";
 import LM from "../util/LogManager";
+import { CollisionEvent } from "./util";
+import { GameEvent } from "../event/util";
+import EM from "../event/EventManager";
 
 class WorldManager implements Bounded {
-  private quadTree: QuadTree<Entity>;
+  public quadTree: QuadTree<Entity>;
   private entities: { [id: string]: Entity } = {};
   public boundingBox: Rectangle;
 
@@ -30,6 +33,7 @@ class WorldManager implements Bounded {
 
     for (const entity of this.getEntities()) {
       entity.render(ctx);
+      entity.color = WHITE;
     }
   }
 
@@ -59,21 +63,40 @@ class WorldManager implements Bounded {
     for (const entity of this.getEntities()) {
       // Query for entities that may collide with this entity
       let collided = false;
+      // for (const candidate of this.getEntities()) {
       for (const candidate of this.quadTree.retrieve(entity.boundingBox)) {
-        if (entity.boundingBox.intersects(candidate.boundingBox)) {
+        if (
+          entity.id !== candidate.id &&
+          (entity.boundingBox.intersects(candidate.boundingBox) ||
+            candidate.boundingBox.intersects(entity.boundingBox))
+        ) {
           // Collision
           collided = true;
-          break;
+          const data: CollisionEvent = {
+            collider: entity,
+            collided: candidate,
+          };
+          const event: GameEvent = {
+            type: "CollisionEvent",
+            data,
+          };
+          EM.emit(event);
         }
       }
-      entity.color = collided ? BLACK : WHITE;
+      // entity.color = collided ? BLACK : WHITE;
 
       // Collide with walls
-      if (entity.boundingBox.x < this.boundingBox.x || entity.boundingBox.farX > this.boundingBox.farX) {
+      if (
+        entity.boundingBox.x < this.boundingBox.x ||
+        entity.boundingBox.farX > this.boundingBox.farX
+      ) {
         entity.velocity.x *= -1;
         // LM.info("horizontal collision");
       }
-      if (entity.boundingBox.y < this.boundingBox.y || entity.boundingBox.farY > this.boundingBox.farY) {
+      if (
+        entity.boundingBox.y < this.boundingBox.y ||
+        entity.boundingBox.farY > this.boundingBox.farY
+      ) {
         entity.velocity.y *= -1;
         // LM.info("vertical collision");
       }

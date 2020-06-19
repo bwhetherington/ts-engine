@@ -21,12 +21,20 @@ export class Queue<T> {
     return this.size() === 0;
   }
 
-  public *iterator(): Generator<T> {
+  public *drain(): Generator<T> {
     while (!this.isEmpty()) {
       const element = this.dequeue();
       if (element !== undefined) {
         yield element;
       }
+    }
+  }
+
+  public *iterator(): Generator<T> {
+    let current = this.head;
+    while (current !== undefined) {
+      yield current.value;
+      current = current.next;
     }
   }
 

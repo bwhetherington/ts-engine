@@ -13,6 +13,10 @@ export interface Bounded {
   boundingBox: Rectangle;
 }
 
+function calculateMaxDepth(size: number): number {
+  return Math.floor(Math.log(size) / (2 * Math.log(2)));
+}
+
 class QuadNode<T extends Bounded> {
   public boundingBox: Rectangle;
   public children: T[] = [];
@@ -50,8 +54,30 @@ class QuadNode<T extends Bounded> {
   }
 
   private findIndex(rect: Rectangle): number {
-    const isLeft = rect.x > this.boundingBox.centerX;
-    const isBottom = rect.y > this.boundingBox.centerY;
+    return this.findIndexXY(rect.x, rect.y);
+  }
+
+  private *findIndices(rect: Rectangle): Generator<number> {
+    const { x, y, farX, farY } = rect;
+    const { centerX, centerY } = this.boundingBox;
+
+    if (x < centerX && y < centerY) {
+      yield NODE_POSITION.TOP_LEFT;
+    }
+    if (farX > centerX && y < centerY) {
+      yield NODE_POSITION.TOP_RIGHT;
+    }
+    if (x < centerX && farY > centerY) {
+      yield NODE_POSITION.BOTTOM_LEFT;
+    }
+    if (farX > centerX && farY > centerY) {
+      yield NODE_POSITION.BOTTOM_RIGHT;
+    }
+  }
+
+  private findIndexXY(x: number, y: number): number {
+    const isLeft = x < this.boundingBox.centerX;
+    const isBottom = y > this.boundingBox.centerY;
 
     if (isLeft && isBottom) {
       return NODE_POSITION.BOTTOM_LEFT;
@@ -67,13 +93,19 @@ class QuadNode<T extends Bounded> {
   public insert(element: T) {
     if (this.nodes.length === 0) {
       this.children.push(element);
-
-      if (this.depth < this.maxDepth && this.children.length > this.maxChildren) {
+      if (
+        this.depth < this.maxDepth &&
+        this.children.length > this.maxChildren
+      ) {
         this.subdivide();
       }
     } else {
-      const index = this.findIndex(element.boundingBox);
-      this.nodes[index].insert(element);
+      for (const index of this.findIndices(element.boundingBox)) {
+        const node = this.nodes[index];
+        if (node.boundingBox.intersects(element.boundingBox)) {
+          this.nodes[index].insert(element);
+        }
+      }
     }
   }
 
@@ -137,15 +169,24 @@ class QuadNode<T extends Bounded> {
     this.children = [];
   }
 
-  public *retrieve(rect: Rectangle): Generator<T> {
-    if (this.nodes.length === 0) {
-      for (const child of this.children) {
-        yield child;
+  private *retrieveInternal(rect: Rectangle): Generator<T> {
+    if (
+      this.boundingBox.intersects(rect) ||
+      rect.intersects(this.boundingBox)
+    ) {
+      if (this.nodes.length === 0) {
+        for (const child of this.children) {
+          yield child;
+        }
       }
-    } else {
-      const index = this.findIndex(rect);
-      yield* this.nodes[index].retrieve(rect);
+      for (const node of this.nodes) {
+        yield* node.retrieveInternal(rect);
+      }
     }
+  }
+
+  public retrieve(rect: Rectangle): Set<T> {
+    return new Set(this.retrieveInternal(rect));
   }
 }
 
@@ -153,7 +194,7 @@ export class QuadTree<T extends Bounded> {
   private root: QuadNode<T>;
 
   constructor(bounds: Rectangle) {
-    this.root = new QuadNode(bounds);
+    this.root = new QuadNode(bounds, 0, calculateMaxDepth(bounds.diagonal));
   }
 
   public render(ctx: GraphicsContext): void {
@@ -164,8 +205,8 @@ export class QuadTree<T extends Bounded> {
     this.root.insert(element);
   }
 
-  public *retrieve(rect: Rectangle): Generator<T> {
-    yield* this.root.retrieve(rect);
+  public retrieve(rect: Rectangle): Set<T> {
+    return this.root.retrieve(rect);
   }
 
   public clear(): void {

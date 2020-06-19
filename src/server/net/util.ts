@@ -15,18 +15,15 @@ interface Options {
 
 export async function createServer(options: Options): Promise<http.Server> {
   const { dir, index, encoding = "utf8" } = options;
-  const indexFile = await readFile(index, encoding);
 
   return http.createServer(async (req, res) => {
     if (req.url !== undefined) {
       if (req.url === "/") {
-        LM.warn("unsafe base url");
-        LM.debug(`read index file: ${index}`);
+        const file = await readFile(index, encoding);
+        LM.debug(`read file: ${index}`);
         res.writeHead(200, { "Content-Type": "text/html" });
-        res.write(indexFile);
-        res.end(() => {
-          LM.debug("request completed");
-        });
+        res.write(file);
+        res.end();
       } else {
         const filePath = path.join(dir, req.url);
         const mimeType = mime.lookup(path.extname(filePath)) || "text/plain";
@@ -34,9 +31,7 @@ export async function createServer(options: Options): Promise<http.Server> {
         LM.debug(`read file: ${filePath} (${mimeType})`);
         res.writeHead(200, { "Content-Type": mimeType });
         res.write(file);
-        res.end(() => {
-          LM.debug("request completed");
-        });
+        res.end();
       }
     } else {
       res.writeHead(504, "No request URL specified.");
