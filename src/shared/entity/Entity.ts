@@ -2,22 +2,28 @@ import { Bounded } from "../util/quadtree";
 import Rectangle from "../util/rectangle";
 import Vector from "../util/vector";
 import { GraphicsContext } from "../graphics/util";
-import { WHITE, Color } from "../util/color";
+import { WHITE, Color, invert, BLACK } from "../util/color";
 import { v1 as genUuid } from "uuid";
 import { CollisionLayer } from "./util";
 
 type Uuid = string;
 
 class Entity implements Bounded {
-  public boundingBox: Rectangle = new Rectangle(10, 10, 0, 0);
+  public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
   public id: Uuid;
   public color: Color = WHITE;
   public collisionLayer: CollisionLayer = "unit";
+  public mass: number = 1;
+  public highlight: boolean = false;
 
   constructor() {
     this.id = genUuid();
+  }
+
+  public applyForce(force: Vector): void {
+    this.velocity.add(force, 1 / this.mass);
   }
 
   public setPosition(point: Vector): void {
@@ -40,7 +46,11 @@ class Entity implements Bounded {
 
   public render(ctx: GraphicsContext): void {
     const { x, y, width, height } = this.boundingBox;
-    ctx.rect(x, y, width, height, this.color);
+    if (this.highlight) {
+      ctx.rect(x, y, width, height, { red: 0.85, green: 0.1, blue: 0.1 });
+    } else {
+      ctx.rect(x, y, width, height, this.color);
+    }
   }
 
   private updateBoundingBox(): void {

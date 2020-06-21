@@ -53,10 +53,6 @@ class QuadNode<T extends Bounded> {
     this.nodes = [];
   }
 
-  private findIndex(rect: Rectangle): number {
-    return this.findIndexXY(rect.x, rect.y);
-  }
-
   private *findIndices(rect: Rectangle): Generator<number> {
     const { x, y, farX, farY } = rect;
     const { centerX, centerY } = this.boundingBox;
@@ -75,21 +71,6 @@ class QuadNode<T extends Bounded> {
     }
   }
 
-  private findIndexXY(x: number, y: number): number {
-    const isLeft = x < this.boundingBox.centerX;
-    const isBottom = y > this.boundingBox.centerY;
-
-    if (isLeft && isBottom) {
-      return NODE_POSITION.BOTTOM_LEFT;
-    } else if (isLeft) {
-      return NODE_POSITION.TOP_LEFT;
-    } else if (isBottom) {
-      return NODE_POSITION.BOTTOM_RIGHT;
-    } else {
-      return NODE_POSITION.TOP_RIGHT;
-    }
-  }
-
   public insert(element: T) {
     if (this.nodes.length === 0) {
       this.children.push(element);
@@ -102,9 +83,9 @@ class QuadNode<T extends Bounded> {
     } else {
       for (const index of this.findIndices(element.boundingBox)) {
         const node = this.nodes[index];
-        if (node.boundingBox.intersects(element.boundingBox)) {
-          this.nodes[index].insert(element);
-        }
+        // if (node.boundingBox.intersects(element.boundingBox)) {
+        this.nodes[index].insert(element);
+        // }
       }
     }
   }
@@ -161,7 +142,6 @@ class QuadNode<T extends Bounded> {
       maxChildren
     );
 
-    // Insert children into each new child node
     for (const child of this.children) {
       this.insert(child);
     }
@@ -170,10 +150,7 @@ class QuadNode<T extends Bounded> {
   }
 
   private *retrieveInternal(rect: Rectangle): Generator<T> {
-    if (
-      this.boundingBox.intersects(rect) ||
-      rect.intersects(this.boundingBox)
-    ) {
+    if (this.boundingBox.intersects(rect)) {
       if (this.nodes.length === 0) {
         for (const child of this.children) {
           yield child;
@@ -194,11 +171,19 @@ export class QuadTree<T extends Bounded> {
   private root: QuadNode<T>;
 
   constructor(bounds: Rectangle) {
-    this.root = new QuadNode(bounds, 0, calculateMaxDepth(bounds.diagonal));
+    this.root = new QuadNode(bounds, 0, 4);
   }
 
   public render(ctx: GraphicsContext): void {
+    ctx.setOptions({
+      lineWidth: 1,
+      doFill: false,
+    });
     this.root.render(ctx);
+    ctx.setOptions({
+      lineWidth: 5,
+      doFill: true,
+    });
   }
 
   public insert(element: T): void {

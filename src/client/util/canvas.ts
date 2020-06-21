@@ -1,5 +1,9 @@
-import { Color, toCss, reshade } from "../../shared/util/color";
-import { TextStyle, GraphicsContext } from "../../shared/graphics/util";
+import { Color, toCss, reshade, invert } from "../../shared/util/color";
+import {
+  TextStyle,
+  GraphicsContext,
+  GraphicsOptions,
+} from "../../shared/graphics/util";
 
 interface Options {
   width: number;
@@ -17,27 +21,17 @@ const DEFAULT_OPTIONS: Options = {
   isFullScreen: false,
 };
 
-// type DrawOptions = {
-//   stroke: Color;
-//   fill: Color;
-//   lineWidth: number;
-// };
-
-// const DEFAULT_DRAW_OPTIONS = {
-//   stroke: "grey",
-//   fill: "lightgrey",
-//   lineWidth: 5,
-// };
-
 export class HDCanvas implements GraphicsContext {
   private element?: HTMLCanvasElement;
   private width: number = 1;
   private height: number = 1;
   private ratio: number = 1;
 
-  public fill?: string;
-  public stroke?: string;
-  public lineWidth?: number = 1;
+  private options: GraphicsOptions = {
+    lineWidth: 5,
+    doStroke: true,
+    doFill: true,
+  };
 
   private curContext?: CanvasRenderingContext2D;
 
@@ -55,6 +49,18 @@ export class HDCanvas implements GraphicsContext {
       }
 
       // Set up auto scaling
+    }
+  }
+
+  public setOptions(options: Partial<GraphicsOptions>): void {
+    if (options.lineWidth !== undefined) {
+      this.options.lineWidth = options.lineWidth;
+    }
+    if (options.doStroke !== undefined) {
+      this.options.doStroke = options.doStroke;
+    }
+    if (options.doFill !== undefined) {
+      this.options.doFill = options.doFill;
     }
   }
 
@@ -116,11 +122,15 @@ export class HDCanvas implements GraphicsContext {
     if (ctx) {
       ctx.beginPath();
       ctx.fillStyle = toCss(color);
-      ctx.strokeStyle = toCss(reshade(color, 0));
-      ctx.lineWidth = 5;
-      ctx.ellipse(x, y, w, h, 0, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.stroke();
+      ctx.strokeStyle = toCss(reshade(color));
+      ctx.lineWidth = this.options.lineWidth;
+      ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, 2 * Math.PI);
+      if (this.options.doFill) {
+        ctx.fill();
+      }
+      if (this.options.doStroke) {
+        ctx.stroke();
+      }
     }
   }
 
@@ -130,13 +140,17 @@ export class HDCanvas implements GraphicsContext {
       ctx.beginPath();
 
       // ctx.fillStyle = toCss(color);
-      ctx.fillStyle = "rgba(0, 0, 0, 0)";
+      ctx.fillStyle = toCss(color);
       ctx.strokeStyle = toCss(reshade(color));
       // console.log(ctx.fillStyle, ctx.strokeStyle);
-      ctx.lineWidth = 1;
+      ctx.lineWidth = this.options.lineWidth;
       ctx.rect(x, y, w, h);
-      ctx.fill();
-      ctx.stroke();
+      if (this.options.doFill) {
+        ctx.fill();
+      }
+      if (this.options.doStroke) {
+        ctx.stroke();
+      }
     }
   }
 

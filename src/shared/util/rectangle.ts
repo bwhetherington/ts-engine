@@ -5,18 +5,38 @@ class Rectangle {
     public x: number = 0,
     public y: number = 0
   ) {
-    this.x = x;
-    this.y = y;
     this.width = width;
     this.height = height;
+    this.x = x;
+    this.y = y;
+  }
+
+  public static centered(
+    width: number = 0,
+    height: number = 0,
+    centerX: number = 0,
+    centerY: number = 0
+  ): Rectangle {
+    const rect = new Rectangle(width, height);
+    rect.centerX = centerX;
+    rect.centerY = centerY;
+    return rect;
   }
 
   public get centerX(): number {
     return this.x + this.width / 2;
   }
 
+  public set centerX(x: number) {
+    this.x = x - this.width / 2;
+  }
+
   public get centerY(): number {
     return this.y + this.height / 2;
+  }
+
+  public set centerY(y: number) {
+    this.y = y - this.height / 2;
   }
 
   public get farX(): number {
@@ -35,21 +55,27 @@ class Rectangle {
     return this.x < x && x < this.farX && this.y < y && y < this.farY;
   }
 
-  public intersects(other: Rectangle): boolean {
+  private intersectsPartial(other: Rectangle): boolean {
+    const { x, y, farX, farY } = other;
     return (
-      this.containsPointXY(other.x, other.y) ||
-      this.containsPointXY(other.farX, other.y) ||
-      this.containsPointXY(other.x, other.farY) ||
-      this.containsPointXY(other.farX, other.farY)
+      this.containsPointXY(x, y) ||
+      this.containsPointXY(farX, y) ||
+      this.containsPointXY(x, farY) ||
+      this.containsPointXY(farX, farY)
     );
   }
 
+  public intersects(other: Rectangle): boolean {
+    return this.intersectsPartial(other) || other.intersectsPartial(this);
+  }
+
   public contains(other: Rectangle): boolean {
+    const { x, y, farX, farY } = other;
     return (
-      this.containsPointXY(other.x, other.y) &&
-      this.containsPointXY(other.farX, other.y) &&
-      this.containsPointXY(other.x, other.farY) &&
-      this.containsPointXY(other.farX, other.farY)
+      this.containsPointXY(x, y) &&
+      this.containsPointXY(farX, y) &&
+      this.containsPointXY(x, farY) &&
+      this.containsPointXY(farX, farY)
     );
   }
 }

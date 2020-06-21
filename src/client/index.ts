@@ -11,6 +11,7 @@ import ClientLogger from "./util/ClientLogger";
 import LM from "../shared/util/LogManager";
 import WM from "../shared/entity/WorldManager";
 import Entity from "../shared/entity/Entity";
+import Geometry from "../shared/entity/Geometry";
 import Vector from "../shared/util/vector";
 import { SizedQueue } from "../shared/util/queue";
 import Rectangle from "../shared/util/rectangle";
@@ -51,19 +52,6 @@ async function main(): Promise<void> {
 
   WM.initialize();
 
-  // EM.addListener("NetworkMessageEvent", (msg) => {
-  //   LM.debug("receive: " + JSON.stringify(msg));
-  // });
-
-  // NM.send({ foo: "foo", bar: "bar" });
-
-  const cursorRect = new Rectangle(100, 70);
-
-  game?.addEventListener("mousemove", (event) => {
-    cursorRect.x = event.x - 256 - 50;
-    cursorRect.y = event.y - 238 - 35;
-  });
-
   if (game) {
     const canvas = new HDCanvas();
     canvas.attachTo(game);
@@ -73,28 +61,52 @@ async function main(): Promise<void> {
       canvas.setSize(window.innerWidth, window.innerHeight);
     });
 
-    const ENTITIES = 500;
+    const mouseBox = new Rectangle(50, 50);
+
+    game.addEventListener("mousemove", (event) => {
+      const { clientX, clientY } = event;
+      const { x: gameX, y: gameY } = game.getBoundingClientRect();
+
+      const x = clientX - gameX + WM.boundingBox.x - mouseBox.width / 2;
+      const y = clientY - gameY + WM.boundingBox.y - mouseBox.height / 2;
+
+      mouseBox.x = x;
+      mouseBox.y = y;
+    });
+
+    const ENTITIES = 100;
     for (let i = 0; i < ENTITIES; i++) {
       const entity = new Entity();
 
-      const x = (Math.random() - 0.5) * 400;
-      const y = (Math.random() - 0.5) * 400;
+      entity.color = {
+        red: Math.random() * 0.2 + 0.7,
+        green: Math.random() * 0.2 + 0.7,
+        blue: Math.random() * 0.2 + 0.7,
+      };
 
-      const dx = (Math.random() - 0.5) * 30;
-      const dy = (Math.random() - 0.5) * 30;
+      const x = Math.random() * WM.boundingBox.width + WM.boundingBox.x;
+      const y = Math.random() * WM.boundingBox.height + WM.boundingBox.y;
+
+      const dx = (Math.random() - 0.5) * 200;
+      const dy = (Math.random() - 0.5) * 200;
 
       entity.position.setXY(x, y);
       entity.velocity.setXY(dx, dy);
       WM.addEntity(entity);
     }
 
-    const geometry = new Entity();
-    geometry.boundingBox = new Rectangle(100, 100);
-    geometry.position.setXY(50, 50);
-    geometry.collisionLayer = "geometry";
-    WM.addEntity(geometry);
-
-    const red = { red: 0.8, green: 0.4, blue: 0.2 };
+    const geometry = [
+      Rectangle.centered(225, 50, 200 / 2, 0),
+      Rectangle.centered(500, 50, 0, -200),
+      Rectangle.centered(500, 50, 0, 200),
+      Rectangle.centered(50, 500, -200, 0),
+      Rectangle.centered(50, 500, 200, 0),
+      Rectangle.centered(100, 100, 0, 0),
+    ];
+    for (const element of geometry) {
+      const entity = new Geometry(element);
+      WM.addEntity(entity);
+    }
 
     EM.addListener("CollisionEvent", (event: CollisionEvent) => {
       const { collider, collided } = event;
@@ -102,31 +114,56 @@ async function main(): Promise<void> {
         collider.collisionLayer === "unit" &&
         collided.collisionLayer === "geometry"
       ) {
-        LM.info("geometry");
         shuntOutOf(collider, collided.boundingBox);
+      } else if (
+        collider.collisionLayer === "unit" &&
+        collided.collisionLayer === "unit"
+      ) {
       }
-      // collider.color = BLACK;
-      // LM.info(`collision: ${collider.id}, ${collided.id}`);
     });
 
     EM.addListener("StepEvent", (step: StepEvent) => {
       WM.step(step.dt);
-      WM.render(canvas);
 
-      for (const candidate of WM.quadTree.retrieve(cursorRect)) {
-        candidate.color = BLACK;
+      for (const entity of WM.getEntities()) {
+        entity.highlight = false;
       }
 
+      const candidates = WM.quadTree.retrieve(mouseBox);
+
+      const element = document.getElementById("highlighted-label");
+      if (element) {
+        element.innerText = candidates.size.toString();
+      }
+
+      for (const candidate of candidates) {
+        candidate.highlight = true;
+      }
+
+      WM.render(canvas);
+
+      canvas.setOptions({
+        lineWidth: 1,
+        doStroke: true,
+        doFill: false,
+      });
+
       canvas.rect(
-        cursorRect.x,
-        cursorRect.y,
-        cursorRect.width,
-        cursorRect.height,
+        mouseBox.x,
+        mouseBox.y,
+        mouseBox.width,
+        mouseBox.height,
         BLACK
       );
+
+      canvas.setOptions({
+        lineWidth: 5,
+        doStroke: true,
+        doFill: true,
+      });
     });
 
-    const frameTimes = new SizedQueue<number>(10);
+    const frameTimes = new SizedQueue<number>(60);
 
     const timer = new Timer((dt) => {
       frameTimes.enqueue(dt);
@@ -136,13 +173,15 @@ async function main(): Promise<void> {
       }
       // LM.debug("fps: " + 1 / (sum / frameTimes.size()));
       const fps = 1 / (sum / frameTimes.size());
-      const rounded = Math.round(fps * 100) / 100;
-      const label = `FPS: ${rounded}`;
+      const rounded = Math.round(fps);
+      const label = rounded.toString();
+
+      const element = document.getElementById("fps-label");
+      if (element) {
+        element.innerText = label;
+      }
+
       EM.step(dt);
-      canvas.text(10 - 250, 40 - 250 + 500, label, {
-        color: { red: 1, green: 0, blue: 0 },
-        size: "2em",
-      });
     });
 
     timer.start();

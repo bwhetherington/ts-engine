@@ -14,6 +14,33 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
   const box = entity.boundingBox;
   const { centerX: x, centerY: y } = box;
 
+  // Check if contained entirely within the rectangle
+  if (other.contains(box)) {
+    // Push out to nearest side
+    const left = box.x - other.x;
+    const right = other.farX - box.farX;
+    const top = box.x - other.x;
+    const bottom = other.farY - box.farY;
+
+    // Find closest of them
+    const min = Math.min(left, right, top, bottom);
+    switch (min) {
+      case left:
+        entity.addPositionXY(other.x - box.farX, 0);
+        break;
+      case right:
+        entity.addPositionXY(other.farX - box.x, 0);
+        break;
+      case top:
+        entity.addPositionXY(0, other.y - box.farY);
+        break;
+      case bottom:
+        entity.addPositionXY(0, other.farY - box.y);
+        break;
+    }
+    return;
+  }
+
   const x1 = box.x;
   const x2 = box.farX;
   const y1 = box.y;
@@ -80,8 +107,5 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
     entity.velocity.y = -1 * entity.velocity.y;
   }
 
-  LM.info(`dx: ${dx}, dy: ${dy}`);
-
   entity.addPositionXY(dx, dy);
-  entity.color = BLACK;
 }

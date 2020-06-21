@@ -34,5 +34,15 @@ export function reshade(color: Color, amount: number = 0.2): Color {
   };
 }
 
+export function invert(color: Color): Color {
+  const { red, green, blue, alpha } = color;
+  return {
+    red: 1 - red,
+    green: 1 - green,
+    blue: 1 - blue,
+    alpha,
+  };
+}
+
 export const BLACK: Color = { red: 0, green: 0, blue: 0 };
 export const WHITE: Color = { red: 1, green: 1, blue: 1 };

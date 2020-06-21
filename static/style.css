@@ -21,7 +21,9 @@ body,
 
 .dialog {
   background-color: rgba(0, 0, 0, 0.67);
-  padding: 10px;
-  border-radius: 5px;
+  padding: 8px;
+  border-radius: 4px;
   pointer-events: auto;
+  font-size: 0.9em;
+  user-select: none;
 }

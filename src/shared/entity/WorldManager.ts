@@ -4,14 +4,20 @@ import { GraphicsContext } from "../graphics/util";
 import Entity from "./Entity";
 import { BLACK, WHITE } from "../util/color";
 import LM from "../util/LogManager";
-import { CollisionEvent } from "./util";
+import { CollisionEvent, CollisionLayer } from "./util";
 import { GameEvent } from "../event/util";
 import EM from "../event/EventManager";
+
+const LAYER_INDICES: { [layer in CollisionLayer]: number } = {
+  geometry: 0,
+  unit: 1,
+};
 
 class WorldManager implements Bounded {
   public quadTree: QuadTree<Entity>;
   private entities: { [id: string]: Entity } = {};
   public boundingBox: Rectangle;
+  private collisionLayers: Entity[][] = [[], []];
 
   constructor(boundingBox: Rectangle) {
     this.quadTree = new QuadTree(boundingBox);
@@ -31,9 +37,16 @@ class WorldManager implements Bounded {
     // ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WHITE);
     this.quadTree.render(ctx);
 
-    for (const entity of this.getEntities()) {
+    for (const entity of this.getEntitiesLayerOrdered()) {
       entity.render(ctx);
-      entity.color = WHITE;
+    }
+  }
+
+  public *getEntitiesLayerOrdered(): Generator<Entity> {
+    for (const layer of this.collisionLayers) {
+      for (const entity of layer) {
+        yield entity;
+      }
     }
   }
 
@@ -51,12 +64,41 @@ class WorldManager implements Bounded {
     // Step each entity
     for (const entity of this.getEntities()) {
       entity.step(dt);
+
+      // Check for collision with bounds
+      let dx = 0;
+      let dy = 0;
+
+      if (entity.boundingBox.x < this.boundingBox.x) {
+        dx += this.boundingBox.x - entity.boundingBox.x;
+      }
+      if (entity.boundingBox.farX > this.boundingBox.farX) {
+        dx += this.boundingBox.farX - entity.boundingBox.farX;
+      }
+      if (entity.boundingBox.y < this.boundingBox.y) {
+        dy += this.boundingBox.y - entity.boundingBox.y;
+      }
+      if (entity.boundingBox.farY > this.boundingBox.farY) {
+        dy += this.boundingBox.farY - entity.boundingBox.farY;
+      }
+
+      if (dx !== 0) {
+        entity.velocity.x *= -1;
+      }
+      if (dy !== 0) {
+        entity.velocity.y *= -1;
+      }
+
+      entity.addPositionXY(dx, dy);
     }
 
     // Reinsert each entity into the quad tree
     this.quadTree.clear();
+    this.collisionLayers = [[], []];
     for (const entity of this.getEntities()) {
       this.quadTree.insert(entity);
+      const layerIndex = LAYER_INDICES[entity.collisionLayer];
+      this.collisionLayers[layerIndex]?.push(entity);
     }
 
     // Check for collisions
@@ -83,26 +125,9 @@ class WorldManager implements Bounded {
           EM.emit(event);
         }
       }
-      // entity.color = collided ? BLACK : WHITE;
-
-      // Collide with walls
-      if (
-        entity.boundingBox.x < this.boundingBox.x ||
-        entity.boundingBox.farX > this.boundingBox.farX
-      ) {
-        entity.velocity.x *= -1;
-        // LM.info("horizontal collision");
-      }
-      if (
-        entity.boundingBox.y < this.boundingBox.y ||
-        entity.boundingBox.farY > this.boundingBox.farY
-      ) {
-        entity.velocity.y *= -1;
-        // LM.info("vertical collision");
-      }
     }
   }
 }
 
-const WM = new WorldManager(new Rectangle(500, 500, -250, -250));
+const WM = new WorldManager(new Rectangle(800, 600, -400, -300));
 export default WM;
