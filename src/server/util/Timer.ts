@@ -1,5 +1,5 @@
-import { TimerHandler, AbstractTimer, sleep } from "../../shared/util/util";
-import LM from "../../shared/util/LogManager";
+import { TimerHandler, AbstractTimer, sleep } from 'core/util/util';
+import LM from 'core/util/LogManager';
 
 function toSeconds(seconds: number, nanoseconds: number): number {
   return seconds + nanoseconds * 0.000000001;

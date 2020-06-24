@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:client": "webpack",
-    "watch:client": "webpack --watch",
+    "build:client": "webpack --mode=production",
+    "watch:client": "webpack --watch --mode=development",
     "build:server": "tsc --project config/server/tsconfig.json",
     "server": "ts-node --project config/server/tsconfig.json src/server/main.ts",
     "start": "npm run build && node build/main.js"
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/node": "^14.0.9",
     "@types/websocket": "^1.0.0",
+    "prettier": "^2.0.5",
     "ts-loader": "^7.0.5",
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",

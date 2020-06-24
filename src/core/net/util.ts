@@ -1,6 +1,5 @@
-import LM from "../util/LogManager";
-import { GameEvent } from "../event/util";
-import EM from "../event/EventManager";
+import LM from 'core/util/LogManager';
+import EM from 'core/event/EventManager';
 
 export interface Message {
   [key: string]: any;
@@ -12,7 +11,7 @@ export abstract class Node {
   public abstract send(msg: Message, socket: Socket): void;
   public onMessage(message: Message, socket: Socket) {
     const event = {
-      type: "NetworkMessageEvent",
+      type: 'NetworkMessageEvent',
       data: {
         socket,
         message,
@@ -23,7 +22,7 @@ export abstract class Node {
 
   public onConnect(socket: Socket) {
     const event = {
-      type: "ConnectEvent",
+      type: 'ConnectEvent',
       data: {
         socket,
       },
@@ -33,7 +32,7 @@ export abstract class Node {
 
   public onDisconnect(socket: Socket) {
     const event = {
-      type: "DisconnectEvent",
+      type: 'DisconnectEvent',
       data: {
         socket,
       },
@@ -44,19 +43,19 @@ export abstract class Node {
 
 export class DefaultNode implements Node {
   public send(msg: Message, socket: Socket) {
-    LM.warn("default network node in use");
+    LM.warn('default network node in use');
   }
 
   public onMessage(msg: Message, socket: Socket) {
-    LM.warn("default network node in use");
+    LM.warn('default network node in use');
   }
 
   public onConnect(socket: Socket) {
-    LM.warn("default network node in use");
+    LM.warn('default network node in use');
   }
 
   public onDisconnect(socket: Socket) {
-    LM.warn("default network node in use");
+    LM.warn('default network node in use');
   }
 }
 

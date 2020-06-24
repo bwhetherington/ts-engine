@@ -1,5 +1,5 @@
-import { Node, Message, Socket } from "../../shared/net/util";
-import LM from "../../shared/util/LogManager";
+import { Node, Message, Socket } from 'core/net/util';
+import LM from 'core/util/LogManager';
 
 class Client extends Node {
   private sendBuffer: Message[] = [];
@@ -39,7 +39,7 @@ class Client extends Node {
         this.sendBuffer.push(message);
       }
     } else {
-      LM.error("only socket -1 exists on clients");
+      LM.error('only socket -1 exists on clients');
     }
   }
 
@@ -54,7 +54,7 @@ class Client extends Node {
 
   public onDisconnect(socket: Socket) {
     this.isConnected = false;
-    LM.debug("disconnected");
+    LM.debug('disconnected');
     super.onDisconnect(socket);
   }
 }

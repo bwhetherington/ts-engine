@@ -1,9 +1,9 @@
-import { Color, toCss, reshade, invert } from "../../shared/util/color";
+import { Color, toCss, reshade, invert } from 'core/util/color';
 import {
   TextStyle,
   GraphicsContext,
   GraphicsOptions,
-} from "../../shared/graphics/util";
+} from 'core/graphics/util';
 
 interface Options {
   width: number;
@@ -38,7 +38,7 @@ export class HDCanvas implements GraphicsContext {
   constructor(options: Options = DEFAULT_OPTIONS) {
     const { width, height, isFullScreen } = options;
 
-    this.element = document.createElement("canvas");
+    this.element = document.createElement('canvas');
     if (this.element) {
       if (isFullScreen) {
         // document.addEventListener("resive", event => {
@@ -73,9 +73,9 @@ export class HDCanvas implements GraphicsContext {
       this.ratio = ratio;
       element.width = w * ratio;
       element.height = h * ratio;
-      element.style.width = w + "px";
-      element.style.height = h + "px";
-      element.getContext("2d")?.setTransform(ratio, 0, 0, ratio, 0, 0);
+      element.style.width = w + 'px';
+      element.style.height = h + 'px';
+      element.getContext('2d')?.setTransform(ratio, 0, 0, ratio, 0, 0);
     }
   }
 
@@ -86,7 +86,7 @@ export class HDCanvas implements GraphicsContext {
   }
 
   public getContext(): CanvasRenderingContext2D | undefined {
-    return this.element?.getContext("2d") ?? undefined;
+    return this.element?.getContext('2d') ?? undefined;
   }
 
   public begin() {
@@ -105,8 +105,8 @@ export class HDCanvas implements GraphicsContext {
   public text(x: number, y: number, text: string, style: TextStyle) {
     const ctx = this.curContext;
     if (ctx) {
-      const { font = "sans-serif", size = "12px", color } = style;
-      const colorCss = color ? toCss(color) : "black";
+      const { font = 'sans-serif', size = '12px', color } = style;
+      const colorCss = color ? toCss(color) : 'black';
 
       ctx.beginPath();
       // ctx.lineWidth = 1;

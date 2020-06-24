@@ -1,4 +1,4 @@
-import { AbstractLogger } from "../../shared/util/log";
+import { AbstractLogger } from 'core/util/log';
 
 class ClientLogger extends AbstractLogger {
   public logRaw(...text: string[]): void {

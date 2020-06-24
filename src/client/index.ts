@@ -1,21 +1,21 @@
-import { square } from "../shared/util/util";
+import { square } from 'core/util/util';
 
-import { GameEvent } from "../shared/event/util";
-import Timer from "./util/Timer";
-import { HDCanvas } from "./util/canvas";
-import { BLACK, WHITE } from "../shared/util/color";
-import Client from "./util/NetClient";
-import NM from "../shared/net/NetworkManager";
-import EM from "../shared/event/EventManager";
-import ClientLogger from "./util/ClientLogger";
-import LM from "../shared/util/LogManager";
-import WM from "../shared/entity/WorldManager";
-import Entity from "../shared/entity/Entity";
-import Geometry from "../shared/entity/Geometry";
-import Vector from "../shared/util/vector";
-import { SizedQueue } from "../shared/util/queue";
-import Rectangle from "../shared/util/rectangle";
-import { CollisionEvent, shuntOutOf } from "../shared/entity/util";
+import { GameEvent } from 'core/event/util';
+import Timer from 'client/util/Timer';
+import { HDCanvas } from 'client/util/canvas';
+import { BLACK, WHITE } from 'core/util/color';
+import Client from 'client/util/NetClient';
+import NM from 'core/net/NetworkManager';
+import EM from 'core/event/EventManager';
+import ClientLogger from 'client/util/ClientLogger';
+import LM from 'core/util/LogManager';
+import WM from 'core/entity/WorldManager';
+import Entity from 'core/entity/Entity';
+import Geometry from 'core/entity/Geometry';
+import Vector from 'core/util/vector';
+import { SizedQueue } from 'core/util/queue';
+import Rectangle from 'core/util/rectangle';
+import { CollisionEvent, shuntOutOf } from 'core/entity/util';
 
 class DamageEvent {
   public amount: number;
@@ -25,7 +25,7 @@ class DamageEvent {
   }
 
   public static create(amount: number): GameEvent {
-    return { type: "DamageEvent", data: new DamageEvent(amount) };
+    return { type: 'DamageEvent', data: new DamageEvent(amount) };
   }
 }
 
@@ -37,7 +37,7 @@ class StepEvent {
   }
 
   public static create(dt: number): GameEvent {
-    return { type: "StepEvent", data: new StepEvent(dt) };
+    return { type: 'StepEvent', data: new StepEvent(dt) };
   }
 }
 
@@ -45,7 +45,7 @@ async function main(): Promise<void> {
   LM.initialize(new ClientLogger());
   // LM.setLogLevel("warn");
 
-  const game = document.getElementById("game");
+  const game = document.getElementById('game');
 
   // const client = new Client();
   // NM.initialize(client);
@@ -57,13 +57,13 @@ async function main(): Promise<void> {
     canvas.attachTo(game);
     canvas.setSize(window.innerWidth, window.innerHeight);
 
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       canvas.setSize(window.innerWidth, window.innerHeight);
     });
 
     const mouseBox = new Rectangle(50, 50);
 
-    game.addEventListener("mousemove", (event) => {
+    game.addEventListener('mousemove', (event) => {
       const { clientX, clientY } = event;
       const { x: gameX, y: gameY } = game.getBoundingClientRect();
 
@@ -108,21 +108,21 @@ async function main(): Promise<void> {
       WM.addEntity(entity);
     }
 
-    EM.addListener("CollisionEvent", (event: CollisionEvent) => {
+    EM.addListener('CollisionEvent', (event: CollisionEvent) => {
       const { collider, collided } = event;
       if (
-        collider.collisionLayer === "unit" &&
-        collided.collisionLayer === "geometry"
+        collider.collisionLayer === 'unit' &&
+        collided.collisionLayer === 'geometry'
       ) {
         shuntOutOf(collider, collided.boundingBox);
       } else if (
-        collider.collisionLayer === "unit" &&
-        collided.collisionLayer === "unit"
+        collider.collisionLayer === 'unit' &&
+        collided.collisionLayer === 'unit'
       ) {
       }
     });
 
-    EM.addListener("StepEvent", (step: StepEvent) => {
+    EM.addListener('StepEvent', (step: StepEvent) => {
       WM.step(step.dt);
 
       for (const entity of WM.getEntities()) {
@@ -131,7 +131,7 @@ async function main(): Promise<void> {
 
       const candidates = WM.quadTree.retrieve(mouseBox);
 
-      const element = document.getElementById("highlighted-label");
+      const element = document.getElementById('highlighted-label');
       if (element) {
         element.innerText = candidates.size.toString();
       }
@@ -176,7 +176,7 @@ async function main(): Promise<void> {
       const rounded = Math.round(fps);
       const label = rounded.toString();
 
-      const element = document.getElementById("fps-label");
+      const element = document.getElementById('fps-label');
       if (element) {
         element.innerText = label;
       }

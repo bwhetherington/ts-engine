@@ -2,12 +2,12 @@ import {
   server as WebsocketServer,
   request as Request,
   connection as Connection,
-} from "websocket";
+} from 'websocket';
 
-import { Node, Message, Socket } from "../../shared/net/util";
-import * as http from "http";
-import LM from "../../shared/util/LogManager";
-import EM from "../../shared/event/EventManager";
+import { Node, Message, Socket } from 'core/net/util';
+import * as http from 'http';
+import LM from 'core/util/LogManager';
+import EM from 'core/event/EventManager';
 
 interface Connections {
   [key: number]: Connection;
@@ -40,14 +40,14 @@ class Server extends Node {
   }
 
   private initializeConnection(connection: Connection, index: Socket) {
-    connection.on("message", (data) => {
+    connection.on('message', (data) => {
       const { type, utf8Data } = data;
-      if (utf8Data && type === "utf8") {
+      if (utf8Data && type === 'utf8') {
         const parsed: Message = JSON.parse(utf8Data);
         this.onMessage(parsed, index);
       }
     });
-    connection.on("close", () => {
+    connection.on('close', () => {
       this.disconnect(index);
     });
   }
@@ -77,12 +77,10 @@ class Server extends Node {
   public initialize(httpServer: http.Server) {
     this.httpServer = httpServer;
     this.wsServer = new WebsocketServer({ httpServer });
-    this.wsServer.on("request", (req) => {
+    this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on("close", (connection) => {
-
-    });
+    this.wsServer.on('close', (connection) => {});
   }
 
   private sendRaw(data: string, socket: Socket) {

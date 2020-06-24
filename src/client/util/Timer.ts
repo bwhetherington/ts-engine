@@ -1,5 +1,5 @@
-import { TimerHandler, AbstractTimer } from "../../shared/util/util";
-import LM from "../../shared/util/LogManager";
+import { TimerHandler, AbstractTimer } from 'core/util/util';
+import LM from 'core/util/LogManager';
 
 const MAX_TIME = 4 / 60;
 
