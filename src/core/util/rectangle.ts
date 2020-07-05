@@ -1,4 +1,4 @@
-class Rectangle {
+export class Rectangle {
   constructor(
     public width: number = 0,
     public height: number = 0,
@@ -79,5 +79,3 @@ class Rectangle {
     );
   }
 }
-
-export default Rectangle;

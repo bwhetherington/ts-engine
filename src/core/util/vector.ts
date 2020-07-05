@@ -1,4 +1,4 @@
-class Vector {
+export class Vector {
   public x: number = 0;
   public y: number = 0;
 
@@ -32,5 +32,3 @@ class Vector {
     this.y += dy * scale;
   }
 }
-
-export default Vector;

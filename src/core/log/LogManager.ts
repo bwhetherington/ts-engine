@@ -1,11 +1,11 @@
-import { AbstractLogger } from "./log";
+import { AbstractLogger } from 'core/log/util';
 
 class LogManager extends AbstractLogger {
   private logger?: AbstractLogger;
 
   public initialize(logger: AbstractLogger) {
     this.logger = logger;
-    this.debug("LogManager initialized");
+    this.debug('LogManager initialized');
   }
 
   public logRaw(content: string) {
@@ -29,5 +29,4 @@ class LogManager extends AbstractLogger {
   }
 }
 
-const LM = new LogManager();
-export default LM;
+export const LM = new LogManager();

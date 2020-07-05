@@ -1,5 +1,5 @@
-import LM from 'core/util/LogManager';
-import EM from 'core/event/EventManager';
+import { LM } from 'core/log';
+import { EM } from 'core/event';
 
 export interface Message {
   [key: string]: any;

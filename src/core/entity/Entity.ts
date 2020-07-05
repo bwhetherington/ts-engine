@@ -1,20 +1,18 @@
-import { Bounded } from "../util/quadtree";
-import Rectangle from "../util/rectangle";
-import Vector from "../util/vector";
-import { GraphicsContext } from "../graphics/util";
-import { WHITE, Color, invert, BLACK } from "../util/color";
-import { v1 as genUuid } from "uuid";
-import { CollisionLayer } from "./util";
+import { Bounded, Rectangle, Vector } from 'core/util';
+import { GraphicsContext } from 'core/graphics/context';
+import { WHITE, Color, invert, BLACK } from 'core/graphics/color';
+import { v1 as genUuid } from 'uuid';
+import { CollisionLayer } from 'core/entity/util';
 
-type Uuid = string;
+export type Uuid = string;
 
-class Entity implements Bounded {
+export class Entity implements Bounded {
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
   public id: Uuid;
   public color: Color = WHITE;
-  public collisionLayer: CollisionLayer = "unit";
+  public collisionLayer: CollisionLayer = 'unit';
   public mass: number = 1;
   public highlight: boolean = false;
 
@@ -66,5 +64,3 @@ class Entity implements Bounded {
     this.updatePosition(dt);
   }
 }
-
-export default Entity;

@@ -1,4 +1,4 @@
-export type LogLevel = "error" | "warn" | "info" | "debug";
+export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
 
 type LogPriorities = {
   [level in LogLevel]: number;
@@ -15,7 +15,7 @@ function getLevelPriority(level: LogLevel): number {
   return LOG_PRIORITIES[level];
 }
 
-const DEFAULT_LEVEL = "debug";
+const DEFAULT_LEVEL = 'debug';
 
 export abstract class AbstractLogger {
   public get level(): LogLevel {
@@ -70,18 +70,18 @@ export abstract class AbstractLogger {
   }
 
   public error(message: string): void {
-    this.log("error", message, this.logRawError.bind(this));
+    this.log('error', message, this.logRawError.bind(this));
   }
 
   public warn(message: string): void {
-    this.log("warn", message, this.logRawWarn.bind(this));
+    this.log('warn', message, this.logRawWarn.bind(this));
   }
 
   public info(message: string): void {
-    this.log("info", message);
+    this.log('info', message);
   }
 
   public debug(message: string): void {
-    this.log("debug", message);
+    this.log('debug', message);
   }
 }

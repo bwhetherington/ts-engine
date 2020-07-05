@@ -1,6 +1,5 @@
-import { Queue } from "../util/queue";
-import { GameEvent, EventData } from "./util";
-import { AbstractTimer } from "../util/util";
+import { Queue } from 'core/util/queue';
+import { GameEvent, EventData } from 'core/event';
 
 type Proc<T> = (arg: T) => void;
 
@@ -12,7 +11,11 @@ function convertHandler<E extends EventData>(handler: Proc<E>): Handler {
   };
 }
 
-class EventManager {
+export interface StepEvent {
+  dt: number;
+}
+
+export class EventManager {
   private handlers: Record<string, Handler[]> = {};
   private events: Queue<GameEvent> = new Queue();
 
@@ -65,13 +68,10 @@ class EventManager {
 
   public step(dt: number): void {
     const event = {
-      type: "StepEvent",
+      type: 'StepEvent',
       data: { dt },
     };
     this.emit(event);
     this.pollEvents();
   }
 }
-
-const EM = new EventManager();
-export default EM;

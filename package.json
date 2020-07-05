@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:client": "webpack --mode=production",
     "watch:client": "webpack --watch --mode=development",
-    "build:server": "tsc --project config/server/tsconfig.json",
-    "server": "ts-node --project config/server/tsconfig.json src/server/main.ts",
+    "build:server": "tsc --traceResolution --project config/server/tsconfig.json",
+    "server": "ts-node -r tsconfig-paths/register --project config/server/tsconfig.json src/server/main.ts",
     "start": "npm run build && node build/main.js"
   },
   "keywords": [],
@@ -19,6 +19,7 @@
     "@types/websocket": "^1.0.0",
     "prettier": "^2.0.5",
     "ts-loader": "^7.0.5",
+    "tspath": "^1.3.7",
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
@@ -28,6 +29,7 @@
     "@types/uuid": "^8.0.0",
     "mime-types": "^2.1.27",
     "ts-node": "^8.10.2",
+    "tsconfig-paths": "^3.9.0",
     "uuid": "^8.1.0",
     "websocket": "^1.0.31"
   }

@@ -1,45 +1,12 @@
-import { square } from 'core/util/util';
+import { BLACK, WHITE } from 'core/graphics/color';
+import { NM } from 'core/net';
+import { EM, StepEvent } from 'core/event';
+import { LM } from 'core/log';
+import { WM, Entity, CollisionEvent, shuntOutOf } from 'core/entity';
+import { Geometry } from 'core/entity/Geometry';
+import { SizedQueue, Vector, Rectangle } from 'core/util';
 
-import { GameEvent } from 'core/event/util';
-import Timer from 'client/util/Timer';
-import { HDCanvas } from 'client/util/canvas';
-import { BLACK, WHITE } from 'core/util/color';
-import Client from 'client/util/NetClient';
-import NM from 'core/net/NetworkManager';
-import EM from 'core/event/EventManager';
-import ClientLogger from 'client/util/ClientLogger';
-import LM from 'core/util/LogManager';
-import WM from 'core/entity/WorldManager';
-import Entity from 'core/entity/Entity';
-import Geometry from 'core/entity/Geometry';
-import Vector from 'core/util/vector';
-import { SizedQueue } from 'core/util/queue';
-import Rectangle from 'core/util/rectangle';
-import { CollisionEvent, shuntOutOf } from 'core/entity/util';
-
-class DamageEvent {
-  public amount: number;
-
-  constructor(amount: number) {
-    this.amount = amount;
-  }
-
-  public static create(amount: number): GameEvent {
-    return { type: 'DamageEvent', data: new DamageEvent(amount) };
-  }
-}
-
-class StepEvent {
-  public dt: number;
-
-  constructor(dt: number) {
-    this.dt = dt;
-  }
-
-  public static create(dt: number): GameEvent {
-    return { type: 'StepEvent', data: new StepEvent(dt) };
-  }
-}
+import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
 
 async function main(): Promise<void> {
   LM.initialize(new ClientLogger());

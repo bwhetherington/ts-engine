@@ -1,19 +1,15 @@
-import Rectangle from "../util/rectangle";
-import { QuadTree, Bounded } from "../util/quadtree";
-import { GraphicsContext } from "../graphics/util";
-import Entity from "./Entity";
-import { BLACK, WHITE } from "../util/color";
-import LM from "../util/LogManager";
-import { CollisionEvent, CollisionLayer } from "./util";
-import { GameEvent } from "../event/util";
-import EM from "../event/EventManager";
+import { Rectangle, QuadTree, Bounded } from 'core/util';
+import { GraphicsContext } from 'core/graphics';
+import { Entity, CollisionEvent, CollisionLayer } from 'core/entity';
+import { LM } from 'core/log';
+import { EM, GameEvent } from 'core/event';
 
 const LAYER_INDICES: { [layer in CollisionLayer]: number } = {
   geometry: 0,
   unit: 1,
 };
 
-class WorldManager implements Bounded {
+export class WorldManager implements Bounded {
   public quadTree: QuadTree<Entity>;
   private entities: { [id: string]: Entity } = {};
   public boundingBox: Rectangle;
@@ -25,7 +21,7 @@ class WorldManager implements Bounded {
   }
 
   public initialize(): void {
-    LM.debug("WorldManager initialized");
+    LM.debug('WorldManager initialized');
   }
 
   public render(ctx: GraphicsContext): void {
@@ -119,7 +115,7 @@ class WorldManager implements Bounded {
             collided: candidate,
           };
           const event: GameEvent = {
-            type: "CollisionEvent",
+            type: 'CollisionEvent',
             data,
           };
           EM.emit(event);
@@ -128,6 +124,3 @@ class WorldManager implements Bounded {
     }
   }
 }
-
-const WM = new WorldManager(new Rectangle(800, 600, -400, -300));
-export default WM;

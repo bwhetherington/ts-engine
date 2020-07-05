@@ -1,13 +1,13 @@
-import Entity from "./Entity";
-import Rectangle from "../util/rectangle";
-import { GraphicsContext } from "../graphics/util";
+import { Entity } from 'core/entity';
+import { Rectangle } from 'core/util';
+import { GraphicsContext } from 'core/graphics';
 
-class Geometry extends Entity {
+export class Geometry extends Entity {
   public constructor(rect: Rectangle) {
     super();
     this.boundingBox = rect;
     this.setPositionXY(rect.x, rect.y);
-    this.collisionLayer = "geometry";
+    this.collisionLayer = 'geometry';
   }
 
   // public render(ctx: GraphicsContext): void {
@@ -15,5 +15,3 @@ class Geometry extends Entity {
   //   ctx.rect(x, y, width, height, this.color);
   // }
 }
-
-export default Geometry;

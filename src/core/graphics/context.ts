@@ -1,4 +1,4 @@
-import { Color } from "../util/color";
+import { Color } from 'core/graphics/color';
 
 export interface TextStyle {
   font?: string;

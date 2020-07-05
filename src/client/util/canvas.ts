@@ -1,9 +1,12 @@
-import { Color, toCss, reshade, invert } from 'core/util/color';
 import {
+  Color,
+  toCss,
+  reshade,
+  invert,
   TextStyle,
   GraphicsContext,
   GraphicsOptions,
-} from 'core/graphics/util';
+} from 'core/graphics';
 
 interface Options {
   width: number;

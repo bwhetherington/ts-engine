@@ -1,9 +1,9 @@
-import { TimerHandler, AbstractTimer } from 'core/util/util';
-import LM from 'core/util/LogManager';
+import { TimerHandler, AbstractTimer } from 'core/util';
+import { LM } from 'core/log';
 
 const MAX_TIME = 4 / 60;
 
-class Timer extends AbstractTimer {
+export class Timer extends AbstractTimer {
   private previous: number = 0;
   private handle?: number;
   private trigger: FrameRequestCallback;
@@ -36,5 +36,3 @@ class Timer extends AbstractTimer {
     }
   }
 }
-
-export default Timer;

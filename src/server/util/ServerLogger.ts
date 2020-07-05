@@ -1,9 +1,7 @@
-import { AbstractLogger } from 'core/util/log';
+import { AbstractLogger } from 'core/log';
 
-class ServerLogger extends AbstractLogger {
+export class ServerLogger extends AbstractLogger {
   public logRaw(...text: string[]): void {
     console.log(...text);
   }
 }
-
-export default ServerLogger;

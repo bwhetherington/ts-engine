@@ -1,5 +1,5 @@
-import { TimerHandler, AbstractTimer, sleep } from 'core/util/util';
-import LM from 'core/util/LogManager';
+import { TimerHandler, AbstractTimer, sleep } from 'core/util';
+import { LM } from 'core/log';
 
 function toSeconds(seconds: number, nanoseconds: number): number {
   return seconds + nanoseconds * 0.000000001;
@@ -13,7 +13,7 @@ function now(): number {
 
 const DEFAULT_INTERVAL = 1 / 60;
 
-class Timer extends AbstractTimer {
+export class Timer extends AbstractTimer {
   private interval: number;
   private isRunning: boolean;
 
@@ -54,5 +54,3 @@ class Timer extends AbstractTimer {
     this.isRunning = false;
   }
 }
-
-export default Timer;

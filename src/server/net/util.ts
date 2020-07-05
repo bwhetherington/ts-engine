@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as path from 'path';
 import { promisify } from 'util';
-import LM from 'core/util/LogManager';
+import { LM } from 'core/log/LogManager';
 
 export const readFile = promisify(fs.readFile);
 

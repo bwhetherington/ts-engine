@@ -1,6 +1,6 @@
-import { AbstractLogger } from 'core/util/log';
+import { AbstractLogger } from 'core/log';
 
-class ClientLogger extends AbstractLogger {
+export class ClientLogger extends AbstractLogger {
   public logRaw(...text: string[]): void {
     console.log(...text);
   }
@@ -13,5 +13,3 @@ class ClientLogger extends AbstractLogger {
     console.warn(...text);
   }
 }
-
-export default ClientLogger;

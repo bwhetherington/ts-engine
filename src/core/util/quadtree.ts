@@ -1,6 +1,6 @@
-import Rectangle from "./rectangle";
-import { GraphicsContext } from "../graphics/util";
-import { WHITE } from "./color";
+import { Rectangle } from 'core/util';
+import { GraphicsContext } from 'core/graphics';
+import { WHITE } from 'core/graphics/color';
 
 const NODE_POSITION = {
   TOP_LEFT: 0,

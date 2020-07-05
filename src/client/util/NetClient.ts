@@ -1,7 +1,7 @@
-import { Node, Message, Socket } from 'core/net/util';
-import LM from 'core/util/LogManager';
+import { Node, Message, Socket } from 'core/net';
+import { LM } from 'core/log';
 
-class Client extends Node {
+export class Client extends Node {
   private sendBuffer: Message[] = [];
   private socket: WebSocket;
   private isConnected: boolean = false;
@@ -58,5 +58,3 @@ class Client extends Node {
     super.onDisconnect(socket);
   }
 }
-
-export default Client;

@@ -4,16 +4,16 @@ import {
   connection as Connection,
 } from 'websocket';
 
-import { Node, Message, Socket } from 'core/net/util';
+import { Node, Message, Socket } from 'core/net';
 import * as http from 'http';
-import LM from 'core/util/LogManager';
-import EM from 'core/event/EventManager';
+import { LM } from 'core/log';
+import { EM } from 'core/event';
 
 interface Connections {
   [key: number]: Connection;
 }
 
-class Server extends Node {
+export class Server extends Node {
   private httpServer?: http.Server;
   private wsServer?: WebsocketServer;
   private connections: Connections;
@@ -107,5 +107,3 @@ class Server extends Node {
     LM.info(`listening on port ${port}`);
   }
 }
-
-export default Server;

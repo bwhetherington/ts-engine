@@ -1,9 +1,9 @@
-import Entity from "./Entity";
-import Rectangle from "../util/rectangle";
-import LM from "../util/LogManager";
-import { BLACK } from "../util/color";
+import { Entity } from 'core/entity';
+import { Rectangle } from 'core/util';
+import { LM } from 'core/log';
+import { BLACK } from 'core/graphics/color';
 
-export type CollisionLayer = "geometry" | "unit";
+export type CollisionLayer = 'geometry' | 'unit';
 
 export interface CollisionEvent {
   collider: Entity;
