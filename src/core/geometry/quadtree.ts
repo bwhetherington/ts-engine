@@ -1,4 +1,4 @@
-import { Rectangle } from 'core/util';
+import { Rectangle } from 'core/geometry';
 import { GraphicsContext } from 'core/graphics';
 import { WHITE } from 'core/graphics/color';
 

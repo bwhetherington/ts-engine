@@ -1,4 +1,6 @@
-export class Rectangle {
+import { Data, Serializable } from 'core/serialize';
+
+export class Rectangle implements Serializable {
   constructor(
     public width: number = 0,
     public height: number = 0,
@@ -77,5 +79,24 @@ export class Rectangle {
       this.containsPointXY(x, farY) &&
       this.containsPointXY(farX, farY)
     );
+  }
+
+  public serialize(): Data {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+    };
+  }
+
+  public deserialize(data: Data): void {
+    const { x, y, width, height } = data;
+    if (typeof x === 'number' && typeof y === 'number' && typeof width === 'number' && typeof height === 'number') {
+      this.x = x;
+      this.y = y;
+      this.width = width;
+      this.height = height;
+    }
   }
 }

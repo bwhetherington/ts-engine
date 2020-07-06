@@ -1,4 +1,4 @@
-import { Color, invert, reshade, toCss } from 'core/graphics/color';
+import { Color, invert, reshade, toCss, isColor } from 'core/graphics/color';
 
 import {
   TextStyle,
@@ -14,4 +14,5 @@ export {
   invert,
   reshade,
   toCss,
+  isColor,
 };

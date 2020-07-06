@@ -8,6 +8,10 @@ import {
   DisconnectEvent,
   NetworkMessageEvent,
 } from 'core/net/util';
+import {
+  HTTPClient,
+  HTTPResponse,
+} from 'core/net/http';
 
 export const NM = new NetworkManager();
 export {
@@ -18,4 +22,6 @@ export {
   ConnectEvent,
   DisconnectEvent,
   NetworkMessageEvent,
+  HTTPClient,
+  HTTPResponse,
 };

@@ -1,15 +1,17 @@
-import { Rectangle, QuadTree, Bounded } from 'core/util';
+import { Rectangle, QuadTree, Bounded } from 'core/geometry';
 import { GraphicsContext } from 'core/graphics';
 import { Entity, CollisionEvent, CollisionLayer } from 'core/entity';
 import { LM } from 'core/log';
 import { EM, GameEvent } from 'core/event';
+import { Serializable, Data } from 'core/serialize';
+import { Iterator, iterateObject, iterator } from 'core/iterator';
 
 const LAYER_INDICES: { [layer in CollisionLayer]: number } = {
   geometry: 0,
   unit: 1,
 };
 
-export class WorldManager implements Bounded {
+export class WorldManager implements Bounded, Serializable {
   public quadTree: QuadTree<Entity>;
   private entities: { [id: string]: Entity } = {};
   public boundingBox: Rectangle;
@@ -38,7 +40,7 @@ export class WorldManager implements Bounded {
     }
   }
 
-  public *getEntitiesLayerOrdered(): Generator<Entity> {
+  private *getEntitiesLayerOrderedInternal(): Generator<Entity> {
     for (const layer of this.collisionLayers) {
       for (const entity of layer) {
         yield entity;
@@ -46,14 +48,16 @@ export class WorldManager implements Bounded {
     }
   }
 
+  public getEntitiesLayerOrdered(): Iterator<Entity> {
+    return iterator(this.getEntitiesLayerOrderedInternal());
+  }
+
   public addEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
   }
 
-  public *getEntities(): Generator<Entity> {
-    for (const id in this.entities) {
-      yield this.entities[id];
-    }
+  public getEntities(): Iterator<Entity> {
+    return iterateObject(this.entities);
   }
 
   public step(dt: number): void {
@@ -122,5 +126,15 @@ export class WorldManager implements Bounded {
         }
       }
     }
+  }
+
+  public serialize(): Data {
+    return {
+
+    }
+  }
+
+  public deserialize(data: Data): void {
+
   }
 }

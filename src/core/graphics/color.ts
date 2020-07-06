@@ -5,6 +5,16 @@ export interface Color {
   alpha?: number;
 }
 
+export function isColor(input: any): input is Color {
+  const { red, green, blue, alpha } = input;
+  return (
+    typeof red === 'number' &&
+    typeof green === 'number' &&
+    typeof blue === 'number' &&
+    (alpha === undefined || typeof alpha === 'number')
+  );
+}
+
 function toColorInt(color: number): number {
   return Math.round(color * 255);
 }

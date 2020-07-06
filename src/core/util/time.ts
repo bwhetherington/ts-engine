@@ -1,7 +1,3 @@
-export function square(x: number): number {
-  return x * x;
-}
-
 export type TimerHandler = (dt: number) => void;
 
 export abstract class AbstractTimer {

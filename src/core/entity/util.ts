@@ -1,9 +1,13 @@
 import { Entity } from 'core/entity';
-import { Rectangle } from 'core/util';
+import { Rectangle } from 'core/geometry';
 import { LM } from 'core/log';
 import { BLACK } from 'core/graphics/color';
 
 export type CollisionLayer = 'geometry' | 'unit';
+
+export function isCollisionLayer(input: any): input is CollisionLayer {
+  return typeof input === 'string' && (input === 'geometry' || input === 'unit');
+}
 
 export interface CollisionEvent {
   collider: Entity;

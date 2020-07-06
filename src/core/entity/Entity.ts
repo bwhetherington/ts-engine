@@ -1,20 +1,23 @@
-import { Bounded, Rectangle, Vector } from 'core/util';
-import { GraphicsContext } from 'core/graphics/context';
-import { WHITE, Color, invert, BLACK } from 'core/graphics/color';
+import { Bounded, Rectangle, Vector } from 'core/geometry';
+import { GraphicsContext, Color, invert } from 'core/graphics';
+import { WHITE, BLACK, isColor } from 'core/graphics/color';
 import { v1 as genUuid } from 'uuid';
-import { CollisionLayer } from 'core/entity/util';
+import { CollisionLayer } from 'core/entity';
+import { Data, Serializable } from 'core/serialize';
+import { isCollisionLayer } from './util';
 
 export type Uuid = string;
 
-export class Entity implements Bounded {
+export class Entity implements Bounded, Serializable {
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
   public id: Uuid;
   public color: Color = WHITE;
   public collisionLayer: CollisionLayer = 'unit';
-  public mass: number = 1;
   public highlight: boolean = false;
+  public type: string = 'Entity';
+  public mass: number = 1;
 
   constructor() {
     this.id = genUuid();
@@ -62,5 +65,40 @@ export class Entity implements Bounded {
 
   public step(dt: number): void {
     this.updatePosition(dt);
+  }
+
+  public serialize(): Data {
+    return {
+      id: this.id,
+      type: this.type,
+      mass: this.mass,
+      color: this.color,
+      collisionLayer: this.collisionLayer,
+      boundingBox: this.boundingBox.serialize(),
+      position: this.position.serialize(),
+      velocity: this.velocity.serialize(),
+    }
+  }
+
+  public deserialize(data: Data): void {
+    const { id, type, mass, color, collisionLayer, boundingBox, position, velocity } = data;
+    if (typeof id === 'string') {
+      this.id = id;
+    }
+    if (typeof type === 'string') {
+      this.type = type;
+    }
+    if (typeof mass === 'number') {
+      this.mass = mass;
+    }
+    if (isColor(color)) {
+      this.color = color;
+    }
+    if (isCollisionLayer(collisionLayer)) {
+      this.collisionLayer = collisionLayer;
+    }
+    this.boundingBox.deserialize(boundingBox);
+    this.position.deserialize(position);
+    this.velocity.deserialize(velocity);
   }
 }
