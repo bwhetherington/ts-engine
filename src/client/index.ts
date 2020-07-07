@@ -45,7 +45,7 @@ async function main(): Promise<void> {
       mouseBox.y = y;
     });
 
-    const ENTITIES = 100;
+    const ENTITIES = 5;
     for (let i = 0; i < ENTITIES; i++) {
       const entity = new Entity();
 

@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="/static/style.css" />
+<style>
+  #messages {
+    height: 150px;
+    overflow-y: auto;
+  }
+
+  #chat-input {
+    width: 300px;
+  }
+
+  .author {
+    font-weight: bold;
+  }
+
+  .content {
+    /* nothing here yet */
+  }
+</style>
+<div class="dialog col chat-component">
+  <div id="messages"></div>
+  <form autocomplete="off" id="chat-form">
+    <input id="chat-input" type="text" placeholder="Enter message..." />
+  </form>
+</div>

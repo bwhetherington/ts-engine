@@ -1,20 +1,27 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
-  entry: path.resolve(__dirname, "src", "client", "index.ts"),
-  devtool: "inline-source-map",
+  entry: path.resolve(__dirname, 'src', 'client', 'index.ts'),
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
+        test: /\.html$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'html-loader',
+        },
+      },
+      {
         test: /\.tsx?$/,
         use: {
-          loader: "ts-loader",
+          loader: 'ts-loader',
           options: {
             configFile: path.resolve(
               __dirname,
-              "config",
-              "client",
-              "tsconfig.json"
+              'config',
+              'client',
+              'tsconfig.json'
             ),
           },
         },
@@ -23,11 +30,11 @@ module.exports = {
     ],
   },
   resolve: {
-    modules: [path.join(__dirname, "src"), "node_modules"],
-    extensions: [".ts", ".tsx", ".js", ".json"],
+    modules: [path.join(__dirname, 'src'), 'node_modules'],
+    extensions: ['.ts', '.tsx', '.js', '.json'],
   },
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "build", "client"),
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'build', 'client'),
   },
 };
