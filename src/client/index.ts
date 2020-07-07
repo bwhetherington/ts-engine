@@ -4,13 +4,17 @@ import { EM, StepEvent } from 'core/event';
 import { LM } from 'core/log';
 import { WM, Entity, CollisionEvent, shuntOutOf } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
-import { SizedQueue, Vector, Rectangle } from 'core/util';
+import { SizedQueue } from 'core/util';
+import { Rectangle, Vector } from 'core/geometry';
 
 import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
+import { registerComponents } from 'client/components';
 
 async function main(): Promise<void> {
   LM.initialize(new ClientLogger());
   // LM.setLogLevel("warn");
+
+  registerComponents();
 
   const game = document.getElementById('game');
 

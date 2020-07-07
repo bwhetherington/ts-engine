@@ -13,10 +13,24 @@ body,
   font-family: "Roboto Mono", monospace;
 }
 
-.top-left {
+.top {
   position: absolute;
   top: 10px;
+}
+
+.bottom {
+  position: absolute;
+  bottom: 10px;
+}
+
+.left {
+  position: absolute;
   left: 10px;
+}
+
+.right {
+  position: absolute;
+  right: 10px;
 }
 
 .dialog {
@@ -26,4 +40,22 @@ body,
   pointer-events: auto;
   font-size: 0.9em;
   user-select: none;
+}
+
+input[type="text"] {
+  margin: 2px;
+  flex-grow: 1;
+  font-family: inherit;
+  border: none;
+  background: rgba(0, 0, 0, 0.67);
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: inherit;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-radius: 2px;
+  content: normal;
 }
