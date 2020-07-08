@@ -19,7 +19,7 @@ async function main(): Promise<void> {
   server.initialize(httpServer);
   NM.initialize(server);
   CM.initialize();
-  server.start(8080);
+  server.start(parseInt(process.env.PORT ?? '0') || 8080);
 
   EM.addListener('NetworkMessageEvent', (msg) => {
     LM.debug('receive: ' + JSON.stringify(msg));
