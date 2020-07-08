@@ -1,13 +1,32 @@
 import { Node, Message, Socket } from 'core/net';
 import { LM } from 'core/log';
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} from 'unique-names-generator';
+import { SetNameEvent } from 'core/chat';
+
+function generateName(): string {
+  return uniqueNamesGenerator({
+    dictionaries: [adjectives, colors, animals],
+    separator: '-',
+    style: 'capital',
+  });
+}
 
 export class Client extends Node {
   private sendBuffer: Message[] = [];
   private socket: WebSocket;
   private isConnected: boolean = false;
+  private name: string = '';
 
   constructor(addr?: string) {
     super();
+
+    this.name = generateName();
+
     let connect;
     if (addr) {
       connect = addr;
@@ -45,6 +64,12 @@ export class Client extends Node {
 
   public onConnect(socket: Socket) {
     this.isConnected = true;
+    this.send({
+      type: 'SetNameEvent',
+      data: <SetNameEvent>{
+        name: this.name,
+      },
+    });
     for (const message of this.sendBuffer) {
       this.send(message);
     }

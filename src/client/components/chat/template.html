@@ -1,20 +1,18 @@
 <link rel="stylesheet" href="/static/style.css" />
 <style>
   #messages {
-    height: 150px;
+    height: 200px;
+    width: 400px;
+    word-wrap: break-word;
     overflow-y: auto;
   }
 
+  #chat-form {
+    display: flex;
+  }
+
   #chat-input {
-    width: 300px;
-  }
-
-  .author {
-    font-weight: bold;
-  }
-
-  .content {
-    /* nothing here yet */
+    flex-grow: 1;
   }
 </style>
 <div class="dialog col chat-component">

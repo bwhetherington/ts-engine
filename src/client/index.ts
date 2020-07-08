@@ -1,6 +1,6 @@
 import { BLACK, WHITE } from 'core/graphics/color';
 import { NM } from 'core/net';
-import { EM, StepEvent } from 'core/event';
+import { EM, StepEvent, Event } from 'core/event';
 import { LM } from 'core/log';
 import { WM, Entity, CollisionEvent, shuntOutOf } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
@@ -18,8 +18,8 @@ async function main(): Promise<void> {
 
   const game = document.getElementById('game');
 
-  // const client = new Client();
-  // NM.initialize(client);
+  const client = new Client();
+  NM.initialize(client);
 
   WM.initialize();
 
@@ -79,8 +79,8 @@ async function main(): Promise<void> {
       WM.addEntity(entity);
     }
 
-    EM.addListener('CollisionEvent', (event: CollisionEvent) => {
-      const { collider, collided } = event;
+    EM.addListener('CollisionEvent', (event: Event<CollisionEvent>) => {
+      const { collider, collided } = event.data;
       if (
         collider.collisionLayer === 'unit' &&
         collided.collisionLayer === 'geometry'
@@ -93,8 +93,8 @@ async function main(): Promise<void> {
       }
     });
 
-    EM.addListener('StepEvent', (step: StepEvent) => {
-      WM.step(step.dt);
+    EM.addListener('StepEvent', (step: Event<StepEvent>) => {
+      WM.step(step.data.dt);
 
       for (const entity of WM.getEntities()) {
         entity.highlight = false;

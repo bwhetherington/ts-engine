@@ -11,6 +11,7 @@ body,
   margin: 0px;
   color: white;
   font-family: 'Roboto Mono', monospace;
+  font-size: 0.9em;
 }
 
 .top {
@@ -44,7 +45,7 @@ body,
 
 .dialog {
   background-color: rgba(0, 0, 0, 0.67);
-  padding: 8px;
+  padding: 6px;
   border-radius: 4px;
   pointer-events: auto;
   font-size: 0.9em;

@@ -1,7 +1,7 @@
 import { Component } from 'client/components';
 import template from 'client/components/debug/template.html';
 import { SizedQueue } from 'core/util';
-import { EM, StepEvent } from 'core/event';
+import { EM, StepEvent, Event } from 'core/event';
 
 export class DebugComponent extends Component {
   public static componentName: string = 'debug-component';
@@ -17,8 +17,8 @@ export class DebugComponent extends Component {
     const frameTimes = new SizedQueue<number>(60);
 
     // const timer = new Timer((dt) => {
-    EM.addListener('StepEvent', (event: StepEvent) => {
-      frameTimes.enqueue(event.dt);
+    EM.addListener('StepEvent', (event: Event<StepEvent>) => {
+      frameTimes.enqueue(event.data.dt);
       let sum = 0;
       for (const elem of frameTimes.iterator()) {
         sum += elem;

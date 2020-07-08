@@ -4,6 +4,8 @@ import * as mime from 'mime-types';
 import * as path from 'path';
 import { promisify } from 'util';
 import { LM } from 'core/log/LogManager';
+import { Socket } from 'core/net';
+import { EventData } from 'core/event';
 
 export const readFile = promisify(fs.readFile);
 

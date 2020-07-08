@@ -5,6 +5,14 @@ export interface Color {
   alpha?: number;
 }
 
+export function rgb(red: number, green: number, blue: number): Color {
+  return { red, green, blue, alpha: 1 };
+}
+
+export function rgba(red: number, green: number, blue: number, alpha: number): Color {
+  return { red, green, blue, alpha };
+}
+
 export function isColor(input: any): input is Color {
   const { red, green, blue, alpha } = input;
   return (

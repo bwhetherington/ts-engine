@@ -5,10 +5,10 @@ import { Timer, ServerLogger } from 'server/util';
 import { LM } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NM } from 'core/net';
+import { CM } from 'server/chat';
 
 async function main(): Promise<void> {
   LM.initialize(new ServerLogger());
-  LM.info('Hello, world!');
 
   const httpServer = await createServer({
     dir: './',
@@ -18,6 +18,7 @@ async function main(): Promise<void> {
   const server = new Server();
   server.initialize(httpServer);
   NM.initialize(server);
+  CM.initialize();
   server.start(8080);
 
   EM.addListener('NetworkMessageEvent', (msg) => {

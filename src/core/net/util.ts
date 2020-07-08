@@ -1,5 +1,5 @@
 import { LM } from 'core/log';
-import { EM } from 'core/event';
+import { EM, GameEvent } from 'core/event';
 
 export interface Message {
   [key: string]: any;
@@ -18,6 +18,16 @@ export abstract class Node {
       },
     };
     EM.emit(event);
+
+    // If the message is also a game event, mirror it
+    if (typeof message.type === 'string' && typeof message.data === 'object') {
+      const gameEvent: GameEvent = {
+        type: message.type,
+        data: message.data,
+        socket,
+      };
+      EM.emit(gameEvent);
+    }
   }
 
   public onConnect(socket: Socket) {

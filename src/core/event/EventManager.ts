@@ -1,15 +1,7 @@
 import { Queue } from 'core/util/queue';
-import { GameEvent, EventData } from 'core/event';
+import { GameEvent } from 'core/event';
 
-type Proc<T> = (arg: T) => void;
-
-type Handler = Proc<GameEvent>;
-
-function convertHandler<E extends EventData>(handler: Proc<E>): Handler {
-  return (event) => {
-    handler(event.data as E);
-  };
-}
+type Handler = (arg: any) => void;
 
 export interface StepEvent {
   dt: number;
@@ -18,11 +10,6 @@ export interface StepEvent {
 export class EventManager {
   private handlers: Record<string, Handler[]> = {};
   private events: Queue<GameEvent> = new Queue();
-
-  public registerEventType<T extends GameEvent>(
-    type: T,
-    check: (x: T) => x is T
-  ) {}
 
   public emit<E extends GameEvent>(event: E): void {
     this.events.enqueue(event);
@@ -37,13 +24,12 @@ export class EventManager {
     return handlers;
   }
 
-  public addListener<E extends EventData>(
+  public addListener(
     type: string,
-    handler: Proc<E>
+    handler: Handler
   ): void {
-    const converted = convertHandler(handler);
     const handlers = this.getHandlers(type);
-    handlers.push(converted);
+    handlers.push(handler);
   }
 
   private handleEvent(event: GameEvent): void {

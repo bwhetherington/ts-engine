@@ -7,7 +7,8 @@ import {
 import { Node, Message, Socket } from 'core/net';
 import * as http from 'http';
 import { LM } from 'core/log';
-import { EM } from 'core/event';
+import { EM, Event } from 'core/event';
+import { NONAME } from 'dns';
 
 interface Connections {
   [key: number]: Connection;
@@ -19,11 +20,19 @@ export class Server extends Node {
   private connections: Connections;
   private freedSockets: Socket[];
   private socketCount: number = 0;
+  private names: { [key: number]: string } = {};
 
   constructor() {
     super();
     this.connections = {};
     this.freedSockets = [];
+
+    EM.addListener('SetName', (event: Event<{ name: string }>) => {
+      const { socket, data } = event;
+      if (socket) {
+        this.names[socket] = data.name;
+      }
+    });
   }
 
   private disconnect(index: Socket) {
@@ -80,7 +89,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => {});
+    this.wsServer.on('close', (connection) => { });
   }
 
   private sendRaw(data: string, socket: Socket) {
