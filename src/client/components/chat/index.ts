@@ -1,7 +1,6 @@
 import { Component } from 'client/components/util';
 import { EM, StepEvent, Event } from 'core/event';
 import { SizedQueue } from 'core/util';
-import template from 'client/components/chat/template.html';
 import { LM } from 'core/log';
 import {
   TextColor,
@@ -12,6 +11,8 @@ import {
 import { Color, rgb, toCss } from 'core/graphics';
 import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
 import { NM } from 'core/net';
+
+import template from 'client/components/chat/template.html';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
@@ -112,27 +113,31 @@ export class ChatComponent extends Component {
     }
   }
 
-  private renderComponent(component: string | TextComponent): HTMLElement {
-    const span = document.createElement('span');
-    if (typeof component === 'string') {
-      span.innerText = component;
+  private renderComponent(
+    component: string | null | TextComponent
+  ): HTMLElement {
+    let element = document.createElement('span');
+    if (component === null) {
+      element = document.createElement('br');
+    } else if (typeof component === 'string') {
+      element.innerText = component;
     } else {
       component;
-      span.innerText = component.content;
+      element.innerText = component.content;
 
       if (component.style?.color) {
-        span.style.color = toCss(COLOR_MAPPING[component.style.color]);
+        element.style.color = toCss(COLOR_MAPPING[component.style.color]);
       }
 
       if (component.style?.styles?.includes('bold')) {
-        span.style.fontWeight = 'bold';
+        element.style.fontWeight = 'bold';
       }
     }
-    return span;
+    return element;
   }
 
   private renderComponents(
-    components: (string | TextComponent)[]
+    components: (string | null | TextComponent)[]
   ): HTMLElement {
     const element = document.createElement('div');
     element.className = 'message';

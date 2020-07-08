@@ -14,7 +14,10 @@
     <div id="game"></div>
     <div class="ui-pane">
       <debug-component class="top left"></debug-component>
-      <chat-component class="bottom left"></chat-component>
+      <div class="bottom left col">
+        <chat-component></chat-component>
+        <div class="dialog"><bar-component id="hp-bar"></bar-component></div>
+      </div>
     </div>
     <script src="/build/client/bundle.js"></script>
   </body>

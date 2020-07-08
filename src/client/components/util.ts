@@ -10,7 +10,6 @@ export abstract class Component extends HTMLElement {
     super();
     const shadowRoot = this.attachShadow({ mode: 'open' });
     shadowRoot.innerHTML = source;
-    console.log(shadowRoot);
     this.root = shadowRoot;
   }
 
@@ -23,6 +22,6 @@ export function registerComponent(
   Custom: (new () => Component) & typeof Component
 ) {
   const name = Custom.componentName;
-  console.log('register ' + name);
+  LM.debug(`<${name}> registered`);
   window.customElements.define(Custom.componentName, Custom);
 }

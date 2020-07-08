@@ -1,4 +1,4 @@
-import { Component } from 'client/components';
+import { Component } from 'client/components/util';
 import template from 'client/components/debug/template.html';
 import { SizedQueue } from 'core/util';
 import { EM, StepEvent, Event } from 'core/event';

@@ -11,24 +11,47 @@ import { LM } from 'core/log';
 
 const DEFAULT_NAME = 'Unknown';
 
-type Command = (socket: Socket, ...args: string[]) => void;
+type CommandHandler = (socket: Socket, ...args: string[]) => void;
+
+interface Command {
+  name: string;
+  help: string;
+  handler: CommandHandler;
+}
 
 export class ChatManager {
   private names: { [socket: number]: string } = {};
   private commands: { [command: string]: Command } = {};
+  private aliases: { [alias: string]: string } = {};
 
   private getName(socket: Socket): string {
     return this.names[socket] ?? DEFAULT_NAME;
   }
 
-  public registerCommand(command: string, handler: Command): void {
-    this.commands[command] = handler;
+  public registerCommand(
+    command: string,
+    handler: CommandHandler,
+    help: string,
+    ...aliases: string[]
+  ): void {
+    const entry = {
+      name: command,
+      handler,
+      help,
+    };
+    this.commands[command] = entry;
+    for (const alias of aliases) {
+      this.aliases[alias] = command;
+    }
   }
 
   private handleCommand(socket: Socket, command: string, args: string[]): void {
     if (command in this.commands) {
       const handler = this.commands[command];
-      handler.apply(null, [socket, ...args]);
+      handler.handler.apply(null, [socket, ...args]);
+    } else if (command in this.aliases) {
+      const handler = this.commands[this.aliases[command]];
+      handler.handler.apply(null, [socket, ...args]);
     } else {
       this.error(`command '${command}' is undefined`, socket);
     }
@@ -86,12 +109,46 @@ export class ChatManager {
       }
     });
 
-    this.registerCommand('ping', (socket) => {
-      this.info('Pong!', socket);
-    });
+    this.registerCommand(
+      'help',
+      (socket) => {
+        const components = this.renderInfo('Command Directory');
+        for (const command in this.commands) {
+          const entry = this.commands[command];
+          components.push(
+            null,
+            {
+              content: "'" + entry.name + "':",
+              style: {
+                color: 'yellow',
+                styles: ['bold'],
+              },
+            },
+            {
+              content: ' ' + entry.help,
+              style: {
+                color: 'yellow',
+              },
+            }
+          );
+        }
+        this.sendComponents(components, socket);
+      },
+      'Lists all commands and their help messages.',
+      'h'
+    );
+
+    this.registerCommand(
+      'ping',
+      (socket) => {
+        this.info('Pong!', socket);
+      },
+      "Responds to the user's ping with a pong.",
+      'p'
+    );
   }
 
-  private renderInfo(message: string): (string | TextComponent)[] {
+  private renderInfo(message: string): (string | null | TextComponent)[] {
     return [
       {
         content: 'Info:',
@@ -110,7 +167,7 @@ export class ChatManager {
     ];
   }
 
-  private renderWarn(message: string): (string | TextComponent)[] {
+  private renderWarn(message: string): (string | null | TextComponent)[] {
     return [
       {
         content: 'Warn:',
@@ -129,7 +186,7 @@ export class ChatManager {
     ];
   }
 
-  private renderError(message: string): (string | TextComponent)[] {
+  private renderError(message: string): (string | null | TextComponent)[] {
     return [
       {
         content: 'Error:',
@@ -149,7 +206,7 @@ export class ChatManager {
   }
 
   private sendComponents(
-    components: (string | TextComponent)[],
+    components: (string | null | TextComponent)[],
     socket: number = -1
   ): void {
     const outEvent = {

@@ -23,7 +23,7 @@ export interface TextMessageInEvent {
 }
 
 export interface TextMessageOutEvent {
-  components: (string | TextComponent)[];
+  components: (string | null | TextComponent)[];
 }
 
 export interface SetNameEvent {

@@ -8,7 +8,11 @@ import { SizedQueue } from 'core/util';
 import { Rectangle, Vector } from 'core/geometry';
 
 import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
-import { registerComponents } from 'client/components';
+import {
+  registerComponents,
+  BarComponent,
+  BarUpdateEvent,
+} from 'client/components';
 
 async function main(): Promise<void> {
   LM.initialize(new ClientLogger());
@@ -93,8 +97,24 @@ async function main(): Promise<void> {
       }
     });
 
+    let counter = 0;
+
     EM.addListener('StepEvent', (step: Event<StepEvent>) => {
       WM.step(step.data.dt);
+
+      counter += step.data.dt;
+      while (counter >= 2) {
+        counter -= 2;
+
+        const event = {
+          type: 'BarUpdateEvent',
+          data: <BarUpdateEvent>{
+            id: 'hp-bar',
+            current: Math.random() * 100,
+          },
+        };
+        EM.emit(event);
+      }
 
       for (const entity of WM.getEntities()) {
         entity.highlight = false;

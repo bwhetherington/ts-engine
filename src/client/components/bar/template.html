@@ -1,0 +1,33 @@
+<link rel="stylesheet" href="/static/style.css" />
+<style>
+  .bar-container {
+    height: 1.75em;
+    background-color: rgba(0, 0, 0, 0.67);
+    border-radius: 2px;
+    overflow: hidden;
+    vertical-align: middle;
+    margin: 2px;
+    position: relative;
+    flex-grow: 1;
+  }
+
+  #bar-value {
+    background-color: rgb(192, 32, 32);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+    height: 100%;
+    transition: width 0.25s;
+  }
+
+  #bar-label {
+    position: absolute;
+    top: 20%;
+    width: 100%;
+    text-align: center;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 0.5);
+  }
+</style>
+<div class="bar-container">
+  <div id="bar-value"></div>
+  <div id="bar-label"></div>
+</div>
