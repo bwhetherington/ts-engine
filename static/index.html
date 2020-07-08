@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Test</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<head>
-  <title>Test</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="/static/style.css" />
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap" rel="stylesheet" />
-</head>
-
-<body>
-  <div id="game"></div>
-  <div class="ui-pane">
-    <div class="top left col">
-      <debug-component></debug-component>
-      <debug-component></debug-component>
+  <body>
+    <div id="game"></div>
+    <div class="ui-pane">
+      <debug-component class="top left"></debug-component>
+      <chat-component class="bottom left"></chat-component>
     </div>
-  </div>
-  <chat-component class="bottom left"></chat-component>
-  </div>
-  <script src="/build/client/bundle.js"></script>
-</body>
-
+    <script src="/build/client/bundle.js"></script>
+  </body>
 </html>
