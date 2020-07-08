@@ -30,7 +30,7 @@ export class ChatManager {
       const handler = this.commands[command];
       handler.apply(null, [socket, ...args]);
     } else {
-      this.error(`command '${command}' is undefined`);
+      this.error(`command '${command}' is undefined`, socket);
     }
   }
 
@@ -84,6 +84,10 @@ export class ChatManager {
       if (socket !== undefined) {
         this.handleCommand(socket, data.command, data.args);
       }
+    });
+
+    this.registerCommand('ping', (socket) => {
+      this.info('Pong!', socket);
     });
   }
 
@@ -154,7 +158,7 @@ export class ChatManager {
         components,
       },
     };
-    NM.send(outEvent);
+    NM.send(outEvent, socket);
   }
 
   public info(message: string, socket: number = -1): void {

@@ -15,9 +15,9 @@ import { NM } from 'core/net';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
-  red: rgb(0.9, 0.4, 0.4),
+  red: rgb(1, 0.4, 0.4),
   orange: rgb(0.9, 0.6, 0.3),
-  yellow: rgb(0.9, 0.8, 0.3),
+  yellow: rgb(1, 1, 0.3),
   green: rgb(0.3, 0.6, 0.3),
   aqua: rgb(0.3, 0.8, 1),
   blue: rgb(0.5, 0.5, 1),

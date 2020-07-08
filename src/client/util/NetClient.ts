@@ -10,7 +10,8 @@ import { SetNameEvent } from 'core/chat';
 
 function generateName(): string {
   return uniqueNamesGenerator({
-    dictionaries: [adjectives, colors, animals],
+    dictionaries: [colors, animals],
+    length: 2,
     separator: '-',
     style: 'capital',
   });
