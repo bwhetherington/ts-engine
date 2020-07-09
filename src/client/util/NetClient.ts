@@ -1,4 +1,4 @@
-import { Node, Message, Socket } from 'core/net';
+import { Node, Message, Socket, DisconnectEvent } from 'core/net';
 import { LM } from 'core/log';
 import {
   uniqueNamesGenerator,
@@ -7,6 +7,7 @@ import {
   animals,
 } from 'unique-names-generator';
 import { SetNameEvent } from 'core/chat';
+import { EM } from 'core/event';
 
 function generateName(): string {
   return uniqueNamesGenerator({

@@ -1,7 +1,7 @@
 import { sleep } from 'core/util';
 
 import { EM } from 'core/event';
-import { Timer, ServerLogger } from 'server/util';
+import { Timer, ServerLogger, TM } from 'server/util';
 import { LM } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NM } from 'core/net';
@@ -27,10 +27,10 @@ async function main(): Promise<void> {
 
   const timer = new Timer((dt) => {
     NM.send({ foo: 'foo', bar: 'bar' });
+    LM.debug('dt: ' + dt);
     EM.step(dt);
   });
-
-  await timer.start();
+  TM.initialize(timer);
 }
 
 main().catch((ex) => {

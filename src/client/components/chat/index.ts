@@ -7,10 +7,11 @@ import {
   TextStyle,
   TextComponent,
   TextCommandEvent,
+  renderError,
 } from 'core/chat';
 import { Color, rgb, toCss } from 'core/graphics';
 import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
-import { NM } from 'core/net';
+import { NM, DisconnectEvent } from 'core/net';
 
 import template from 'client/components/chat/template.html';
 
@@ -65,6 +66,12 @@ export class ChatComponent extends Component {
         this.addMessage(element);
       }
     );
+
+    EM.addListener('DisconnectEvent', (event: DisconnectEvent) => {
+      const components = renderError('Disconnected from server.');
+      const element = this.renderComponents(components);
+      this.addMessage(element);
+    });
   }
 
   private handleMessage(message: string): void {

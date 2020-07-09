@@ -6,6 +6,9 @@ import {
   TextMessageOutEvent,
   TextComponent,
   TextCommandEvent,
+  renderInfo,
+  renderWarn,
+  renderError,
 } from 'core/chat';
 import { LM } from 'core/log';
 
@@ -112,7 +115,7 @@ export class ChatManager {
     this.registerCommand(
       'help',
       (socket) => {
-        const components = this.renderInfo('Command Directory');
+        const components = renderInfo('Command Directory');
         for (const command in this.commands) {
           const entry = this.commands[command];
           components.push(
@@ -148,63 +151,6 @@ export class ChatManager {
     );
   }
 
-  private renderInfo(message: string): (string | null | TextComponent)[] {
-    return [
-      {
-        content: 'Info:',
-        style: {
-          color: 'yellow',
-          styles: ['bold'],
-        },
-      },
-      ' ',
-      {
-        content: message,
-        style: {
-          color: 'yellow',
-        },
-      },
-    ];
-  }
-
-  private renderWarn(message: string): (string | null | TextComponent)[] {
-    return [
-      {
-        content: 'Warn:',
-        style: {
-          color: 'orange',
-          styles: ['bold'],
-        },
-      },
-      ' ',
-      {
-        content: message,
-        style: {
-          color: 'orange',
-        },
-      },
-    ];
-  }
-
-  private renderError(message: string): (string | null | TextComponent)[] {
-    return [
-      {
-        content: 'Error:',
-        style: {
-          color: 'red',
-          styles: ['bold'],
-        },
-      },
-      ' ',
-      {
-        content: message,
-        style: {
-          color: 'red',
-        },
-      },
-    ];
-  }
-
   private sendComponents(
     components: (string | null | TextComponent)[],
     socket: number = -1
@@ -219,19 +165,19 @@ export class ChatManager {
   }
 
   public info(message: string, socket: number = -1): void {
-    const components = this.renderInfo(message);
+    const components = renderInfo(message);
     this.sendComponents(components, socket);
     LM.info(message);
   }
 
   public warn(message: string, socket: number = -1): void {
-    const components = this.renderWarn(message);
+    const components = renderWarn(message);
     this.sendComponents(components, socket);
     LM.warn(message);
   }
 
   public error(message: string, socket: number = -1): void {
-    const components = this.renderError(message);
+    const components = renderError(message);
     this.sendComponents(components, socket);
     LM.error(message);
   }

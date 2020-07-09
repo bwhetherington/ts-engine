@@ -9,6 +9,7 @@ import * as http from 'http';
 import { LM } from 'core/log';
 import { EM, Event } from 'core/event';
 import { NONAME } from 'dns';
+import { TM } from 'server/util';
 
 interface Connections {
   [key: number]: Connection;
@@ -45,6 +46,11 @@ export class Server extends Node {
       this.onDisconnect(index);
     } else {
       LM.warn(`attempt to disconnect inactive socket ${index}`);
+    }
+
+    // Sleep the server clock
+    if (Object.keys(this.connections).length === 0) {
+      TM.sleep();
     }
   }
 
@@ -89,7 +95,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => { });
+    this.wsServer.on('close', (connection) => {});
   }
 
   private sendRaw(data: string, socket: Socket) {
@@ -114,5 +120,12 @@ export class Server extends Node {
   public start(port: number = 8080) {
     this.httpServer?.listen(port);
     LM.info(`listening on port ${port}`);
+  }
+
+  public onMessage(message: Message, socket: Socket): void {
+    super.onMessage(message, socket);
+
+    // Try to wake the server clock
+    TM.wake();
   }
 }
