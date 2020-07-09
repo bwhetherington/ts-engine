@@ -27,7 +27,6 @@ async function main(): Promise<void> {
 
   const timer = new Timer((dt) => {
     NM.send({ foo: 'foo', bar: 'bar' });
-    LM.debug('dt: ' + dt);
     EM.step(dt);
   });
   TM.initialize(timer);
