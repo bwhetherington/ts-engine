@@ -3,13 +3,14 @@ import {
   request as Request,
   connection as Connection,
 } from 'websocket';
+import * as http from 'http';
 
 import { Node, Message, Socket } from 'core/net';
-import * as http from 'http';
 import { LM } from 'core/log';
-import { EM, Event } from 'core/event';
-import { NONAME } from 'dns';
+import { EM, Event, StepEvent } from 'core/event';
 import { TM } from 'server/util';
+import { WM } from 'core/entity';
+import { SyncEvent } from 'core/entity/WorldManager';
 
 interface Connections {
   [key: number]: Connection;
@@ -33,6 +34,16 @@ export class Server extends Node {
       if (socket) {
         this.names[socket] = data.name;
       }
+    });
+
+    EM.addListener('StepEvent', (_: Event<StepEvent>) => {
+      const event = {
+        type: 'SyncEvent',
+        data: <SyncEvent>{
+          data: WM.serialize(),
+        },
+      };
+      this.send(event);
     });
   }
 
@@ -122,8 +133,8 @@ export class Server extends Node {
     LM.info(`listening on port ${port}`);
   }
 
-  public onMessage(message: Message, socket: Socket): void {
-    super.onMessage(message, socket);
+  public onConnect(socket: Socket): void {
+    super.onConnect(socket);
 
     // Try to wake the server clock
     TM.wake();

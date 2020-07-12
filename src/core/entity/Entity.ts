@@ -9,6 +9,8 @@ import { isCollisionLayer } from './util';
 export type Uuid = string;
 
 export class Entity implements Bounded, Serializable {
+  public static typeName: string = 'Entity';
+
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
@@ -16,11 +18,12 @@ export class Entity implements Bounded, Serializable {
   public color: Color = WHITE;
   public collisionLayer: CollisionLayer = 'unit';
   public highlight: boolean = false;
-  public type: string = 'Entity';
+  public type: string;
   public mass: number = 1;
 
   constructor() {
     this.id = genUuid();
+    this.type = Entity.typeName;
   }
 
   public applyForce(force: Vector): void {
@@ -77,11 +80,20 @@ export class Entity implements Bounded, Serializable {
       boundingBox: this.boundingBox.serialize(),
       position: this.position.serialize(),
       velocity: this.velocity.serialize(),
-    }
+    };
   }
 
   public deserialize(data: Data): void {
-    const { id, type, mass, color, collisionLayer, boundingBox, position, velocity } = data;
+    const {
+      id,
+      type,
+      mass,
+      color,
+      collisionLayer,
+      boundingBox,
+      position,
+      velocity,
+    } = data;
     if (typeof id === 'string') {
       this.id = id;
     }

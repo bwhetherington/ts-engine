@@ -11,11 +11,16 @@ const LAYER_INDICES: { [layer in CollisionLayer]: number } = {
   unit: 1,
 };
 
+export interface SyncEvent {
+  data: Data;
+}
+
 export class WorldManager implements Bounded, Serializable {
   public quadTree: QuadTree<Entity>;
   private entities: { [id: string]: Entity } = {};
   public boundingBox: Rectangle;
   private collisionLayers: Entity[][] = [[], []];
+  private entityConstructors: { [type: string]: new () => Entity } = {};
 
   constructor(boundingBox: Rectangle) {
     this.quadTree = new QuadTree(boundingBox);
@@ -24,6 +29,8 @@ export class WorldManager implements Bounded, Serializable {
 
   public initialize(): void {
     LM.debug('WorldManager initialized');
+
+    this.registerEntity(Entity);
   }
 
   public render(ctx: GraphicsContext): void {
@@ -128,13 +135,49 @@ export class WorldManager implements Bounded, Serializable {
     }
   }
 
-  public serialize(): Data {
-    return {
+  public registerEntity(Type: (new () => Entity) & typeof Entity) {
+    const name = Type.typeName;
+    this.entityConstructors[name] = Type;
+  }
 
+  private createEntity(type: string): Entity | undefined {
+    const Type = this.entityConstructors[type];
+    if (Type) {
+      return new Type();
+    } else {
+      return undefined;
     }
   }
 
-  public deserialize(data: Data): void {
+  public serialize(): Data {
+    const entities = this.getEntities()
+      .map((entity) => entity.serialize())
+      .toArray();
+    return {
+      entities,
+    };
+  }
 
+  public deserialize(data: Data): void {
+    const { entities } = data;
+    if (entities instanceof Array) {
+      for (const entityData of entities) {
+        const { id, type } = entityData;
+        if (typeof id === 'string' && typeof type === 'string') {
+          let entity: Entity | undefined = this.entities[id];
+          if (entity === undefined) {
+            // Create new entity
+            entity = this.createEntity(type);
+            if (entity) {
+              entity.id = id;
+            }
+          }
+          entity?.deserialize(entityData);
+          if (entity === undefined) {
+            LM.error(`failed to create entity of type: ${type}`);
+          }
+        }
+      }
+    }
   }
 }

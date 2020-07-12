@@ -6,7 +6,10 @@ function* map<T, U>(gen: Generator<T>, fn: (x: T) => U): Generator<U> {
   }
 }
 
-function* flatMap<T, U>(gen: Generator<T>, fn: (x: T) => Generator<U>): Generator<U> {
+function* flatMap<T, U>(
+  gen: Generator<T>,
+  fn: (x: T) => Generator<U>
+): Generator<U> {
   for (const x of gen) {
     yield* fn(x);
   }
@@ -166,5 +169,13 @@ export class Iterator<T> implements Generator<T> {
     for (const x of this.generator) {
       fn(x);
     }
+  }
+
+  public toArray(): Array<T> {
+    const arr = [];
+    for (const x of this.generator) {
+      arr.push(x);
+    }
+    return arr;
   }
 }

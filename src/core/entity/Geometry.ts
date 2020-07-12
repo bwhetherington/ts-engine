@@ -3,9 +3,11 @@ import { Rectangle } from 'core/geometry';
 import { GraphicsContext } from 'core/graphics';
 
 export class Geometry extends Entity {
+  public static typeName: string = 'Geometry';
+
   public constructor(rect: Rectangle) {
     super();
-    this.type = 'Geometry';
+    this.type = Geometry.typeName;
     this.boundingBox = rect;
     this.setPositionXY(rect.x, rect.y);
     this.collisionLayer = 'geometry';
