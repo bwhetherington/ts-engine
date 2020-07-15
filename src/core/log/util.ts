@@ -29,6 +29,15 @@ export abstract class AbstractLogger {
 
   private priotityInternal: number = getLevelPriority(DEFAULT_LEVEL);
   private levelInternal: LogLevel = DEFAULT_LEVEL;
+  private tags: string[] = [];
+
+  public addTag(tag: string): void {
+    this.tags.push(tag);
+  }
+
+  public setTags(tags: string[]): void {
+    this.tags = [];
+  }
 
   public setLogLevel(level: LogLevel) {
     const priority = getLevelPriority(level);
@@ -40,9 +49,14 @@ export abstract class AbstractLogger {
     return Date.now();
   }
 
-  public format(level: LogLevel, date: number, message: string): string[] {
+  private formatTags(tags: string[]): string {
+    return tags.map((x) => '[' + x + ']').join(' ');
+  }
+
+  public format(level: LogLevel, date: number, message: string): string {
     const dateFormat = new Date(date).toISOString();
-    return [`[${dateFormat}]`, `[${level}]`, message];
+    const prefix = this.formatTags([dateFormat, ...this.tags, level]);
+    return prefix + ' ' + message;
   }
 
   public log(
@@ -55,7 +69,7 @@ export abstract class AbstractLogger {
       // Only log if
       const date = this.getDate();
       const text = this.format(level, date, message);
-      method(...text);
+      method(text);
     }
   }
 

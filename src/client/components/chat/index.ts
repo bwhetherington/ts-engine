@@ -1,7 +1,7 @@
 import { Component } from 'client/components/util';
 import { EM, StepEvent, Event } from 'core/event';
 import { SizedQueue } from 'core/util';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
 import {
   TextColor,
   TextStyle,
@@ -14,6 +14,8 @@ import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
 import { NM, DisconnectEvent } from 'core/net';
 
 import template from 'client/components/chat/template.html';
+
+const LM = InternalLogger.forFile(__filename);
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),

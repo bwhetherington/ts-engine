@@ -1,5 +1,7 @@
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
 import { v1 as genUuid } from 'uuid';
+
+const LM = InternalLogger.forFile(__filename);
 
 export abstract class Component extends HTMLElement {
   protected root?: ShadowRoot;

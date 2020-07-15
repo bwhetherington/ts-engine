@@ -1,7 +1,7 @@
 import { BLACK, WHITE } from 'core/graphics/color';
 import { NM } from 'core/net';
 import { EM, StepEvent, Event } from 'core/event';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
 import { WM, Entity, CollisionEvent, shuntOutOf } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
 import { SizedQueue } from 'core/util';
@@ -13,9 +13,12 @@ import {
   BarComponent,
   BarUpdateEvent,
 } from 'client/components';
+import { CM } from 'core/graphics';
+
+const LM = InternalLogger.forFile(__filename);
 
 async function main(): Promise<void> {
-  LM.initialize(new ClientLogger());
+  InternalLogger.initialize(new ClientLogger());
   // LM.setLogLevel("warn");
 
   registerComponents();
@@ -26,6 +29,8 @@ async function main(): Promise<void> {
   NM.initialize(client);
 
   WM.initialize();
+
+  CM.initialize();
 
   if (game) {
     const canvas = new HDCanvas();
@@ -40,13 +45,13 @@ async function main(): Promise<void> {
 
     game.addEventListener('mousemove', (event) => {
       const { clientX, clientY } = event;
-      const { x: gameX, y: gameY } = game.getBoundingClientRect();
+      const { x, y } = CM.translateMouse(clientX, clientY);
 
-      const x = clientX - gameX + WM.boundingBox.x - mouseBox.width / 2;
-      const y = clientY - gameY + WM.boundingBox.y - mouseBox.height / 2;
+      // const x = clientX - gameX + WM.boundingBox.x - mouseBox.width / 2;
+      // const y = clientY - gameY + WM.boundingBox.y - mouseBox.height / 2;
 
-      mouseBox.x = x;
-      mouseBox.y = y;
+      mouseBox.centerX = x;
+      mouseBox.centerY = y;
     });
 
     const ENTITIES = 5;
@@ -68,6 +73,7 @@ async function main(): Promise<void> {
       entity.position.setXY(x, y);
       entity.velocity.setXY(dx, dy);
       WM.addEntity(entity);
+      CM.follow(entity);
     }
 
     const geometry = [

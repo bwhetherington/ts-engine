@@ -6,11 +6,13 @@ import {
 import * as http from 'http';
 
 import { Node, Message, Socket } from 'core/net';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
 import { EM, Event, StepEvent } from 'core/event';
 import { TM } from 'server/util';
 import { WM } from 'core/entity';
 import { SyncEvent } from 'core/entity/WorldManager';
+
+const LM = InternalLogger.forFile(__filename);
 
 interface Connections {
   [key: number]: Connection;

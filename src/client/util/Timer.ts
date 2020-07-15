@@ -1,5 +1,7 @@
 import { TimerHandler, AbstractTimer } from 'core/util';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
+
+const LM = InternalLogger.forFile(__filename);
 
 const MAX_TIME = 4 / 60;
 

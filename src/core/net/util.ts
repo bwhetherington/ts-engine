@@ -1,5 +1,7 @@
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
 import { EM, GameEvent } from 'core/event';
+
+const LM = InternalLogger.forFile(__filename);
 
 export interface Message {
   [key: string]: any;

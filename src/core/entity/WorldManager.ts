@@ -1,10 +1,12 @@
 import { Rectangle, QuadTree, Bounded } from 'core/geometry';
-import { GraphicsContext } from 'core/graphics';
+import { GraphicsContext, CM } from 'core/graphics';
 import { Entity, CollisionEvent, CollisionLayer } from 'core/entity';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
 import { EM, GameEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
 import { Iterator, iterateObject, iterator } from 'core/iterator';
+
+const LM = InternalLogger.forFile(__filename);
 
 const LAYER_INDICES: { [layer in CollisionLayer]: number } = {
   geometry: 0,
@@ -37,14 +39,15 @@ export class WorldManager implements Bounded, Serializable {
     ctx.clear();
     ctx.begin();
     ctx.resetTransform();
-    ctx.translate(-this.boundingBox.x, -this.boundingBox.y);
+    const camBounds = CM.boundingBox;
+    ctx.translate(-camBounds.x, -camBounds.y);
 
     // ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WHITE);
     this.quadTree.render(ctx);
 
-    for (const entity of this.getEntitiesLayerOrdered()) {
-      entity.render(ctx);
-    }
+    this.getEntitiesLayerOrdered()
+      .filter((entity) => entity.boundingBox.intersects(camBounds))
+      .forEach((entity) => entity.render(ctx));
   }
 
   private *getEntitiesLayerOrderedInternal(): Generator<Entity> {
@@ -65,6 +68,16 @@ export class WorldManager implements Bounded, Serializable {
 
   public getEntities(): Iterator<Entity> {
     return iterateObject(this.entities);
+  }
+
+  private *queryInternal(box: Rectangle): Generator<Entity> {
+    for (const entity of this.quadTree.retrieve(box)) {
+      yield entity;
+    }
+  }
+
+  public query(box: Rectangle): Iterator<Entity> {
+    return iterator(this.queryInternal(box));
   }
 
   public step(dt: number): void {

@@ -1,5 +1,3 @@
-type Predicate<T> = (x: T) => boolean;
-
 function* map<T, U>(gen: Generator<T>, fn: (x: T) => U): Generator<U> {
   for (const x of gen) {
     yield fn(x);
@@ -177,5 +175,18 @@ export class Iterator<T> implements Generator<T> {
       arr.push(x);
     }
     return arr;
+  }
+
+  public any(fn: (x: T) => boolean): boolean {
+    for (const x of this.generator) {
+      if (fn(x)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public all(fn: (x: T) => boolean): boolean {
+    return !this.any((x) => !fn(x));
   }
 }

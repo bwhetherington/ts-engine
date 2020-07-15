@@ -1,4 +1,6 @@
-import { LM } from 'core/log/LogManager';
 import { LogLevel, AbstractLogger } from 'core/log/util';
+import { LoggerWrapper } from 'core/log/wrapper';
+import { LogManager } from 'core/log/manager';
 
-export { LM, LogLevel, AbstractLogger };
+export const LM = new LogManager();
+export { LogLevel, AbstractLogger, LoggerWrapper };

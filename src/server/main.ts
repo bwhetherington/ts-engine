@@ -2,13 +2,15 @@ import { sleep } from 'core/util';
 
 import { EM } from 'core/event';
 import { Timer, ServerLogger, TM } from 'server/util';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NM } from 'core/net';
 import { CM } from 'server/chat';
 
+const LM = InternalLogger.forFile(__filename);
+
 async function main(): Promise<void> {
-  LM.initialize(new ServerLogger());
+  InternalLogger.initialize(new ServerLogger());
 
   const httpServer = await createServer({
     dir: './',

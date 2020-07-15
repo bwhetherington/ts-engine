@@ -6,6 +6,7 @@ import {
   TextStyle,
   GraphicsContext,
   GraphicsOptions,
+  CM,
 } from 'core/graphics';
 
 interface Options {
@@ -80,6 +81,7 @@ export class HDCanvas implements GraphicsContext {
       element.style.height = h + 'px';
       element.getContext('2d')?.setTransform(ratio, 0, 0, ratio, 0, 0);
     }
+    CM.setSize(w, h);
   }
 
   public attachTo(parent: HTMLElement) {

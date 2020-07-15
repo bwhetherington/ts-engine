@@ -1,5 +1,7 @@
 import { TimerHandler, AbstractTimer, sleep } from 'core/util';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
+
+const LM = InternalLogger.forFile(__filename);
 
 function toSeconds(seconds: number, nanoseconds: number): number {
   return seconds + nanoseconds * 0.000000001;

@@ -3,9 +3,11 @@ import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as path from 'path';
 import { promisify } from 'util';
-import { LM } from 'core/log/LogManager';
+import { LM as InternalLogger } from 'core/log';
 import { Socket } from 'core/net';
 import { EventData } from 'core/event';
+
+const LM = InternalLogger.forFile(__filename);
 
 export const readFile = promisify(fs.readFile);
 

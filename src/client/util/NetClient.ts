@@ -1,5 +1,5 @@
 import { Node, Message, Socket, DisconnectEvent } from 'core/net';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
 import {
   uniqueNamesGenerator,
   adjectives,
@@ -17,6 +17,8 @@ function generateName(): string {
     style: 'capital',
   });
 }
+
+const LM = InternalLogger.forFile(__filename);
 
 export class Client extends Node {
   private sendBuffer: Message[] = [];

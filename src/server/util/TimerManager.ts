@@ -1,5 +1,7 @@
 import { Timer } from 'server/util';
-import { LM } from 'core/log';
+import { LM as InternalLogger } from 'core/log';
+
+const LM = InternalLogger.forFile(__filename);
 
 export class TimerManager {
   private timer?: Timer;
