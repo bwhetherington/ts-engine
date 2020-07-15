@@ -2,6 +2,11 @@ const path = require('path');
 
 module.exports = {
   entry: path.resolve(__dirname, 'src', 'client', 'index.ts'),
+  context: __dirname,
+  node: {
+    __filename: true,
+    __dirname: true,
+  },
   devtool: 'inline-source-map',
   module: {
     rules: [

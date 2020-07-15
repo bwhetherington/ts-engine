@@ -11,7 +11,6 @@ body,
   margin: 0px;
   color: white;
   font-family: 'Roboto Mono', monospace;
-  font-size: 0.9em;
 }
 
 .top {
@@ -68,4 +67,38 @@ input[type='text']:focus {
   outline: none;
   border-radius: 2px;
   content: normal;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+button {
+  border: 1px solid;
+  border-color: rgba(255, 255, 255, 0.33);
+  padding: 5px 10px 5px 10px;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0);
+  outline: none;
+  color: white;
+  font-family: 'Roboto Mono', monospace;
+  margin: 2px;
+}
+
+button[type='error'] {
+  border-color: rgba(255, 160, 160, 0.33);
+  background-color: rgba(255, 128, 128, 0);
+  color: rgb(255, 0, 0);
+}
+
+button:hover {
+  border-color: rgba(255, 255, 255, 0.67);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+button[type='error']:hover {
+  border-color: rgba(255, 160, 160, 0.67);
+  background-color: rgba(255, 128, 128, 0.1);
 }

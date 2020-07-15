@@ -31,7 +31,6 @@ export class WorldManager implements Bounded, Serializable {
 
   public initialize(): void {
     LM.debug('WorldManager initialized');
-
     this.registerEntity(Entity);
   }
 
@@ -39,6 +38,7 @@ export class WorldManager implements Bounded, Serializable {
     ctx.clear();
     ctx.begin();
     ctx.resetTransform();
+
     const camBounds = CM.boundingBox;
     ctx.translate(-camBounds.x, -camBounds.y);
 
@@ -151,6 +151,7 @@ export class WorldManager implements Bounded, Serializable {
   public registerEntity(Type: (new () => Entity) & typeof Entity) {
     const name = Type.typeName;
     this.entityConstructors[name] = Type;
+    LM.debug(`entity ${name} registered`);
   }
 
   private createEntity(type: string): Entity | undefined {

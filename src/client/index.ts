@@ -14,6 +14,7 @@ import {
   BarUpdateEvent,
 } from 'client/components';
 import { CM } from 'core/graphics';
+import { AM } from 'client/alert';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -26,11 +27,11 @@ async function main(): Promise<void> {
   const game = document.getElementById('game');
 
   const client = new Client();
+
   NM.initialize(client);
-
   WM.initialize();
-
   CM.initialize();
+  AM.initialize();
 
   if (game) {
     const canvas = new HDCanvas();
@@ -137,6 +138,7 @@ async function main(): Promise<void> {
         candidate.highlight = true;
       }
 
+      CM.update();
       WM.render(canvas);
 
       canvas.setOptions({

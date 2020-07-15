@@ -14,6 +14,7 @@ import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
 import { NM, DisconnectEvent } from 'core/net';
 
 import template from 'client/components/chat/template.html';
+import { AM } from 'client/alert';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -66,6 +67,7 @@ export class ChatComponent extends Component {
       (event: Event<TextMessageOutEvent>) => {
         const element = this.renderComponents(event.data.components);
         this.addMessage(element);
+        AM.showMessage('Hello, world!');
       }
     );
 

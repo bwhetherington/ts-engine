@@ -1,6 +1,8 @@
 import { Rectangle, Vector, Bounded } from 'core/geometry';
 import { Entity } from 'core/entity';
-import { EM, Event, StepEvent } from 'core/event';
+import { LM as InternalLogger } from 'core/log';
+
+const LM = InternalLogger.forFile(__filename);
 
 export class CameraManager implements Bounded {
   public boundingBox: Rectangle;
@@ -11,9 +13,7 @@ export class CameraManager implements Bounded {
   }
 
   public initialize() {
-    EM.addListener('StepEvent', (event: Event<StepEvent>) => {
-      this.step(event.data.dt);
-    });
+    LM.debug('CameraManager initialized');
   }
 
   public setSize(width: number, height: number): void {
@@ -32,7 +32,7 @@ export class CameraManager implements Bounded {
     this.setTargetXY(v.x, v.y);
   }
 
-  private step(dt: number) {
+  public update() {
     if (this.targetEntity) {
       const { centerX, centerY } = this.targetEntity.boundingBox;
       this.setTargetXY(centerX, centerY);

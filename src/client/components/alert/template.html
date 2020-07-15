@@ -1,0 +1,70 @@
+<link rel="stylesheet" href="/static/style.css" />
+<style>
+  .container {
+    pointer-events: none;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    display: flex;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0%;
+      transform: translateY(50%);
+    }
+
+    to {
+      opacity: 100%;
+      transform: translateY(0px);
+    }
+  }
+
+  .fade-in {
+    animation: fade-in 0.125s ease;
+  }
+
+  header {
+    display: flex;
+  }
+
+  header .header-content {
+    flex-grow: 1;
+    vertical-align: center;
+    font-size: 1.5em;
+    text-align: center;
+    margin-right: 5px;
+  }
+
+  header .header-close {
+    flex-grow: 0;
+  }
+
+  #alert {
+    pointer-events: auto;
+    align-self: center;
+    margin: auto;
+  }
+</style>
+<div class="container">
+  <div id="alert" class="dialog fade-in">
+    <header>
+      <div class="header-content">
+        Header
+      </div>
+      <div class="header-close">
+        <button id="close" class="close">
+          Close
+        </button>
+      </div>
+    </header>
+    <p>Please confirm the request</p>
+    <div class="button-row">
+      <button>Confirm</button>
+      <button type="error">Deny</button>
+    </div>
+    <!-- <span id="message"></span> -->
+  </div>
+</div>
