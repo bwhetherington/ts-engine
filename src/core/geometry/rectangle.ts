@@ -92,10 +92,16 @@ export class Rectangle implements Serializable {
 
   public deserialize(data: Data): void {
     const { x, y, width, height } = data;
-    if (typeof x === 'number' && typeof y === 'number' && typeof width === 'number' && typeof height === 'number') {
+    if (typeof x === 'number') {
       this.x = x;
+    }
+    if (typeof y === 'number') {
       this.y = y;
+    }
+    if (typeof width === 'number') {
       this.width = width;
+    }
+    if (typeof height === 'number') {
       this.height = height;
     }
   }

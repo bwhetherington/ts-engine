@@ -71,7 +71,7 @@ export class ChatComponent extends Component {
       }
     );
 
-    EM.addListener('DisconnectEvent', (event: DisconnectEvent) => {
+    EM.addListener('DisconnectEvent', (event: Event<DisconnectEvent>) => {
       const components = renderError('Disconnected from server.');
       const element = this.renderComponents(components);
       this.addMessage(element);

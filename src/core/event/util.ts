@@ -1,5 +1,9 @@
 import { Socket } from 'core/net';
 
+export type Handler<T extends EventData> = (arg: Event<T>) => void;
+
+export type GameHandler = Handler<any>;
+
 export interface Event<T extends EventData> {
   socket?: Socket;
   type: string;

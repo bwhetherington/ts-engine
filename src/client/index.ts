@@ -37,6 +37,7 @@ async function main(): Promise<void> {
     const canvas = new HDCanvas();
     canvas.attachTo(game);
     canvas.setSize(window.innerWidth, window.innerHeight);
+    CM.setTargetXY(0, 0);
 
     window.addEventListener('resize', () => {
       canvas.setSize(window.innerWidth, window.innerHeight);
@@ -55,60 +56,9 @@ async function main(): Promise<void> {
       mouseBox.centerY = y;
     });
 
-    const ENTITIES = 5;
-    for (let i = 0; i < ENTITIES; i++) {
-      const entity = new Entity();
-
-      entity.color = {
-        red: Math.random() * 0.2 + 0.7,
-        green: Math.random() * 0.2 + 0.7,
-        blue: Math.random() * 0.2 + 0.7,
-      };
-
-      const x = Math.random() * WM.boundingBox.width + WM.boundingBox.x;
-      const y = Math.random() * WM.boundingBox.height + WM.boundingBox.y;
-
-      const dx = (Math.random() - 0.5) * 200;
-      const dy = (Math.random() - 0.5) * 200;
-
-      entity.position.setXY(x, y);
-      entity.velocity.setXY(dx, dy);
-      WM.addEntity(entity);
-      CM.follow(entity);
-    }
-
-    const geometry = [
-      Rectangle.centered(225, 50, 200 / 2, 0),
-      Rectangle.centered(500, 50, 0, -200),
-      Rectangle.centered(500, 50, 0, 200),
-      Rectangle.centered(50, 500, -200, 0),
-      Rectangle.centered(50, 500, 200, 0),
-      Rectangle.centered(100, 100, 0, 0),
-    ];
-    for (const element of geometry) {
-      const entity = new Geometry(element);
-      WM.addEntity(entity);
-    }
-
-    EM.addListener('CollisionEvent', (event: Event<CollisionEvent>) => {
-      const { collider, collided } = event.data;
-      if (
-        collider.collisionLayer === 'unit' &&
-        collided.collisionLayer === 'geometry'
-      ) {
-        shuntOutOf(collider, collided.boundingBox);
-      } else if (
-        collider.collisionLayer === 'unit' &&
-        collided.collisionLayer === 'unit'
-      ) {
-      }
-    });
-
     let counter = 0;
 
     EM.addListener('StepEvent', (step: Event<StepEvent>) => {
-      WM.step(step.data.dt);
-
       counter += step.data.dt;
       while (counter >= 2) {
         counter -= 2;

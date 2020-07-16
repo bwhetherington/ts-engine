@@ -43,8 +43,11 @@ export class Vector implements Serializable {
 
   public deserialize(data: Data): void {
     const { x, y } = data;
-    if (typeof x === 'number' && typeof y === 'number') {
-      this.setXY(x, y);
+    if (typeof x === 'number') {
+      this.x = x;
+    }
+    if (typeof y === 'number') {
+      this.y = y;
     }
   }
 }

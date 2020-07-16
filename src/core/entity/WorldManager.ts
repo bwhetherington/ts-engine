@@ -2,9 +2,11 @@ import { Rectangle, QuadTree, Bounded } from 'core/geometry';
 import { GraphicsContext, CM } from 'core/graphics';
 import { Entity, CollisionEvent, CollisionLayer } from 'core/entity';
 import { LM as InternalLogger } from 'core/log';
-import { EM, GameEvent } from 'core/event';
+import { EM, GameEvent, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
 import { Iterator, iterateObject, iterator } from 'core/iterator';
+import { Geometry } from 'core/entity/Geometry';
+import { diff } from 'core/util';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -23,6 +25,7 @@ export class WorldManager implements Bounded, Serializable {
   public boundingBox: Rectangle;
   private collisionLayers: Entity[][] = [[], []];
   private entityConstructors: { [type: string]: new () => Entity } = {};
+  public oldState: Record<string, Data> = {};
 
   constructor(boundingBox: Rectangle) {
     this.quadTree = new QuadTree(boundingBox);
@@ -32,6 +35,15 @@ export class WorldManager implements Bounded, Serializable {
   public initialize(): void {
     LM.debug('WorldManager initialized');
     this.registerEntity(Entity);
+    this.registerEntity(Geometry);
+
+    EM.addListener<SyncEvent>('SyncEvent', (event) => {
+      this.deserialize(event.data.data);
+    });
+
+    EM.addListener<StepEvent>('StepEvent', (event) => {
+      this.step(event.data.dt);
+    });
   }
 
   public render(ctx: GraphicsContext): void {
@@ -146,6 +158,8 @@ export class WorldManager implements Bounded, Serializable {
         }
       }
     }
+
+    // Check diffs
   }
 
   public registerEntity(Type: (new () => Entity) & typeof Entity) {
@@ -164,34 +178,38 @@ export class WorldManager implements Bounded, Serializable {
   }
 
   public serialize(): Data {
-    const entities = this.getEntities()
-      .map((entity) => entity.serialize())
-      .toArray();
-    return {
-      entities,
-    };
+    const out = <Data>{};
+    for (const key in this.entities) {
+      out[key] = this.entities[key].serialize();
+    }
+    return out;
   }
 
   public deserialize(data: Data): void {
-    const { entities } = data;
-    if (entities instanceof Array) {
-      for (const entityData of entities) {
-        const { id, type } = entityData;
-        if (typeof id === 'string' && typeof type === 'string') {
-          let entity: Entity | undefined = this.entities[id];
-          if (entity === undefined) {
-            // Create new entity
-            entity = this.createEntity(type);
-            if (entity) {
-              entity.id = id;
-            }
-          }
-          entity?.deserialize(entityData);
-          if (entity === undefined) {
-            LM.error(`failed to create entity of type: ${type}`);
-          }
+    for (const id in data) {
+      const entry = data[id];
+      const { type } = entry;
+      let entity = <Entity | undefined>this.entities[id];
+      if (!entity && typeof type === 'string') {
+        entity = this.createEntity(type);
+        if (entity) {
+          entity.id = id;
+          this.addEntity(entity);
         }
       }
+      if (entity) {
+        entity.deserialize(entry);
+      } else {
+        LM.error(`failed to create entity from data: ${JSON.stringify(entry)}`);
+      }
     }
+  }
+
+  public diffState(): Data {
+    const diffObj = {};
+    const newState = this.serialize();
+    diff(this.oldState, newState, diffObj);
+    this.oldState = newState;
+    return diffObj;
   }
 }

@@ -20,6 +20,7 @@ export class Entity implements Bounded, Serializable {
   public highlight: boolean = false;
   public type: string;
   public mass: number = 1;
+  public markedForDelete: boolean = false;
 
   constructor() {
     this.id = genUuid();
@@ -103,14 +104,38 @@ export class Entity implements Bounded, Serializable {
     if (typeof mass === 'number') {
       this.mass = mass;
     }
-    if (isColor(color)) {
-      this.color = color;
+    if (color) {
+      const { red, green, blue, alpha } = color;
+      if (typeof red === 'number') {
+        this.color.red = red;
+      }
+      if (typeof green === 'number') {
+        this.color.green = green;
+      }
+      if (typeof blue === 'number') {
+        this.color.blue = blue;
+      }
+      if (typeof alpha === 'number') {
+        this.color.alpha = alpha;
+      }
     }
     if (isCollisionLayer(collisionLayer)) {
       this.collisionLayer = collisionLayer;
     }
-    this.boundingBox.deserialize(boundingBox);
-    this.position.deserialize(position);
-    this.velocity.deserialize(velocity);
+    if (boundingBox !== undefined) {
+      this.boundingBox.deserialize(boundingBox);
+    }
+    if (position !== undefined) {
+      this.position.deserialize(position);
+    }
+    if (velocity !== undefined) {
+      this.velocity.deserialize(velocity);
+    }
   }
+
+  public markForDelete(): void {
+    this.markedForDelete = true;
+  }
+
+  public cleanup(): void {}
 }

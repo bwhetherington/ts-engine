@@ -1,35 +1,41 @@
 import { Queue } from 'core/util/queue';
-import { GameEvent } from 'core/event';
-
-type Handler = (arg: any) => void;
+import { GameEvent, GameHandler, Handler, EventData } from 'core/event';
+import { v1 as genUuid } from 'uuid';
 
 export interface StepEvent {
   dt: number;
 }
 
 export class EventManager {
-  private handlers: Record<string, Handler[]> = {};
+  private handlers: Record<string, Record<string, GameHandler>> = {};
   private events: Queue<GameEvent> = new Queue();
 
   public emit<E extends GameEvent>(event: E): void {
     this.events.enqueue(event);
   }
 
-  private getHandlers(type: string): Handler[] {
+  private getHandlers(type: string): Record<string, GameHandler> {
     let handlers = this.handlers[type];
     if (handlers === undefined) {
-      handlers = [];
+      handlers = {};
       this.handlers[type] = handlers;
     }
     return handlers;
   }
 
-  public addListener(
+  public addListener<E extends EventData>(
     type: string,
-    handler: Handler
-  ): void {
+    handler: Handler<E>
+  ): string {
     const handlers = this.getHandlers(type);
-    handlers.push(handler);
+    const id = genUuid();
+    handlers[id] = handler;
+    return id;
+  }
+
+  public removeListener(type: string, id: string): void {
+    const handlers = this.getHandlers(type);
+    delete handlers[id];
   }
 
   private handleEvent(event: GameEvent): void {
@@ -37,8 +43,8 @@ export class EventManager {
     const { type } = event;
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
-      for (const handler of handlers) {
-        handler(event);
+      for (const id in handlers) {
+        handlers[id](event);
       }
     }
   }

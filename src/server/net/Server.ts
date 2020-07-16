@@ -138,6 +138,15 @@ export class Server extends Node {
   public onConnect(socket: Socket): void {
     super.onConnect(socket);
 
+    const state = WM.serialize();
+    const event = {
+      type: 'SyncEvent',
+      data: <SyncEvent>{
+        data: state,
+      },
+    };
+    this.send(event, socket);
+
     // Try to wake the server clock
     TM.wake();
   }
