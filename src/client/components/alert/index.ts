@@ -16,7 +16,7 @@ export class AlertComponent extends Component {
       this.hide();
     });
 
-    this.hide();
+    this.show();
   }
 
   public setVisible(isVisible: boolean): void {

@@ -1,6 +1,7 @@
 :root {
   --mouse-x: 0px;
   --mouse-y: 0px;
+  --ui-margin: 10px;
 }
 
 html,
@@ -15,22 +16,22 @@ body,
 
 .top {
   position: absolute;
-  top: 10px;
+  top: var(--ui-margin);
 }
 
 .bottom {
   position: absolute;
-  bottom: 10px;
+  bottom: var(--ui-margin);
 }
 
 .left {
   position: absolute;
-  left: 10px;
+  left: var(--ui-margin);
 }
 
 .right {
   position: absolute;
-  right: 10px;
+  right: var(--ui-margin);
 }
 
 .col {
@@ -39,7 +40,7 @@ body,
 }
 
 .col > *:not(:last-child) {
-  margin-bottom: 10px;
+  margin-bottom: var(--ui-margin);
 }
 
 .dialog {
@@ -72,7 +73,7 @@ input[type='text']:focus {
 .button-row {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: flex-end;
 }
 
 button {
@@ -101,4 +102,32 @@ button:hover {
 button[type='error']:hover {
   border-color: rgba(255, 160, 160, 0.67);
   background-color: rgba(255, 128, 128, 0.1);
+}
+
+.close {
+  width: 28px;
+  height: 28px;
+  opacity: 0.33;
+  display: flex;
+}
+
+.close:hover {
+  opacity: 1;
+}
+
+.close:before,
+.close:after {
+  content: ' ';
+  height: 26px;
+  width: 2px;
+  background: white;
+  color: white;
+}
+
+.close:before {
+  transform: translateX(2px) translateY(-5px) rotate(45deg);
+}
+
+.close:after {
+  transform: translateX(0px) translateY(-5px) rotate(-45deg);
 }

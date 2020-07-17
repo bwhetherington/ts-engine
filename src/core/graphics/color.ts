@@ -9,18 +9,27 @@ export function rgb(red: number, green: number, blue: number): Color {
   return { red, green, blue, alpha: 1 };
 }
 
-export function rgba(red: number, green: number, blue: number, alpha: number): Color {
+export function rgba(
+  red: number,
+  green: number,
+  blue: number,
+  alpha: number
+): Color {
   return { red, green, blue, alpha };
 }
 
 export function isColor(input: any): input is Color {
-  const { red, green, blue, alpha } = input;
-  return (
-    typeof red === 'number' &&
-    typeof green === 'number' &&
-    typeof blue === 'number' &&
-    (alpha === undefined || typeof alpha === 'number')
-  );
+  if (input) {
+    const { red, green, blue, alpha } = input;
+    return (
+      typeof red === 'number' &&
+      typeof green === 'number' &&
+      typeof blue === 'number' &&
+      (alpha === undefined || typeof alpha === 'number')
+    );
+  } else {
+    return false;
+  }
 }
 
 function toColorInt(color: number): number {
@@ -33,7 +42,7 @@ export function toCss(color: Color): string {
   const greenInt = toColorInt(green);
   const blueInt = toColorInt(blue);
   const out =
-    "rgba(" + redInt + ", " + greenInt + ", " + blueInt + ", " + alpha + ")";
+    'rgba(' + redInt + ', ' + greenInt + ', ' + blueInt + ', ' + alpha + ')';
   // console.log(out);
   return out;
 }

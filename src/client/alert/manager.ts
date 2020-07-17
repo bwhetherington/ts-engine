@@ -21,7 +21,7 @@ export class AlertManager {
       if (this.counter > 0) {
         this.counter = Math.max(0, this.counter - event.data.dt);
       } else if (this.counter === 0) {
-        this.element?.hide();
+        // this.element?.hide();
       }
     });
 

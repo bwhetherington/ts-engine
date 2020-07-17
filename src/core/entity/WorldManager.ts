@@ -188,6 +188,9 @@ export class WorldManager implements Bounded, Serializable {
   public deserialize(data: Data): void {
     for (const id in data) {
       const entry = data[id];
+      if (Object.keys(entry).length === 0) {
+        continue;
+      }
       const { type } = entry;
       let entity = <Entity | undefined>this.entities[id];
       if (!entity && typeof type === 'string') {
@@ -211,5 +214,9 @@ export class WorldManager implements Bounded, Serializable {
     diff(this.oldState, newState, diffObj);
     this.oldState = newState;
     return diffObj;
+  }
+
+  public getEntity(id: string): Entity | undefined {
+    return this.entities[id];
   }
 }

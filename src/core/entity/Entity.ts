@@ -85,6 +85,7 @@ export class Entity implements Bounded, Serializable {
   }
 
   public deserialize(data: Data): void {
+    console.log(data);
     const {
       id,
       type,
@@ -104,20 +105,8 @@ export class Entity implements Bounded, Serializable {
     if (typeof mass === 'number') {
       this.mass = mass;
     }
-    if (color) {
-      const { red, green, blue, alpha } = color;
-      if (typeof red === 'number') {
-        this.color.red = red;
-      }
-      if (typeof green === 'number') {
-        this.color.green = green;
-      }
-      if (typeof blue === 'number') {
-        this.color.blue = blue;
-      }
-      if (typeof alpha === 'number') {
-        this.color.alpha = alpha;
-      }
+    if (isColor(color)) {
+      this.color = color;
     }
     if (isCollisionLayer(collisionLayer)) {
       this.collisionLayer = collisionLayer;
