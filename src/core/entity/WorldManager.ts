@@ -1,12 +1,20 @@
 import { Rectangle, QuadTree, Bounded } from 'core/geometry';
 import { GraphicsContext, CM } from 'core/graphics';
-import { Entity, CollisionEvent, CollisionLayer } from 'core/entity';
+import {
+  CollisionEvent,
+  CollisionLayer,
+  Entity,
+  Unit,
+  Hero,
+  Geometry,
+  shuntOutOf,
+} from 'core/entity';
 import { LM as InternalLogger } from 'core/log';
 import { EM, GameEvent, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
 import { Iterator, iterateObject, iterator } from 'core/iterator';
-import { Geometry } from 'core/entity/Geometry';
 import { diff } from 'core/util';
+import { SyncEvent } from 'core/net';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -15,34 +23,52 @@ const LAYER_INDICES: { [layer in CollisionLayer]: number } = {
   unit: 1,
 };
 
-export interface SyncEvent {
-  data: Data;
-}
-
 export class WorldManager implements Bounded, Serializable {
   public quadTree: QuadTree<Entity>;
   private entities: { [id: string]: Entity } = {};
   public boundingBox: Rectangle;
   private collisionLayers: Entity[][] = [[], []];
   private entityConstructors: { [type: string]: new () => Entity } = {};
-  public oldState: Record<string, Data> = {};
+  public previousState: Record<string, Data> = {};
+  private toDelete: string[] = [];
 
   constructor(boundingBox: Rectangle) {
     this.quadTree = new QuadTree(boundingBox);
     this.boundingBox = boundingBox;
   }
 
+  private registerEntities(): void {
+    this.registerEntity(Entity);
+    this.registerEntity(Unit);
+    this.registerEntity(Hero);
+    this.registerEntity(Geometry);
+  }
+
   public initialize(): void {
     LM.debug('WorldManager initialized');
-    this.registerEntity(Entity);
-    this.registerEntity(Geometry);
+
+    this.registerEntities();
 
     EM.addListener<SyncEvent>('SyncEvent', (event) => {
-      this.deserialize(event.data.data);
+      this.deserialize(event.data.worldData);
     });
 
     EM.addListener<StepEvent>('StepEvent', (event) => {
       this.step(event.data.dt);
+    });
+
+    EM.addListener<CollisionEvent>('CollisionEvent', (event) => {
+      const { collider, collided } = event.data;
+      if (
+        collider.collisionLayer === 'unit' &&
+        collided.collisionLayer === 'geometry'
+      ) {
+        shuntOutOf(collider, collided.boundingBox);
+      } else if (
+        collider.collisionLayer === 'unit' &&
+        collided.collisionLayer === 'unit'
+      ) {
+      }
     });
   }
 
@@ -74,8 +100,21 @@ export class WorldManager implements Bounded, Serializable {
     return iterator(this.getEntitiesLayerOrderedInternal());
   }
 
-  public addEntity(entity: Entity): void {
+  public add(entity: Entity): void {
     this.entities[entity.id] = entity;
+  }
+
+  public remove(entity: Entity | string): void {
+    let actual: Entity | undefined = undefined;
+    if (typeof entity === 'string') {
+      actual = this.getEntity(entity);
+    } else {
+      actual = entity;
+    }
+    actual?.cleanup();
+    if (actual) {
+      delete this.entities[actual.id];
+    }
   }
 
   public getEntities(): Iterator<Entity> {
@@ -93,8 +132,14 @@ export class WorldManager implements Bounded, Serializable {
   }
 
   public step(dt: number): void {
+    // Clear deleted entities
+    this.toDelete = [];
+
     // Step each entity
     for (const entity of this.getEntities()) {
+      if (entity.markedForDelete) {
+        this.toDelete.push(entity.id);
+      }
       entity.step(dt);
 
       // Check for collision with bounds
@@ -159,7 +204,10 @@ export class WorldManager implements Bounded, Serializable {
       }
     }
 
-    // Check diffs
+    // Delete marked entities
+    for (const entity of this.toDelete) {
+      this.remove(entity);
+    }
   }
 
   public registerEntity(Type: (new () => Entity) & typeof Entity) {
@@ -178,16 +226,20 @@ export class WorldManager implements Bounded, Serializable {
   }
 
   public serialize(): Data {
-    const out = <Data>{};
+    const out = <Data>{
+      entities: {},
+      deleted: this.toDelete,
+    };
     for (const key in this.entities) {
-      out[key] = this.entities[key].serialize();
+      out.entities[key] = this.entities[key].serialize();
     }
     return out;
   }
 
   public deserialize(data: Data): void {
-    for (const id in data) {
-      const entry = data[id];
+    const { entities, deleted } = data;
+    for (const id in entities) {
+      const entry = entities[id];
       if (Object.keys(entry).length === 0) {
         continue;
       }
@@ -197,7 +249,7 @@ export class WorldManager implements Bounded, Serializable {
         entity = this.createEntity(type);
         if (entity) {
           entity.id = id;
-          this.addEntity(entity);
+          this.add(entity);
         }
       }
       if (entity) {
@@ -206,13 +258,18 @@ export class WorldManager implements Bounded, Serializable {
         LM.error(`failed to create entity from data: ${JSON.stringify(entry)}`);
       }
     }
+    if (deleted instanceof Array) {
+      iterator(deleted)
+        .map((id) => this.getEntity(id))
+        .forEach((entity) => entity?.markForDelete());
+    }
   }
 
   public diffState(): Data {
     const diffObj = {};
     const newState = this.serialize();
-    diff(this.oldState, newState, diffObj);
-    this.oldState = newState;
+    diff(this.previousState, newState, diffObj);
+    this.previousState = newState;
     return diffObj;
   }
 

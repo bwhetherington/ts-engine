@@ -4,13 +4,13 @@ import { EM } from 'core/event';
 import { Timer, ServerLogger, TM } from 'server/util';
 import { LM as InternalLogger } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
-import { NM } from 'core/net';
+import { NM, SyncEvent } from 'core/net';
 import { CM } from 'server/chat';
 import { diff } from 'core/util/object';
 import { WM, CollisionEvent, shuntOutOf, Entity } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
 import { Rectangle } from 'core/geometry';
-import { SyncEvent } from 'core/entity/WorldManager';
+import { PM } from 'core/player';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -48,7 +48,7 @@ async function main(): Promise<void> {
 
     entity.position.setXY(x, y);
     entity.velocity.setXY(dx, dy);
-    WM.addEntity(entity);
+    WM.add(entity);
   }
 
   const geometry = [
@@ -61,35 +61,23 @@ async function main(): Promise<void> {
   ];
   for (const element of geometry) {
     const entity = Geometry.fromRectangle(element);
-    WM.addEntity(entity);
+    WM.add(entity);
   }
-
-  EM.addListener<CollisionEvent>('CollisionEvent', (event) => {
-    const { collider, collided } = event.data;
-    if (
-      collider.collisionLayer === 'unit' &&
-      collided.collisionLayer === 'geometry'
-    ) {
-      shuntOutOf(collider, collided.boundingBox);
-    } else if (
-      collider.collisionLayer === 'unit' &&
-      collided.collisionLayer === 'unit'
-    ) {
-    }
-  });
 
   const timer = new Timer((dt) => {
     NM.send({ foo: 'foo', bar: 'bar' });
     EM.step(dt);
-    const diffState = WM.diffState();
+
     const event = {
       type: 'SyncEvent',
       data: <SyncEvent>{
-        data: diffState,
+        worldData: WM.diffState(),
+        playerData: PM.diffState(),
       },
     };
+
     NM.send(event);
-  });
+  }, 1 / 20);
   TM.initialize(timer);
 }
 

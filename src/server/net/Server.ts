@@ -9,8 +9,9 @@ import { Node, Message, Socket } from 'core/net';
 import { LM as InternalLogger } from 'core/log';
 import { EM, Event, StepEvent } from 'core/event';
 import { TM } from 'server/util';
-import { WM } from 'core/entity';
-import { SyncEvent } from 'core/entity/WorldManager';
+import { WM, Hero } from 'core/entity';
+import { SyncEvent } from 'core/net';
+import { PM, Player } from 'core/player';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -37,16 +38,6 @@ export class Server extends Node {
         this.names[socket] = data.name;
       }
     });
-
-    EM.addListener('StepEvent', (_: Event<StepEvent>) => {
-      const event = {
-        type: 'SyncEvent',
-        data: <SyncEvent>{
-          data: WM.serialize(),
-        },
-      };
-      this.send(event);
-    });
   }
 
   private disconnect(index: Socket) {
@@ -59,11 +50,6 @@ export class Server extends Node {
       this.onDisconnect(index);
     } else {
       LM.warn(`attempt to disconnect inactive socket ${index}`);
-    }
-
-    // Sleep the server clock
-    if (Object.keys(this.connections).length === 0) {
-      TM.sleep();
     }
   }
 
@@ -138,16 +124,43 @@ export class Server extends Node {
   public onConnect(socket: Socket): void {
     super.onConnect(socket);
 
-    const state = WM.serialize();
+    // Initialize player
+    const player = new Player();
+    player.socket = socket;
+
+    const hero = new Hero();
+    hero.setPlayer(player);
+
+    player.hero = hero;
+
+    WM.add(hero);
+    PM.add(player);
+
     const event = {
       type: 'SyncEvent',
       data: <SyncEvent>{
-        data: state,
+        worldData: WM.serialize(),
+        playerData: PM.serialize(),
       },
     };
+
     this.send(event, socket);
 
     // Try to wake the server clock
     TM.wake();
+  }
+
+  public onDisconnect(socket: Socket): void {
+    super.onDisconnect(socket);
+
+    const player = PM.getPlayer(socket);
+    if (player) {
+      PM.remove(player);
+    }
+
+    // Sleep the server clock
+    if (Object.keys(this.connections).length === 0) {
+      TM.sleep();
+    }
   }
 }

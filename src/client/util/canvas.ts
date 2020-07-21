@@ -143,11 +143,8 @@ export class HDCanvas implements GraphicsContext {
     const ctx = this.curContext;
     if (ctx) {
       ctx.beginPath();
-
-      // ctx.fillStyle = toCss(color);
       ctx.fillStyle = toCss(color);
       ctx.strokeStyle = toCss(reshade(color));
-      // console.log(ctx.fillStyle, ctx.strokeStyle);
       ctx.lineWidth = this.options.lineWidth;
       ctx.rect(x, y, w, h);
       if (this.options.doFill) {

@@ -5,6 +5,7 @@ import { v1 as genUuid } from 'uuid';
 import { CollisionLayer } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer } from './util';
+import { GameHandler, EventData, Handler, EM } from 'core/event';
 
 export type Uuid = string;
 
@@ -21,6 +22,7 @@ export class Entity implements Bounded, Serializable {
   public type: string;
   public mass: number = 1;
   public markedForDelete: boolean = false;
+  private handlers: Record<string, Set<string>> = {};
 
   constructor() {
     this.id = genUuid();
@@ -85,7 +87,6 @@ export class Entity implements Bounded, Serializable {
   }
 
   public deserialize(data: Data): void {
-    console.log(data);
     const {
       id,
       type,
@@ -126,5 +127,29 @@ export class Entity implements Bounded, Serializable {
     this.markedForDelete = true;
   }
 
-  public cleanup(): void {}
+  private getHandlers(type: string): Set<string> {
+    let handlers = this.handlers[type];
+    if (handlers === undefined) {
+      handlers = new Set();
+      this.handlers[type] = handlers;
+    }
+    return handlers;
+  }
+
+  public addListener<E extends EventData>(
+    type: string,
+    handler: Handler<E>
+  ): void {
+    const id = EM.addListener(type, handler);
+    this.getHandlers(type).add(id);
+  }
+
+  public cleanup(): void {
+    for (const type in this.handlers) {
+      const handlerSet = this.handlers[type];
+      for (const id of handlerSet) {
+        EM.removeListener(type, id);
+      }
+    }
+  }
 }

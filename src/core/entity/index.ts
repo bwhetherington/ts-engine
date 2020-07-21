@@ -6,6 +6,9 @@ import {
   shuntOutOf,
   CollisionEvent,
 } from 'core/entity/util';
+import { Unit } from 'core/entity/Unit';
+import { Hero } from 'core/entity/Hero';
+import { Geometry } from 'core/entity/Geometry';
 
 import { Rectangle } from 'core/geometry';
 
@@ -15,6 +18,9 @@ export {
   Uuid,
   CollisionLayer,
   CollisionEvent,
+  Unit,
+  Hero,
+  Geometry,
   isCollisionLayer,
   shuntOutOf,
 };

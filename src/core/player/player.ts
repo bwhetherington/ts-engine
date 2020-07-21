@@ -1,11 +1,13 @@
-import { Entity, WM } from 'core/entity';
+import { Hero, WM } from 'core/entity';
 import { Serializable, Data } from 'core/serialize';
 import { v1 } from 'uuid';
+import { Socket } from 'core/net';
 
 export class Player implements Serializable {
-  public name?: string;
+  public name: string = 'Anonymous';
   public id: string;
-  public hero?: Entity;
+  public hero?: Hero;
+  public socket?: Socket;
 
   public constructor(id?: string) {
     if (id) {
@@ -32,9 +34,13 @@ export class Player implements Serializable {
     }
     if (typeof heroID == 'string') {
       const entity = WM.getEntity(heroID);
-      if (entity instanceof Entity) {
+      if (entity instanceof Hero) {
         this.hero = entity;
       }
     }
+  }
+
+  public cleanup(): void {
+    this.hero?.markForDelete();
   }
 }

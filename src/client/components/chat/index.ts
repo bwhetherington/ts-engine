@@ -110,7 +110,6 @@ export class ChatComponent extends Component {
 
   private addMessage(message: HTMLElement): void {
     const removed = this.messagesQueue.enqueue(message);
-    console.log(this.messagesQueue);
     if (removed) {
       this.messagesContainer?.removeChild(removed);
     }

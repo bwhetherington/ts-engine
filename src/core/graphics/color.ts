@@ -43,7 +43,6 @@ export function toCss(color: Color): string {
   const blueInt = toColorInt(blue);
   const out =
     'rgba(' + redInt + ', ' + greenInt + ', ' + blueInt + ', ' + alpha + ')';
-  // console.log(out);
   return out;
 }
 

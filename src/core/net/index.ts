@@ -7,6 +7,7 @@ import {
   ConnectEvent,
   DisconnectEvent,
   NetworkMessageEvent,
+  SyncEvent,
 } from 'core/net/util';
 import { HTTPClient, HTTPResponse } from 'core/net/http';
 
@@ -21,4 +22,5 @@ export {
   NetworkMessageEvent,
   HTTPClient,
   HTTPResponse,
+  SyncEvent,
 };

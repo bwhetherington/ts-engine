@@ -5,6 +5,8 @@ import { EM, Event, StepEvent } from 'core/event';
 
 const LM = InternalLogger.forFile(__filename);
 
+export interface Dialog {}
+
 export class AlertManager {
   private element?: AlertComponent;
   private counter: number = 0;

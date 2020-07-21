@@ -1,5 +1,6 @@
 import { LM as InternalLogger } from 'core/log';
 import { EM, GameEvent } from 'core/event';
+import { Data } from 'core/serialize';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -14,7 +15,7 @@ export abstract class Node {
   public onMessage(message: Message, socket: Socket) {
     const event = {
       type: 'NetworkMessageEvent',
-      data: {
+      data: <NetworkMessageEvent>{
         socket,
         message,
       },
@@ -35,7 +36,7 @@ export abstract class Node {
   public onConnect(socket: Socket) {
     const event = {
       type: 'ConnectEvent',
-      data: {
+      data: <ConnectEvent>{
         socket,
       },
     };
@@ -45,7 +46,7 @@ export abstract class Node {
   public onDisconnect(socket: Socket) {
     const event = {
       type: 'DisconnectEvent',
-      data: {
+      data: <DisconnectEvent>{
         socket,
       },
     };
@@ -82,4 +83,9 @@ export interface DisconnectEvent {
 export interface NetworkMessageEvent {
   socket: Socket;
   message: Message;
+}
+
+export interface SyncEvent {
+  worldData: Data;
+  playerData: Data;
 }

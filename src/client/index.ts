@@ -15,6 +15,8 @@ import {
 } from 'client/components';
 import { CM } from 'core/graphics';
 import { AM } from 'client/alert';
+import { IM } from 'client/input';
+import { PM } from 'core/player';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -30,6 +32,7 @@ async function main(): Promise<void> {
 
   NM.initialize(client);
   WM.initialize();
+  PM.initialize();
   CM.initialize();
   AM.initialize();
 
@@ -38,6 +41,8 @@ async function main(): Promise<void> {
     canvas.attachTo(game);
     canvas.setSize(window.innerWidth, window.innerHeight);
     CM.setTargetXY(0, 0);
+
+    IM.initialize(game);
 
     window.addEventListener('resize', () => {
       canvas.setSize(window.innerWidth, window.innerHeight);

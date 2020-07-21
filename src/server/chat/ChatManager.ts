@@ -11,6 +11,7 @@ import {
   renderError,
 } from 'core/chat';
 import { LM as InternalLogger } from 'core/log';
+import { PM } from 'core/player';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -25,13 +26,8 @@ interface Command {
 }
 
 export class ChatManager {
-  private names: { [socket: number]: string } = {};
   private commands: { [command: string]: Command } = {};
   private aliases: { [alias: string]: string } = {};
-
-  private getName(socket: Socket): string {
-    return this.names[socket] ?? DEFAULT_NAME;
-  }
 
   public registerCommand(
     command: string,
@@ -84,27 +80,32 @@ export class ChatManager {
 
     EM.addListener('SetNameEvent', (event: Event<SetNameEvent>) => {
       const { data, socket } = event;
+
       if (socket !== undefined) {
-        this.names[socket] = data.name;
-        LM.debug(`player ${socket} set name to ${data.name}`);
+        const player = PM.getPlayer(socket);
+        if (player) {
+          player.name = data.name;
+          LM.debug(`player ${socket} set name to ${data.name}`);
+        } else {
+          LM.error(`player ${socket} not found`);
+        }
       } else {
         LM.error('unknown socket');
       }
     });
 
     EM.addListener('TextMessageInEvent', (event: Event<TextMessageInEvent>) => {
-      LM.info(JSON.stringify(this.names));
-
-      LM.info(event.data.content);
       const { data, socket } = event;
 
       let name = DEFAULT_NAME;
       if (socket !== undefined) {
-        name = this.getName(socket);
+        name = PM.getPlayer(socket)?.name ?? DEFAULT_NAME;
       }
 
       const components = this.formatMessage(name, event.data.content);
       this.sendComponents(components);
+
+      LM.info(`<${name}> ${data.content}`);
     });
 
     EM.addListener('TextCommandEvent', (event: Event<TextCommandEvent>) => {
