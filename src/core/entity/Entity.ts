@@ -2,9 +2,9 @@ import { Bounded, Rectangle, Vector } from 'core/geometry';
 import { GraphicsContext, Color, invert } from 'core/graphics';
 import { WHITE, BLACK, isColor } from 'core/graphics/color';
 import { v1 as genUuid } from 'uuid';
-import { CollisionLayer } from 'core/entity';
+import { CollisionLayer, WM, CollisionEvent } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
-import { isCollisionLayer } from './util';
+import { isCollisionLayer, shuntOutOf } from './util';
 import { GameHandler, EventData, Handler, EM } from 'core/event';
 
 export type Uuid = string;
@@ -67,6 +67,35 @@ export class Entity implements Bounded, Serializable {
 
   private updatePosition(dt: number): void {
     this.addPosition(this.velocity, dt);
+    // Query for entities that may collide with this entity
+    let collided = false;
+    // for (const candidate of this.getEntities()) {
+    for (const candidate of WM.query(this.boundingBox)) {
+      if (
+        this.id !== candidate.id &&
+        (this.boundingBox.intersects(candidate.boundingBox) ||
+          candidate.boundingBox.intersects(this.boundingBox))
+      ) {
+        // Collision
+        if (
+          this.collisionLayer === 'unit' &&
+          candidate.collisionLayer === 'geometry'
+        ) {
+          shuntOutOf(this, candidate.boundingBox);
+        }
+
+        collided = true;
+        const data = <CollisionEvent>{
+          collider: this,
+          collided: candidate,
+        };
+        const event = {
+          type: 'CollisionEvent',
+          data,
+        };
+        EM.emit(event);
+      }
+    }
   }
 
   public step(dt: number): void {

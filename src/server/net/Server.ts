@@ -12,6 +12,7 @@ import { TM } from 'server/util';
 import { WM, Hero } from 'core/entity';
 import { SyncEvent } from 'core/net';
 import { PM, Player } from 'core/player';
+import { InitialSyncEvent } from 'core/net/util';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -94,7 +95,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => {});
+    this.wsServer.on('close', (connection) => { });
   }
 
   private sendRaw(data: string, socket: Socket) {
@@ -137,10 +138,13 @@ export class Server extends Node {
     PM.add(player);
 
     const event = {
-      type: 'SyncEvent',
-      data: <SyncEvent>{
-        worldData: WM.serialize(),
-        playerData: PM.serialize(),
+      type: 'InitialSyncEvent',
+      data: <InitialSyncEvent>{
+        socket,
+        sync: {
+          worldData: WM.serialize(),
+          playerData: PM.serialize(),
+        },
       },
     };
 

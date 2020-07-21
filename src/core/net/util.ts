@@ -89,3 +89,8 @@ export interface SyncEvent {
   worldData: Data;
   playerData: Data;
 }
+
+export interface InitialSyncEvent {
+  socket: Socket,
+  sync: SyncEvent,
+}

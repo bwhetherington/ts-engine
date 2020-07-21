@@ -48,19 +48,6 @@ async function main(): Promise<void> {
       canvas.setSize(window.innerWidth, window.innerHeight);
     });
 
-    const mouseBox = new Rectangle(50, 50);
-
-    game.addEventListener('mousemove', (event) => {
-      const { clientX, clientY } = event;
-      const { x, y } = CM.translateMouse(clientX, clientY);
-
-      // const x = clientX - gameX + WM.boundingBox.x - mouseBox.width / 2;
-      // const y = clientY - gameY + WM.boundingBox.y - mouseBox.height / 2;
-
-      mouseBox.centerX = x;
-      mouseBox.centerY = y;
-    });
-
     let counter = 0;
 
     EM.addListener('StepEvent', (step: Event<StepEvent>) => {
@@ -78,21 +65,6 @@ async function main(): Promise<void> {
         EM.emit(event);
       }
 
-      for (const entity of WM.getEntities()) {
-        entity.highlight = false;
-      }
-
-      const candidates = WM.quadTree.retrieve(mouseBox);
-
-      const element = document.getElementById('highlighted-label');
-      if (element) {
-        element.innerText = candidates.size.toString();
-      }
-
-      for (const candidate of candidates) {
-        candidate.highlight = true;
-      }
-
       CM.update();
       WM.render(canvas);
 
@@ -100,20 +72,6 @@ async function main(): Promise<void> {
         lineWidth: 1,
         doStroke: true,
         doFill: false,
-      });
-
-      canvas.rect(
-        mouseBox.x,
-        mouseBox.y,
-        mouseBox.width,
-        mouseBox.height,
-        BLACK
-      );
-
-      canvas.setOptions({
-        lineWidth: 5,
-        doStroke: true,
-        doFill: true,
       });
     });
 

@@ -41,8 +41,8 @@ export class Timer extends AbstractTimer {
       if (remaining > 0) {
         await sleep(remaining);
       } else {
-        const remainingMS = Math.round(remaining * -1000);
-        LM.warn(`Can't keep up! Frame took ${remainingMS}ms`);
+        const durationMS = Math.round(duration * 1000);
+        // LM.warn(`Can't keep up! Frame took ${durationMS}ms`);
       }
     }
   }

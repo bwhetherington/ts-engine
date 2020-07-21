@@ -56,20 +56,6 @@ export class WorldManager implements Bounded, Serializable {
     EM.addListener<StepEvent>('StepEvent', (event) => {
       this.step(event.data.dt);
     });
-
-    EM.addListener<CollisionEvent>('CollisionEvent', (event) => {
-      const { collider, collided } = event.data;
-      if (
-        collider.collisionLayer === 'unit' &&
-        collided.collisionLayer === 'geometry'
-      ) {
-        shuntOutOf(collider, collided.boundingBox);
-      } else if (
-        collider.collisionLayer === 'unit' &&
-        collided.collisionLayer === 'unit'
-      ) {
-      }
-    });
   }
 
   public render(ctx: GraphicsContext): void {
@@ -178,34 +164,11 @@ export class WorldManager implements Bounded, Serializable {
       this.collisionLayers[layerIndex]?.push(entity);
     }
 
-    // Check for collisions
-    for (const entity of this.getEntities()) {
-      // Query for entities that may collide with this entity
-      let collided = false;
-      // for (const candidate of this.getEntities()) {
-      for (const candidate of this.quadTree.retrieve(entity.boundingBox)) {
-        if (
-          entity.id !== candidate.id &&
-          (entity.boundingBox.intersects(candidate.boundingBox) ||
-            candidate.boundingBox.intersects(entity.boundingBox))
-        ) {
-          // Collision
-          collided = true;
-          const data: CollisionEvent = {
-            collider: entity,
-            collided: candidate,
-          };
-          const event: GameEvent = {
-            type: 'CollisionEvent',
-            data,
-          };
-          EM.emit(event);
-        }
-      }
-    }
-
     // Delete marked entities
     for (const entity of this.toDelete) {
+      LM.info('delete ' + entity);
+      const entityObj = this.getEntity(entity);
+      entityObj?.cleanup();
       this.remove(entity);
     }
   }
@@ -244,7 +207,7 @@ export class WorldManager implements Bounded, Serializable {
         continue;
       }
       const { type } = entry;
-      let entity = <Entity | undefined>this.entities[id];
+      let entity = this.getEntity(id);
       if (!entity && typeof type === 'string') {
         entity = this.createEntity(type);
         if (entity) {
@@ -258,7 +221,9 @@ export class WorldManager implements Bounded, Serializable {
         LM.error(`failed to create entity from data: ${JSON.stringify(entry)}`);
       }
     }
+
     if (deleted instanceof Array) {
+      console.log(deleted);
       iterator(deleted)
         .map((id) => this.getEntity(id))
         .forEach((entity) => entity?.markForDelete());

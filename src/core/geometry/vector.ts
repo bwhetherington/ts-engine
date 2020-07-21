@@ -12,6 +12,13 @@ export class Vector implements Serializable {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
+  public set magnitude(amount: number) {
+    const { magnitude } = this;
+    if (magnitude > 0) {
+      this.scale(amount / magnitude);
+    }
+  }
+
   public get angle(): number {
     return Math.atan2(this.y, this.x);
   }
@@ -49,5 +56,14 @@ export class Vector implements Serializable {
     if (typeof y === 'number') {
       this.y = y;
     }
+  }
+
+  public scale(amount: number): void {
+    this.x *= amount;
+    this.y *= amount;
+  }
+
+  public normalize(): void {
+    this.magnitude = 1;
   }
 }

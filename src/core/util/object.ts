@@ -17,7 +17,7 @@ export function diff(
     }
     if (inequal || include.includes(key)) {
       if (typeof a === 'object') {
-        const obj = {};
+        const obj = a instanceof Array ? <any[]>[] : <Data>{};
         if (diff(a, b, obj)) {
           diffObj[key] = obj;
         }

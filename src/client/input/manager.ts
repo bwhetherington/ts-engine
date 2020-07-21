@@ -28,7 +28,7 @@ export class InputManager {
   private element?: HTMLElement;
   private keyStates: Array<boolean> = initializeKeyStates();
 
-  public constructor() {}
+  public constructor() { }
 
   public initialize(element: HTMLElement): void {
     this.element = element;
@@ -69,6 +69,7 @@ export class InputManager {
           },
         };
         EM.emit(mouseEvent);
+        NM.send(mouseEvent);
       } else {
         LM.warn('unrecognized button: ' + event.button);
       }
@@ -113,14 +114,14 @@ export class InputManager {
     });
     LM.debug('InputManager initialized');
 
-    EM.addListener<KeyEvent>('KeyEvent', (event) => {
-      const { action, key } = event.data;
-      LM.info(`action: ${action}, key: ${key}`);
-    });
+    // EM.addListener<KeyEvent>('KeyEvent', (event) => {
+    //   const { action, key } = event.data;
+    //   LM.info(`action: ${action}, key: ${key}`);
+    // });
 
-    EM.addListener<MouseEvent>('MouseEvent', (event) => {
-      const { action, button, x, y } = event.data;
-      LM.info(`action: ${action}, x: ${x}, y: ${y}, button: ${button}`);
-    });
+    // EM.addListener<MouseEvent>('MouseEvent', (event) => {
+    //   const { action, button, x, y } = event.data;
+    //   LM.info(`action: ${action}, x: ${x}, y: ${y}, button: ${button}`);
+    // });
   }
 }

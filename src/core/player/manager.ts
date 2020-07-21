@@ -11,6 +11,7 @@ export class PlayerManager implements Serializable {
   private players: Record<string, Player> = {};
   private socketMap: Record<number, Player> = {};
   private previousState: Data = {};
+  private activePlayer: number = -1;
 
   public initialize(): void {
     LM.debug('PlayerManager initialized');
@@ -18,6 +19,14 @@ export class PlayerManager implements Serializable {
     EM.addListener<SyncEvent>('SyncEvent', (event) => {
       this.deserialize(event.data.playerData);
     });
+  }
+
+  public setActivePlayer(socket: number): void {
+    this.activePlayer = socket;
+  }
+
+  public isActivePlayer(player: Player): boolean {
+    return this.activePlayer > -1 && player.socket === this.activePlayer;
   }
 
   public add(player: Player): void {
@@ -71,6 +80,7 @@ export class PlayerManager implements Serializable {
       if (!player) {
         player = new Player();
       }
+      player.deserialize(data[index]);
     }
   }
 

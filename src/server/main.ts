@@ -77,7 +77,7 @@ async function main(): Promise<void> {
     };
 
     NM.send(event);
-  }, 1 / 20);
+  }, 1 / 60);
   TM.initialize(timer);
 }
 

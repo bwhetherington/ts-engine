@@ -8,6 +8,9 @@ import {
 } from 'unique-names-generator';
 import { SetNameEvent } from 'core/chat';
 import { EM } from 'core/event';
+import { InitialSyncEvent } from 'core/net/util';
+import { PM } from 'core/player';
+import { WM } from 'core/entity';
 
 function generateName(): string {
   return uniqueNamesGenerator({
@@ -39,6 +42,14 @@ export class Client extends Node {
     }
     this.socket = new WebSocket(connect);
     this.initializeSocket(this.socket);
+
+    EM.addListener<InitialSyncEvent>('InitialSyncEvent', (event) => {
+      const { socket, sync } = event.data;
+      PM.setActivePlayer(socket);
+      const { worldData, playerData } = sync;
+      WM.deserialize(worldData);
+      PM.deserialize(playerData);
+    })
   }
 
   private initializeSocket(socket: WebSocket) {
