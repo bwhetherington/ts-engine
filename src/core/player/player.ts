@@ -43,14 +43,12 @@ export class Player implements Serializable {
         this.setHero(entity);
       }
     }
-    console.log(this);
   }
 
   public setHero(hero: Hero): void {
     this.hero = hero;
     if (hero.getPlayer() !== this) {
       hero.setPlayer(this);
-      console.log('set from Player');
     }
   }
 

@@ -15,6 +15,7 @@ export class Entity implements Bounded, Serializable {
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
+  public frictionBuffer: Vector = new Vector(0, 0);
   public id: Uuid;
   public color: Color = WHITE;
   public collisionLayer: CollisionLayer = 'unit';
@@ -22,6 +23,8 @@ export class Entity implements Bounded, Serializable {
   public type: string;
   public mass: number = 1;
   public markedForDelete: boolean = false;
+  public friction: number = 0;
+  public bounce: number = 1;
   private handlers: Record<string, Set<string>> = {};
 
   constructor() {
@@ -96,6 +99,20 @@ export class Entity implements Bounded, Serializable {
         EM.emit(event);
       }
     }
+
+    // Apply friction
+    const normal = this.friction * this.mass;
+    if (normal > 0) {
+      const oldAngle = this.velocity.angle;
+      this.frictionBuffer.set(this.velocity);
+      this.frictionBuffer.normalize();
+      const scale = -dt * normal;
+      this.velocity.add(this.frictionBuffer, scale);
+      const newAngle = this.velocity.angle;
+      if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
+        this.velocity.setXY(0, 0);
+      }
+    }
   }
 
   public step(dt: number): void {
@@ -107,11 +124,14 @@ export class Entity implements Bounded, Serializable {
       id: this.id,
       type: this.type,
       mass: this.mass,
+      friction: this.friction,
+      bounce: this.bounce,
       color: this.color,
       collisionLayer: this.collisionLayer,
       boundingBox: this.boundingBox.serialize(),
       position: this.position.serialize(),
       velocity: this.velocity.serialize(),
+      frictionBuffer: this.frictionBuffer.serialize(),
     };
   }
 
@@ -125,6 +145,9 @@ export class Entity implements Bounded, Serializable {
       boundingBox,
       position,
       velocity,
+      frictionBuffer,
+      friction,
+      bounce,
     } = data;
     if (typeof id === 'string') {
       this.id = id;
@@ -134,6 +157,12 @@ export class Entity implements Bounded, Serializable {
     }
     if (typeof mass === 'number') {
       this.mass = mass;
+    }
+    if (typeof friction === 'number') {
+      this.friction = friction;
+    }
+    if (typeof bounce === 'number') {
+      this.bounce = bounce;
     }
     if (isColor(color)) {
       this.color = color;
@@ -149,6 +178,9 @@ export class Entity implements Bounded, Serializable {
     }
     if (velocity !== undefined) {
       this.velocity.deserialize(velocity);
+    }
+    if (frictionBuffer !== undefined) {
+      this.frictionBuffer.deserialize(frictionBuffer);
     }
   }
 

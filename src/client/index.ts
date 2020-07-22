@@ -40,6 +40,11 @@ async function main(): Promise<void> {
     const canvas = new HDCanvas();
     canvas.attachTo(game);
     canvas.setSize(window.innerWidth, window.innerHeight);
+    canvas.pushOptions({
+      lineWidth: 5,
+      doFill: true,
+      doStroke: true,
+    });
     CM.setTargetXY(0, 0);
 
     IM.initialize(game);
@@ -67,12 +72,6 @@ async function main(): Promise<void> {
 
       CM.update();
       WM.render(canvas);
-
-      canvas.setOptions({
-        lineWidth: 1,
-        doStroke: true,
-        doFill: false,
-      });
     });
 
     const frameTimes = new SizedQueue<number>(60);

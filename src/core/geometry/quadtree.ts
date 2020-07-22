@@ -175,15 +175,12 @@ export class QuadTree<T extends Bounded> {
   }
 
   public render(ctx: GraphicsContext): void {
-    ctx.setOptions({
+    ctx.pushOptions({
       lineWidth: 1,
       doFill: false,
     });
     this.root.render(ctx);
-    ctx.setOptions({
-      lineWidth: 5,
-      doFill: true,
-    });
+    ctx.popOptions();
   }
 
   public insert(element: T): void {

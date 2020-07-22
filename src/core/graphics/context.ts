@@ -14,9 +14,11 @@ export interface GraphicsOptions {
 
 export interface GraphicsContext {
   setOptions(options: Partial<GraphicsOptions>): void;
+  pushOptions(options: Partial<GraphicsOptions>): void;
+  popOptions(): Partial<GraphicsOptions> | undefined;
 
   begin(): void;
-  clear(): void;
+  clear(color?: Color): void;
   text(x: number, y: number, text: string, style: TextStyle): void;
   ellipse(x: number, y: number, w: number, h: number, color: Color): void;
   rect(x: number, y: number, w: number, h: number, color: Color): void;

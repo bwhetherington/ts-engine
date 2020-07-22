@@ -108,11 +108,11 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
   }
 
   if (Math.abs(dx) > 0) {
-    entity.velocity.x = -1 * entity.velocity.x;
+    entity.velocity.x *= -entity.bounce;
   }
 
   if (Math.abs(dy) > 0) {
-    entity.velocity.y = -1 * entity.velocity.y;
+    entity.velocity.y *= -entity.bounce;
   }
 
   entity.addPositionXY(dx, dy);

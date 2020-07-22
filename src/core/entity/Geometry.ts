@@ -2,6 +2,8 @@ import { Entity } from 'core/entity';
 import { Rectangle } from 'core/geometry';
 import { GraphicsContext } from 'core/graphics';
 
+export const WALL_COLOR = { red: 0.85, green: 0.85, blue: 0.85 };
+
 export class Geometry extends Entity {
   public static typeName: string = 'Geometry';
 
@@ -9,6 +11,7 @@ export class Geometry extends Entity {
     const entity = new Geometry();
     entity.boundingBox = rect;
     entity.setPositionXY(rect.x, rect.y);
+
     return entity;
   }
 
@@ -16,6 +19,7 @@ export class Geometry extends Entity {
     super();
     this.type = Geometry.typeName;
     this.collisionLayer = 'geometry';
+    this.color = WALL_COLOR;
   }
 
   // public render(ctx: GraphicsContext): void {

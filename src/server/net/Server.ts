@@ -130,6 +130,7 @@ export class Server extends Node {
     player.socket = socket;
 
     const hero = new Hero();
+    hero.setPositionXY(-500, -500);
     hero.setPlayer(player);
 
     player.hero = hero;

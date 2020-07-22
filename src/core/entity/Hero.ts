@@ -15,6 +15,8 @@ import { CM } from 'core/graphics';
 
 const LM = InternalLogger.forFile(__filename);
 
+const ACCELERATION = 2000;
+
 export class Hero extends Unit {
   public static typeName: string = 'Hero';
 
@@ -33,6 +35,8 @@ export class Hero extends Unit {
     this.type = Hero.typeName;
     this.boundingBox.width = 30;
     this.boundingBox.height = 30;
+    this.friction = 1000;
+    this.bounce = 0.1;
 
     this.addListener<KeyEvent>('KeyEvent', (event) => {
       const { data, socket } = event;
@@ -87,8 +91,12 @@ export class Hero extends Unit {
       this.acceleration.addXY(1, 0);
     }
 
-    this.acceleration.magnitude = 200;
-    this.velocity.set(this.acceleration);
+    this.acceleration.magnitude = ACCELERATION * dt;
+    this.applyForce(this.acceleration);
+
+    if (this.velocity.magnitude > 300) {
+      this.velocity.magnitude = 300;
+    }
 
     super.step(dt);
 
@@ -107,8 +115,7 @@ export class Hero extends Unit {
 
   public deserialize(data: Data): void {
     const { x: oldX, y: oldY } = this.position;
-
-    console.log(data);
+    const { x: oldDX, y: oldDY } = this.velocity;
 
     super.deserialize(data);
     const { input, playerID } = data;
@@ -118,14 +125,12 @@ export class Hero extends Unit {
       const player = this.getPlayer();
       if (player && player.hero !== this) {
         player.setHero(this);
-        console.log('set from Hero');
       }
     }
 
     if (input) {
       if (MovementDirection.Up in input) {
         this.setMovement(MovementDirection.Up, input[MovementDirection.Up]);
-        LM.info('Move up');
       }
 
       if (MovementDirection.Down in input) {
@@ -147,11 +152,17 @@ export class Hero extends Unit {
     if (this.getPlayer()?.isActivePlayer()) {
       // Use our own position
       this.setPositionXY(oldX, oldY);
+      this.velocity.setXY(oldDX, oldDY);
       const syncEvent = {
         type: 'SyncEvent',
         data: <SyncEvent>{
           worldData: {
-            [this.id]: { position: this.position.serialize() }
+            entities: {
+              [this.id]: {
+                position: this.position.serialize(),
+                velocity: this.velocity.serialize(),
+              },
+            },
           },
           playerData: {}
         }

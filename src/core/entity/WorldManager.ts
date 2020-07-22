@@ -15,6 +15,8 @@ import { Serializable, Data } from 'core/serialize';
 import { Iterator, iterateObject, iterator } from 'core/iterator';
 import { diff } from 'core/util';
 import { SyncEvent } from 'core/net';
+import { WALL_COLOR } from './Geometry';
+import { WHITE } from 'core/graphics/color';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -59,15 +61,34 @@ export class WorldManager implements Bounded, Serializable {
   }
 
   public render(ctx: GraphicsContext): void {
-    ctx.clear();
+    ctx.clear(WALL_COLOR);
     ctx.begin();
     ctx.resetTransform();
 
     const camBounds = CM.boundingBox;
     ctx.translate(-camBounds.x, -camBounds.y);
 
-    // ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WHITE);
+    ctx.pushOptions({
+      lineWidth: 5,
+      doFill: true,
+      doStroke: false,
+    });
+    ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WHITE);
+    ctx.popOptions();
+
     this.quadTree.render(ctx);
+
+    ctx.pushOptions({
+      lineWidth: 5,
+      doFill: false,
+      doStroke: true,
+    });
+    ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WALL_COLOR);
+    ctx.popOptions();
+
+
+    // ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WHITE);
+
 
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
@@ -146,10 +167,10 @@ export class WorldManager implements Bounded, Serializable {
       }
 
       if (dx !== 0) {
-        entity.velocity.x *= -1;
+        entity.velocity.x *= -entity.bounce;
       }
       if (dy !== 0) {
-        entity.velocity.y *= -1;
+        entity.velocity.y *= -entity.bounce;
       }
 
       entity.addPositionXY(dx, dy);
@@ -223,7 +244,6 @@ export class WorldManager implements Bounded, Serializable {
     }
 
     if (deleted instanceof Array) {
-      console.log(deleted);
       iterator(deleted)
         .map((id) => this.getEntity(id))
         .forEach((entity) => entity?.markForDelete());

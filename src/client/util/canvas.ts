@@ -36,6 +36,7 @@ export class HDCanvas implements GraphicsContext {
     doStroke: true,
     doFill: true,
   };
+  private optionsStack: Partial<GraphicsOptions>[] = [];
 
   private curContext?: CanvasRenderingContext2D;
 
@@ -66,6 +67,17 @@ export class HDCanvas implements GraphicsContext {
     if (options.doFill !== undefined) {
       this.options.doFill = options.doFill;
     }
+  }
+
+  public pushOptions(options: Partial<GraphicsOptions>): void {
+    this.optionsStack.push(options);
+    this.setOptions(options);
+  }
+
+  public popOptions(): Partial<GraphicsOptions> | undefined {
+    const options = this.optionsStack.pop();
+    this.setOptions(this.optionsStack[this.optionsStack.length - 1]);
+    return options;
   }
 
   public setSize(w: number, h: number) {
@@ -100,10 +112,15 @@ export class HDCanvas implements GraphicsContext {
     this.clear();
   }
 
-  public clear() {
+  public clear(color?: Color) {
     const ctx = this.curContext;
     if (ctx) {
       ctx.clearRect(0, 0, this.width, this.height);
+      if (color) {
+        if (this.element) {
+          this.element.style.backgroundColor = toCss(color);
+        }
+      }
     }
   }
 
@@ -114,8 +131,6 @@ export class HDCanvas implements GraphicsContext {
       const colorCss = color ? toCss(color) : 'black';
 
       ctx.beginPath();
-      // ctx.lineWidth = 1;
-      // ctx.fillStyle = "black";
       ctx.fillStyle = colorCss;
       ctx.font = createFontString(font, size);
       ctx.fillText(text, x, y);

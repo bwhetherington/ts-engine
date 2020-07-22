@@ -12,7 +12,7 @@ import { Geometry } from 'core/entity/Geometry';
 
 import { Rectangle } from 'core/geometry';
 
-export const WM = new WorldManager(new Rectangle(800, 600, -400, -300));
+export const WM = new WorldManager(new Rectangle(1000, 1000, -500, -500));
 export {
   Entity,
   Uuid,
