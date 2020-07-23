@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Test</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="/static/style.css" />
-    <link
-      href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
-  </head>
 
-  <body>
-    <div id="game" tabindex="0"></div>
-    <div class="ui-pane">
-      <debug-component class="top left"></debug-component>
-      <div class="bottom left col">
-        <chat-component></chat-component>
-        <div class="dialog"><bar-component id="hp-bar"></bar-component></div>
+<head>
+  <title>Test</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap" rel="stylesheet" />
+  <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+</head>
+
+<body>
+  <div id="game" tabindex="0"></div>
+  <div class="ui-pane">
+    <debug-component class="top left"></debug-component>
+    <div class="bottom left col">
+      <chat-component id="chat-box"></chat-component>
+      <div class="dialog">
+        <bar-component id="hp-bar"></bar-component>
       </div>
     </div>
-    <alert-component id="alert"></alert-component>
-    <script src="/build/client/bundle.js"></script>
-  </body>
+  </div>
+  <alert-component id="alert"></alert-component>
+  <script src="/build/client/bundle.js"></script>
+</body>
+
 </html>

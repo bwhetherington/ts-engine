@@ -16,6 +16,7 @@ import { CM } from 'core/graphics';
 const LM = InternalLogger.forFile(__filename);
 
 const ACCELERATION = 2000;
+const MAX_SPEED = 250;
 
 export class Hero extends Unit {
   public static typeName: string = 'Hero';
@@ -94,8 +95,12 @@ export class Hero extends Unit {
     this.acceleration.magnitude = ACCELERATION * dt;
     this.applyForce(this.acceleration);
 
-    if (this.velocity.magnitude > 300) {
-      this.velocity.magnitude = 300;
+    if (this.velocity.magnitude > MAX_SPEED) {
+      const excess = this.velocity.magnitude - MAX_SPEED;
+      this.frictionBuffer.set(this.velocity);
+      this.frictionBuffer.normalize();
+      this.frictionBuffer.scale(-excess);
+      this.velocity.add(this.frictionBuffer);
     }
 
     super.step(dt);

@@ -1,8 +1,9 @@
-import { BarComponent, BarUpdateEvent } from 'client/components/bar';
+import { BarComponent } from 'client/components/bar';
 import { ChatComponent } from 'client/components/chat';
 import { Component, registerComponent } from 'client/components/util';
 import { DebugComponent } from 'client/components/debug';
 import { AlertComponent } from './alert';
+import { UIManager } from './ui';
 
 export function registerComponents() {
   registerComponent(BarComponent);
@@ -11,10 +12,11 @@ export function registerComponents() {
   registerComponent(AlertComponent);
 }
 
+export const UIM = new UIManager();
+
 export {
   Component,
   BarComponent,
-  BarUpdateEvent,
   ChatComponent,
   DebugComponent,
   AlertComponent,

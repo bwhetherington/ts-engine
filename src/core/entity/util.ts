@@ -5,12 +5,13 @@ import { BLACK } from 'core/graphics/color';
 
 const LM = InternalLogger.forFile(__filename);
 
-export type CollisionLayer = 'geometry' | 'unit';
+export enum CollisionLayer {
+  Geometry,
+  Unit,
+}
 
 export function isCollisionLayer(input: any): input is CollisionLayer {
-  return (
-    typeof input === 'string' && (input === 'geometry' || input === 'unit')
-  );
+  return CollisionLayer.hasOwnProperty(input);
 }
 
 export interface CollisionEvent {

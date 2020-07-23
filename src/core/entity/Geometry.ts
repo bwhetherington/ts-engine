@@ -1,6 +1,7 @@
 import { Entity } from 'core/entity';
 import { Rectangle } from 'core/geometry';
 import { GraphicsContext } from 'core/graphics';
+import { CollisionLayer } from './util';
 
 export const WALL_COLOR = { red: 0.85, green: 0.85, blue: 0.85 };
 
@@ -18,7 +19,7 @@ export class Geometry extends Entity {
   public constructor() {
     super();
     this.type = Geometry.typeName;
-    this.collisionLayer = 'geometry';
+    this.collisionLayer = CollisionLayer.Geometry;
     this.color = WALL_COLOR;
   }
 
@@ -27,3 +28,4 @@ export class Geometry extends Entity {
   //   ctx.rect(x, y, width, height, this.color);
   // }
 }
+

@@ -9,9 +9,7 @@ import { Rectangle, Vector } from 'core/geometry';
 
 import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
 import {
-  registerComponents,
-  BarComponent,
-  BarUpdateEvent,
+  UIM,
 } from 'client/components';
 import { CM } from 'core/graphics';
 import { AM } from 'client/alert';
@@ -24,7 +22,7 @@ async function main(): Promise<void> {
   InternalLogger.initialize(new ClientLogger());
   // LM.setLogLevel("warn");
 
-  registerComponents();
+  UIM.initialize();
 
   const game = document.getElementById('game');
 
@@ -59,15 +57,7 @@ async function main(): Promise<void> {
       counter += step.data.dt;
       while (counter >= 2) {
         counter -= 2;
-
-        const event = {
-          type: 'BarUpdateEvent',
-          data: <BarUpdateEvent>{
-            id: 'hp-bar',
-            current: Math.random() * 100,
-          },
-        };
-        EM.emit(event);
+        UIM.healthBar?.setValue(Math.random() * 100);
       }
 
       CM.update();

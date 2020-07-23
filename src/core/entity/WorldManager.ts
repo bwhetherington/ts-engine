@@ -1,13 +1,10 @@
 import { Rectangle, QuadTree, Bounded } from 'core/geometry';
 import { GraphicsContext, CM } from 'core/graphics';
 import {
-  CollisionEvent,
-  CollisionLayer,
   Entity,
   Unit,
   Hero,
   Geometry,
-  shuntOutOf,
 } from 'core/entity';
 import { LM as InternalLogger } from 'core/log';
 import { EM, GameEvent, StepEvent } from 'core/event';
@@ -19,11 +16,6 @@ import { WALL_COLOR } from './Geometry';
 import { WHITE } from 'core/graphics/color';
 
 const LM = InternalLogger.forFile(__filename);
-
-const LAYER_INDICES: { [layer in CollisionLayer]: number } = {
-  geometry: 0,
-  unit: 1,
-};
 
 export class WorldManager implements Bounded, Serializable {
   public quadTree: QuadTree<Entity>;
@@ -181,7 +173,7 @@ export class WorldManager implements Bounded, Serializable {
     this.collisionLayers = [[], []];
     for (const entity of this.getEntities()) {
       this.quadTree.insert(entity);
-      const layerIndex = LAYER_INDICES[entity.collisionLayer];
+      const layerIndex = entity.collisionLayer;
       this.collisionLayers[layerIndex]?.push(entity);
     }
 

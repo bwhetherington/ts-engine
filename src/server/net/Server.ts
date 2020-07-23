@@ -133,6 +133,12 @@ export class Server extends Node {
     hero.setPositionXY(-500, -500);
     hero.setPlayer(player);
 
+    hero.color = {
+      red: Math.random() * 0.6 + 0.4,
+      green: Math.random() * 0.6 + 0.4,
+      blue: Math.random() * 0.6 + 0.4,
+    };
+
     player.hero = hero;
 
     WM.add(hero);

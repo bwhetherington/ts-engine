@@ -18,7 +18,7 @@ export class Entity implements Bounded, Serializable {
   public frictionBuffer: Vector = new Vector(0, 0);
   public id: Uuid;
   public color: Color = WHITE;
-  public collisionLayer: CollisionLayer = 'unit';
+  public collisionLayer: CollisionLayer = CollisionLayer.Unit;
   public highlight: boolean = false;
   public type: string;
   public mass: number = 1;
@@ -81,8 +81,8 @@ export class Entity implements Bounded, Serializable {
       ) {
         // Collision
         if (
-          this.collisionLayer === 'unit' &&
-          candidate.collisionLayer === 'geometry'
+          this.collisionLayer === CollisionLayer.Unit &&
+          candidate.collisionLayer === CollisionLayer.Geometry
         ) {
           shuntOutOf(this, candidate.boundingBox);
         }
@@ -131,7 +131,6 @@ export class Entity implements Bounded, Serializable {
       boundingBox: this.boundingBox.serialize(),
       position: this.position.serialize(),
       velocity: this.velocity.serialize(),
-      frictionBuffer: this.frictionBuffer.serialize(),
     };
   }
 
@@ -166,7 +165,7 @@ export class Entity implements Bounded, Serializable {
     }
     if (isColor(color)) {
       this.color = color;
-    }
+    };
     if (isCollisionLayer(collisionLayer)) {
       this.collisionLayer = collisionLayer;
     }
@@ -178,9 +177,6 @@ export class Entity implements Bounded, Serializable {
     }
     if (velocity !== undefined) {
       this.velocity.deserialize(velocity);
-    }
-    if (frictionBuffer !== undefined) {
-      this.frictionBuffer.deserialize(frictionBuffer);
     }
   }
 
