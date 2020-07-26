@@ -14,4 +14,12 @@ export class NetworkManager {
   public send(msg: Message, socket: Socket = -1) {
     this.node.send(msg, socket);
   }
+
+  public isClient(): boolean {
+    return this.node.isClient();
+  }
+
+  public isServer(): boolean {
+    return this.node.isServer();
+  }
 }

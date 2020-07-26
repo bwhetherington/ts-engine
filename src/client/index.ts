@@ -51,15 +51,7 @@ async function main(): Promise<void> {
       canvas.setSize(window.innerWidth, window.innerHeight);
     });
 
-    let counter = 0;
-
     EM.addListener('StepEvent', (step: Event<StepEvent>) => {
-      counter += step.data.dt;
-      while (counter >= 2) {
-        counter -= 2;
-        UIM.healthBar?.setValue(Math.random() * 100);
-      }
-
       CM.update();
       WM.render(canvas);
     });

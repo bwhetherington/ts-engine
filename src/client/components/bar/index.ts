@@ -1,6 +1,7 @@
 import { Component } from 'client/components/util';
 import template from 'client/components/bar/template.html';
 import { EM, Event } from 'core/event';
+import { BarUpdateEvent } from 'core/util';
 
 export class BarComponent extends Component {
   public static componentName: string = 'bar-component';
@@ -15,6 +16,8 @@ export class BarComponent extends Component {
 
     this.bar = this.queryChild('#bar-value');
     this.label = this.queryChild('#bar-label');
+
+    this.registerListeners();
   }
 
   public get value(): number {
@@ -56,5 +59,21 @@ export class BarComponent extends Component {
 
   public setMaxValue(value: number): void {
     this.maxValue = value;
+  }
+
+  private registerListeners(): void {
+    EM.addListener('BarUpdateEvent', (event: Event<BarUpdateEvent>) => {
+      const { id, value, maxValue } = event.data;
+      if (this.id === id) {
+        const old = this.value;
+        if (value !== undefined) {
+          this.valueInternal = value;
+        }
+        if (maxValue !== undefined) {
+          this.maxValueInternal = maxValue;
+        }
+        this.updateElement(old, this.value);
+      }
+    });
   }
 }

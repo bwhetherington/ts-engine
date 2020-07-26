@@ -5,7 +5,7 @@ import { v1 as genUuid } from 'uuid';
 import { CollisionLayer, WM, CollisionEvent } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
-import { GameHandler, EventData, Handler, EM } from 'core/event';
+import { GameHandler, EventData, Handler, EM, Event } from 'core/event';
 
 export type Uuid = string;
 
@@ -15,7 +15,7 @@ export class Entity implements Bounded, Serializable {
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
-  public frictionBuffer: Vector = new Vector(0, 0);
+  public vectorBuffer: Vector = new Vector(0, 0);
   public id: Uuid;
   public color: Color = WHITE;
   public collisionLayer: CollisionLayer = CollisionLayer.Unit;
@@ -25,6 +25,9 @@ export class Entity implements Bounded, Serializable {
   public markedForDelete: boolean = false;
   public friction: number = 0;
   public bounce: number = 1;
+  public isVisible: boolean = true;
+  public isCollidable: boolean = true;
+  public doSync: boolean = true;
   private handlers: Record<string, Set<string>> = {};
 
   constructor() {
@@ -54,6 +57,12 @@ export class Entity implements Bounded, Serializable {
     this.updateBoundingBox();
   }
 
+  public renderInternal(ctx: GraphicsContext): void {
+    if (this.isVisible) {
+      this.render(ctx);
+    }
+  }
+
   public render(ctx: GraphicsContext): void {
     const { x, y, width, height } = this.boundingBox;
     if (this.highlight) {
@@ -64,53 +73,51 @@ export class Entity implements Bounded, Serializable {
   }
 
   private updateBoundingBox(): void {
-    this.boundingBox.x = this.position.x;
-    this.boundingBox.y = this.position.y;
+    this.boundingBox.centerX = this.position.x;
+    this.boundingBox.centerY = this.position.y;
   }
 
   private updatePosition(dt: number): void {
     this.addPosition(this.velocity, dt);
-    // Query for entities that may collide with this entity
-    let collided = false;
-    // for (const candidate of this.getEntities()) {
-    for (const candidate of WM.query(this.boundingBox)) {
-      if (
-        this.id !== candidate.id &&
-        (this.boundingBox.intersects(candidate.boundingBox) ||
-          candidate.boundingBox.intersects(this.boundingBox))
-      ) {
-        // Collision
-        if (
-          this.collisionLayer === CollisionLayer.Unit &&
-          candidate.collisionLayer === CollisionLayer.Geometry
-        ) {
-          shuntOutOf(this, candidate.boundingBox);
+    if (this.isCollidable) {
+      // Query for entities that may collide with this entity
+      let collided = false;
+      // for (const candidate of this.getEntities()) {
+      WM.query(this.boundingBox)
+        .filter(candidate => candidate.isCollidable && this.id !== candidate.id && this.boundingBox.intersects(candidate.boundingBox))
+        .forEach(candidate => {
+          // Collision
+          if (
+            this.collisionLayer === CollisionLayer.Unit &&
+            candidate.collisionLayer === CollisionLayer.Geometry
+          ) {
+            shuntOutOf(this, candidate.boundingBox);
+          }
+
+          collided = true;
+          const data = <CollisionEvent>{
+            collider: this,
+            collided: candidate,
+          };
+          const event = {
+            type: 'CollisionEvent',
+            data,
+          };
+          EM.emit(event);
+        });
+
+      // Apply friction
+      const normal = this.friction * this.mass;
+      if (normal > 0) {
+        const oldAngle = this.velocity.angle;
+        this.vectorBuffer.set(this.velocity);
+        this.vectorBuffer.normalize();
+        const scale = -dt * normal;
+        this.velocity.add(this.vectorBuffer, scale);
+        const newAngle = this.velocity.angle;
+        if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
+          this.velocity.setXY(0, 0);
         }
-
-        collided = true;
-        const data = <CollisionEvent>{
-          collider: this,
-          collided: candidate,
-        };
-        const event = {
-          type: 'CollisionEvent',
-          data,
-        };
-        EM.emit(event);
-      }
-    }
-
-    // Apply friction
-    const normal = this.friction * this.mass;
-    if (normal > 0) {
-      const oldAngle = this.velocity.angle;
-      this.frictionBuffer.set(this.velocity);
-      this.frictionBuffer.normalize();
-      const scale = -dt * normal;
-      this.velocity.add(this.frictionBuffer, scale);
-      const newAngle = this.velocity.angle;
-      if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
-        this.velocity.setXY(0, 0);
       }
     }
   }
@@ -128,6 +135,9 @@ export class Entity implements Bounded, Serializable {
       bounce: this.bounce,
       color: this.color,
       collisionLayer: this.collisionLayer,
+      isVisible: this.isVisible,
+      doSync: this.doSync,
+      isCollidable: this.isCollidable,
       boundingBox: this.boundingBox.serialize(),
       position: this.position.serialize(),
       velocity: this.velocity.serialize(),
@@ -144,9 +154,11 @@ export class Entity implements Bounded, Serializable {
       boundingBox,
       position,
       velocity,
-      frictionBuffer,
       friction,
       bounce,
+      isVisible,
+      isCollidable,
+      doSync,
     } = data;
     if (typeof id === 'string') {
       this.id = id;
@@ -162,6 +174,15 @@ export class Entity implements Bounded, Serializable {
     }
     if (typeof bounce === 'number') {
       this.bounce = bounce;
+    }
+    if (typeof isVisible === 'boolean') {
+      this.isVisible = isVisible;
+    }
+    if (typeof isCollidable === 'boolean') {
+      this.isCollidable = isCollidable;
+    }
+    if (typeof doSync === 'boolean') {
+      this.doSync = true;
     }
     if (isColor(color)) {
       this.color = color;
@@ -201,6 +222,14 @@ export class Entity implements Bounded, Serializable {
     this.getHandlers(type).add(id);
   }
 
+  public handleEvent<E extends EventData>(type: string, event: Event<E>): void {
+    const handlers = this.handlers[type] ?? [];
+    for (const handlerID of handlers) {
+      const handler = EM.getHandler(type, handlerID);
+      handler?.call(null, event);
+    }
+  }
+
   public cleanup(): void {
     for (const type in this.handlers) {
       const handlerSet = this.handlers[type];
@@ -208,5 +237,9 @@ export class Entity implements Bounded, Serializable {
         EM.removeListener(type, id);
       }
     }
+  }
+
+  public toString(): string {
+    return this.type + '[' + this.id + ']';
   }
 }

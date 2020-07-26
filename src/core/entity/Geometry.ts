@@ -11,7 +11,7 @@ export class Geometry extends Entity {
   public static fromRectangle(rect: Rectangle): Geometry {
     const entity = new Geometry();
     entity.boundingBox = rect;
-    entity.setPositionXY(rect.x, rect.y);
+    entity.setPositionXY(rect.centerX, rect.centerY);
 
     return entity;
   }

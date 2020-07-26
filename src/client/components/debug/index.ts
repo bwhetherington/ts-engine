@@ -2,17 +2,19 @@ import { Component } from 'client/components/util';
 import template from 'client/components/debug/template.html';
 import { SizedQueue } from 'core/util';
 import { EM, StepEvent, Event } from 'core/event';
+import { WM } from 'core/entity';
 
 export class DebugComponent extends Component {
   public static componentName: string = 'debug-component';
 
   private fpsLabel?: HTMLElement;
-  private highlightLabel?: HTMLElement;
+  private entitiesLabel?: HTMLElement;
 
   constructor() {
     super(template);
 
     this.fpsLabel = this.queryChild('#fps-label');
+    this.entitiesLabel = this.queryChild('#entities-label');
 
     const frameTimes = new SizedQueue<number>(60);
 
@@ -29,6 +31,9 @@ export class DebugComponent extends Component {
 
       if (this.fpsLabel) {
         this.fpsLabel.innerText = label;
+      }
+      if (this.entitiesLabel) {
+        this.entitiesLabel.innerText = '' + WM.getEntityCount();
       }
     });
   }

@@ -5,6 +5,7 @@ import {
   Unit,
   Hero,
   Geometry,
+  CollisionEvent,
 } from 'core/entity';
 import { LM as InternalLogger } from 'core/log';
 import { EM, GameEvent, StepEvent } from 'core/event';
@@ -14,6 +15,8 @@ import { diff } from 'core/util';
 import { SyncEvent } from 'core/net';
 import { WALL_COLOR } from './Geometry';
 import { WHITE } from 'core/graphics/color';
+import { Projectile } from './Projectile';
+import { Explosion } from './Explosion';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -25,6 +28,7 @@ export class WorldManager implements Bounded, Serializable {
   private entityConstructors: { [type: string]: new () => Entity } = {};
   public previousState: Record<string, Data> = {};
   private toDelete: string[] = [];
+  private entityCount: number = 0;
 
   constructor(boundingBox: Rectangle) {
     this.quadTree = new QuadTree(boundingBox);
@@ -36,6 +40,8 @@ export class WorldManager implements Bounded, Serializable {
     this.registerEntity(Unit);
     this.registerEntity(Hero);
     this.registerEntity(Geometry);
+    this.registerEntity(Projectile);
+    this.registerEntity(Explosion);
   }
 
   public initialize(): void {
@@ -84,7 +90,7 @@ export class WorldManager implements Bounded, Serializable {
 
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
-      .forEach((entity) => entity.render(ctx));
+      .forEach((entity) => entity.renderInternal(ctx));
   }
 
   private *getEntitiesLayerOrderedInternal(): Generator<Entity> {
@@ -101,6 +107,8 @@ export class WorldManager implements Bounded, Serializable {
 
   public add(entity: Entity): void {
     this.entities[entity.id] = entity;
+    LM.debug('add ' + entity.toString());
+    this.entityCount += 1;
   }
 
   public remove(entity: Entity | string): void {
@@ -112,7 +120,9 @@ export class WorldManager implements Bounded, Serializable {
     }
     actual?.cleanup();
     if (actual) {
+      LM.debug('remove ' + actual.toString())
       delete this.entities[actual.id];
+      this.entityCount -= 1;
     }
   }
 
@@ -158,11 +168,24 @@ export class WorldManager implements Bounded, Serializable {
         dy += this.boundingBox.farY - entity.boundingBox.farY;
       }
 
+      let didCollide = false;
       if (dx !== 0) {
         entity.velocity.x *= -entity.bounce;
+        didCollide = true;
       }
       if (dy !== 0) {
         entity.velocity.y *= -entity.bounce;
+        didCollide = true;
+      }
+
+      if (didCollide) {
+        const event = {
+          type: 'CollisionEvent',
+          data: <CollisionEvent>{
+            collider: entity,
+          },
+        };
+        EM.emit(event);
       }
 
       entity.addPositionXY(dx, dy);
@@ -171,17 +194,17 @@ export class WorldManager implements Bounded, Serializable {
     // Reinsert each entity into the quad tree
     this.quadTree.clear();
     this.collisionLayers = [[], []];
+
     for (const entity of this.getEntities()) {
-      this.quadTree.insert(entity);
+      if (entity.isCollidable) {
+        this.quadTree.insert(entity);
+      }
       const layerIndex = entity.collisionLayer;
       this.collisionLayers[layerIndex]?.push(entity);
     }
 
     // Delete marked entities
     for (const entity of this.toDelete) {
-      LM.info('delete ' + entity);
-      const entityObj = this.getEntity(entity);
-      entityObj?.cleanup();
       this.remove(entity);
     }
   }
@@ -221,14 +244,16 @@ export class WorldManager implements Bounded, Serializable {
       }
       const { type } = entry;
       let entity = this.getEntity(id);
+      let createdEntity = false;
       if (!entity && typeof type === 'string') {
         entity = this.createEntity(type);
         if (entity) {
           entity.id = id;
+          createdEntity = true;
           this.add(entity);
         }
       }
-      if (entity) {
+      if (entity && (createdEntity || entity.doSync)) {
         entity.deserialize(entry);
       } else {
         LM.error(`failed to create entity from data: ${JSON.stringify(entry)}`);
@@ -252,5 +277,9 @@ export class WorldManager implements Bounded, Serializable {
 
   public getEntity(id: string): Entity | undefined {
     return this.entities[id];
+  }
+
+  public getEntityCount(): number {
+    return this.entityCount;
   }
 }

@@ -1,0 +1,10 @@
+{
+  "watch": [
+    "src/**/*.ts"
+  ],
+  "ignore": [
+    "src/client/*"
+  ],
+  "exec": "npm run server",
+  "ext": "ts"
+}

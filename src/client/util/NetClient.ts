@@ -97,4 +97,8 @@ export class Client extends Node {
     LM.debug('disconnected');
     super.onDisconnect(socket);
   }
+
+  public isClient(): boolean {
+    return true;
+  }
 }

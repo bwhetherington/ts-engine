@@ -8,6 +8,8 @@ const LM = InternalLogger.forFile(__filename);
 export enum CollisionLayer {
   Geometry,
   Unit,
+  Projectile,
+  Effect,
 }
 
 export function isCollisionLayer(input: any): input is CollisionLayer {
@@ -16,7 +18,7 @@ export function isCollisionLayer(input: any): input is CollisionLayer {
 
 export interface CollisionEvent {
   collider: Entity;
-  collided: Entity;
+  collided?: Entity;
 }
 
 export function shuntOutOf(entity: Entity, other: Rectangle) {

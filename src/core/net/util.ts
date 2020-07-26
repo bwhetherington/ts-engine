@@ -12,6 +12,7 @@ export type Socket = number;
 
 export abstract class Node {
   public abstract send(msg: Message, socket: Socket): void;
+
   public onMessage(message: Message, socket: Socket) {
     const event = {
       type: 'NetworkMessageEvent',
@@ -52,9 +53,17 @@ export abstract class Node {
     };
     EM.emit(event);
   }
+
+  public isClient(): boolean {
+    return false;
+  }
+
+  public isServer(): boolean {
+    return !this.isClient();
+  }
 }
 
-export class DefaultNode implements Node {
+export class DefaultNode extends Node {
   public send(msg: Message, socket: Socket) {
     LM.warn('default network node in use');
   }

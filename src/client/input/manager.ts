@@ -54,7 +54,7 @@ export class InputManager {
         LM.warn('unrecognized button: ' + event.button);
       }
     });
-    this.element?.addEventListener('mousedown', (event) => {
+    this.element?.addEventListener('mouseup', (event) => {
       const { clientX, clientY } = event;
       const { x, y } = CM.translateMouse(clientX, clientY);
       const button = BUTTON_MAP[event.button];
@@ -73,6 +73,20 @@ export class InputManager {
       } else {
         LM.warn('unrecognized button: ' + event.button);
       }
+    });
+    this.element?.addEventListener('mousemove', (event) => {
+      const { clientX, clientY } = event;
+      const { x, y } = CM.translateMouse(clientX, clientY);
+      const mouseEvent = {
+        type: 'MouseEvent',
+        data: <MouseEvent>{
+          action: MouseAction.Move,
+          x,
+          y,
+        },
+      };
+      EM.emit(mouseEvent);
+      NM.send(mouseEvent);
     });
     this.element?.addEventListener('keydown', (event) => {
       const key = KEY_MAP[event.code];

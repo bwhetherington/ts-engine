@@ -23,6 +23,13 @@ export class EventManager {
     return handlers;
   }
 
+  public getHandler(type: string, id: string): GameHandler | undefined {
+    const handlers = this.handlers[type];
+    if (handlers) {
+      return handlers[id];
+    }
+  }
+
   public addListener<E extends EventData>(
     type: string,
     handler: Handler<E>

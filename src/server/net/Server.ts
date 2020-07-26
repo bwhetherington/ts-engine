@@ -174,4 +174,8 @@ export class Server extends Node {
       TM.sleep();
     }
   }
+
+  public isClient(): boolean {
+    return false;
+  }
 }
