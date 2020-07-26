@@ -193,7 +193,7 @@ export class WorldManager implements Bounded, Serializable {
 
     // Reinsert each entity into the quad tree
     this.quadTree.clear();
-    this.collisionLayers = [[], []];
+    this.collisionLayers = [[], [], [], []];
 
     for (const entity of this.getEntities()) {
       if (entity.isCollidable) {

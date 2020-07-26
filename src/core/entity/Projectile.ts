@@ -10,11 +10,18 @@ export class Projectile extends Entity {
   public static typeName: string = 'Projectile';
 
   public damage: number = 15;
+  private hasExploded: boolean = false;
 
   constructor() {
     super();
     this.type = Projectile.typeName;
     this.bounce = 1;
+    this.color = {
+      red: 1.0,
+      green: 0.6,
+      blue: 0.3,
+      alpha: 0.8,
+    };
     this.registerListeners();
   }
 
@@ -33,12 +40,25 @@ export class Projectile extends Entity {
     });
   }
 
+  private explode(): void {
+    if (NM.isClient()) {
+      const explosion = new Explosion();
+      explosion.setPosition(this.position);
+      explosion.color = this.color;
+      WM.add(explosion);
+      this.hasExploded = true;
+    }
+  }
+
   public remove(): void {
     if (NM.isServer()) {
       this.markForDelete();
     } else {
       this.isVisible = false;
       this.isCollidable = false;
+      if (!this.hasExploded) {
+        this.explode();
+      }
     }
   }
 
@@ -68,10 +88,8 @@ export class Projectile extends Entity {
   }
 
   public cleanup(): void {
-    if (NM.isClient()) {
-      const explosion = new Explosion();
-      explosion.setPosition(this.position);
-      WM.add(explosion);
+    if (!this.hasExploded) {
+      this.explode();
     }
     super.cleanup();
   }

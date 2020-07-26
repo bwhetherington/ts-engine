@@ -65,11 +65,7 @@ export class Entity implements Bounded, Serializable {
 
   public render(ctx: GraphicsContext): void {
     const { x, y, width, height } = this.boundingBox;
-    if (this.highlight) {
-      ctx.rect(x, y, width, height, { red: 0.85, green: 0.1, blue: 0.1 });
-    } else {
-      ctx.rect(x, y, width, height, this.color);
-    }
+    ctx.rect(x, y, width, height, this.color);
   }
 
   private updateBoundingBox(): void {
@@ -82,7 +78,6 @@ export class Entity implements Bounded, Serializable {
     if (this.isCollidable) {
       // Query for entities that may collide with this entity
       let collided = false;
-      // for (const candidate of this.getEntities()) {
       WM.query(this.boundingBox)
         .filter(candidate => candidate.isCollidable && this.id !== candidate.id && this.boundingBox.intersects(candidate.boundingBox))
         .forEach(candidate => {
@@ -95,13 +90,12 @@ export class Entity implements Bounded, Serializable {
           }
 
           collided = true;
-          const data = <CollisionEvent>{
-            collider: this,
-            collided: candidate,
-          };
           const event = {
             type: 'CollisionEvent',
-            data,
+            data: <CollisionEvent>{
+              collider: this,
+              collided: candidate,
+            },
           };
           EM.emit(event);
         });
