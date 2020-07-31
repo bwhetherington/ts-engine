@@ -8,9 +8,7 @@ import { SizedQueue } from 'core/util';
 import { Rectangle, Vector } from 'core/geometry';
 
 import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
-import {
-  UIM,
-} from 'client/components';
+import { UIM } from 'client/components';
 import { CM } from 'core/graphics';
 import { AM } from 'client/alert';
 import { IM } from 'client/input';
@@ -75,6 +73,28 @@ async function main(): Promise<void> {
       }
 
       EM.step(dt);
+    });
+
+    AM.showForm({
+      name: 'Sample Form',
+      description: 'This is a sample form.',
+      items: [
+        {
+          type: 'text',
+          name: 'textField',
+          label: 'Text Field',
+        },
+        {
+          type: 'number',
+          name: 'numberField',
+          label: 'Number Field',
+        },
+        {
+          type: 'checkbox',
+          name: 'booleanField',
+          label: 'Boolean Field',
+        },
+      ],
     });
 
     timer.start();

@@ -27,3 +27,9 @@ export function registerComponent(
   LM.debug(`<${name}> registered`);
   window.customElements.define(Custom.componentName, Custom);
 }
+
+export function removeChildren(element: HTMLElement): void {
+  while (element.hasChildNodes() && element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+}

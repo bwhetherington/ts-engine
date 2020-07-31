@@ -2,6 +2,7 @@ import { LM as InternalLogger } from 'core/log';
 import { AlertComponent } from 'client/components';
 import { sleep } from 'core/util';
 import { EM, Event, StepEvent } from 'core/event';
+import { Form } from 'core/form';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -30,13 +31,7 @@ export class AlertManager {
     LM.debug('AlertManager initialized');
   }
 
-  public showMessage(message: string): void {
-    if (this.element) {
-      this.element?.setMessage(message);
-      this.element?.show();
-      this.counter = 3;
-    } else {
-      LM.error('element does not exist');
-    }
+  public showForm(form: Form): void {
+    this.element?.showForm(form);
   }
 }

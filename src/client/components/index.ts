@@ -1,6 +1,10 @@
 import { BarComponent } from 'client/components/bar';
 import { ChatComponent } from 'client/components/chat';
-import { Component, registerComponent } from 'client/components/util';
+import {
+  Component,
+  registerComponent,
+  removeChildren,
+} from 'client/components/util';
 import { DebugComponent } from 'client/components/debug';
 import { AlertComponent } from './alert';
 import { UIManager } from './ui';
@@ -20,4 +24,5 @@ export {
   ChatComponent,
   DebugComponent,
   AlertComponent,
+  removeChildren,
 };

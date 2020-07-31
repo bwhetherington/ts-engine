@@ -34,13 +34,12 @@ export class Explosion extends Entity {
 
   public renderInternal(ctx: GraphicsContext): void {
     this.render(ctx);
-    console.log('render');
   }
 
   public render(ctx: GraphicsContext): void {
     const t = this.timeRemaining / DURATION;
     const r = explodeFunction(t) * 20;
-    const { x, y, } = this.position;
+    const { x, y } = this.position;
     ctx.ellipse(x - r, y - r, 2 * r, 2 * r, this.color);
   }
 }

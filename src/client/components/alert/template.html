@@ -47,22 +47,33 @@
     margin: auto;
     margin-top: var(--ui-margin);
   }
+
+  .form-item {
+    display: flex;
+    padding: 5px;
+  }
+
+  .form-label {
+    flex-grow: 1;
+    font-weight: bold;
+    vertical-align: middle;
+    margin-right: var(--ui-margin);
+  }
+
+  .form-value {
+    max-width: 100px;
+  }
 </style>
 <div class="container">
   <div id="alert" class="dialog fade-in">
     <header>
-      <div class="header-content">
+      <div id="header" class="header-content">
         Header
       </div>
       <div class="header-close">
         <button id="close" class="close"></button>
       </div>
     </header>
-    <p>Please confirm the request</p>
-    <div class="button-row">
-      <button>Confirm</button>
-      <button type="error">Deny</button>
-    </div>
-    <!-- <span id="message"></span> -->
+    <div id="body"></div>
   </div>
 </div>

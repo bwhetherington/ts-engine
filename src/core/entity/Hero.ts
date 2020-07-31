@@ -90,7 +90,6 @@ export class Hero extends Unit {
   public setMaxLife(maxLife: number): void {
     super.setMaxLife(maxLife);
     if (this.getPlayer()?.isActivePlayer()) {
-      console.log('setMaxLife');
       EM.emit({
         type: 'BarUpdateEvent',
         data: <BarUpdateEvent>{
@@ -161,8 +160,8 @@ export class Hero extends Unit {
               },
             },
           },
-          playerData: {}
-        }
+          playerData: {},
+        },
       };
       NM.send(syncEvent);
     } else {
