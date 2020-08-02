@@ -13,6 +13,7 @@ import { CM } from 'core/graphics';
 import { AM } from 'client/alert';
 import { IM } from 'client/input';
 import { PM } from 'core/player';
+import { FM } from 'core/form';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -31,6 +32,7 @@ async function main(): Promise<void> {
   PM.initialize();
   CM.initialize();
   AM.initialize();
+  FM.initialize();
 
   if (game) {
     const canvas = new HDCanvas();
@@ -54,47 +56,8 @@ async function main(): Promise<void> {
       WM.render(canvas);
     });
 
-    const frameTimes = new SizedQueue<number>(60);
-
     const timer = new Timer((dt) => {
-      frameTimes.enqueue(dt);
-      let sum = 0;
-      for (const elem of frameTimes.iterator()) {
-        sum += elem;
-      }
-      // LM.debug("fps: " + 1 / (sum / frameTimes.size()));
-      const fps = 1 / (sum / frameTimes.size());
-      const rounded = Math.round(fps);
-      const label = rounded.toString();
-
-      const element = document.getElementById('fps-label');
-      if (element) {
-        element.innerText = label;
-      }
-
       EM.step(dt);
-    });
-
-    AM.showForm({
-      name: 'Sample Form',
-      description: 'This is a sample form.',
-      items: [
-        {
-          type: 'text',
-          name: 'textField',
-          label: 'Text Field',
-        },
-        {
-          type: 'number',
-          name: 'numberField',
-          label: 'Number Field',
-        },
-        {
-          type: 'checkbox',
-          name: 'booleanField',
-          label: 'Boolean Field',
-        },
-      ],
     });
 
     timer.start();

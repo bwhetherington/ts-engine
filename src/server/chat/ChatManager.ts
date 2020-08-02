@@ -78,7 +78,7 @@ export class ChatManager {
   public initialize(): void {
     LM.debug('ChatManager initialized');
 
-    EM.addListener('SetNameEvent', (event: Event<SetNameEvent>) => {
+    EM.addListener<SetNameEvent>('SetNameEvent', (event) => {
       const { data, socket } = event;
 
       if (socket !== undefined) {
@@ -94,7 +94,7 @@ export class ChatManager {
       }
     });
 
-    EM.addListener('TextMessageInEvent', (event: Event<TextMessageInEvent>) => {
+    EM.addListener<TextMessageInEvent>('TextMessageInEvent', (event) => {
       const { data, socket } = event;
 
       let name = DEFAULT_NAME;
@@ -108,7 +108,7 @@ export class ChatManager {
       LM.info(`<${name}> ${data.content}`);
     });
 
-    EM.addListener('TextCommandEvent', (event: Event<TextCommandEvent>) => {
+    EM.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
       const { socket, data } = event;
       if (socket !== undefined) {
         this.handleCommand(socket, data.command, data.args);
@@ -150,7 +150,25 @@ export class ChatManager {
         this.info('Pong!', socket);
       },
       "Responds to the user's ping with a pong.",
-      'p'
+      'p',
+    );
+
+    this.registerCommand(
+      'rename',
+      (socket, name) => {
+        if (typeof name === 'string') {
+          const player = PM.getPlayer(socket);
+          if (player) {
+            player.name = name;
+            this.info(`Set name to '${name}'`);
+          }
+        } else {
+          this.error('Name not specified.', socket);
+        }
+      },
+      'Sets the player\'s name.',
+      'rn',
+      'nick',
     );
   }
 

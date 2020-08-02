@@ -1,4 +1,4 @@
-import { Rectangle, QuadTree, Bounded } from 'core/geometry';
+import { Rectangle, QuadTree, Bounded, Vector } from 'core/geometry';
 import { GraphicsContext, CM } from 'core/graphics';
 import {
   Entity,
@@ -213,6 +213,15 @@ export class WorldManager implements Bounded, Serializable {
     const name = Type.typeName;
     this.entityConstructors[name] = Type;
     LM.debug(`entity ${name} registered`);
+  }
+
+  public spawn<T extends Entity>(Type: (new () => T) & typeof Entity, position?: Vector): T {
+    const entity = new Type();
+    if (position) {
+      entity.position.set(position);
+    }
+    this.add(entity);
+    return entity;
   }
 
   private createEntity(type: string): Entity | undefined {

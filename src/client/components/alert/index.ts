@@ -1,29 +1,7 @@
-import { Component } from 'client/components/util';
+import { Component } from 'client/components';
 import template from 'client/components/alert/template.html';
-import { FormItem, Form } from 'core/form';
+import { FormItem, Form, FormSubmitEvent, Entry, FormShowEvent } from 'core/form';
 import { EM } from 'core/event';
-
-export interface StringEntry {
-  type: 'text';
-  value: string;
-}
-
-export interface NumberEntry {
-  type: 'number';
-  value: number;
-}
-
-export interface BooleanEntry {
-  type: 'boolean';
-  value: boolean;
-}
-
-export type Entry = StringEntry | NumberEntry | BooleanEntry;
-
-export interface FormSubmitEvent {
-  name: string;
-  data: Record<string, Entry>;
-}
 
 export class AlertComponent extends Component {
   public static componentName: string = 'alert-component';
@@ -44,7 +22,11 @@ export class AlertComponent extends Component {
       this.hide();
     });
 
-    this.show();
+    EM.addListener<FormShowEvent>('FormShowEvent', event => {
+      console.log(event);
+      this.showForm(event.data.form);
+      this.show();
+    });
   }
 
   public setVisible(isVisible: boolean): void {

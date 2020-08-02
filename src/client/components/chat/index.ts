@@ -4,7 +4,6 @@ import { SizedQueue } from 'core/util';
 import { LM as InternalLogger } from 'core/log';
 import {
   TextColor,
-  TextStyle,
   TextComponent,
   TextCommandEvent,
   renderError,
@@ -12,9 +11,7 @@ import {
 import { Color, rgb, toCss } from 'core/graphics';
 import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
 import { NM, DisconnectEvent } from 'core/net';
-
 import template from 'client/components/chat/template.html';
-import { AM } from 'client/alert';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -62,8 +59,14 @@ export class ChatComponent extends Component {
       });
     }
 
-    EM.addListener('DisconnectEvent', (event: Event<DisconnectEvent>) => {
+    EM.addListener<DisconnectEvent>('DisconnectEvent', (event) => {
       const components = renderError('Disconnected from server.');
+      const element = this.renderComponents(components);
+      this.addMessage(element);
+    });
+
+    EM.addListener<TextMessageOutEvent>('TextMessageOutEvent', (event) => {
+      const { components } = event.data;
       const element = this.renderComponents(components);
       this.addMessage(element);
     });

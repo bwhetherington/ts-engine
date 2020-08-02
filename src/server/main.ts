@@ -11,6 +11,8 @@ import { WM, CollisionEvent, shuntOutOf, Entity } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
 import { Rectangle } from 'core/geometry';
 import { PM } from 'core/player';
+import { FM } from 'core/form';
+import { registerJoinForm } from 'core/form/join';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -29,6 +31,8 @@ async function main(): Promise<void> {
   server.start(parseInt(process.env.PORT ?? '0') || 8080);
 
   WM.initialize();
+  FM.initialize();
+  registerJoinForm();
 
   const ENTITIES = 5;
   for (let i = 0; i < ENTITIES; i++) {

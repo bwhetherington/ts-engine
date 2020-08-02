@@ -1,7 +1,7 @@
 import { Hero, WM } from 'core/entity';
 import { Serializable, Data } from 'core/serialize';
 import { v1 } from 'uuid';
-import { Socket } from 'core/net';
+import { Socket, NM } from 'core/net';
 import { PM } from '.';
 
 export class Player implements Serializable {
@@ -58,5 +58,11 @@ export class Player implements Serializable {
 
   public isActivePlayer(): boolean {
     return PM.isActivePlayer(this);
+  }
+
+  public send(packet: Data): void {
+    if (this.socket > -1) {
+      NM.send(packet, this.socket);
+    }
   }
 }

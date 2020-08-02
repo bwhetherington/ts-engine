@@ -50,14 +50,12 @@ export class Hero extends Unit {
           // Shoot projectile if we are on the server
           if (NM.isServer()) {
             LM.info('fire');
-            const projectile = new Projectile();
-            projectile.position.set(this.position);
+            const projectile = WM.spawn(Projectile, this.position);
             projectile.velocity.setXY(x, y);
             projectile.velocity.add(this.position, -1);
             projectile.velocity.normalize();
             projectile.position.add(projectile.velocity, 20);
             projectile.velocity.scale(500);
-            WM.add(projectile);
           }
         }
       }
