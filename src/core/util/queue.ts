@@ -1,3 +1,5 @@
+import { iterator, Iterator } from 'core/iterator';
+
 class Node<T> {
   public value: T;
   public prev?: Node<T>;
@@ -30,12 +32,16 @@ export class Queue<T> {
     }
   }
 
-  public *iterator(): Generator<T> {
+  private *iteratorInternal(): Generator<T> {
     let current = this.head;
     while (current !== undefined) {
       yield current.value;
       current = current.next;
     }
+  }
+
+  public iterator(): Iterator<T> {
+    return iterator(this.iteratorInternal());
   }
 
   public enqueue(element: T): T | undefined {

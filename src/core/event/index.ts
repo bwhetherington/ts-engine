@@ -1,4 +1,4 @@
-import { EventManager, StepEvent } from 'core/event/EventManager';
+import { EventManager, StepEvent } from 'core/event/manager';
 import {
   Handler,
   GameHandler,

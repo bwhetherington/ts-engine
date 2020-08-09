@@ -9,6 +9,7 @@ export interface StepEvent {
 export class EventManager {
   private handlers: Record<string, Record<string, GameHandler>> = {};
   private events: Queue<GameEvent> = new Queue();
+  private listenerCount: number = 0;
 
   public emit<E extends GameEvent>(event: E): void {
     this.events.enqueue(event);
@@ -37,12 +38,16 @@ export class EventManager {
     const handlers = this.getHandlers(type);
     const id = genUuid();
     handlers[id] = handler;
+    this.listenerCount += 1;
     return id;
   }
 
   public removeListener(type: string, id: string): void {
     const handlers = this.getHandlers(type);
-    delete handlers[id];
+    if (id in handlers) {
+      this.listenerCount -= 1;
+      delete handlers[id];
+    }
   }
 
   private handleEvent(event: GameEvent): void {
@@ -51,7 +56,7 @@ export class EventManager {
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
       for (const id in handlers) {
-        handlers[id](event);
+        handlers[id](event, id);
       }
     }
   }
@@ -72,5 +77,9 @@ export class EventManager {
     };
     this.emit(event);
     this.pollEvents();
+  }
+
+  public getListenerCount(): number {
+    return this.listenerCount;
   }
 }

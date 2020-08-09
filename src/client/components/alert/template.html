@@ -1,13 +1,16 @@
 <link rel="stylesheet" href="/static/style.css" />
 <style>
   .container {
-    pointer-events: none;
+    /* pointer-events: none; */
     position: absolute;
     left: 0px;
     right: 0px;
     top: 0px;
     bottom: 0px;
     display: flex;
+    overflow: hidden;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.5);
   }
 
   @keyframes fade-in {
@@ -62,6 +65,10 @@
 
   .form-value {
     max-width: 100px;
+  }
+
+  .padded {
+    padding: 20px;
   }
 </style>
 <div class="container">

@@ -1,11 +1,11 @@
 import { Bounded, Rectangle, Vector } from 'core/geometry';
 import { GraphicsContext, Color, invert } from 'core/graphics';
-import { WHITE, BLACK, isColor } from 'core/graphics/color';
+import { WHITE, isColor } from 'core/graphics/color';
 import { v1 as genUuid } from 'uuid';
 import { CollisionLayer, WM, CollisionEvent } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
-import { GameHandler, EventData, Handler, EM, Event } from 'core/event';
+import { EventData, Handler, EM, Event } from 'core/event';
 
 export type Uuid = string;
 
@@ -90,6 +90,9 @@ export class Entity implements Bounded, Serializable {
           }
 
           collided = true;
+          if (this.type === 'Projectile') {
+            console.log('hit', candidate.toString());
+          }
           const event = {
             type: 'CollisionEvent',
             data: <CollisionEvent>{
@@ -220,7 +223,7 @@ export class Entity implements Bounded, Serializable {
     const handlers = this.handlers[type] ?? [];
     for (const handlerID of handlers) {
       const handler = EM.getHandler(type, handlerID);
-      handler?.call(null, event);
+      handler?.call(null, event, handlerID);
     }
   }
 

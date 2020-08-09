@@ -1,12 +1,15 @@
-import { Entity } from 'core/entity';
+import { Entity, Hero } from 'core/entity';
 import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';
 import { clamp } from 'core/util';
+import { DamageEvent } from './util';
 
 const ACCELERATION = 2000;
 
 export class Unit extends Entity {
+  public static typeName: string = 'Unit';
+
   private maxLife: number = 100;
   private life: number = 100;
   private lifeRegen: number = 5;
@@ -22,6 +25,13 @@ export class Unit extends Entity {
   public constructor() {
     super();
     this.type = Unit.typeName;
+
+    this.addListener<DamageEvent>('DamageEvent', event => {
+      const { target, source, amount } = event.data;
+      if (target === this) {
+        this.damage(amount);
+      }
+    });
   }
 
   public getLife(): number {
@@ -37,6 +47,7 @@ export class Unit extends Entity {
 
   public damage(amount: number): void {
     this.setLife(this.life - amount);
+    console.log('damage', amount, this.life);
   }
 
   public getMaxLife(): number {

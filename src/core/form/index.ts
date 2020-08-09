@@ -1,7 +1,10 @@
 import { FormManager } from "./manager";
+import { Data } from "core/serialize";
+import { Player } from "core/player";
 
 export interface Form {
   name: string;
+  label: string;
   description?: string;
   items: FormItem[];
 }
@@ -71,3 +74,10 @@ export interface FormShowEvent {
 }
 
 export const FM = new FormManager();
+
+export interface FormEntry<T> {
+  name: string;
+  form: Form;
+  onSubmit(player: Player, response: T): void;
+  validate(data: Data): data is T;
+}

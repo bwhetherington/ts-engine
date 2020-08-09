@@ -1,7 +1,7 @@
 import { Entity, CollisionEvent, Unit, WM } from 'core/entity';
 import { GraphicsContext } from 'core/graphics';
 import { LM } from 'core/log';
-import { CollisionLayer } from './util';
+import { CollisionLayer, DamageEvent } from './util';
 import { Data } from 'core/serialize';
 import { NM } from 'core/net';
 import { Explosion } from './Explosion';
@@ -11,6 +11,7 @@ export class Projectile extends Entity {
 
   public damage: number = 15;
   private hasExploded: boolean = false;
+  public parent?: Entity;
 
   constructor() {
     super();
@@ -31,8 +32,14 @@ export class Projectile extends Entity {
       if (collider === this) {
         if (collided === undefined || collided.collisionLayer === CollisionLayer.Geometry) {
           this.remove();
+          return;
         }
-        if (collided instanceof Unit) {
+
+        if (collided === this.parent) {
+          return;
+        }
+
+        if (collided instanceof Unit && this.parent?.id !== collided.id) {
           collided.damage(this.damage);
           this.remove();
         }

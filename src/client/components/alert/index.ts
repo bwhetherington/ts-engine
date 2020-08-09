@@ -2,10 +2,12 @@ import { Component } from 'client/components';
 import template from 'client/components/alert/template.html';
 import { FormItem, Form, FormSubmitEvent, Entry, FormShowEvent } from 'core/form';
 import { EM } from 'core/event';
+import { removeChildren } from 'client/components';
 
 export class AlertComponent extends Component {
   public static componentName: string = 'alert-component';
 
+  private container?: HTMLElement;
   private element?: HTMLElement;
   private header?: HTMLElement;
   private body?: HTMLElement;
@@ -14,6 +16,8 @@ export class AlertComponent extends Component {
 
   public constructor() {
     super(template);
+
+    this.container = this.queryChild('.container');
     this.header = this.queryChild('#header');
     this.element = this.queryChild('#alert');
     this.body = this.queryChild('#body');
@@ -30,9 +34,9 @@ export class AlertComponent extends Component {
   }
 
   public setVisible(isVisible: boolean): void {
-    if (this.element) {
-      const display = isVisible ? 'block' : 'none';
-      this.element.style.display = display;
+    if (this.container) {
+      const display = isVisible ? 'flex' : 'none';
+      this.container.style.display = display;
     }
   }
 
@@ -46,17 +50,17 @@ export class AlertComponent extends Component {
 
   private clearDialog(): void {
     if (this.body) {
-      this.removeChild(this.body);
+      removeChildren(this.body);
     }
     this.data = {};
   }
 
   public showForm(data: Form): void {
     if (this.header) {
-      this.header.innerText = data.name;
+      this.header.innerText = data.label;
     }
 
-    // this.clearDialog();
+    this.clearDialog();
 
     const form = document.createElement('form');
     form.addEventListener('submit', (event) => {
@@ -72,7 +76,7 @@ export class AlertComponent extends Component {
       EM.emit(submitEvent);
       console.log(submitEvent);
 
-      // this.clearDialog();
+      this.clearDialog();
       this.hide();
     });
 

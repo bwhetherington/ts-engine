@@ -120,3 +120,9 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
 
   entity.addPositionXY(dx, dy);
 }
+
+export interface DamageEvent {
+  target: Entity,
+  source?: Entity,
+  amount: number;
+}

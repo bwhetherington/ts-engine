@@ -7,12 +7,14 @@ import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NM, SyncEvent } from 'core/net';
 import { CM } from 'server/chat';
 import { diff } from 'core/util/object';
-import { WM, CollisionEvent, shuntOutOf, Entity } from 'core/entity';
+import { WM, CollisionEvent, shuntOutOf, Entity, Unit } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
 import { Rectangle } from 'core/geometry';
 import { PM } from 'core/player';
 import { FM } from 'core/form';
 import { registerJoinForm } from 'core/form/join';
+import { registerRegisterForm } from 'core/form/register';
+import { MM } from 'server/metrics';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -33,10 +35,13 @@ async function main(): Promise<void> {
   WM.initialize();
   FM.initialize();
   registerJoinForm();
+  registerRegisterForm();
 
-  const ENTITIES = 5;
+  MM.initialize();
+
+  const ENTITIES = 15;
   for (let i = 0; i < ENTITIES; i++) {
-    const entity = new Entity();
+    const entity = WM.spawn(Unit);
 
     entity.color = {
       red: Math.random() * 0.2 + 0.7,
@@ -52,7 +57,6 @@ async function main(): Promise<void> {
 
     entity.position.setXY(x, y);
     entity.velocity.setXY(dx, dy);
-    WM.add(entity);
   }
 
   const geometry = [

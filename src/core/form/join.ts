@@ -1,7 +1,7 @@
-import { Form, FormData, StringField, FormType, FM, StringEntry } from "core/form";
+import { Form, FormData, StringField, FormType, FM, StringEntry, FormEntry } from "core/form";
 import { EM } from "core/event";
 import { ConnectEvent } from "core/net";
-import { PM } from "core/player";
+import { PM, Player } from "core/player";
 import { Data } from "core/serialize";
 import { LM as InternalLogger } from 'core/log';
 
@@ -16,7 +16,9 @@ export function isJoinForm(form: Data): form is JoinForm {
 }
 
 export const JOIN_FORM: Form = {
-  name: 'Join Game',
+  label: 'Join Game',
+  name: 'JoinForm',
+  description: 'Please enter a name when joining the game.',
   items: [
     {
       type: 'text',
@@ -30,16 +32,19 @@ export function registerJoinForm(): void {
   EM.addListener<ConnectEvent>('ConnectEvent', async (event) => {
     const player = PM.getPlayer(event.data.socket);
     if (player) {
-      try {
-        const response = await FM.sendForm(player, JOIN_FORM);
-        if (isJoinForm(response)) {
-          player.name = response.name.value;
-        }
-      } catch (ex) {
-        if (ex instanceof Error) {
-          LM.error(ex.message);
-        }
-      }
+      FM.sendUserForm(player, 'JoinForm');
     }
   });
+  FM.registerForm(JoinFormEntry);
 }
+
+export const JoinFormEntry: FormEntry<JoinForm> = {
+  name: 'JoinForm',
+  form: JOIN_FORM,
+  onSubmit(player: Player, response: JoinForm): void {
+    player.name = response.name.value;
+  },
+  validate(x: Data): x is JoinForm {
+    return isJoinForm(x);
+  },
+};

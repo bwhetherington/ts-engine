@@ -1,11 +1,7 @@
-import { BLACK, WHITE } from 'core/graphics/color';
 import { NM } from 'core/net';
 import { EM, StepEvent, Event } from 'core/event';
 import { LM as InternalLogger } from 'core/log';
-import { WM, Entity, CollisionEvent, shuntOutOf } from 'core/entity';
-import { Geometry } from 'core/entity/Geometry';
-import { SizedQueue } from 'core/util';
-import { Rectangle, Vector } from 'core/geometry';
+import { WM } from 'core/entity';
 
 import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
 import { UIM } from 'client/components';
