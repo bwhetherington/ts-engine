@@ -1,6 +1,7 @@
-import { FormManager } from "./manager";
+import { FormManager } from "core/form/manager";
 import { Data } from "core/serialize";
 import { Player } from "core/player";
+import { registerJoinForm } from "core/form/join";
 
 export interface Form {
   name: string;
@@ -81,3 +82,5 @@ export interface FormEntry<T> {
   onSubmit(player: Player, response: T): void;
   validate(data: Data): data is T;
 }
+
+export { registerJoinForm };

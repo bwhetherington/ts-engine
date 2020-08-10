@@ -90,9 +90,6 @@ export class Entity implements Bounded, Serializable {
           }
 
           collided = true;
-          if (this.type === 'Projectile') {
-            console.log('hit', candidate.toString());
-          }
           const event = {
             type: 'CollisionEvent',
             data: <CollisionEvent>{

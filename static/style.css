@@ -135,3 +135,8 @@ button[type='error']:hover {
 .close:after {
   transform: translateX(0px) translateY(-5px) rotate(-45deg);
 }
+
+h1, h2, h3, h4 {
+  margin: 0.5em;
+  text-align: center;
+}

@@ -1,19 +1,15 @@
-import { sleep } from 'core/util';
-
 import { EM } from 'core/event';
 import { Timer, ServerLogger, TM } from 'server/util';
 import { LM as InternalLogger } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NM, SyncEvent } from 'core/net';
 import { CM } from 'server/chat';
-import { diff } from 'core/util/object';
-import { WM, CollisionEvent, shuntOutOf, Entity, Unit } from 'core/entity';
+import { WM, Unit } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
 import { Rectangle } from 'core/geometry';
 import { PM } from 'core/player';
 import { FM } from 'core/form';
-import { registerJoinForm } from 'core/form/join';
-import { registerRegisterForm } from 'core/form/register';
+import { registerJoinForm } from 'core/form';
 import { MM } from 'server/metrics';
 
 const LM = InternalLogger.forFile(__filename);
@@ -35,11 +31,10 @@ async function main(): Promise<void> {
   WM.initialize();
   FM.initialize();
   registerJoinForm();
-  registerRegisterForm();
 
   MM.initialize();
 
-  const ENTITIES = 15;
+  const ENTITIES = 0;
   for (let i = 0; i < ENTITIES; i++) {
     const entity = WM.spawn(Unit);
 

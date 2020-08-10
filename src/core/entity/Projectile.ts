@@ -82,15 +82,24 @@ export class Projectile extends Entity {
     return {
       ...super.serialize(),
       damage: this.damage,
+      parentID: this.parent?.id,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const { damage } = data;
+    const { damage, parentID } = data;
+
     if (typeof damage === 'number') {
       this.damage = damage;
+    }
+
+    if (typeof parentID === 'string') {
+      const parent = WM.getEntity(parentID);
+      if (parent) {
+        this.parent = parent;
+      }
     }
   }
 
