@@ -1,12 +1,6 @@
 import { Rectangle, QuadTree, Bounded, Vector } from 'core/geometry';
 import { GraphicsContext, CM } from 'core/graphics';
-import {
-  Entity,
-  Unit,
-  Hero,
-  Geometry,
-  CollisionEvent,
-} from 'core/entity';
+import { Entity, Unit, Hero, Geometry, CollisionEvent } from 'core/entity';
 import { LM as InternalLogger } from 'core/log';
 import { EM, GameEvent, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
@@ -71,7 +65,13 @@ export class WorldManager implements Bounded, Serializable {
       doFill: true,
       doStroke: false,
     });
-    ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WHITE);
+    ctx.rect(
+      this.boundingBox.x,
+      this.boundingBox.y,
+      this.boundingBox.width,
+      this.boundingBox.height,
+      WHITE
+    );
     ctx.popOptions();
 
     this.quadTree.render(ctx);
@@ -81,12 +81,16 @@ export class WorldManager implements Bounded, Serializable {
       doFill: false,
       doStroke: true,
     });
-    ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WALL_COLOR);
+    ctx.rect(
+      this.boundingBox.x,
+      this.boundingBox.y,
+      this.boundingBox.width,
+      this.boundingBox.height,
+      WALL_COLOR
+    );
     ctx.popOptions();
 
-
     // ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WHITE);
-
 
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
@@ -120,7 +124,7 @@ export class WorldManager implements Bounded, Serializable {
     }
     actual?.cleanup();
     if (actual) {
-      LM.debug('remove ' + actual.toString())
+      LM.debug('remove ' + actual.toString());
       delete this.entities[actual.id];
       this.entityCount -= 1;
     }
@@ -215,7 +219,10 @@ export class WorldManager implements Bounded, Serializable {
     LM.debug(`entity ${name} registered`);
   }
 
-  public spawn<T extends Entity>(Type: (new () => T) & typeof Entity, position?: Vector): T {
+  public spawn<T extends Entity>(
+    Type: (new () => T) & typeof Entity,
+    position?: Vector
+  ): T {
     const entity = new Type();
     if (position) {
       entity.position.set(position);

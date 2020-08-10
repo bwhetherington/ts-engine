@@ -30,7 +30,10 @@ export class Projectile extends Entity {
     this.addListener<CollisionEvent>('CollisionEvent', (event) => {
       const { collider, collided } = event.data;
       if (collider === this) {
-        if (collided === undefined || collided.collisionLayer === CollisionLayer.Geometry) {
+        if (
+          collided === undefined ||
+          collided.collisionLayer === CollisionLayer.Geometry
+        ) {
           this.remove();
           return;
         }

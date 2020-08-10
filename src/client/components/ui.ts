@@ -1,5 +1,10 @@
 import { LM as InternalLogger } from 'core/log';
-import { ChatComponent, BarComponent, Component, registerComponents } from 'client/components';
+import {
+  ChatComponent,
+  BarComponent,
+  Component,
+  registerComponents,
+} from 'client/components';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -14,7 +19,10 @@ export class UIManager {
     LM.debug('UIManager initialized');
   }
 
-  public getComponent<T extends Component>(type: (new (...args: any[]) => T) & typeof Component, id: string): T | undefined {
+  public getComponent<T extends Component>(
+    type: (new (...args: any[]) => T) & typeof Component,
+    id: string
+  ): T | undefined {
     const element = document.getElementById(id);
     if (element instanceof type) {
       return element as T;

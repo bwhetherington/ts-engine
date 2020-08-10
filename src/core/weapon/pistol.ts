@@ -1,5 +1,5 @@
-import { Weapon } from "core/weapon";
-import { Unit, WM, Projectile } from "core/entity";
+import { Weapon } from 'core/weapon';
+import { Unit, WM, Projectile } from 'core/entity';
 
 export class Pistol extends Weapon {
   public static typeName: string = 'Pistol';

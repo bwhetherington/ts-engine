@@ -6,8 +6,8 @@ export class ServerHTTPClient implements HTTPClient {
     const response = await fetch(uri, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     if (response.ok) {
@@ -23,8 +23,8 @@ export class ServerHTTPClient implements HTTPClient {
     const response = await fetch(uri, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     if (response.ok) {

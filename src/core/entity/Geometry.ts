@@ -28,4 +28,3 @@ export class Geometry extends Entity {
   //   ctx.rect(x, y, width, height, this.color);
   // }
 }
-

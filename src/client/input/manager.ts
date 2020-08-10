@@ -28,7 +28,7 @@ export class InputManager {
   private element?: HTMLElement;
   private keyStates: Array<boolean> = initializeKeyStates();
 
-  public constructor() { }
+  public constructor() {}
 
   public initialize(element: HTMLElement): void {
     this.element = element;

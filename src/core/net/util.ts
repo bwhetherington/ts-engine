@@ -100,6 +100,6 @@ export interface SyncEvent {
 }
 
 export interface InitialSyncEvent {
-  socket: Socket,
-  sync: SyncEvent,
+  socket: Socket;
+  sync: SyncEvent;
 }

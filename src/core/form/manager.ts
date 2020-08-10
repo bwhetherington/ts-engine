@@ -1,11 +1,11 @@
-import { LM as InternalLogger } from "core/log";
-import { Player, PM } from "core/player";
-import { Data } from "core/serialize";
-import { v1 } from "uuid";
-import { EM } from "core/event";
-import { FormSubmitEvent, Form, FormShowEvent, FormEntry } from "core/form";
-import { NM } from "core/net";
-import { sleep } from "core/util";
+import { LM as InternalLogger } from 'core/log';
+import { Player, PM } from 'core/player';
+import { Data } from 'core/serialize';
+import { v1 } from 'uuid';
+import { EM } from 'core/event';
+import { FormSubmitEvent, Form, FormShowEvent, FormEntry } from 'core/form';
+import { NM } from 'core/net';
+import { sleep } from 'core/util';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -24,7 +24,11 @@ export class FormManager {
     }
   }
 
-  public sendForm(player: Player, form: Form, timeout: number = 60): Promise<Data> {
+  public sendForm(
+    player: Player,
+    form: Form,
+    timeout: number = 60
+  ): Promise<Data> {
     // Send form to player
     const event = {
       type: 'FormShowEvent',
@@ -51,7 +55,11 @@ export class FormManager {
     return promise;
   }
 
-  public sendUserForm(player: Player, formName: string, timeout: number = 60): void {
+  public sendUserForm(
+    player: Player,
+    formName: string,
+    timeout: number = 60
+  ): void {
     const form = this.forms[formName];
     if (form) {
       try {
@@ -70,7 +78,7 @@ export class FormManager {
     LM.debug(`form ${formEntry.name} registered`);
     const { name, form, validate, onSubmit } = formEntry;
     this.forms[name] = form;
-    EM.addListener<FormSubmitEvent>('FormSubmitEvent', event => {
+    EM.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
       const { socket, data } = event;
       const player = PM.getPlayer(socket);
       if (player) {
@@ -82,6 +90,4 @@ export class FormManager {
       }
     });
   }
-
-
 }

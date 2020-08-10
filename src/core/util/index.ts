@@ -12,4 +12,13 @@ interface BarUpdateEvent {
   maxValue?: number;
 }
 
-export { BarUpdateEvent, Queue, SizedQueue, TimerHandler, AbstractTimer, sleep, diff, clamp };
+export {
+  BarUpdateEvent,
+  Queue,
+  SizedQueue,
+  TimerHandler,
+  AbstractTimer,
+  sleep,
+  diff,
+  clamp,
+};

@@ -1,6 +1,6 @@
-import { Serializable, Data } from "core/serialize";
-import { Unit } from "core/entity";
-import { EM, StepEvent } from "core/event";
+import { Serializable, Data } from 'core/serialize';
+import { Unit } from 'core/entity';
+import { EM, StepEvent } from 'core/event';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';
@@ -11,7 +11,7 @@ export abstract class Weapon implements Serializable {
   private listenerID?: string;
 
   public constructor() {
-    this.listenerID = EM.addListener<StepEvent>('StepEvent', event => {
+    this.listenerID = EM.addListener<StepEvent>('StepEvent', (event) => {
       const { dt } = event.data;
       this.cooldown = Math.max(this.cooldown - dt, 0);
     });

@@ -26,7 +26,7 @@ export class Unit extends Entity {
     super();
     this.type = Unit.typeName;
 
-    this.addListener<DamageEvent>('DamageEvent', event => {
+    this.addListener<DamageEvent>('DamageEvent', (event) => {
       const { target, source, amount } = event.data;
       if (target === this) {
         this.damage(amount);
@@ -124,11 +124,17 @@ export class Unit extends Entity {
       }
 
       if (MovementDirection.Down in movement) {
-        this.setMovement(MovementDirection.Down, movement[MovementDirection.Down]);
+        this.setMovement(
+          MovementDirection.Down,
+          movement[MovementDirection.Down]
+        );
       }
 
       if (MovementDirection.Left in movement) {
-        this.setMovement(MovementDirection.Left, movement[MovementDirection.Left]);
+        this.setMovement(
+          MovementDirection.Left,
+          movement[MovementDirection.Left]
+        );
       }
 
       if (MovementDirection.Right in movement) {

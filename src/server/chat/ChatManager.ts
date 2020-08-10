@@ -150,7 +150,7 @@ export class ChatManager {
         this.info('Pong!', socket);
       },
       "Responds to the user's ping with a pong.",
-      'p',
+      'p'
     );
 
     this.registerCommand(
@@ -166,9 +166,9 @@ export class ChatManager {
           this.error('Name not specified.', socket);
         }
       },
-      'Sets the player\'s name.',
+      "Sets the player's name.",
       'rn',
-      'nick',
+      'nick'
     );
   }
 

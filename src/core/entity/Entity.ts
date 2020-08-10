@@ -79,8 +79,13 @@ export class Entity implements Bounded, Serializable {
       // Query for entities that may collide with this entity
       let collided = false;
       WM.query(this.boundingBox)
-        .filter(candidate => candidate.isCollidable && this.id !== candidate.id && this.boundingBox.intersects(candidate.boundingBox))
-        .forEach(candidate => {
+        .filter(
+          (candidate) =>
+            candidate.isCollidable &&
+            this.id !== candidate.id &&
+            this.boundingBox.intersects(candidate.boundingBox)
+        )
+        .forEach((candidate) => {
           // Collision
           if (
             this.collisionLayer === CollisionLayer.Unit &&
@@ -180,7 +185,7 @@ export class Entity implements Bounded, Serializable {
     }
     if (isColor(color)) {
       this.color = color;
-    };
+    }
     if (isCollisionLayer(collisionLayer)) {
       this.collisionLayer = collisionLayer;
     }

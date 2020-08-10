@@ -1,7 +1,7 @@
-import { FormManager } from "core/form/manager";
-import { Data } from "core/serialize";
-import { Player } from "core/player";
-import { registerJoinForm } from "core/form/join";
+import { FormManager } from 'core/form/manager';
+import { Data } from 'core/serialize';
+import { Player } from 'core/player';
+import { registerJoinForm } from 'core/form/join';
 
 export interface Form {
   name: string;
@@ -57,7 +57,7 @@ export type Entry = StringEntry | NumberEntry | BooleanEntry;
 
 export interface FormData {
   [key: string]: Entry | undefined;
-};
+}
 
 export interface FormSubmitEvent {
   name: string;

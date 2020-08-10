@@ -1,6 +1,12 @@
 import { Component } from 'client/components';
 import template from 'client/components/alert/template.html';
-import { FormItem, Form, FormSubmitEvent, Entry, FormShowEvent } from 'core/form';
+import {
+  FormItem,
+  Form,
+  FormSubmitEvent,
+  Entry,
+  FormShowEvent,
+} from 'core/form';
 import { EM } from 'core/event';
 import { removeChildren } from 'client/components';
 
@@ -26,7 +32,7 @@ export class AlertComponent extends Component {
       this.hide();
     });
 
-    EM.addListener<FormShowEvent>('FormShowEvent', event => {
+    EM.addListener<FormShowEvent>('FormShowEvent', (event) => {
       console.log(event);
       this.showForm(event.data.form);
       this.show();

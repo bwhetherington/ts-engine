@@ -1,8 +1,16 @@
-import { Form, FormData, StringField, FormType, FM, StringEntry, FormEntry } from "core/form";
-import { EM } from "core/event";
-import { ConnectEvent } from "core/net";
-import { PM, Player } from "core/player";
-import { Data } from "core/serialize";
+import {
+  Form,
+  FormData,
+  StringField,
+  FormType,
+  FM,
+  StringEntry,
+  FormEntry,
+} from 'core/form';
+import { EM } from 'core/event';
+import { ConnectEvent } from 'core/net';
+import { PM, Player } from 'core/player';
+import { Data } from 'core/serialize';
 import { LM as InternalLogger } from 'core/log';
 
 const LM = InternalLogger.forFile(__filename);
@@ -24,9 +32,9 @@ export const JOIN_FORM: Form = {
       type: 'text',
       name: 'name',
       label: 'Display Name',
-    }
-  ]
-}
+    },
+  ],
+};
 
 export function registerJoinForm(): void {
   EM.addListener<ConnectEvent>('ConnectEvent', async (event) => {

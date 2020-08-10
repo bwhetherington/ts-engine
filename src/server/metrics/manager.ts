@@ -1,10 +1,10 @@
-import { LM as InternalLogger } from "core/log";
-import { EM, StepEvent } from "core/event";
-import { SizedQueue } from "core/util";
-import { Timer } from "server/util";
-import { MetricsEvent } from "core/metrics";
-import { WM } from "core/entity";
-import { NM } from "core/net";
+import { LM as InternalLogger } from 'core/log';
+import { EM, StepEvent } from 'core/event';
+import { SizedQueue } from 'core/util';
+import { Timer } from 'server/util';
+import { MetricsEvent } from 'core/metrics';
+import { WM } from 'core/entity';
+import { NM } from 'core/net';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -20,7 +20,7 @@ export class MetricsManager {
 
     const frameTimes = new SizedQueue<number>(100);
 
-    EM.addListener<StepEvent>('StepEvent', event => {
+    EM.addListener<StepEvent>('StepEvent', (event) => {
       frameTimes.enqueue(event.data.dt);
     });
 
@@ -32,7 +32,7 @@ export class MetricsManager {
           entities: WM.getEntityCount(),
           listeners: EM.getListenerCount(),
           connections: 0,
-        }
+        },
       };
 
       NM.send(event);
@@ -40,6 +40,4 @@ export class MetricsManager {
 
     timer.start();
   }
-
-
 }

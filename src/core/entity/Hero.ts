@@ -50,7 +50,6 @@ export class Hero extends Unit {
           // Shoot projectile if we are on the server
           if (NM.isServer()) {
             LM.info('fire');
-
           }
         }
       }

@@ -49,7 +49,7 @@ export class Client extends Node {
       const { worldData, playerData } = sync;
       WM.deserialize(worldData);
       PM.deserialize(playerData);
-    })
+    });
   }
 
   private initializeSocket(socket: WebSocket) {

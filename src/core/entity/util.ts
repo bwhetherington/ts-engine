@@ -122,7 +122,7 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
 }
 
 export interface DamageEvent {
-  target: Entity,
-  source?: Entity,
+  target: Entity;
+  source?: Entity;
   amount: number;
 }

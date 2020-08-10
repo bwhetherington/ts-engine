@@ -1,3 +1,3 @@
-import { MetricsManager } from "server/metrics/manager";
+import { MetricsManager } from 'server/metrics/manager';
 
 export const MM = new MetricsManager();
