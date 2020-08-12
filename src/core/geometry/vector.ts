@@ -12,15 +12,30 @@ export class Vector implements Serializable {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
+  public get magnitudeSquared(): number {
+    return this.x * this.x + this.y * this.y;
+  }
+
   public set magnitude(amount: number) {
-    const { magnitude } = this;
-    if (magnitude > 0) {
-      this.scale(amount / magnitude);
+    const { magnitudeSquared } = this;
+    if (magnitudeSquared > 0) {
+      this.scale(amount / Math.sqrt(magnitudeSquared));
     }
   }
 
   public get angle(): number {
     return Math.atan2(this.y, this.x);
+  }
+
+  public set angle(angle: number) {
+    const { magnitudeSquared } = this;
+    if (magnitudeSquared > 0) {
+      const mag = Math.sqrt(magnitudeSquared);
+      const sin = Math.sin(angle);
+      const cos = Math.cos(angle);
+      this.x = mag * cos;
+      this.y = mag * sin;
+    }
   }
 
   public set(v: Vector): void {

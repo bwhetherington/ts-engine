@@ -20,6 +20,12 @@ export class TimerManager {
     }
   }
 
+  public setInterval(interval: number): void {
+    if (this.timer) {
+      this.timer.interval = interval;
+    }
+  }
+
   public sleep(): void {
     if (this.isRunning) {
       LM.debug('sleeping timer');

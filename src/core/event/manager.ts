@@ -1,6 +1,9 @@
 import { Queue } from 'core/util/queue';
 import { GameEvent, GameHandler, Handler, EventData } from 'core/event';
-import { v1 as genUuid } from 'uuid';
+import { UM } from 'core/uuid';
+import { LM } from 'core/log';
+
+const log = LM.forFile(__filename);
 
 export interface StepEvent {
   dt: number;
@@ -36,9 +39,10 @@ export class EventManager {
     handler: Handler<E>
   ): string {
     const handlers = this.getHandlers(type);
-    const id = genUuid();
+    const id = UM.generate();
     handlers[id] = handler;
     this.listenerCount += 1;
+    log.debug(`add listener ${type}[${id}]`);
     return id;
   }
 
@@ -47,6 +51,10 @@ export class EventManager {
     if (id in handlers) {
       this.listenerCount -= 1;
       delete handlers[id];
+      UM.free(id);
+      log.debug(`remove listener ${type}[${id}]`);
+    } else {
+      log.warn(`failed to remove listener ${type}[${id}]`);
     }
   }
 

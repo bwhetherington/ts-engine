@@ -13,6 +13,7 @@ import { WM, Hero } from 'core/entity';
 import { SyncEvent } from 'core/net';
 import { PM, Player } from 'core/player';
 import { InitialSyncEvent } from 'core/net/util';
+import { Pistol } from 'core/weapon';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -132,6 +133,9 @@ export class Server extends Node {
     const hero = new Hero();
     hero.setPositionXY(-500, -500);
     hero.setPlayer(player);
+
+    const weapon = new Pistol();
+    hero.setWeapon(weapon);
 
     hero.color = {
       red: Math.random() * 0.6 + 0.4,

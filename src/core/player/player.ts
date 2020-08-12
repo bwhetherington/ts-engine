@@ -3,6 +3,7 @@ import { Serializable, Data } from 'core/serialize';
 import { v1 } from 'uuid';
 import { Socket, NM } from 'core/net';
 import { PM } from '.';
+import { UM, UUID } from 'core/uuid';
 
 export class Player implements Serializable {
   public name: string = 'Anonymous';
@@ -10,11 +11,11 @@ export class Player implements Serializable {
   public hero?: Hero;
   public socket: Socket = -1;
 
-  public constructor(id?: string) {
+  public constructor(id?: UUID) {
     if (id) {
       this.id = id;
     } else {
-      this.id = v1();
+      this.id = UM.generate();
     }
   }
 
@@ -54,6 +55,7 @@ export class Player implements Serializable {
 
   public cleanup(): void {
     this.hero?.markForDelete();
+    UM.free(this.id);
   }
 
   public isActivePlayer(): boolean {

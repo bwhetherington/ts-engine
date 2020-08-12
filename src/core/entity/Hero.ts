@@ -1,30 +1,27 @@
-import { Unit, WM } from 'core/entity';
+import { Unit } from 'core/entity';
 import {
-  MovementDirection,
   KeyEvent,
   KeyAction,
   MOVEMENT_DIRECTION_MAP,
   MouseEvent,
   MouseAction,
 } from 'core/input';
-import { EventData, Event, EM } from 'core/event';
-import { Vector } from 'core/geometry';
+import { EventData, Event, EM, StepEvent } from 'core/event';
 import { Data } from 'core/serialize';
 import { Player, PM } from 'core/player';
-import { LM as InternalLogger } from 'core/log';
+import { LM } from 'core/log';
 import { NM, SyncEvent } from 'core/net';
 import { CM, GraphicsContext } from 'core/graphics';
-import { Projectile } from './Projectile';
-import { UIM } from 'client/components';
 import { BarUpdateEvent } from 'core/util';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LM.forFile(__filename);
 
 export class Hero extends Unit {
   public static typeName: string = 'Hero';
 
   private angle: number = 0;
   private player?: Player;
+  private mouseDown: boolean = false;
 
   public constructor() {
     super();
@@ -32,7 +29,7 @@ export class Hero extends Unit {
     this.type = Hero.typeName;
     this.boundingBox.width = 30;
     this.boundingBox.height = 30;
-    this.friction = 1000;
+    this.friction = 500;
     this.bounce = 0.1;
 
     this.setMaxLife(100);
@@ -46,11 +43,10 @@ export class Hero extends Unit {
           this.vectorBuffer.setXY(x, y);
           this.vectorBuffer.add(this.position, -1);
           this.angle = this.vectorBuffer.angle;
+        } else if (action === MouseAction.ButtonDown) {
+          this.mouseDown = true;
         } else if (action === MouseAction.ButtonUp) {
-          // Shoot projectile if we are on the server
-          if (NM.isServer()) {
-            LM.info('fire');
-          }
+          this.mouseDown = false;
         }
       }
     });
@@ -63,6 +59,12 @@ export class Hero extends Unit {
         if (direction !== undefined) {
           this.setMovement(direction, state);
         }
+      }
+    });
+
+    this.addListener<StepEvent>('StepEvent', () => {
+      if (this.mouseDown && NM.isServer()) {
+        this.fire(this.angle);
       }
     });
   }
@@ -140,7 +142,6 @@ export class Hero extends Unit {
     if (this.getPlayer()?.isActivePlayer()) {
       // Use our own position
       this.setPositionXY(oldX, oldY);
-      this.velocity.setXY(oldDX, oldDY);
       const syncEvent = {
         type: 'SyncEvent',
         data: <SyncEvent>{
@@ -148,7 +149,6 @@ export class Hero extends Unit {
             entities: {
               [this.id]: {
                 position: this.position.serialize(),
-                velocity: this.velocity.serialize(),
               },
             },
           },

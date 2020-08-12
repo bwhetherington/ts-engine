@@ -74,7 +74,7 @@ export class WorldManager implements Bounded, Serializable {
     );
     ctx.popOptions();
 
-    this.quadTree.render(ctx);
+    // this.quadTree.render(ctx);
 
     ctx.pushOptions({
       lineWidth: 5,

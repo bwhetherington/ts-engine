@@ -33,6 +33,11 @@ export const JOIN_FORM: Form = {
       name: 'name',
       label: 'Display Name',
     },
+    {
+      type: 'checkbox',
+      name: 'test',
+      label: 'Test',
+    },
   ],
 };
 
@@ -40,7 +45,7 @@ export function registerJoinForm(): void {
   EM.addListener<ConnectEvent>('ConnectEvent', async (event) => {
     const player = PM.getPlayer(event.data.socket);
     if (player) {
-      FM.sendUserForm(player, 'JoinForm');
+      FM.sendForm(player, 'JoinForm');
     }
   });
   FM.registerForm(JoinFormEntry);

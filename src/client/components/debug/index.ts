@@ -10,6 +10,7 @@ export class DebugComponent extends Component {
 
   private fpsLabel?: HTMLElement;
   private entitiesLabel?: HTMLElement;
+  private listenersLabel?: HTMLElement;
 
   private serverTpsLabel?: HTMLElement;
   private serverEntitiesLabel?: HTMLElement;
@@ -20,6 +21,7 @@ export class DebugComponent extends Component {
 
     this.fpsLabel = this.queryChild('#fps-label');
     this.entitiesLabel = this.queryChild('#entities-label');
+    this.listenersLabel = this.queryChild('#listeners-label');
 
     this.serverTpsLabel = this.queryChild('#server-tps-label');
     this.serverEntitiesLabel = this.queryChild('#server-entities-label');
@@ -30,10 +32,7 @@ export class DebugComponent extends Component {
     // const timer = new Timer((dt) => {
     EM.addListener<StepEvent>('StepEvent', (event) => {
       frameTimes.enqueue(event.data.dt);
-      let sum = 0;
-      for (const elem of frameTimes.iterator()) {
-        sum += elem;
-      }
+      const sum = frameTimes.iterator().fold(0, (acc, x) => acc + x);
       const fps = 1 / (sum / frameTimes.size());
       const rounded = Math.round(fps);
       const label = rounded.toString();
@@ -43,6 +42,9 @@ export class DebugComponent extends Component {
       }
       if (this.entitiesLabel) {
         this.entitiesLabel.innerText = '' + WM.getEntityCount();
+      }
+      if (this.listenersLabel) {
+        this.listenersLabel.innerText = '' + EM.getListenerCount();
       }
     });
 

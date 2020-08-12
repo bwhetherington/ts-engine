@@ -6,6 +6,7 @@ import { CollisionLayer, WM, CollisionEvent } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
 import { EventData, Handler, EM, Event } from 'core/event';
+import { UM } from 'core/uuid';
 
 export type Uuid = string;
 
@@ -31,12 +32,12 @@ export class Entity implements Bounded, Serializable {
   private handlers: Record<string, Set<string>> = {};
 
   constructor() {
-    this.id = genUuid();
+    this.id = UM.generate();
     this.type = Entity.typeName;
   }
 
-  public applyForce(force: Vector): void {
-    this.velocity.add(force, 1 / this.mass);
+  public applyForce(force: Vector, scalar: number = 1): void {
+    this.velocity.add(force, scalar / this.mass);
   }
 
   public setPosition(point: Vector): void {
@@ -236,6 +237,7 @@ export class Entity implements Bounded, Serializable {
         EM.removeListener(type, id);
       }
     }
+    UM.free(this.id);
   }
 
   public toString(): string {

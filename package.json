@@ -11,7 +11,8 @@
     "build": "run-p build:client build:server",
     "server": "ts-node -r tsconfig-paths/register --project config/server/tsconfig.json src/server/main.ts",
     "start": "npm run build && node build/main.js",
-    "dev": "PORT=8000 nodemon"
+    "dev": "PORT=8000 nodemon",
+    "format": "prettier --write ./src"
   },
   "keywords": [],
   "author": "",

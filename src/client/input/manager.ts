@@ -49,6 +49,7 @@ export class InputManager {
             y,
           },
         };
+        NM.send(mouseEvent);
         EM.emit(mouseEvent);
       } else {
         LM.warn('unrecognized button: ' + event.button);

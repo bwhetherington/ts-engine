@@ -33,7 +33,6 @@ export class AlertComponent extends Component {
     });
 
     EM.addListener<FormShowEvent>('FormShowEvent', (event) => {
-      console.log(event);
       this.showForm(event.data.form);
       this.show();
     });
@@ -80,7 +79,6 @@ export class AlertComponent extends Component {
         },
       };
       EM.emit(submitEvent);
-      console.log(submitEvent);
 
       this.clearDialog();
       this.hide();

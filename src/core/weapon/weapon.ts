@@ -1,34 +1,35 @@
 import { Serializable, Data } from 'core/serialize';
 import { Unit } from 'core/entity';
 import { EM, StepEvent } from 'core/event';
+import { UUID } from 'core/uuid';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';
 
   public type: string = Weapon.typeName;
-  private rate: number = 1;
+  public rate: number = 1;
   private cooldown: number = 0;
-  private listenerID?: string;
+  private id?: UUID;
 
   public constructor() {
-    this.listenerID = EM.addListener<StepEvent>('StepEvent', (event) => {
+    this.id = EM.addListener<StepEvent>('StepEvent', (event) => {
       const { dt } = event.data;
       this.cooldown = Math.max(this.cooldown - dt, 0);
     });
   }
 
   public cleanup(): void {
-    if (this.listenerID !== undefined) {
-      EM.removeListener('StepEvent', this.listenerID);
+    if (this.id !== undefined) {
+      EM.removeListener('StepEvent', this.id);
     }
   }
 
-  public abstract fire(source: Unit, tx: number, ty: number): void;
+  public abstract fire(source: Unit, angle: number): void;
 
-  public fireInternal(source: Unit, tx: number, ty: number): void {
+  public fireInternal(source: Unit, angle: number): void {
     if (this.cooldown <= 0) {
       this.cooldown += this.rate;
-      this.fire(source, tx, ty);
+      this.fire(source, angle);
     }
   }
 

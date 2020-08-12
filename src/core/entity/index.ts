@@ -1,3 +1,9 @@
+export { Entity, Uuid } from 'core/entity/Entity';
+export { Unit } from 'core/entity/Unit';
+export { Hero } from 'core/entity/Hero';
+export { Geometry } from 'core/entity/Geometry';
+export { Projectile } from 'core/entity/Projectile';
+
 import { WorldManager } from 'core/entity/WorldManager';
 import { Rectangle } from 'core/geometry';
 
@@ -7,11 +13,5 @@ export {
   shuntOutOf,
   CollisionEvent,
 } from 'core/entity/util';
-
-export { Entity, Uuid } from 'core/entity/Entity';
-export { Unit } from 'core/entity/Unit';
-export { Hero } from 'core/entity/Hero';
-export { Geometry } from 'core/entity/Geometry';
-export { Projectile } from 'core/entity/Projectile';
 
 export const WM = new WorldManager(new Rectangle(1000, 1000, -500, -500));

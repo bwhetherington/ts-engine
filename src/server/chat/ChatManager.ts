@@ -12,6 +12,8 @@ import {
 } from 'core/chat';
 import { LM as InternalLogger } from 'core/log';
 import { PM } from 'core/player';
+import { WM, Unit } from 'core/entity';
+import { TM } from 'server/util';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -160,7 +162,7 @@ export class ChatManager {
           const player = PM.getPlayer(socket);
           if (player) {
             player.name = name;
-            this.info(`Set name to '${name}'`);
+            this.info(`Set name to '${name}'`, socket);
           }
         } else {
           this.error('Name not specified.', socket);
@@ -169,6 +171,77 @@ export class ChatManager {
       "Sets the player's name.",
       'rn',
       'nick'
+    );
+
+    this.registerCommand(
+      'spawn',
+      (socket, countString) => {
+        if (countString === undefined) {
+          this.error('No entity count specified.', socket);
+          return;
+        }
+        const count = parseInt(countString);
+        if (Number.isNaN(count)) {
+          this.error(`Could not parse '${countString}' as integer.`, socket);
+          return;
+        }
+
+        for (let i = 0; i < count; i++) {
+          const entity = WM.spawn(Unit);
+
+          entity.color = {
+            red: Math.random() * 0.2 + 0.7,
+            green: Math.random() * 0.2 + 0.7,
+            blue: Math.random() * 0.2 + 0.7,
+          };
+
+          const x = Math.random() * WM.boundingBox.width + WM.boundingBox.x;
+          const y = Math.random() * WM.boundingBox.height + WM.boundingBox.y;
+
+          const dx = (Math.random() - 0.5) * 200;
+          const dy = (Math.random() - 0.5) * 200;
+
+          entity.position.setXY(x, y);
+          entity.velocity.setXY(dx, dy);
+        }
+
+        this.info(`Spawning ${count} entities.`);
+      },
+      'Spawns a number of AI units.'
+    );
+
+    this.registerCommand(
+      'kill',
+      (socket) => {
+        WM.getEntities()
+          .filter((entity) => entity instanceof Unit)
+          .forEach((entity) => {
+            entity.markForDelete();
+          });
+        this.info('Removed all units.');
+      },
+      'Kills all units.'
+    );
+
+    this.registerCommand(
+      'setinterval',
+      (socket, intervalString) => {
+        if (intervalString === undefined) {
+          this.error('No interval specified.', socket);
+          return;
+        }
+
+        const interval = parseFloat(intervalString);
+        if (Number.isNaN(interval)) {
+          this.error(`Could not parse '${intervalString}' as a float.`, socket);
+          return;
+        }
+
+        this.info(intervalString + ',' + interval);
+
+        TM.setInterval(interval);
+      },
+      'Sets the server clock interval.'
     );
   }
 

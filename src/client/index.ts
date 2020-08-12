@@ -10,6 +10,7 @@ import { AM } from 'client/alert';
 import { IM } from 'client/input';
 import { PM } from 'core/player';
 import { FM } from 'core/form';
+import { WM as WeaponManager } from 'core/weapon';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -29,6 +30,7 @@ async function main(): Promise<void> {
   CM.initialize();
   AM.initialize();
   FM.initialize();
+  WeaponManager.initialize();
 
   if (game) {
     const canvas = new HDCanvas();

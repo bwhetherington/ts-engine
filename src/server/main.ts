@@ -11,6 +11,7 @@ import { PM } from 'core/player';
 import { FM } from 'core/form';
 import { registerJoinForm } from 'core/form';
 import { MM } from 'server/metrics';
+import { WM as WeaponManager } from 'core/weapon';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -33,6 +34,7 @@ async function main(): Promise<void> {
   registerJoinForm();
 
   MM.initialize();
+  WeaponManager.initialize();
 
   const ENTITIES = 0;
   for (let i = 0; i < ENTITIES; i++) {
@@ -80,7 +82,7 @@ async function main(): Promise<void> {
     };
 
     NM.send(event);
-  }, 1 / 20);
+  }, 1 / 30);
   TM.initialize(timer);
 }
 

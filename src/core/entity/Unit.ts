@@ -3,7 +3,9 @@ import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';
 import { clamp } from 'core/util';
-import { DamageEvent } from './util';
+import { DamageEvent } from 'core/entity/util';
+import { Weapon, WM as WeaponManager } from 'core/weapon';
+import { LM } from 'core/log';
 
 const ACCELERATION = 2000;
 
@@ -21,6 +23,7 @@ export class Unit extends Entity {
     [MovementDirection.Right]: false,
   };
   private acceleration: Vector = new Vector(0, 0);
+  private weapon?: Weapon;
 
   public constructor() {
     super();
@@ -32,6 +35,24 @@ export class Unit extends Entity {
         this.damage(amount);
       }
     });
+  }
+
+  public setWeapon(weapon?: Weapon): void {
+    if (this.weapon && this.weapon !== weapon) {
+      this.weapon.cleanup();
+      this.weapon = weapon;
+    } else if (weapon) {
+      this.weapon = weapon;
+    }
+  }
+
+  public cleanup(): void {
+    super.cleanup();
+    this.weapon?.cleanup();
+  }
+
+  public fire(angle: number): void {
+    this.weapon?.fireInternal(this, angle);
   }
 
   public getLife(): number {
@@ -47,7 +68,6 @@ export class Unit extends Entity {
 
   public damage(amount: number): void {
     this.setLife(this.life - amount);
-    console.log('damage', amount, this.life);
   }
 
   public getMaxLife(): number {
@@ -106,17 +126,30 @@ export class Unit extends Entity {
       ...super.serialize(),
       life: this.life,
       maxLife: this.maxLife,
+      weapon: this.weapon?.serialize(),
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const { life, maxLife, movement } = data;
+    const { life, maxLife, movement, weapon } = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }
     if (typeof life === 'number') {
       this.setLife(life);
+    }
+    if (weapon) {
+      const { type } = weapon;
+      if (type && this.weapon?.type !== type) {
+        const newWeapon = WeaponManager.createWeapon(type);
+        if (newWeapon) {
+          newWeapon.deserialize(weapon);
+          this.setWeapon(newWeapon);
+        }
+      } else {
+        this.weapon?.deserialize(weapon);
+      }
     }
     if (movement) {
       if (MovementDirection.Up in movement) {

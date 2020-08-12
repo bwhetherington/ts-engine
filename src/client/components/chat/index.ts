@@ -12,6 +12,7 @@ import { Color, rgb, toCss } from 'core/graphics';
 import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
 import { NM, DisconnectEvent } from 'core/net';
 import template from 'client/components/chat/template.html';
+import { iterator } from 'core/iterator';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -73,9 +74,13 @@ export class ChatComponent extends Component {
   }
 
   private handleMessage(message: string): void {
+    message = message.trim();
     if (message.startsWith('/')) {
       // Send command
-      const argv = message.slice(1).split(/\W+/);
+      const argv = iterator(message.slice(1).split(/\s+/))
+        .map((word) => word.trim())
+        .filter((word) => word.length > 0)
+        .toArray();
       if (argv.length > 0) {
         const command = argv[0];
         const args = argv.slice(1);
@@ -90,7 +95,7 @@ export class ChatComponent extends Component {
       } else {
         LM.error('expected command');
       }
-    } else {
+    } else if (message.length > 0) {
       // Send message
       const outEvent = {
         type: 'TextMessageInEvent',

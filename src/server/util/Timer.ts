@@ -16,7 +16,7 @@ function now(): number {
 const DEFAULT_INTERVAL = 1 / 60;
 
 export class Timer extends AbstractTimer {
-  private interval: number;
+  public interval: number;
   private isRunning: boolean;
 
   constructor(onTick: TimerHandler, interval: number = DEFAULT_INTERVAL) {

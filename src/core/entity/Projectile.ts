@@ -6,6 +6,8 @@ import { Data } from 'core/serialize';
 import { NM } from 'core/net';
 import { Explosion } from './Explosion';
 
+const log = LM.forFile(__filename);
+
 export class Projectile extends Entity {
   public static typeName: string = 'Projectile';
 
@@ -43,7 +45,7 @@ export class Projectile extends Entity {
         }
 
         if (collided instanceof Unit && this.parent?.id !== collided.id) {
-          collided.damage(this.damage);
+          this.hit(collided);
           this.remove();
         }
       }
@@ -72,8 +74,10 @@ export class Projectile extends Entity {
     }
   }
 
-  public hit(entity: Entity): void {
-    LM.debug(`${this.id} hit ${entity.id}`);
+  public hit(unit: Unit): void {
+    log.debug(`${this.toString()} hit ${unit.toString()}`);
+    unit.damage(this.damage);
+    unit.applyForce(this.velocity, this.mass);
   }
 
   public render(ctx: GraphicsContext): void {
