@@ -30,6 +30,7 @@ export class HDCanvas implements GraphicsContext {
   private width: number = 1;
   private height: number = 1;
   private ratio: number = 1;
+  private scale: number = 1;
 
   private options: GraphicsOptions = {
     lineWidth: 5,
@@ -87,11 +88,12 @@ export class HDCanvas implements GraphicsContext {
     if (element) {
       const ratio = window.devicePixelRatio ?? 1;
       this.ratio = ratio;
-      element.width = w * ratio;
-      element.height = h * ratio;
+      const scale = this.ratio * this.scale;
+      element.width = w * scale;
+      element.height = h * scale;
       element.style.width = w + 'px';
       element.style.height = h + 'px';
-      element.getContext('2d')?.setTransform(ratio, 0, 0, ratio, 0, 0);
+      element.getContext('2d')?.setTransform(scale, 0, 0, scale, 0, 0);
     }
     CM.setSize(w, h);
   }
@@ -188,7 +190,11 @@ export class HDCanvas implements GraphicsContext {
   public resetTransform() {
     const ctx = this.curContext;
     if (ctx) {
-      ctx.setTransform(this.ratio, 0, 0, this.ratio, 0, 0);
+      ctx.setTransform(this.ratio * this.scale, 0, 0, this.ratio * this.scale, 0, 0);
     }
+  }
+
+  public setScale(scale: number): void {
+    this.curContext?.scale(scale, scale);
   }
 }

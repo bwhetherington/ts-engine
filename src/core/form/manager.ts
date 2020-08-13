@@ -1,5 +1,5 @@
 import { LM } from 'core/log';
-import { Player, PM } from 'core/player';
+import { Player, PlayerManager } from 'core/player';
 import { Data } from 'core/serialize';
 import { EM } from 'core/event';
 import { FormSubmitEvent, Form, FormShowEvent, FormEntry } from 'core/form';
@@ -83,7 +83,7 @@ export class FormManager {
     this.forms[name] = form;
     EM.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
       const { socket, data } = event;
-      const player = PM.getPlayer(socket);
+      const player = PlayerManager.getPlayer(socket);
       if (player) {
         const { name, data: response } = data;
         if (name === name && validate(response)) {

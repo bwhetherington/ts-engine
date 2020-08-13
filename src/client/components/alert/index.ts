@@ -51,6 +51,7 @@ export class AlertComponent extends Component {
 
   public hide(): void {
     this.setVisible(false);
+    document.getElementById('game')?.focus();
   }
 
   private clearDialog(): void {

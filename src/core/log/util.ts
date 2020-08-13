@@ -17,6 +17,15 @@ function getLevelPriority(level: LogLevel): number {
 
 const DEFAULT_LEVEL = 'debug';
 
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  hour12: false,
+};
+
+const DATE_FORMAT = new Intl.DateTimeFormat('en-US', DATE_OPTIONS);
+
 export abstract class AbstractLogger {
   public get level(): LogLevel {
     return this.levelInternal;
@@ -54,7 +63,7 @@ export abstract class AbstractLogger {
   }
 
   public format(level: LogLevel, date: number, message: string): string {
-    const dateFormat = new Date(date).toISOString();
+    const dateFormat = DATE_FORMAT.format(new Date(date));
     const prefix = this.formatTags([dateFormat, ...this.tags, level]);
     return prefix + ' ' + message;
   }

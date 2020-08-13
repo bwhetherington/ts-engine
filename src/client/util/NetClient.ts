@@ -9,7 +9,7 @@ import {
 import { SetNameEvent } from 'core/chat';
 import { EM } from 'core/event';
 import { InitialSyncEvent } from 'core/net/util';
-import { PM } from 'core/player';
+import { PlayerManager } from 'core/player';
 import { WM } from 'core/entity';
 
 function generateName(): string {
@@ -45,10 +45,10 @@ export class Client extends Node {
 
     EM.addListener<InitialSyncEvent>('InitialSyncEvent', (event) => {
       const { socket, sync } = event.data;
-      PM.setActivePlayer(socket);
+      PlayerManager.setActivePlayer(socket);
       const { worldData, playerData } = sync;
       WM.deserialize(worldData);
-      PM.deserialize(playerData);
+      PlayerManager.deserialize(playerData);
     });
   }
 

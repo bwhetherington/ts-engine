@@ -9,7 +9,7 @@ import {
 } from 'core/form';
 import { EM } from 'core/event';
 import { ConnectEvent } from 'core/net';
-import { PM, Player } from 'core/player';
+import { PlayerManager, Player } from 'core/player';
 import { Data } from 'core/serialize';
 import { LM as InternalLogger } from 'core/log';
 
@@ -43,7 +43,7 @@ export const JOIN_FORM: Form = {
 
 export function registerJoinForm(): void {
   EM.addListener<ConnectEvent>('ConnectEvent', async (event) => {
-    const player = PM.getPlayer(event.data.socket);
+    const player = PlayerManager.getPlayer(event.data.socket);
     if (player) {
       FM.sendForm(player, 'JoinForm');
     }

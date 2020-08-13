@@ -13,6 +13,7 @@ import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
 import { NM, DisconnectEvent } from 'core/net';
 import template from 'client/components/chat/template.html';
 import { iterator } from 'core/iterator';
+import { KeyEvent, KeyAction, Key } from 'core/input';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -27,15 +28,23 @@ const COLOR_MAPPING: { [color in TextColor]: Color } = {
   purple: rgb(0.9, 0.3, 0.9),
 };
 
+const SHOW_TIME = 5;
+
 export class ChatComponent extends Component {
   public static componentName: string = 'chat-component';
 
+  private container?: HTMLElement;
   private input?: HTMLInputElement;
   private messagesContainer?: HTMLElement;
   private messagesQueue: SizedQueue<Element> = new SizedQueue(100);
+  private timer: number = 0;
+  private isShown: boolean = false;
+  private isFocused: boolean = false;
 
   constructor() {
     super(template);
+
+    this.container = this.queryChild('#container');
 
     const messages = this.queryChild('#messages');
     if (messages) {
@@ -45,6 +54,17 @@ export class ChatComponent extends Component {
     const input = this.queryChild('#chat-input');
     if (input instanceof HTMLInputElement) {
       this.input = input;
+      this.input.addEventListener('focus', () => {
+        this.isFocused = true;
+        this.show();
+      });
+      this.input.addEventListener('blur', () => {
+
+        this.isFocused = false;
+        if (this.timer === 0) {
+          this.hide();
+        }
+      });
     }
 
     const form = this.queryChild('#chat-form');
@@ -71,6 +91,36 @@ export class ChatComponent extends Component {
       const element = this.renderComponents(components);
       this.addMessage(element);
     });
+
+    EM.addListener<StepEvent>('StepEvent', (event) => {
+      this.timer = Math.max(0, this.timer - event.data.dt);
+      if (this.timer === 0) {
+        this.hide();
+      }
+    });
+
+    EM.addListener<KeyEvent>('KeyEvent', (event) => {
+      const { action, key } = event.data;
+      if (action === KeyAction.KeyDown && key === Key.Enter) {
+        this.input?.focus();
+      }
+    })
+  }
+
+  private show(): void {
+    if (this.container && !this.isShown) {
+      this.container.style.visibility = 'visible';
+      this.container.style.pointerEvents = 'auto';
+      this.isShown = true;
+    }
+  }
+
+  private hide(): void {
+    if (this.container && this.isShown && !this.isFocused) {
+      this.container.style.visibility = 'hidden';
+      this.container.style.pointerEvents = 'none';
+      this.isShown = false;
+    }
   }
 
   private handleMessage(message: string): void {
@@ -114,6 +164,8 @@ export class ChatComponent extends Component {
     }
     this.messagesContainer?.appendChild(message);
     this.scrollToBottom();
+    this.timer = SHOW_TIME;
+    this.show();
   }
 
   private scrollToBottom(): void {

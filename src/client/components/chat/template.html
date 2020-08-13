@@ -13,9 +13,16 @@
 
   #chat-input {
     flex-grow: 1;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  #container {
+    visibility: hidden;
+    pointer-events: none;
   }
 </style>
-<div class="dialog col chat-component">
+<div id="container" class="dialog col chat-component">
   <div id="messages"></div>
   <form autocomplete="off" id="chat-form">
     <input id="chat-input" type="text" placeholder="Enter message..." />

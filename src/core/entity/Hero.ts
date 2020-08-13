@@ -1,4 +1,4 @@
-import { Unit } from 'core/entity';
+import { Unit, Text, WM } from 'core/entity';
 import {
   KeyEvent,
   KeyAction,
@@ -8,11 +8,13 @@ import {
 } from 'core/input';
 import { EventData, Event, EM, StepEvent } from 'core/event';
 import { Data } from 'core/serialize';
-import { Player, PM } from 'core/player';
+import { Player, PlayerManager } from 'core/player';
 import { LM } from 'core/log';
 import { NM, SyncEvent } from 'core/net';
-import { CM, GraphicsContext } from 'core/graphics';
-import { BarUpdateEvent } from 'core/util';
+import { CM, GraphicsContext, rgb } from 'core/graphics';
+import { BarUpdateEvent, sleep } from 'core/util';
+import { debug } from 'console';
+import { DamageEvent } from './util';
 
 const log = LM.forFile(__filename);
 
@@ -22,6 +24,7 @@ export class Hero extends Unit {
   private angle: number = 0;
   private player?: Player;
   private mouseDown: boolean = false;
+  private label?: Text;
 
   public constructor() {
     super();
@@ -62,16 +65,48 @@ export class Hero extends Unit {
       }
     });
 
+    if (NM.isClient()) {
+      this.label = WM.spawn(Text);
+      this.label.text = 'Hello';
+
+      this.addListener<DamageEvent>('DamageEvent', async (event) => {
+        const { target, source, amount } = event.data;
+        if (this.getPlayer()?.isActivePlayer() && (this === target || this === source)) {
+          const label = 'Hit ' + amount;
+          const text = WM.spawn(Text, target.position);
+          text.color = rgb(192, 128, 128);
+          text.isStatic = false;
+          text.position.addXY((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 20);
+          text.text = label;
+          text.velocity.setXY(25 + Math.random() * 25, 0);
+          text.velocity.scale(0.1);
+          text.velocity.angle = Math.random() * 2 * Math.PI;
+          await sleep(1);
+          text.markForDelete();
+        }
+      });
+
+    }
+
     this.addListener<StepEvent>('StepEvent', () => {
       if (this.mouseDown && NM.isServer()) {
         this.fire(this.angle);
+      }
+      if (NM.isClient()) {
+        this.label?.setPosition(this.position);
+        this.label?.position?.addXY(0, -55);
+
+        if (this.label) {
+          this.label.text = this.getPlayer()?.name ?? 'Player';
+          this.label.color = this.color;
+        }
       }
     });
   }
 
   public setPlayer(player: string | Player): void {
     if (typeof player === 'string') {
-      this.player = PM.getPlayer(player);
+      this.player = PlayerManager.getPlayer(player);
     } else {
       this.player = player;
     }
@@ -183,5 +218,10 @@ export class Hero extends Unit {
     const player = this.getPlayer();
     const isLocal = socket === undefined && player?.isActivePlayer();
     return isLocal || socket === player?.socket;
+  }
+
+  public markForDelete(): void {
+    super.markForDelete();
+    this.label?.markForDelete();
   }
 }

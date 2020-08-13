@@ -24,5 +24,6 @@ export interface GraphicsContext {
   rect(x: number, y: number, w: number, h: number, color: Color): void;
   translate(x: number, y: number): void;
   rotate(angle: number): void;
+  setScale(scale: number): void;
   resetTransform(): void;
 }

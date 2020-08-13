@@ -4,8 +4,11 @@ import { LM as InternalLogger } from 'core/log';
 
 const LM = InternalLogger.forFile(__filename);
 
+const TARGET_HEIGHT = 650;
+
 export class CameraManager implements Bounded {
   public boundingBox: Rectangle;
+  public scale: number = 1;
   private targetEntity?: Entity;
 
   constructor() {
@@ -18,8 +21,11 @@ export class CameraManager implements Bounded {
 
   public setSize(width: number, height: number): void {
     const { centerX, centerY } = this.boundingBox;
-    this.boundingBox.width = width;
-    this.boundingBox.height = height;
+
+    this.scale = height / TARGET_HEIGHT;
+
+    this.boundingBox.width = width / this.scale;
+    this.boundingBox.height = height / this.scale;
     this.setTargetXY(centerX, centerY);
   }
 
@@ -47,7 +53,11 @@ export class CameraManager implements Bounded {
     delete this.targetEntity;
   }
 
-  public translateMouse(x: number, y: number): Vector {
-    return new Vector(x + this.boundingBox.x, y + this.boundingBox.y);
+  public toWorldSpace(x: number, y: number): Vector {
+    return new Vector(x / this.scale + this.boundingBox.x, y / this.scale + this.boundingBox.y);
+  }
+
+  public toScreenSpace(x: number, y: number): Vector {
+    return new Vector((x - this.boundingBox.x) * this.scale, (y - this.boundingBox.y) * this.scale);
   }
 }

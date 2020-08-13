@@ -1,9 +1,8 @@
-import { Entity } from 'core/entity';
+import { Entity, Unit } from 'core/entity';
 import { Rectangle } from 'core/geometry';
-import { LM as InternalLogger } from 'core/log';
-import { BLACK } from 'core/graphics/color';
+import { LM } from 'core/log';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LM.forFile(__filename);
 
 export enum CollisionLayer {
   Geometry,
@@ -122,7 +121,7 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
 }
 
 export interface DamageEvent {
-  target: Entity;
-  source?: Entity;
+  target: Unit;
+  source?: Unit;
   amount: number;
 }

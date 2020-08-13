@@ -1,7 +1,7 @@
 import { Rectangle, QuadTree, Bounded, Vector } from 'core/geometry';
 import { GraphicsContext, CM } from 'core/graphics';
-import { Entity, Unit, Hero, Geometry, CollisionEvent } from 'core/entity';
-import { LM as InternalLogger } from 'core/log';
+import { Entity, Unit, Hero, Geometry, Text, Projectile, Explosion, CollisionEvent } from 'core/entity';
+import { LM } from 'core/log';
 import { EM, GameEvent, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
 import { Iterator, iterateObject, iterator } from 'core/iterator';
@@ -9,10 +9,8 @@ import { diff } from 'core/util';
 import { SyncEvent } from 'core/net';
 import { WALL_COLOR } from './Geometry';
 import { WHITE } from 'core/graphics/color';
-import { Projectile } from './Projectile';
-import { Explosion } from './Explosion';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LM.forFile(__filename);
 
 export class WorldManager implements Bounded, Serializable {
   public quadTree: QuadTree<Entity>;
@@ -36,10 +34,11 @@ export class WorldManager implements Bounded, Serializable {
     this.registerEntity(Geometry);
     this.registerEntity(Projectile);
     this.registerEntity(Explosion);
+    this.registerEntity(Text);
   }
 
   public initialize(): void {
-    LM.debug('WorldManager initialized');
+    log.debug('WorldManager initialized');
 
     this.registerEntities();
 
@@ -58,6 +57,7 @@ export class WorldManager implements Bounded, Serializable {
     ctx.resetTransform();
 
     const camBounds = CM.boundingBox;
+    ctx.setScale(CM.scale);
     ctx.translate(-camBounds.x, -camBounds.y);
 
     ctx.pushOptions({
@@ -74,7 +74,7 @@ export class WorldManager implements Bounded, Serializable {
     );
     ctx.popOptions();
 
-    // this.quadTree.render(ctx);
+    this.quadTree.render(ctx);
 
     ctx.pushOptions({
       lineWidth: 5,
@@ -111,7 +111,7 @@ export class WorldManager implements Bounded, Serializable {
 
   public add(entity: Entity): void {
     this.entities[entity.id] = entity;
-    LM.debug('add ' + entity.toString());
+    log.debug('add ' + entity.toString());
     this.entityCount += 1;
   }
 
@@ -124,7 +124,7 @@ export class WorldManager implements Bounded, Serializable {
     }
     actual?.cleanup();
     if (actual) {
-      LM.debug('remove ' + actual.toString());
+      log.debug('remove ' + actual.toString());
       delete this.entities[actual.id];
       this.entityCount -= 1;
     }
@@ -156,43 +156,45 @@ export class WorldManager implements Bounded, Serializable {
       entity.step(dt);
 
       // Check for collision with bounds
-      let dx = 0;
-      let dy = 0;
+      if (entity.isCollidable) {
+        let dx = 0;
+        let dy = 0;
 
-      if (entity.boundingBox.x < this.boundingBox.x) {
-        dx += this.boundingBox.x - entity.boundingBox.x;
-      }
-      if (entity.boundingBox.farX > this.boundingBox.farX) {
-        dx += this.boundingBox.farX - entity.boundingBox.farX;
-      }
-      if (entity.boundingBox.y < this.boundingBox.y) {
-        dy += this.boundingBox.y - entity.boundingBox.y;
-      }
-      if (entity.boundingBox.farY > this.boundingBox.farY) {
-        dy += this.boundingBox.farY - entity.boundingBox.farY;
-      }
+        if (entity.boundingBox.x < this.boundingBox.x) {
+          dx += this.boundingBox.x - entity.boundingBox.x;
+        }
+        if (entity.boundingBox.farX > this.boundingBox.farX) {
+          dx += this.boundingBox.farX - entity.boundingBox.farX;
+        }
+        if (entity.boundingBox.y < this.boundingBox.y) {
+          dy += this.boundingBox.y - entity.boundingBox.y;
+        }
+        if (entity.boundingBox.farY > this.boundingBox.farY) {
+          dy += this.boundingBox.farY - entity.boundingBox.farY;
+        }
 
-      let didCollide = false;
-      if (dx !== 0) {
-        entity.velocity.x *= -entity.bounce;
-        didCollide = true;
-      }
-      if (dy !== 0) {
-        entity.velocity.y *= -entity.bounce;
-        didCollide = true;
-      }
+        let didCollide = false;
+        if (dx !== 0) {
+          entity.velocity.x *= -entity.bounce;
+          didCollide = true;
+        }
+        if (dy !== 0) {
+          entity.velocity.y *= -entity.bounce;
+          didCollide = true;
+        }
 
-      if (didCollide) {
-        const event = {
-          type: 'CollisionEvent',
-          data: <CollisionEvent>{
-            collider: entity,
-          },
-        };
-        EM.emit(event);
-      }
+        if (didCollide) {
+          const event = {
+            type: 'CollisionEvent',
+            data: <CollisionEvent>{
+              collider: entity,
+            },
+          };
+          EM.emit(event);
+        }
 
-      entity.addPositionXY(dx, dy);
+        entity.addPositionXY(dx, dy);
+      }
     }
 
     // Reinsert each entity into the quad tree
@@ -216,7 +218,7 @@ export class WorldManager implements Bounded, Serializable {
   public registerEntity(Type: (new () => Entity) & typeof Entity) {
     const name = Type.typeName;
     this.entityConstructors[name] = Type;
-    LM.debug(`entity ${name} registered`);
+    log.debug(`entity ${name} registered`);
   }
 
   public spawn<T extends Entity>(
@@ -244,6 +246,7 @@ export class WorldManager implements Bounded, Serializable {
     const out = <Data>{
       entities: {},
       deleted: this.toDelete,
+      boundingBox: this.boundingBox.serialize(),
     };
     for (const key in this.entities) {
       out.entities[key] = this.entities[key].serialize();
@@ -252,7 +255,7 @@ export class WorldManager implements Bounded, Serializable {
   }
 
   public deserialize(data: Data): void {
-    const { entities, deleted } = data;
+    const { entities, deleted, boundingBox } = data;
     for (const id in entities) {
       const entry = entities[id];
       if (Object.keys(entry).length === 0) {
@@ -272,7 +275,7 @@ export class WorldManager implements Bounded, Serializable {
       if (entity && (createdEntity || entity.doSync)) {
         entity.deserialize(entry);
       } else {
-        LM.error(`failed to create entity from data: ${JSON.stringify(entry)}`);
+        log.error(`failed to create entity from data: ${JSON.stringify(entry)}`);
       }
     }
 
@@ -280,6 +283,10 @@ export class WorldManager implements Bounded, Serializable {
       iterator(deleted)
         .map((id) => this.getEntity(id))
         .forEach((entity) => entity?.markForDelete());
+    }
+
+    if (boundingBox) {
+      this.boundingBox.deserialize(boundingBox);
     }
   }
 

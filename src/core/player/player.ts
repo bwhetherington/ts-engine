@@ -1,8 +1,7 @@
 import { Hero, WM } from 'core/entity';
 import { Serializable, Data } from 'core/serialize';
-import { v1 } from 'uuid';
 import { Socket, NM } from 'core/net';
-import { PM } from '.';
+import { PlayerManager } from 'core/player';
 import { UM, UUID } from 'core/uuid';
 
 export class Player implements Serializable {
@@ -33,6 +32,7 @@ export class Player implements Serializable {
       this.id = id;
     }
     if (typeof name === 'string') {
+      console.log('name', name);
       this.name = name;
     }
     if (typeof socket === 'number') {
@@ -59,7 +59,7 @@ export class Player implements Serializable {
   }
 
   public isActivePlayer(): boolean {
-    return PM.isActivePlayer(this);
+    return PlayerManager.isActivePlayer(this);
   }
 
   public send(packet: Data): void {

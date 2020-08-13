@@ -13,7 +13,7 @@ export class Projectile extends Entity {
 
   public damage: number = 15;
   private hasExploded: boolean = false;
-  public parent?: Entity;
+  public parent?: Unit;
 
   constructor() {
     super();
@@ -76,7 +76,7 @@ export class Projectile extends Entity {
 
   public hit(unit: Unit): void {
     log.debug(`${this.toString()} hit ${unit.toString()}`);
-    unit.damage(this.damage);
+    unit.damage(this.damage, this.parent);
     unit.applyForce(this.velocity, this.mass);
   }
 
@@ -104,7 +104,7 @@ export class Projectile extends Entity {
 
     if (typeof parentID === 'string') {
       const parent = WM.getEntity(parentID);
-      if (parent) {
+      if (parent instanceof Unit) {
         this.parent = parent;
       }
     }

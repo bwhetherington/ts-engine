@@ -14,13 +14,13 @@ export class Pistol extends Weapon {
     const projectile = WM.spawn(Projectile, source.position);
     projectile.parent = source;
     projectile.bounce = 0;
-    projectile.damage = 8;
-    projectile.mass = 0.02;
+    projectile.damage = 12;
+    projectile.mass = 0.025;
     projectile.velocity.setXY(1, 0);
-    const offset = (Math.random() - 0.5) * 0.1;
+    const offset = (Math.random() - 0.5) * 0.15;
     projectile.velocity.angle = angle + offset;
     projectile.position.add(projectile.velocity, 10);
-    projectile.velocity.magnitude = 1200;
+    projectile.velocity.magnitude = 750;
     source.applyForce(projectile.velocity, -projectile.mass);
   }
 }

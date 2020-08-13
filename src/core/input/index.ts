@@ -98,6 +98,7 @@ export const KEY_MAP: Record<string, Key> = {
   AltRight: Key.Alt,
   Backspace: Key.Backspace,
   Tab: Key.Tab,
+  Enter: Key.Enter,
 };
 
 export interface KeyEvent {

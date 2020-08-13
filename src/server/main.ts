@@ -7,13 +7,41 @@ import { CM } from 'server/chat';
 import { WM, Unit } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
 import { Rectangle } from 'core/geometry';
-import { PM } from 'core/player';
+import { PlayerManager } from 'core/player';
 import { FM } from 'core/form';
 import { registerJoinForm } from 'core/form';
-import { MM } from 'server/metrics';
-import { WM as WeaponManager } from 'core/weapon';
+import { MetricsManager } from 'server/metrics';
+import { WeaponManager } from 'core/weapon';
+import { readFile as readFileNonPromise } from 'fs';
+import { promisify } from 'util';
+
+const readFile = promisify(readFileNonPromise);
 
 const LM = InternalLogger.forFile(__filename);
+
+async function loadGeometry(file: string): Promise<void> {
+  const text = await readFile(file, 'utf-8');
+  const obj = JSON.parse(text);
+
+  const { boundingBox, geometry } = obj;
+  if (boundingBox && geometry) {
+    WM.boundingBox.deserialize(boundingBox);
+    WM.boundingBox.centerX = 0;
+    WM.boundingBox.centerY = 0;
+
+    for (const element of geometry) {
+      const rect = new Rectangle();
+      const { x, y, width, height } = element;
+      rect.width = width;
+      rect.height = height;
+      rect.centerX = x;
+      rect.centerY = y;
+
+      const entity = Geometry.fromRectangle(rect);
+      WM.add(entity);
+    }
+  }
+}
 
 async function main(): Promise<void> {
   InternalLogger.initialize(new ServerLogger());
@@ -30,10 +58,14 @@ async function main(): Promise<void> {
   server.start(parseInt(process.env.PORT ?? '0') || 8080);
 
   WM.initialize();
+
+  await loadGeometry('world.json');
+
+  PlayerManager.initialize();
   FM.initialize();
   registerJoinForm();
 
-  MM.initialize();
+  MetricsManager.initialize();
   WeaponManager.initialize();
 
   const ENTITIES = 0;
@@ -56,19 +88,6 @@ async function main(): Promise<void> {
     entity.velocity.setXY(dx, dy);
   }
 
-  const geometry = [
-    Rectangle.centered(225, 50, 200 / 2, 0),
-    Rectangle.centered(500, 50, 0, -200),
-    Rectangle.centered(500, 50, 0, 200),
-    Rectangle.centered(50, 500, -200, 0),
-    Rectangle.centered(50, 500, 200, 0),
-    Rectangle.centered(100, 100, 0, 0),
-  ];
-  for (const element of geometry) {
-    const entity = Geometry.fromRectangle(element);
-    WM.add(entity);
-  }
-
   const timer = new Timer((dt) => {
     NM.send({ foo: 'foo', bar: 'bar' });
     EM.step(dt);
@@ -77,7 +96,7 @@ async function main(): Promise<void> {
       type: 'SyncEvent',
       data: <SyncEvent>{
         worldData: WM.diffState(),
-        playerData: PM.diffState(),
+        playerData: PlayerManager.diffState(),
       },
     };
 

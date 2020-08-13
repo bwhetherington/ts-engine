@@ -1,11 +1,13 @@
-import { Entity, Hero } from 'core/entity';
+import { Entity, Text, WM } from 'core/entity';
 import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';
-import { clamp } from 'core/util';
+import { clamp, sleep } from 'core/util';
 import { DamageEvent } from 'core/entity/util';
-import { Weapon, WM as WeaponManager } from 'core/weapon';
-import { LM } from 'core/log';
+import { Weapon, WeaponManager } from 'core/weapon';
+import { EM } from 'core/event';
+import { NM } from 'core/net';
+import { rgb } from 'core/graphics';
 
 const ACCELERATION = 2000;
 
@@ -28,13 +30,6 @@ export class Unit extends Entity {
   public constructor() {
     super();
     this.type = Unit.typeName;
-
-    this.addListener<DamageEvent>('DamageEvent', (event) => {
-      const { target, source, amount } = event.data;
-      if (target === this) {
-        this.damage(amount);
-      }
-    });
   }
 
   public setWeapon(weapon?: Weapon): void {
@@ -66,8 +61,16 @@ export class Unit extends Entity {
     }
   }
 
-  public damage(amount: number): void {
+  public damage(amount: number, source?: Unit): void {
     this.setLife(this.life - amount);
+    EM.emit<DamageEvent>({
+      type: 'DamageEvent',
+      data: {
+        target: this,
+        source,
+        amount,
+      },
+    })
   }
 
   public getMaxLife(): number {

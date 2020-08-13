@@ -28,7 +28,7 @@ export class InputManager {
   private element?: HTMLElement;
   private keyStates: Array<boolean> = initializeKeyStates();
 
-  public constructor() {}
+  public constructor() { }
 
   public initialize(element: HTMLElement): void {
     this.element = element;
@@ -37,7 +37,7 @@ export class InputManager {
     });
     this.element?.addEventListener('mousedown', (event) => {
       const { clientX, clientY } = event;
-      const { x, y } = CM.translateMouse(clientX, clientY);
+      const { x, y } = CM.toWorldSpace(clientX, clientY);
       const button = BUTTON_MAP[event.button];
       if (button !== undefined) {
         const mouseEvent = {
@@ -57,7 +57,7 @@ export class InputManager {
     });
     this.element?.addEventListener('mouseup', (event) => {
       const { clientX, clientY } = event;
-      const { x, y } = CM.translateMouse(clientX, clientY);
+      const { x, y } = CM.toWorldSpace(clientX, clientY);
       const button = BUTTON_MAP[event.button];
       if (button !== undefined) {
         const mouseEvent = {
@@ -77,7 +77,7 @@ export class InputManager {
     });
     this.element?.addEventListener('mousemove', (event) => {
       const { clientX, clientY } = event;
-      const { x, y } = CM.translateMouse(clientX, clientY);
+      const { x, y } = CM.toWorldSpace(clientX, clientY);
       const mouseEvent = {
         type: 'MouseEvent',
         data: <MouseEvent>{
@@ -128,15 +128,5 @@ export class InputManager {
       }
     });
     LM.debug('InputManager initialized');
-
-    // EM.addListener<KeyEvent>('KeyEvent', (event) => {
-    //   const { action, key } = event.data;
-    //   LM.info(`action: ${action}, key: ${key}`);
-    // });
-
-    // EM.addListener<MouseEvent>('MouseEvent', (event) => {
-    //   const { action, button, x, y } = event.data;
-    //   LM.info(`action: ${action}, x: ${x}, y: ${y}, button: ${button}`);
-    // });
   }
 }

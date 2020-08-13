@@ -6,16 +6,16 @@ import {
 import * as http from 'http';
 
 import { Node, Message, Socket } from 'core/net';
-import { LM as InternalLogger } from 'core/log';
-import { EM, Event, StepEvent } from 'core/event';
+import { LM } from 'core/log';
+import { EM, Event } from 'core/event';
 import { TM } from 'server/util';
 import { WM, Hero } from 'core/entity';
-import { SyncEvent } from 'core/net';
-import { PM, Player } from 'core/player';
+import { PlayerManager, Player } from 'core/player';
 import { InitialSyncEvent } from 'core/net/util';
 import { Pistol } from 'core/weapon';
+import process from 'process';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LM.forFile(__filename);
 
 interface Connections {
   [key: number]: Connection;
@@ -48,10 +48,10 @@ export class Server extends Node {
       socket.close();
       delete this.connections[index];
       this.freedSockets.push(index);
-      LM.debug(`disconnected socket ${index}`);
+      log.debug(`disconnected socket ${index}`);
       this.onDisconnect(index);
     } else {
-      LM.warn(`attempt to disconnect inactive socket ${index}`);
+      log.warn(`attempt to disconnect inactive socket ${index}`);
     }
   }
 
@@ -72,7 +72,7 @@ export class Server extends Node {
     const connection = request.accept();
     const index = this.allocateSocket();
     this.connections[index] = connection;
-    LM.debug(`accepted connection on socket ${index}`);
+    log.debug(`accepted connection on socket ${index}`);
     this.initializeConnection(connection, index);
     this.onConnect(index);
   }
@@ -96,7 +96,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => {});
+    this.wsServer.on('close', (connection) => { });
   }
 
   private sendRaw(data: string, socket: Socket) {
@@ -119,8 +119,13 @@ export class Server extends Node {
   }
 
   public start(port: number = 8080) {
-    this.httpServer?.listen(port);
-    LM.info(`listening on port ${port}`);
+    try {
+      this.httpServer?.listen(port);
+    } catch (ex) {
+      log.error(`port ${port} is already in use`);
+      process.abort();
+    }
+    log.info(`listening on port ${port}`);
   }
 
   public onConnect(socket: Socket): void {
@@ -146,7 +151,7 @@ export class Server extends Node {
     player.hero = hero;
 
     WM.add(hero);
-    PM.add(player);
+    PlayerManager.add(player);
 
     const event = {
       type: 'InitialSyncEvent',
@@ -154,7 +159,7 @@ export class Server extends Node {
         socket,
         sync: {
           worldData: WM.serialize(),
-          playerData: PM.serialize(),
+          playerData: PlayerManager.serialize(),
         },
       },
     };
@@ -168,9 +173,9 @@ export class Server extends Node {
   public onDisconnect(socket: Socket): void {
     super.onDisconnect(socket);
 
-    const player = PM.getPlayer(socket);
+    const player = PlayerManager.getPlayer(socket);
     if (player) {
-      PM.remove(player);
+      PlayerManager.remove(player);
     }
 
     // Sleep the server clock

@@ -79,6 +79,7 @@ export class PlayerManager implements Serializable {
       let player = this.players[index];
       if (!player) {
         player = new Player();
+        this.players[index] = player;
       }
       player.deserialize(data[index]);
     }

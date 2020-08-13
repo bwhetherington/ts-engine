@@ -8,9 +8,10 @@ import { UIM } from 'client/components';
 import { CM } from 'core/graphics';
 import { AM } from 'client/alert';
 import { IM } from 'client/input';
-import { PM } from 'core/player';
+import { PlayerManager } from 'core/player';
 import { FM } from 'core/form';
-import { WM as WeaponManager } from 'core/weapon';
+import { WeaponManager } from 'core/weapon';
+import { TextManager } from 'client/text';
 
 const LM = InternalLogger.forFile(__filename);
 
@@ -26,10 +27,11 @@ async function main(): Promise<void> {
 
   NM.initialize(client);
   WM.initialize();
-  PM.initialize();
+  PlayerManager.initialize();
   CM.initialize();
   AM.initialize();
   FM.initialize();
+  TextManager.initialize();
   WeaponManager.initialize();
 
   if (game) {
@@ -49,13 +51,10 @@ async function main(): Promise<void> {
       canvas.setSize(window.innerWidth, window.innerHeight);
     });
 
-    EM.addListener('StepEvent', (step: Event<StepEvent>) => {
-      CM.update();
-      WM.render(canvas);
-    });
-
     const timer = new Timer((dt) => {
       EM.step(dt);
+      CM.update();
+      WM.render(canvas);
     });
 
     timer.start();

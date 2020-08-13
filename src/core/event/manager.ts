@@ -1,5 +1,5 @@
 import { Queue } from 'core/util/queue';
-import { GameEvent, GameHandler, Handler, EventData } from 'core/event';
+import { Event, GameEvent, GameHandler, Handler, EventData } from 'core/event';
 import { UM } from 'core/uuid';
 import { LM } from 'core/log';
 
@@ -14,7 +14,7 @@ export class EventManager {
   private events: Queue<GameEvent> = new Queue();
   private listenerCount: number = 0;
 
-  public emit<E extends GameEvent>(event: E): void {
+  public emit<E extends EventData>(event: Event<E>): void {
     this.events.enqueue(event);
   }
 

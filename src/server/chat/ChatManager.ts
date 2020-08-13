@@ -10,12 +10,12 @@ import {
   renderWarn,
   renderError,
 } from 'core/chat';
-import { LM as InternalLogger } from 'core/log';
-import { PM } from 'core/player';
+import { LM } from 'core/log';
+import { PlayerManager } from 'core/player';
 import { WM, Unit } from 'core/entity';
 import { TM } from 'server/util';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LM.forFile(__filename);
 
 const DEFAULT_NAME = 'Unknown';
 
@@ -78,21 +78,21 @@ export class ChatManager {
   }
 
   public initialize(): void {
-    LM.debug('ChatManager initialized');
+    log.debug('ChatManager initialized');
 
     EM.addListener<SetNameEvent>('SetNameEvent', (event) => {
       const { data, socket } = event;
 
       if (socket !== undefined) {
-        const player = PM.getPlayer(socket);
+        const player = PlayerManager.getPlayer(socket);
         if (player) {
           player.name = data.name;
-          LM.debug(`player ${socket} set name to ${data.name}`);
+          log.debug(`player ${socket} set name to ${data.name}`);
         } else {
-          LM.error(`player ${socket} not found`);
+          log.error(`player ${socket} not found`);
         }
       } else {
-        LM.error('unknown socket');
+        log.error('unknown socket');
       }
     });
 
@@ -101,13 +101,13 @@ export class ChatManager {
 
       let name = DEFAULT_NAME;
       if (socket !== undefined) {
-        name = PM.getPlayer(socket)?.name ?? DEFAULT_NAME;
+        name = PlayerManager.getPlayer(socket)?.name ?? DEFAULT_NAME;
       }
 
       const components = this.formatMessage(name, event.data.content);
       this.sendComponents(components);
 
-      LM.info(`<${name}> ${data.content}`);
+      log.info(`<${name}> ${data.content}`);
     });
 
     EM.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
@@ -159,7 +159,7 @@ export class ChatManager {
       'rename',
       (socket, name) => {
         if (typeof name === 'string') {
-          const player = PM.getPlayer(socket);
+          const player = PlayerManager.getPlayer(socket);
           if (player) {
             player.name = name;
             this.info(`Set name to '${name}'`, socket);
@@ -261,18 +261,18 @@ export class ChatManager {
   public info(message: string, socket: number = -1): void {
     const components = renderInfo(message);
     this.sendComponents(components, socket);
-    LM.info(message);
+    log.info(message);
   }
 
   public warn(message: string, socket: number = -1): void {
     const components = renderWarn(message);
     this.sendComponents(components, socket);
-    LM.warn(message);
+    log.warn(message);
   }
 
   public error(message: string, socket: number = -1): void {
     const components = renderError(message);
     this.sendComponents(components, socket);
-    LM.error(message);
+    log.error(message);
   }
 }
