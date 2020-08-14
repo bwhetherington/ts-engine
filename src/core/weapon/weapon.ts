@@ -1,7 +1,9 @@
 import { Serializable, Data } from 'core/serialize';
 import { Unit } from 'core/entity';
-import { EventManager, StepEvent } from 'core/event';
+import { EventManager, StepEvent, Event } from 'core/event';
 import { UUID } from 'core/uuid';
+import { FireEvent } from '.';
+import { NetworkManager } from 'core/net';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';
@@ -30,6 +32,14 @@ export abstract class Weapon implements Serializable {
     if (this.cooldown <= 0) {
       this.cooldown += this.rate;
       this.fire(source, angle);
+      const event: Event<FireEvent> = {
+        type: 'FireEvent',
+        data: { sourceID: source.id },
+      };
+      EventManager.emit(event);
+      if (NetworkManager.isServer()) {
+        NetworkManager.send(event);
+      }
     }
   }
 

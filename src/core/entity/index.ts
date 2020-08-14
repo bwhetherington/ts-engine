@@ -1,5 +1,6 @@
 export { Entity, Uuid } from 'core/entity/Entity';
 export { Unit } from 'core/entity/Unit';
+export { Tank } from 'core/entity/Tank';
 export { Hero } from 'core/entity/Hero';
 export { Geometry } from 'core/entity/Geometry';
 export { Projectile } from 'core/entity/Projectile';

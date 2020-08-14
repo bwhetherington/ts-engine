@@ -12,7 +12,7 @@ import {
 } from 'core/chat';
 import { LogManager } from 'core/log';
 import { PlayerManager } from 'core/player';
-import { WorldManager, Unit } from 'core/entity';
+import { WorldManager, Tank } from 'core/entity';
 import { TimerManager } from 'server/util';
 
 const log = LogManager.forFile(__filename);
@@ -187,7 +187,7 @@ export class ChatManager {
         }
 
         for (let i = 0; i < count; i++) {
-          const entity = WorldManager.spawn(Unit);
+          const entity = WorldManager.spawn(Tank);
 
           entity.color = {
             red: Math.random() * 0.2 + 0.7,
@@ -214,7 +214,7 @@ export class ChatManager {
       'kill',
       (socket) => {
         WorldManager.getEntities()
-          .filter((entity) => entity instanceof Unit)
+          .filter((entity) => entity.type === 'Tank')
           .forEach((entity) => {
             entity.markForDelete();
           });

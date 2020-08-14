@@ -55,7 +55,7 @@ async function main(): Promise<void> {
       WorldManager.render(canvas);
     });
 
-    timer.start();
+    await timer.start();
   }
 }
 
