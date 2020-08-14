@@ -1,4 +1,4 @@
-import { Entity, CollisionEvent, Unit, WM } from 'core/entity';
+import { Entity, CollisionEvent, Unit, WorldManager } from 'core/entity';
 import { GraphicsContext } from 'core/graphics';
 import { LM } from 'core/log';
 import { CollisionLayer, DamageEvent } from './util';
@@ -53,17 +53,17 @@ export class Projectile extends Entity {
   }
 
   private explode(): void {
-    if (NM.isClient()) {
+    if (NetworkManager.isClient()) {
       const explosion = new Explosion();
       explosion.setPosition(this.position);
       explosion.color = this.color;
-      WM.add(explosion);
+      WorldManager.add(explosion);
       this.hasExploded = true;
     }
   }
 
   public remove(): void {
-    if (NM.isServer()) {
+    if (NetworkManager.isServer()) {
       this.markForDelete();
     } else {
       this.isVisible = false;
@@ -103,7 +103,7 @@ export class Projectile extends Entity {
     }
 
     if (typeof parentID === 'string') {
-      const parent = WM.getEntity(parentID);
+      const parent = WorldManager.getEntity(parentID);
       if (parent instanceof Unit) {
         this.parent = parent;
       }

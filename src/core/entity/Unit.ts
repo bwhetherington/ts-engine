@@ -1,4 +1,4 @@
-import { Entity, Text, WM } from 'core/entity';
+import { Entity, Text, WorldManager } from 'core/entity';
 import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';

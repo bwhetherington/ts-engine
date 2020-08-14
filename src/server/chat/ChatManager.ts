@@ -12,7 +12,7 @@ import {
 } from 'core/chat';
 import { LM } from 'core/log';
 import { PlayerManager } from 'core/player';
-import { WM, Unit } from 'core/entity';
+import { WorldManager, Unit } from 'core/entity';
 import { TM } from 'server/util';
 
 const log = LM.forFile(__filename);
@@ -187,7 +187,7 @@ export class ChatManager {
         }
 
         for (let i = 0; i < count; i++) {
-          const entity = WM.spawn(Unit);
+          const entity = WorldManager.spawn(Unit);
 
           entity.color = {
             red: Math.random() * 0.2 + 0.7,
@@ -195,8 +195,8 @@ export class ChatManager {
             blue: Math.random() * 0.2 + 0.7,
           };
 
-          const x = Math.random() * WM.boundingBox.width + WM.boundingBox.x;
-          const y = Math.random() * WM.boundingBox.height + WM.boundingBox.y;
+          const x = Math.random() * WorldManager.boundingBox.width + WorldManager.boundingBox.x;
+          const y = Math.random() * WorldManager.boundingBox.height + WorldManager.boundingBox.y;
 
           const dx = (Math.random() - 0.5) * 200;
           const dy = (Math.random() - 0.5) * 200;
@@ -213,7 +213,7 @@ export class ChatManager {
     this.registerCommand(
       'kill',
       (socket) => {
-        WM.getEntities()
+        WorldManager.getEntities()
           .filter((entity) => entity instanceof Unit)
           .forEach((entity) => {
             entity.markForDelete();
@@ -255,7 +255,7 @@ export class ChatManager {
         components,
       },
     };
-    NM.send(outEvent, socket);
+    NetworkManager.send(outEvent, socket);
   }
 
   public info(message: string, socket: number = -1): void {

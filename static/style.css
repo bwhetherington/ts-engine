@@ -173,7 +173,6 @@ input[type="checkbox"]:checked::after {
   width: calc(100% - 2 * var(--checkbox-padding));
   height: calc(100% - 2 * var(--checkbox-padding));
   border-radius: 2px;
-  /* border-radius: calc(100% - var(--checkbox-padding)); */
 }
 
 #text-pane {

@@ -9,7 +9,7 @@ import { Node, Message, Socket } from 'core/net';
 import { LM } from 'core/log';
 import { EM, Event } from 'core/event';
 import { TM } from 'server/util';
-import { WM, Hero } from 'core/entity';
+import { WorldManager, Hero } from 'core/entity';
 import { PlayerManager, Player } from 'core/player';
 import { InitialSyncEvent } from 'core/net/util';
 import { Pistol } from 'core/weapon';
@@ -150,7 +150,7 @@ export class Server extends Node {
 
     player.hero = hero;
 
-    WM.add(hero);
+    WorldManager.add(hero);
     PlayerManager.add(player);
 
     const event = {
@@ -158,7 +158,7 @@ export class Server extends Node {
       data: <InitialSyncEvent>{
         socket,
         sync: {
-          worldData: WM.serialize(),
+          worldData: WorldManager.serialize(),
           playerData: PlayerManager.serialize(),
         },
       },

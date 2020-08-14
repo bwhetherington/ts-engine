@@ -1,4 +1,4 @@
-import { Unit, Text, WM } from 'core/entity';
+import { Unit, Text, WorldManager } from 'core/entity';
 import {
   KeyEvent,
   KeyAction,
@@ -65,15 +65,15 @@ export class Hero extends Unit {
       }
     });
 
-    if (NM.isClient()) {
-      this.label = WM.spawn(Text);
+    if (NetworkManager.isClient()) {
+      this.label = WorldManager.spawn(Text);
       this.label.text = 'Hello';
 
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
         const { target, source, amount } = event.data;
         if (this.getPlayer()?.isActivePlayer() && (this === target || this === source)) {
           const label = 'Hit ' + amount;
-          const text = WM.spawn(Text, target.position);
+          const text = WorldManager.spawn(Text, target.position);
           text.color = rgb(192, 128, 128);
           text.isStatic = false;
           text.position.addXY((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 20);
@@ -89,10 +89,10 @@ export class Hero extends Unit {
     }
 
     this.addListener<StepEvent>('StepEvent', () => {
-      if (this.mouseDown && NM.isServer()) {
+      if (this.mouseDown && NetworkManager.isServer()) {
         this.fire(this.angle);
       }
-      if (NM.isClient()) {
+      if (NetworkManager.isClient()) {
         this.label?.setPosition(this.position);
         this.label?.position?.addXY(0, -55);
 
@@ -190,7 +190,7 @@ export class Hero extends Unit {
           playerData: {},
         },
       };
-      NM.send(syncEvent);
+      NetworkManager.send(syncEvent);
     } else {
       // If we are not the active player, we should use the deserialized angle
       if (typeof angle === 'number') {

@@ -1,3 +1,4 @@
 import { ChatManager } from 'server/chat/ChatManager';
 
-export const CM = new ChatManager();
+const CM = new ChatManager();
+export { CM as ChatManager };

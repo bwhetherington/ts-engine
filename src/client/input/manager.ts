@@ -49,7 +49,7 @@ export class InputManager {
             y,
           },
         };
-        NM.send(mouseEvent);
+        NetworkManager.send(mouseEvent);
         EM.emit(mouseEvent);
       } else {
         LM.warn('unrecognized button: ' + event.button);
@@ -70,7 +70,7 @@ export class InputManager {
           },
         };
         EM.emit(mouseEvent);
-        NM.send(mouseEvent);
+        NetworkManager.send(mouseEvent);
       } else {
         LM.warn('unrecognized button: ' + event.button);
       }
@@ -87,7 +87,7 @@ export class InputManager {
         },
       };
       EM.emit(mouseEvent);
-      NM.send(mouseEvent);
+      NetworkManager.send(mouseEvent);
     });
     this.element?.addEventListener('keydown', (event) => {
       const key = KEY_MAP[event.code];
@@ -102,7 +102,7 @@ export class InputManager {
             },
           };
           EM.emit(keyEvent);
-          NM.send(keyEvent);
+          NetworkManager.send(keyEvent);
         }
       } else {
         LM.warn('unrecognized key: ' + event.code);
@@ -121,7 +121,7 @@ export class InputManager {
             },
           };
           EM.emit(keyEvent);
-          NM.send(keyEvent);
+          NetworkManager.send(keyEvent);
         }
       } else {
         LM.warn('unrecognized key: ' + event.code);

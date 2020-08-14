@@ -141,7 +141,7 @@ export class ChatComponent extends Component {
             args,
           },
         };
-        NM.send(event);
+        NetworkManager.send(event);
       } else {
         LM.error('expected command');
       }
@@ -153,7 +153,7 @@ export class ChatComponent extends Component {
           content: message,
         },
       };
-      NM.send(outEvent);
+      NetworkManager.send(outEvent);
     }
   }
 

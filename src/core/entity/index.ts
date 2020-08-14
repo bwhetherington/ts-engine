@@ -6,7 +6,7 @@ export { Projectile } from 'core/entity/Projectile';
 export { Explosion } from 'core/entity/Explosion';
 export { Text } from 'core/entity/Text';
 
-import { WorldManager } from 'core/entity/WorldManager';
+import { WorldManager } from 'core/entity/manager';
 import { Rectangle } from 'core/geometry';
 
 export {
@@ -16,4 +16,5 @@ export {
   CollisionEvent,
 } from 'core/entity/util';
 
-export const WM = new WorldManager(new Rectangle(1000, 1000, -500, -500));
+const WM = new WorldManager(new Rectangle(1000, 1000, -500, -500));
+export { WM as WorldManager };

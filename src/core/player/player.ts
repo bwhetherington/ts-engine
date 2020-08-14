@@ -1,4 +1,4 @@
-import { Hero, WM } from 'core/entity';
+import { Hero, WorldManager } from 'core/entity';
 import { Serializable, Data } from 'core/serialize';
 import { Socket, NM } from 'core/net';
 import { PlayerManager } from 'core/player';
@@ -39,7 +39,7 @@ export class Player implements Serializable {
       this.socket = socket;
     }
     if (typeof heroID == 'string') {
-      const entity = WM.getEntity(heroID);
+      const entity = WorldManager.getEntity(heroID);
       if (entity instanceof Hero) {
         this.setHero(entity);
       }
@@ -64,7 +64,7 @@ export class Player implements Serializable {
 
   public send(packet: Data): void {
     if (this.socket > -1) {
-      NM.send(packet, this.socket);
+      NetworkManager.send(packet, this.socket);
     }
   }
 }

@@ -3,8 +3,8 @@ import { Timer, ServerLogger, TM } from 'server/util';
 import { LM as InternalLogger } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NM, SyncEvent } from 'core/net';
-import { CM } from 'server/chat';
-import { WM, Unit } from 'core/entity';
+import { ChatManager } from 'server/chat';
+import { WorldManager, Unit } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
 import { Rectangle } from 'core/geometry';
 import { PlayerManager } from 'core/player';
@@ -25,9 +25,9 @@ async function loadGeometry(file: string): Promise<void> {
 
   const { boundingBox, geometry } = obj;
   if (boundingBox && geometry) {
-    WM.boundingBox.deserialize(boundingBox);
-    WM.boundingBox.centerX = 0;
-    WM.boundingBox.centerY = 0;
+    WorldManager.boundingBox.deserialize(boundingBox);
+    WorldManager.boundingBox.centerX = 0;
+    WorldManager.boundingBox.centerY = 0;
 
     for (const element of geometry) {
       const rect = new Rectangle();
@@ -38,7 +38,7 @@ async function loadGeometry(file: string): Promise<void> {
       rect.centerY = y;
 
       const entity = Geometry.fromRectangle(rect);
-      WM.add(entity);
+      WorldManager.add(entity);
     }
   }
 }
@@ -53,11 +53,11 @@ async function main(): Promise<void> {
 
   const server = new Server();
   server.initialize(httpServer);
-  NM.initialize(server);
-  CM.initialize();
+  NetworkManager.initialize(server);
+  ChatManager.initialize();
   server.start(parseInt(process.env.PORT ?? '0') || 8080);
 
-  WM.initialize();
+  WorldManager.initialize();
 
   await loadGeometry('world.json');
 
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
 
   const ENTITIES = 0;
   for (let i = 0; i < ENTITIES; i++) {
-    const entity = WM.spawn(Unit);
+    const entity = WorldManager.spawn(Unit);
 
     entity.color = {
       red: Math.random() * 0.2 + 0.7,
@@ -78,8 +78,8 @@ async function main(): Promise<void> {
       blue: Math.random() * 0.2 + 0.7,
     };
 
-    const x = Math.random() * WM.boundingBox.width + WM.boundingBox.x;
-    const y = Math.random() * WM.boundingBox.height + WM.boundingBox.y;
+    const x = Math.random() * WorldManager.boundingBox.width + WorldManager.boundingBox.x;
+    const y = Math.random() * WorldManager.boundingBox.height + WorldManager.boundingBox.y;
 
     const dx = (Math.random() - 0.5) * 200;
     const dy = (Math.random() - 0.5) * 200;
@@ -89,18 +89,18 @@ async function main(): Promise<void> {
   }
 
   const timer = new Timer((dt) => {
-    NM.send({ foo: 'foo', bar: 'bar' });
+    NetworkManager.send({ foo: 'foo', bar: 'bar' });
     EM.step(dt);
 
     const event = {
       type: 'SyncEvent',
       data: <SyncEvent>{
-        worldData: WM.diffState(),
+        worldData: WorldManager.diffState(),
         playerData: PlayerManager.diffState(),
       },
     };
 
-    NM.send(event);
+    NetworkManager.send(event);
   }, 1 / 30);
   TM.initialize(timer);
 }

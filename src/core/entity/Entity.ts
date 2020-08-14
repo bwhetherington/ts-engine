@@ -2,7 +2,7 @@ import { Bounded, Rectangle, Vector } from 'core/geometry';
 import { GraphicsContext, Color, invert } from 'core/graphics';
 import { WHITE, isColor } from 'core/graphics/color';
 import { v1 as genUuid } from 'uuid';
-import { CollisionLayer, WM, CollisionEvent } from 'core/entity';
+import { CollisionLayer, WorldManager, CollisionEvent } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
 import { EventData, Handler, EM, Event } from 'core/event';
@@ -79,7 +79,7 @@ export class Entity implements Bounded, Serializable {
     if (this.isCollidable) {
       // Query for entities that may collide with this entity
       let collided = false;
-      WM.query(this.boundingBox)
+      WorldManager.query(this.boundingBox)
         .filter(
           (candidate) =>
             candidate.isCollidable &&

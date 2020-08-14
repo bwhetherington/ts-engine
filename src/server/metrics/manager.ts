@@ -3,7 +3,7 @@ import { EM, StepEvent } from 'core/event';
 import { SizedQueue } from 'core/util';
 import { Timer } from 'server/util';
 import { MetricsEvent } from 'core/metrics';
-import { WM } from 'core/entity';
+import { WorldManager } from 'core/entity';
 import { NM } from 'core/net';
 
 const LM = InternalLogger.forFile(__filename);
@@ -29,13 +29,13 @@ export class MetricsManager {
         type: 'MetricsEvent',
         data: <MetricsEvent>{
           tps: calculateTps(frameTimes),
-          entities: WM.getEntityCount(),
+          entities: WorldManager.getEntityCount(),
           listeners: EM.getListenerCount(),
           connections: 0,
         },
       };
 
-      NM.send(event);
+      NetworkManager.send(event);
     }, 1);
 
     timer.start();

@@ -12,7 +12,7 @@ export class UUIDManager {
     const b = (Math.random() * 46656) | 0;
     const a2 = ('000' + a.toString(36)).slice(-3);
     const b2 = ('000' + b.toString(36)).slice(-3);
-    const flag = NM.isClient() ? '1' : '0';
+    const flag = NetworkManager.isClient() ? '1' : '0';
     return flag + a2 + b2;
   }
 

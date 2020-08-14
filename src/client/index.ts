@@ -1,7 +1,7 @@
 import { NM } from 'core/net';
 import { EM, StepEvent, Event } from 'core/event';
 import { LM as InternalLogger } from 'core/log';
-import { WM } from 'core/entity';
+import { WorldManager } from 'core/entity';
 
 import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
 import { UIM } from 'client/components';
@@ -25,8 +25,8 @@ async function main(): Promise<void> {
 
   const client = new Client();
 
-  NM.initialize(client);
-  WM.initialize();
+  NetworkManager.initialize(client);
+  WorldManager.initialize();
   PlayerManager.initialize();
   CM.initialize();
   AM.initialize();
@@ -54,7 +54,7 @@ async function main(): Promise<void> {
     const timer = new Timer((dt) => {
       EM.step(dt);
       CM.update();
-      WM.render(canvas);
+      WorldManager.render(canvas);
     });
 
     timer.start();

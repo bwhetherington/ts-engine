@@ -10,7 +10,7 @@ import { SetNameEvent } from 'core/chat';
 import { EM } from 'core/event';
 import { InitialSyncEvent } from 'core/net/util';
 import { PlayerManager } from 'core/player';
-import { WM } from 'core/entity';
+import { WorldManager } from 'core/entity';
 
 function generateName(): string {
   return uniqueNamesGenerator({
@@ -47,7 +47,7 @@ export class Client extends Node {
       const { socket, sync } = event.data;
       PlayerManager.setActivePlayer(socket);
       const { worldData, playerData } = sync;
-      WM.deserialize(worldData);
+      WorldManager.deserialize(worldData);
       PlayerManager.deserialize(playerData);
     });
   }

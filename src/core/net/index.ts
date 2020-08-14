@@ -1,4 +1,4 @@
-import { NetworkManager } from 'core/net/NetworkManager';
+import { NetworkManager } from 'core/net/manager';
 import {
   Message,
   Socket,
@@ -11,7 +11,7 @@ import {
 } from 'core/net/util';
 import { HTTPClient, HTTPResponse } from 'core/net/http';
 
-export const NM = new NetworkManager();
+const NM = new NetworkManager();
 export {
   Message,
   Socket,
@@ -23,4 +23,5 @@ export {
   HTTPClient,
   HTTPResponse,
   SyncEvent,
+  NM as NetworkManager,
 };

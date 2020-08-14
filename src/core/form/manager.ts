@@ -16,9 +16,9 @@ export class FormManager {
   public initialize(): void {
     log.debug('FormManager initialized');
 
-    if (NM.isClient()) {
+    if (NetworkManager.isClient()) {
       EM.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
-        NM.send(event);
+        NetworkManager.send(event);
       });
     }
   }

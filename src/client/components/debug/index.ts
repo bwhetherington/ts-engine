@@ -2,7 +2,7 @@ import { Component } from 'client/components/util';
 import template from 'client/components/debug/template.html';
 import { SizedQueue } from 'core/util';
 import { EM, StepEvent, Event } from 'core/event';
-import { WM } from 'core/entity';
+import { WorldManager } from 'core/entity';
 import { MetricsEvent } from 'core/metrics';
 
 export class DebugComponent extends Component {
@@ -41,7 +41,7 @@ export class DebugComponent extends Component {
         this.fpsLabel.innerText = label;
       }
       if (this.entitiesLabel) {
-        this.entitiesLabel.innerText = '' + WM.getEntityCount();
+        this.entitiesLabel.innerText = '' + WorldManager.getEntityCount();
       }
       if (this.listenersLabel) {
         this.listenersLabel.innerText = '' + EM.getListenerCount();

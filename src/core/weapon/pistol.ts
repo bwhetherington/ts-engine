@@ -1,5 +1,5 @@
 import { Weapon } from 'core/weapon';
-import { Unit, WM, Projectile } from 'core/entity';
+import { Unit, WorldManager, Projectile } from 'core/entity';
 
 export class Pistol extends Weapon {
   public static typeName: string = 'Pistol';
@@ -11,7 +11,7 @@ export class Pistol extends Weapon {
   }
 
   public fire(source: Unit, angle: number): void {
-    const projectile = WM.spawn(Projectile, source.position);
+    const projectile = WorldManager.spawn(Projectile, source.position);
     projectile.parent = source;
     projectile.bounce = 0;
     projectile.damage = 12;
