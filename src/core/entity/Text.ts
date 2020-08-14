@@ -7,6 +7,7 @@ export class Text extends Entity {
   public static typeName: string = 'Text';
 
   public text: string = '';
+  public tag?: string;
   public isStatic: boolean = true;
 
   constructor() {
@@ -25,6 +26,7 @@ export class Text extends Entity {
         id: this.id,
         isStatic: this.isStatic,
         text: this.text,
+        tag: this.tag,
         color: this.color,
         x: this.position.x,
         y: this.position.y,
@@ -47,15 +49,19 @@ export class Text extends Entity {
     return {
       ...super.serialize(),
       text: this.text,
+      label: this.tag,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const { text } = data;
+    const { text, tag } = data;
     if (typeof text === 'string') {
       this.text = text;
+    }
+    if (typeof tag === 'string') {
+      this.tag = tag;
     }
   }
 }

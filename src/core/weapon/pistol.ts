@@ -8,13 +8,14 @@ export class Pistol extends Weapon {
     super();
     this.type = Pistol.typeName;
     this.rate = 0.15;
+    this.damage = 12;
   }
 
   public fire(source: Unit, angle: number): void {
     const projectile = WorldManager.spawn(Projectile, source.position);
     projectile.parent = source;
     projectile.bounce = 0;
-    projectile.damage = 12;
+    projectile.damage = this.damage;
     projectile.mass = 0.025;
     projectile.velocity.setXY(1, 0);
     const offset = (Math.random() - 0.5) * 0.15;

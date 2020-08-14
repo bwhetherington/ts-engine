@@ -14,6 +14,8 @@ const FLASH_DURATION = 0.2;
 export class Tank extends Unit {
   public static typeName: string = 'Tank';
 
+  public armor: number = 0;
+
   protected angle: number = 0;
   protected label?: Text;
 
@@ -23,6 +25,8 @@ export class Tank extends Unit {
   public constructor() {
     super();
     this.type = Tank.typeName;
+    this.friction = 500;
+    this.bounce = 0.1;
 
     this.boundingBox.width = 30;
     this.boundingBox.height = 30;
@@ -63,7 +67,8 @@ export class Tank extends Unit {
   }
 
   public damage(amount: number, source?: Unit): void {
-    super.damage(amount, source);
+    const damage = Math.max(1, amount - this.armor);
+    super.damage(damage, source);
     this.flash();
   }
 

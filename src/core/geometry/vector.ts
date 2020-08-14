@@ -38,6 +38,22 @@ export class Vector implements Serializable {
     }
   }
 
+  public distanceTo(v: Vector): number {
+    const { x, y } = this;
+    this.add(v, -1);
+    const dist = this.magnitude;
+    this.setXY(x, y);
+    return dist;
+  }
+
+  public angleTo(v: Vector): number {
+    const { x, y } = v;
+    v.add(this, -1);
+    const angle = v.angle;
+    v.setXY(x, y);
+    return angle;
+  }
+
   public set(v: Vector): void {
     this.setXY(v.x, v.y);
   }

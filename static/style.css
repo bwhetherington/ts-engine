@@ -38,6 +38,7 @@ body,
 .col {
   display: flex;
   flex-direction: column;
+  pointer-events: none;
 }
 
 .col > *:not(:last-child) {
@@ -200,6 +201,14 @@ input[type="checkbox"]:checked::after {
   animation: fade-out 1s;
 }
 
+.label-text {
+  font-weight: bold;
+}
+
+.label-tag {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .text-label {
   position: absolute;
   top: 0px;
@@ -207,5 +216,4 @@ input[type="checkbox"]:checked::after {
   pointer-events: none;
   user-select: none;
   z-index: 1px;
-  font-weight: bold;
 }

@@ -1,4 +1,4 @@
-import { Entity, DamageEvent } from 'core/entity';
+import { Entity, DamageEvent, KillEvent } from 'core/entity';
 import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';
@@ -15,6 +15,7 @@ export class Unit extends Entity {
   private life: number = 100;
   private lifeRegen: number = 5;
   private speed: number = 250;
+  private isAliveInternal: boolean = true;
   private movement = {
     [MovementDirection.Up]: false,
     [MovementDirection.Down]: false,
@@ -41,6 +42,11 @@ export class Unit extends Entity {
   public cleanup(): void {
     super.cleanup();
     this.weapon?.cleanup();
+    this.isAliveInternal = false;
+  }
+
+  public get isAlive(): boolean {
+    return this.isAliveInternal;
   }
 
   public fire(angle: number): void {
@@ -51,15 +57,15 @@ export class Unit extends Entity {
     return this.life;
   }
 
-  public setLife(life: number): void {
+  public setLife(life: number, source?: Unit): void {
     this.life = clamp(life, 0, this.maxLife);
     if (this.life === 0) {
-      this.kill();
+      this.kill(source);
     }
   }
 
   public damage(amount: number, source?: Unit): void {
-    this.setLife(this.life - amount);
+    this.setLife(this.life - amount, source);
     EventManager.emit<DamageEvent>({
       type: 'DamageEvent',
       data: {
@@ -179,7 +185,15 @@ export class Unit extends Entity {
     }
   }
 
-  public kill(): void {
+  public kill(source?: Unit): void {
     this.markForDelete();
+
+    EventManager.emit<KillEvent>({
+      type: 'KillEvent',
+      data: {
+        target: this,
+        source,
+      },
+    });
   }
 }

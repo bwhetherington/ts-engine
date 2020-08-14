@@ -7,55 +7,81 @@ import { PlayerManager } from "core/player";
 
 const log = LogManager.forFile(__filename);
 
+const MAX_LENGTH = 20;
+
+interface TextEntry {
+  parent: HTMLElement;
+  text: HTMLElement;
+  tag: HTMLElement;
+}
+
 export class TextManager {
-  private textEntities: Record<UUID, HTMLElement> = {};
+  private textEntities: Record<UUID, TextEntry> = {};
 
   public initialize(): void {
     EventManager.addListener<TextUpdateEvent>('TextUpdateEvent', (event) => {
-      const { id, isStatic = true, text, x, y, color } = event.data;
-      let element = this.textEntities[id];
-      if (!element) {
+      const { id, isStatic = true, text, tag, x, y, color } = event.data;
+      let entry = this.textEntities[id];
+      if (!entry) {
         log.debug('create text element');
 
         // Create new element
-        element = document.createElement('div');
-        element.className = 'dialog text-label';
+        const parent = document.createElement('div');
+        parent.className = 'dialog text-label';
         if (!isStatic) {
-          element.className += ' label-fade';
+          parent.className += ' label-fade';
         }
-        element.id = id;
-        this.textEntities[id] = element;
+
+        const textElement = document.createElement('span');
+        textElement.className = 'label-text';
+        parent.appendChild(textElement);
+
+        const tagElement = document.createElement('span');
+        tagElement.className = 'label-tag';
+        parent.appendChild(tagElement);
+
+        parent.id = id;
+        entry = {
+          parent,
+          text: textElement,
+          tag: tagElement,
+        };
+        this.textEntities[id] = entry;
 
         const container = document.getElementById('text-pane');
-        container?.appendChild(element);
+        container?.appendChild(parent);
       }
 
-      this.updateText(element, text, x, y, color);
+      this.updateText(entry, text, tag, x, y, color);
     });
 
     EventManager.addListener<TextRemoveEvent>('TextRemoveEvent', (event) => {
       const { id } = event.data;
-      const element = this.textEntities[id];
-      element?.parentElement?.removeChild(element);
+      const entry = this.textEntities[id];
+      entry.parent?.parentElement?.removeChild(entry.parent);
       delete this.textEntities[id];
     });
   }
 
-  private updateText(element: HTMLElement, text?: string, worldX?: number, worldY?: number, color?: Color) {
-    if (typeof text === 'string') {
-      if (text.length > 12) {
-        text = text.slice(0, 9) + '...';
+  private updateText(entry: TextEntry, text?: string, tag?: string, worldX?: number, worldY?: number, color?: Color) {
+    if (text) {
+      if (text.length > MAX_LENGTH) {
+        text = text.slice(0, MAX_LENGTH - 3) + '...';
       }
-      element.innerText = text;
+      entry.text.innerText = text;
     }
 
-    if (typeof worldX === 'number' && typeof worldY === 'number') {
-      const { x, y } = CameraManager.toScreenSpace(worldX, worldY);
-      const screenX = '' + (x - element.clientWidth / 2) + 'px';
-      const screenY = '' + (y - element.clientHeight / 2) + 'px';
+    if (tag && tag.length > 0) {
+      entry.tag.innerText = ' ' + tag;
+    }
 
-      element.style.top = screenY;
-      element.style.left = screenX;
+    if (!(worldX === undefined || worldY === undefined)) {
+      const { x, y } = CameraManager.toScreenSpace(worldX, worldY);
+      const screenX = '' + (x - entry.parent.clientWidth / 2) + 'px';
+      const screenY = '' + (y - entry.parent.clientHeight / 2) + 'px';
+
+      entry.parent.style.top = screenY;
+      entry.parent.style.left = screenX;
     }
 
     // if (color) {

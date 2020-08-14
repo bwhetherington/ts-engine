@@ -21,6 +21,17 @@ function* filter<T>(gen: Generator<T>, fn: (x: T) => boolean): Generator<T> {
   }
 }
 
+function* filterType<T, U extends T>(
+  gen: Generator<T>,
+  typeCheck: (x: T) => x is U,
+): Generator<U> {
+  for (const x of gen) {
+    if (typeCheck(x)) {
+      yield x;
+    }
+  }
+}
+
 function* take<T>(gen: Generator<T>, num: number): Generator<T> {
   let i = 0;
   for (const x of gen) {
@@ -133,6 +144,10 @@ export class Iterator<T> implements Generator<T> {
 
   public filter(fn: (x: T) => boolean): Iterator<T> {
     return iterator(filter(this.generator, fn));
+  }
+
+  public filterType<U extends T>(fn: (x: T) => x is U): Iterator<U> {
+    return iterator(filterType(this.generator, fn));
   }
 
   public fold<U>(initial: U, fn: (acc: U, x: T) => U): U {

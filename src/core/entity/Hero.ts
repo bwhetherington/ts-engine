@@ -1,4 +1,4 @@
-import { Text, WorldManager, DamageEvent, Tank } from 'core/entity';
+import { Text, WorldManager, DamageEvent, Tank, Unit } from 'core/entity';
 import {
   KeyEvent,
   KeyAction,
@@ -13,6 +13,7 @@ import { LogManager } from 'core/log';
 import { NetworkManager, SyncEvent } from 'core/net';
 import { CameraManager, GraphicsContext, rgb } from 'core/graphics';
 import { BarUpdateEvent, sleep } from 'core/util';
+import { KillEvent } from './util';
 
 const log = LogManager.forFile(__filename);
 
@@ -25,9 +26,9 @@ export class Hero extends Tank {
   public constructor() {
     super();
 
+    this.armor = 10;
+
     this.type = Hero.typeName;
-    this.friction = 500;
-    this.bounce = 0.1;
 
     this.addListener<MouseEvent>('MouseEvent', (event) => {
       if (this.isEventSubject(event)) {
@@ -60,16 +61,27 @@ export class Hero extends Tank {
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
         const { target, source, amount } = event.data;
         if (this.getPlayer()?.isActivePlayer() && (this === target || this === source)) {
-          const label = amount + ' dmg';
+          const label = '' + amount;
           const text = WorldManager.spawn(Text, target.position);
           text.color = rgb(192, 128, 128);
           text.isStatic = false;
           text.position.addXY((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 20);
           text.text = label;
+          text.tag = 'dmg';
           text.velocity.setXY(25 + Math.random() * 25, 0);
           text.velocity.angle = Math.random() * 2 * Math.PI;
           await sleep(1);
           text.markForDelete();
+        }
+      });
+    } else {
+      this.addListener<KillEvent>('KillEvent', (event) => {
+        const { source } = event.data;
+        if (this === source) {
+          const player = this.getPlayer();
+          if (player) {
+            player.score += 5;
+          }
         }
       });
     }
@@ -126,7 +138,12 @@ export class Hero extends Tank {
     }
 
     if (this.label) {
-      this.label.text = this.getPlayer()?.name ?? 'Player';
+      const player = this.getPlayer();
+      if (player) {
+        // console.log(player);
+        this.label.text = player.name;
+        this.label.tag = '[' + player.score + ']';
+      }
     }
   }
 

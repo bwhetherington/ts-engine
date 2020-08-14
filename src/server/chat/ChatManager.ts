@@ -12,8 +12,9 @@ import {
 } from 'core/chat';
 import { LogManager } from 'core/log';
 import { PlayerManager } from 'core/player';
-import { WorldManager, Tank } from 'core/entity';
+import { WorldManager, Tank, Enemy } from 'core/entity';
 import { TimerManager } from 'server/util';
+import { Pistol } from 'core/weapon';
 
 const log = LogManager.forFile(__filename);
 
@@ -187,7 +188,7 @@ export class ChatManager {
         }
 
         for (let i = 0; i < count; i++) {
-          const entity = WorldManager.spawn(Tank);
+          const entity = WorldManager.spawn(Enemy);
 
           entity.color = {
             red: Math.random() * 0.2 + 0.7,
@@ -198,11 +199,16 @@ export class ChatManager {
           const x = Math.random() * WorldManager.boundingBox.width + WorldManager.boundingBox.x;
           const y = Math.random() * WorldManager.boundingBox.height + WorldManager.boundingBox.y;
 
-          const dx = (Math.random() - 0.5) * 200;
-          const dy = (Math.random() - 0.5) * 200;
+          // const dx = (Math.random() - 0.5) * 200;
+          // const dy = (Math.random() - 0.5) * 200;
 
           entity.position.setXY(x, y);
-          entity.velocity.setXY(dx, dy);
+          // entity.velocity.setXY(dx, dy);
+
+          const weapon = new Pistol();
+          weapon.rate = 0.85;
+          weapon.damage = 12;
+          entity.setWeapon(weapon);
         }
 
         this.info(`Spawning ${count} entities.`);
@@ -214,7 +220,7 @@ export class ChatManager {
       'kill',
       (socket) => {
         WorldManager.getEntities()
-          .filter((entity) => entity.type === 'Tank')
+          .filter((entity) => entity.type === 'Enemy')
           .forEach((entity) => {
             entity.markForDelete();
           });

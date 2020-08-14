@@ -125,3 +125,8 @@ export interface DamageEvent {
   source?: Unit;
   amount: number;
 }
+
+export interface KillEvent {
+  target: Unit;
+  source?: Unit;
+}

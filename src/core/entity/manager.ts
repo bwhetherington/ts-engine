@@ -1,6 +1,6 @@
 import { Rectangle, QuadTree, Bounded, Vector } from 'core/geometry';
 import { GraphicsContext, CameraManager } from 'core/graphics';
-import { Entity, Unit, Hero, Geometry, Text, Projectile, Explosion, CollisionEvent, Tank } from 'core/entity';
+import { Entity, Unit, Hero, Geometry, Text, Projectile, Explosion, CollisionEvent, Tank, Enemy } from 'core/entity';
 import { LogManager } from 'core/log';
 import { EventManager, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
@@ -36,6 +36,7 @@ export class WorldManager implements Bounded, Serializable {
     this.registerEntity(Explosion);
     this.registerEntity(Text);
     this.registerEntity(Tank);
+    this.registerEntity(Enemy);
   }
 
   public initialize(): void {

@@ -10,6 +10,8 @@ export class Player implements Serializable {
   public hero?: Hero;
   public socket: Socket = -1;
 
+  public score: number = 0;
+
   public constructor(id?: UUID) {
     if (id) {
       this.id = id;
@@ -23,11 +25,12 @@ export class Player implements Serializable {
       name: this.name,
       heroID: this.hero?.id ?? null,
       socket: this.socket,
+      score: this.score,
     };
   }
 
   public deserialize(data: Data): void {
-    const { name, id, socket, heroID } = data;
+    const { name, id, socket, heroID, score } = data;
     if (typeof id === 'string') {
       this.id = id;
     }
@@ -43,6 +46,9 @@ export class Player implements Serializable {
       if (entity instanceof Hero) {
         this.setHero(entity);
       }
+    }
+    if (typeof score === 'number') {
+      this.score = score;
     }
   }
 

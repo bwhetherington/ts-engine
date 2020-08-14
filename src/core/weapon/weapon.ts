@@ -10,6 +10,7 @@ export abstract class Weapon implements Serializable {
 
   public type: string = Weapon.typeName;
   public rate: number = 1;
+  public damage: number = 0;
   private cooldown: number = 0;
   private id?: UUID;
 
@@ -48,11 +49,12 @@ export abstract class Weapon implements Serializable {
       type: this.type,
       rate: this.rate,
       cooldown: this.cooldown,
+      damage: this.damage,
     };
   }
 
   public deserialize(data: Data): void {
-    const { type, rate, cooldown } = data;
+    const { type, rate, cooldown, damage } = data;
 
     if (typeof type === 'string') {
       this.type = type;
@@ -64,6 +66,10 @@ export abstract class Weapon implements Serializable {
 
     if (typeof cooldown === 'number') {
       this.cooldown = cooldown;
+    }
+
+    if (typeof damage === 'number') {
+      this.damage = damage;
     }
   }
 }
