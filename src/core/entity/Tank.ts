@@ -6,6 +6,7 @@ import { WHITE } from "core/graphics/color";
 import { Data } from "core/serialize";
 import { FireEvent } from "core/weapon";
 import { NetworkManager } from "core/net";
+import { Explosion } from "./Explosion";
 
 const FIRE_DURATION = 0.25;
 const FLASH_DURATION = 0.2;
@@ -107,5 +108,19 @@ export class Tank extends Unit {
   public markForDelete(): void {
     super.markForDelete();
     this.label?.markForDelete();
+  }
+
+  public cleanup(): void {
+    if (NetworkManager.isClient()) {
+      const explosion = WorldManager.spawn(Explosion, this.position);
+      explosion.radius = 35;
+      explosion.color = {
+        red: 1.0,
+        green: 0.6,
+        blue: 0.3,
+        alpha: 0.8,
+      };
+    }
+    super.cleanup();
   }
 }

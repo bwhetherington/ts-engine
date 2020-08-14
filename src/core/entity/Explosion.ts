@@ -14,6 +14,8 @@ const DURATION = 0.3;
 export class Explosion extends Entity {
   public static typeName: string = 'Explosion';
 
+  public radius: number = 20;
+
   private timeRemaining: number = DURATION;
 
   public constructor() {
@@ -38,7 +40,7 @@ export class Explosion extends Entity {
 
   public render(ctx: GraphicsContext): void {
     const t = this.timeRemaining / DURATION;
-    const r = explodeFunction(t) * 20;
+    const r = explodeFunction(t) * this.radius;
     const { x, y } = this.position;
     ctx.ellipse(x - r, y - r, 2 * r, 2 * r, this.color);
   }
