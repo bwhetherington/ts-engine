@@ -6,16 +6,16 @@ import {
 import * as http from 'http';
 
 import { Node, Message, Socket } from 'core/net';
-import { LM } from 'core/log';
-import { EM, Event } from 'core/event';
-import { TM } from 'server/util';
+import { LogManager } from 'core/log';
+import { EventManager, Event } from 'core/event';
+import { TimerManager } from 'server/util';
 import { WorldManager, Hero } from 'core/entity';
 import { PlayerManager, Player } from 'core/player';
 import { InitialSyncEvent } from 'core/net/util';
 import { Pistol } from 'core/weapon';
 import process from 'process';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 interface Connections {
   [key: number]: Connection;
@@ -34,7 +34,7 @@ export class Server extends Node {
     this.connections = {};
     this.freedSockets = [];
 
-    EM.addListener('SetName', (event: Event<{ name: string }>) => {
+    EventManager.addListener('SetName', (event: Event<{ name: string }>) => {
       const { socket, data } = event;
       if (socket) {
         this.names[socket] = data.name;
@@ -167,7 +167,7 @@ export class Server extends Node {
     this.send(event, socket);
 
     // Try to wake the server clock
-    TM.wake();
+    TimerManager.wake();
   }
 
   public onDisconnect(socket: Socket): void {
@@ -180,7 +180,7 @@ export class Server extends Node {
 
     // Sleep the server clock
     if (Object.keys(this.connections).length === 0) {
-      TM.sleep();
+      TimerManager.sleep();
     }
   }
 

@@ -1,8 +1,8 @@
 import { Rectangle, Vector, Bounded } from 'core/geometry';
 import { Entity } from 'core/entity';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 const TARGET_HEIGHT = 650;
 
@@ -16,7 +16,7 @@ export class CameraManager implements Bounded {
   }
 
   public initialize() {
-    LM.debug('CameraManager initialized');
+    log.debug('CameraManager initialized');
   }
 
   public setSize(width: number, height: number): void {

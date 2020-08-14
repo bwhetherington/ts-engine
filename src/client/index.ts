@@ -1,24 +1,22 @@
-import { NM } from 'core/net';
-import { EM, StepEvent, Event } from 'core/event';
-import { LM as InternalLogger } from 'core/log';
+import { NetworkManager } from 'core/net';
+import { EventManager, StepEvent, Event } from 'core/event';
+import { LogManager } from 'core/log';
 import { WorldManager } from 'core/entity';
 
 import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
 import { UIM } from 'client/components';
-import { CM } from 'core/graphics';
-import { AM } from 'client/alert';
-import { IM } from 'client/input';
+import { CameraManager } from 'core/graphics';
+import { AlertManager } from 'client/alert';
+import { InputManager } from 'client/input';
 import { PlayerManager } from 'core/player';
-import { FM } from 'core/form';
+import { FormManager } from 'core/form';
 import { WeaponManager } from 'core/weapon';
 import { TextManager } from 'client/text';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
-  InternalLogger.initialize(new ClientLogger());
-  // LM.setLogLevel("warn");
-
+  LogManager.initialize(new ClientLogger());
   UIM.initialize();
 
   const game = document.getElementById('game');
@@ -28,9 +26,9 @@ async function main(): Promise<void> {
   NetworkManager.initialize(client);
   WorldManager.initialize();
   PlayerManager.initialize();
-  CM.initialize();
-  AM.initialize();
-  FM.initialize();
+  CameraManager.initialize();
+  AlertManager.initialize();
+  FormManager.initialize();
   TextManager.initialize();
   WeaponManager.initialize();
 
@@ -43,17 +41,17 @@ async function main(): Promise<void> {
       doFill: true,
       doStroke: true,
     });
-    CM.setTargetXY(0, 0);
+    CameraManager.setTargetXY(0, 0);
 
-    IM.initialize(game);
+    InputManager.initialize(game);
 
     window.addEventListener('resize', () => {
       canvas.setSize(window.innerWidth, window.innerHeight);
     });
 
     const timer = new Timer((dt) => {
-      EM.step(dt);
-      CM.update();
+      EventManager.step(dt);
+      CameraManager.update();
       WorldManager.render(canvas);
     });
 

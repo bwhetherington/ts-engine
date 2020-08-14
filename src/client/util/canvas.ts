@@ -6,7 +6,7 @@ import {
   TextStyle,
   GraphicsContext,
   GraphicsOptions,
-  CM,
+  CameraManager,
 } from 'core/graphics';
 
 interface Options {
@@ -95,7 +95,7 @@ export class HDCanvas implements GraphicsContext {
       element.style.height = h + 'px';
       element.getContext('2d')?.setTransform(scale, 0, 0, scale, 0, 0);
     }
-    CM.setSize(w, h);
+    CameraManager.setSize(w, h);
   }
 
   public attachTo(parent: HTMLElement) {

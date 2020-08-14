@@ -1,8 +1,8 @@
-import { LM as InternalLogger } from 'core/log';
-import { EM, GameEvent } from 'core/event';
+import { LogManager } from 'core/log';
+import { EventManager, GameEvent } from 'core/event';
 import { Data } from 'core/serialize';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export interface Message {
   [key: string]: any;
@@ -21,7 +21,7 @@ export abstract class Node {
         message,
       },
     };
-    EM.emit(event);
+    EventManager.emit(event);
 
     // If the message is also a game event, mirror it
     if (typeof message.type === 'string' && typeof message.data === 'object') {
@@ -30,7 +30,7 @@ export abstract class Node {
         data: message.data,
         socket,
       };
-      EM.emit(gameEvent);
+      EventManager.emit(gameEvent);
     }
   }
 
@@ -41,7 +41,7 @@ export abstract class Node {
         socket,
       },
     };
-    EM.emit(event);
+    EventManager.emit(event);
   }
 
   public onDisconnect(socket: Socket) {
@@ -51,7 +51,7 @@ export abstract class Node {
         socket,
       },
     };
-    EM.emit(event);
+    EventManager.emit(event);
   }
 
   public isClient(): boolean {
@@ -65,19 +65,19 @@ export abstract class Node {
 
 export class DefaultNode extends Node {
   public send(msg: Message, socket: Socket) {
-    LM.warn('default network node in use');
+    log.warn('default network node in use');
   }
 
   public onMessage(msg: Message, socket: Socket) {
-    LM.warn('default network node in use');
+    log.warn('default network node in use');
   }
 
   public onConnect(socket: Socket) {
-    LM.warn('default network node in use');
+    log.warn('default network node in use');
   }
 
   public onDisconnect(socket: Socket) {
-    LM.warn('default network node in use');
+    log.warn('default network node in use');
   }
 }
 

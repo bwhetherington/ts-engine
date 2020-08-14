@@ -1,13 +1,10 @@
-import { Entity, Text, WorldManager } from 'core/entity';
+import { Entity, DamageEvent } from 'core/entity';
 import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';
-import { clamp, sleep } from 'core/util';
-import { DamageEvent } from 'core/entity/util';
+import { clamp } from 'core/util';
 import { Weapon, WeaponManager } from 'core/weapon';
-import { EM } from 'core/event';
-import { NM } from 'core/net';
-import { rgb } from 'core/graphics';
+import { EventManager } from 'core/event';
 
 const ACCELERATION = 2000;
 
@@ -63,7 +60,7 @@ export class Unit extends Entity {
 
   public damage(amount: number, source?: Unit): void {
     this.setLife(this.life - amount);
-    EM.emit<DamageEvent>({
+    EventManager.emit<DamageEvent>({
       type: 'DamageEvent',
       data: {
         target: this,

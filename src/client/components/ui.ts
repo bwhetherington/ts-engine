@@ -1,4 +1,4 @@
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 import {
   ChatComponent,
   BarComponent,
@@ -6,7 +6,7 @@ import {
   registerComponents,
 } from 'client/components';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class UIManager {
   public chatbox?: ChatComponent;
@@ -16,7 +16,7 @@ export class UIManager {
     registerComponents();
     this.chatbox = this.getComponent(ChatComponent, 'chat-box');
     this.healthBar = this.getComponent(BarComponent, 'hp-bar');
-    LM.debug('UIManager initialized');
+    log.debug('UIManager initialized');
   }
 
   public getComponent<T extends Component>(

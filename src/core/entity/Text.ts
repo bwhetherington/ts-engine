@@ -1,5 +1,5 @@
 import { Entity } from "./Entity";
-import { EM } from "core/event";
+import { EventManager } from "core/event";
 import { TextUpdateEvent, TextRemoveEvent } from "core/text";
 import { Data } from "core/serialize";
 
@@ -19,7 +19,7 @@ export class Text extends Entity {
   public step(dt: number): void {
     super.step(dt);
 
-    EM.emit<TextUpdateEvent>({
+    EventManager.emit<TextUpdateEvent>({
       type: 'TextUpdateEvent',
       data: {
         id: this.id,
@@ -33,7 +33,7 @@ export class Text extends Entity {
   }
 
   public cleanup(): void {
-    EM.emit<TextRemoveEvent>({
+    EventManager.emit<TextRemoveEvent>({
       type: 'TextRemoveEvent',
       data: {
         id: this.id,

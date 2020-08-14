@@ -1,14 +1,14 @@
 import { Message, Socket, Node, DefaultNode } from 'core/net';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class NetworkManager {
   private node: Node = new DefaultNode();
 
   public initialize(node: Node) {
     this.node = node;
-    LM.debug('NetworkManager initialized');
+    log.debug('NetworkManager initialized');
   }
 
   public send(msg: Message, socket: Socket = -1) {

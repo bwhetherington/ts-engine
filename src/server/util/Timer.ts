@@ -1,7 +1,7 @@
 import { TimerHandler, AbstractTimer, sleep } from 'core/util';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 function toSeconds(seconds: number, nanoseconds: number): number {
   return seconds + nanoseconds * 0.000000001;
@@ -42,7 +42,7 @@ export class Timer extends AbstractTimer {
         await sleep(remaining);
       } else {
         const durationMS = Math.round(duration * 1000);
-        LM.warn(`Can't keep up! Frame took ${durationMS}ms`);
+        log.warn(`Can't keep up! Frame took ${durationMS}ms`);
       }
     }
   }

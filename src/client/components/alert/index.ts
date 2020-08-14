@@ -7,7 +7,7 @@ import {
   Entry,
   FormShowEvent,
 } from 'core/form';
-import { EM } from 'core/event';
+import { EventManager } from 'core/event';
 import { removeChildren } from 'client/components';
 
 export class AlertComponent extends Component {
@@ -32,7 +32,7 @@ export class AlertComponent extends Component {
       this.hide();
     });
 
-    EM.addListener<FormShowEvent>('FormShowEvent', (event) => {
+    EventManager.addListener<FormShowEvent>('FormShowEvent', (event) => {
       this.showForm(event.data.form);
       this.show();
     });
@@ -79,7 +79,7 @@ export class AlertComponent extends Component {
           data: this.data,
         },
       };
-      EM.emit(submitEvent);
+      EventManager.emit(submitEvent);
 
       this.clearDialog();
       this.hide();

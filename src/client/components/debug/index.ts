@@ -1,7 +1,7 @@
 import { Component } from 'client/components/util';
 import template from 'client/components/debug/template.html';
 import { SizedQueue } from 'core/util';
-import { EM, StepEvent, Event } from 'core/event';
+import { EventManager, StepEvent, Event } from 'core/event';
 import { WorldManager } from 'core/entity';
 import { MetricsEvent } from 'core/metrics';
 
@@ -30,7 +30,7 @@ export class DebugComponent extends Component {
     const frameTimes = new SizedQueue<number>(60);
 
     // const timer = new Timer((dt) => {
-    EM.addListener<StepEvent>('StepEvent', (event) => {
+    EventManager.addListener<StepEvent>('StepEvent', (event) => {
       frameTimes.enqueue(event.data.dt);
       const sum = frameTimes.iterator().fold(0, (acc, x) => acc + x);
       const fps = 1 / (sum / frameTimes.size());
@@ -44,11 +44,11 @@ export class DebugComponent extends Component {
         this.entitiesLabel.innerText = '' + WorldManager.getEntityCount();
       }
       if (this.listenersLabel) {
-        this.listenersLabel.innerText = '' + EM.getListenerCount();
+        this.listenersLabel.innerText = '' + EventManager.getListenerCount();
       }
     });
 
-    EM.addListener<MetricsEvent>('MetricsEvent', (event) => {
+    EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
       const { tps, entities, listeners } = event.data;
       if (this.serverTpsLabel) {
         const rounded = Math.round(tps);

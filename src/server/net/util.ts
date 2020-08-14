@@ -3,11 +3,11 @@ import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as path from 'path';
 import { promisify } from 'util';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 import { Socket } from 'core/net';
 import { EventData } from 'core/event';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export const readFile = promisify(fs.readFile);
 
@@ -39,7 +39,7 @@ export async function createServer(options: Options): Promise<http.Server> {
       if (req.url !== undefined) {
         if (req.url === '/') {
           const file = await readFile(index, encoding);
-          LM.debug(`read file: ${index}`);
+          log.debug(`read file: ${index}`);
           res.writeHead(200, { 'Content-Type': 'text/html' });
           res.write(file);
           res.end();
@@ -49,12 +49,12 @@ export async function createServer(options: Options): Promise<http.Server> {
             const mimeType =
               mime.lookup(path.extname(filePath)) || 'text/plain';
             const file = await readFile(filePath, encoding);
-            LM.debug(`read file: ${filePath} (${mimeType})`);
+            log.debug(`read file: ${filePath} (${mimeType})`);
             res.writeHead(200, { 'Content-Type': mimeType });
             res.write(file);
             res.end();
           } else {
-            LM.error(`file ${filePath} does not exist`);
+            log.error(`file ${filePath} does not exist`);
             res.writeHead(404, 'File not found');
             res.end();
           }
@@ -64,7 +64,7 @@ export async function createServer(options: Options): Promise<http.Server> {
         res.end();
       }
     } catch (_) {
-      LM.error(`request triggered error: ${req.url}`);
+      log.error(`request triggered error: ${req.url}`);
       res.writeHead(500, 'Internal server error');
       res.end();
     }

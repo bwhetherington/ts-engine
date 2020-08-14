@@ -5,8 +5,8 @@ import { v1 as genUuid } from 'uuid';
 import { CollisionLayer, WorldManager, CollisionEvent } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
-import { EventData, Handler, EM, Event } from 'core/event';
-import { UM } from 'core/uuid';
+import { EventData, Handler, EventManager, Event } from 'core/event';
+import { UUIDManager } from 'core/uuid';
 
 export type Uuid = string;
 
@@ -32,7 +32,7 @@ export class Entity implements Bounded, Serializable {
   private handlers: Record<string, Set<string>> = {};
 
   constructor() {
-    this.id = UM.generate();
+    this.id = UUIDManager.generate();
     this.type = Entity.typeName;
   }
 
@@ -103,7 +103,7 @@ export class Entity implements Bounded, Serializable {
               collided: candidate,
             },
           };
-          EM.emit(event);
+          EventManager.emit(event);
         });
 
       // Apply friction
@@ -218,14 +218,14 @@ export class Entity implements Bounded, Serializable {
     type: string,
     handler: Handler<E>
   ): void {
-    const id = EM.addListener(type, handler);
+    const id = EventManager.addListener(type, handler);
     this.getHandlers(type).add(id);
   }
 
   public handleEvent<E extends EventData>(type: string, event: Event<E>): void {
     const handlers = this.handlers[type] ?? [];
     for (const handlerID of handlers) {
-      const handler = EM.getHandler(type, handlerID);
+      const handler = EventManager.getHandler(type, handlerID);
       handler?.call(null, event, handlerID);
     }
   }
@@ -234,10 +234,10 @@ export class Entity implements Bounded, Serializable {
     for (const type in this.handlers) {
       const handlerSet = this.handlers[type];
       for (const id of handlerSet) {
-        EM.removeListener(type, id);
+        EventManager.removeListener(type, id);
       }
     }
-    UM.free(this.id);
+    UUIDManager.free(this.id);
   }
 
   public toString(): string {

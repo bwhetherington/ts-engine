@@ -1,19 +1,16 @@
 import {
   Form,
-  FormData,
-  StringField,
-  FormType,
-  FM,
+  FormManager,
   StringEntry,
   FormEntry,
 } from 'core/form';
-import { EM } from 'core/event';
+import { EventManager } from 'core/event';
 import { ConnectEvent } from 'core/net';
 import { PlayerManager, Player } from 'core/player';
 import { Data } from 'core/serialize';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export interface JoinForm {
   name: StringEntry;
@@ -42,13 +39,13 @@ export const JOIN_FORM: Form = {
 };
 
 export function registerJoinForm(): void {
-  EM.addListener<ConnectEvent>('ConnectEvent', async (event) => {
+  EventManager.addListener<ConnectEvent>('ConnectEvent', async (event) => {
     const player = PlayerManager.getPlayer(event.data.socket);
     if (player) {
-      FM.sendForm(player, 'JoinForm');
+      FormManager.sendForm(player, 'JoinForm');
     }
   });
-  FM.registerForm(JoinFormEntry);
+  FormManager.registerForm(JoinFormEntry);
 }
 
 export const JoinFormEntry: FormEntry<JoinForm> = {

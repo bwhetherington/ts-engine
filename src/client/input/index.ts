@@ -1,3 +1,4 @@
 import { InputManager } from 'client/input/manager';
 
-export const IM = new InputManager();
+const IM = new InputManager();
+export { IM as InputManager };

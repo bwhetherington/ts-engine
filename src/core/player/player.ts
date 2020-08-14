@@ -1,8 +1,8 @@
 import { Hero, WorldManager } from 'core/entity';
 import { Serializable, Data } from 'core/serialize';
-import { Socket, NM } from 'core/net';
+import { Socket, NetworkManager } from 'core/net';
 import { PlayerManager } from 'core/player';
-import { UM, UUID } from 'core/uuid';
+import { UUIDManager, UUID } from 'core/uuid';
 
 export class Player implements Serializable {
   public name: string = 'Anonymous';
@@ -14,7 +14,7 @@ export class Player implements Serializable {
     if (id) {
       this.id = id;
     } else {
-      this.id = UM.generate();
+      this.id = UUIDManager.generate();
     }
   }
 
@@ -55,7 +55,7 @@ export class Player implements Serializable {
 
   public cleanup(): void {
     this.hero?.markForDelete();
-    UM.free(this.id);
+    UUIDManager.free(this.id);
   }
 
   public isActivePlayer(): boolean {

@@ -1,5 +1,5 @@
 import { Node, Message, Socket, DisconnectEvent } from 'core/net';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 import {
   uniqueNamesGenerator,
   adjectives,
@@ -7,7 +7,7 @@ import {
   animals,
 } from 'unique-names-generator';
 import { SetNameEvent } from 'core/chat';
-import { EM } from 'core/event';
+import { EventManager } from 'core/event';
 import { InitialSyncEvent } from 'core/net/util';
 import { PlayerManager } from 'core/player';
 import { WorldManager } from 'core/entity';
@@ -21,7 +21,7 @@ function generateName(): string {
   });
 }
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class Client extends Node {
   private sendBuffer: Message[] = [];
@@ -43,7 +43,7 @@ export class Client extends Node {
     this.socket = new WebSocket(connect);
     this.initializeSocket(this.socket);
 
-    EM.addListener<InitialSyncEvent>('InitialSyncEvent', (event) => {
+    EventManager.addListener<InitialSyncEvent>('InitialSyncEvent', (event) => {
       const { socket, sync } = event.data;
       PlayerManager.setActivePlayer(socket);
       const { worldData, playerData } = sync;
@@ -73,7 +73,7 @@ export class Client extends Node {
         this.sendBuffer.push(message);
       }
     } else {
-      LM.error('only socket -1 exists on clients');
+      log.error('only socket -1 exists on clients');
     }
   }
 
@@ -94,7 +94,7 @@ export class Client extends Node {
 
   public onDisconnect(socket: Socket) {
     this.isConnected = false;
-    LM.debug('disconnected');
+    log.debug('disconnected');
     super.onDisconnect(socket);
   }
 

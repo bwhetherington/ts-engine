@@ -1,5 +1,5 @@
-import { EM } from 'core/event';
-import { LM as InternalLogger } from 'core/log';
+import { EventManager } from 'core/event';
+import { LogManager } from 'core/log';
 import {
   KEY_MAP,
   KeyEvent,
@@ -9,10 +9,10 @@ import {
   MouseEvent,
   Key,
 } from 'core/input';
-import { CM } from 'core/graphics';
-import { NM } from 'core/net';
+import { CameraManager } from 'core/graphics';
+import { NetworkManager } from 'core/net';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 function initializeKeyStates(): Array<boolean> {
   const obj = [];
@@ -37,7 +37,7 @@ export class InputManager {
     });
     this.element?.addEventListener('mousedown', (event) => {
       const { clientX, clientY } = event;
-      const { x, y } = CM.toWorldSpace(clientX, clientY);
+      const { x, y } = CameraManager.toWorldSpace(clientX, clientY);
       const button = BUTTON_MAP[event.button];
       if (button !== undefined) {
         const mouseEvent = {
@@ -50,14 +50,14 @@ export class InputManager {
           },
         };
         NetworkManager.send(mouseEvent);
-        EM.emit(mouseEvent);
+        EventManager.emit(mouseEvent);
       } else {
-        LM.warn('unrecognized button: ' + event.button);
+        log.warn('unrecognized button: ' + event.button);
       }
     });
     this.element?.addEventListener('mouseup', (event) => {
       const { clientX, clientY } = event;
-      const { x, y } = CM.toWorldSpace(clientX, clientY);
+      const { x, y } = CameraManager.toWorldSpace(clientX, clientY);
       const button = BUTTON_MAP[event.button];
       if (button !== undefined) {
         const mouseEvent = {
@@ -69,15 +69,15 @@ export class InputManager {
             y,
           },
         };
-        EM.emit(mouseEvent);
+        EventManager.emit(mouseEvent);
         NetworkManager.send(mouseEvent);
       } else {
-        LM.warn('unrecognized button: ' + event.button);
+        log.warn('unrecognized button: ' + event.button);
       }
     });
     this.element?.addEventListener('mousemove', (event) => {
       const { clientX, clientY } = event;
-      const { x, y } = CM.toWorldSpace(clientX, clientY);
+      const { x, y } = CameraManager.toWorldSpace(clientX, clientY);
       const mouseEvent = {
         type: 'MouseEvent',
         data: <MouseEvent>{
@@ -86,7 +86,7 @@ export class InputManager {
           y,
         },
       };
-      EM.emit(mouseEvent);
+      EventManager.emit(mouseEvent);
       NetworkManager.send(mouseEvent);
     });
     this.element?.addEventListener('keydown', (event) => {
@@ -101,11 +101,11 @@ export class InputManager {
               key,
             },
           };
-          EM.emit(keyEvent);
+          EventManager.emit(keyEvent);
           NetworkManager.send(keyEvent);
         }
       } else {
-        LM.warn('unrecognized key: ' + event.code);
+        log.warn('unrecognized key: ' + event.code);
       }
     });
     this.element?.addEventListener('keyup', (event) => {
@@ -120,13 +120,13 @@ export class InputManager {
               key,
             },
           };
-          EM.emit(keyEvent);
+          EventManager.emit(keyEvent);
           NetworkManager.send(keyEvent);
         }
       } else {
-        LM.warn('unrecognized key: ' + event.code);
+        log.warn('unrecognized key: ' + event.code);
       }
     });
-    LM.debug('InputManager initialized');
+    log.debug('InputManager initialized');
   }
 }

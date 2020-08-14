@@ -1,6 +1,6 @@
 import { Serializable, Data } from 'core/serialize';
 import { Unit } from 'core/entity';
-import { EM, StepEvent } from 'core/event';
+import { EventManager, StepEvent } from 'core/event';
 import { UUID } from 'core/uuid';
 
 export abstract class Weapon implements Serializable {
@@ -12,7 +12,7 @@ export abstract class Weapon implements Serializable {
   private id?: UUID;
 
   public constructor() {
-    this.id = EM.addListener<StepEvent>('StepEvent', (event) => {
+    this.id = EventManager.addListener<StepEvent>('StepEvent', (event) => {
       const { dt } = event.data;
       this.cooldown = Math.max(this.cooldown - dt, 0);
     });
@@ -20,7 +20,7 @@ export abstract class Weapon implements Serializable {
 
   public cleanup(): void {
     if (this.id !== undefined) {
-      EM.removeListener('StepEvent', this.id);
+      EventManager.removeListener('StepEvent', this.id);
     }
   }
 

@@ -1,17 +1,17 @@
 import { UUID } from "core/uuid";
-import { EM } from "core/event";
+import { EventManager } from "core/event";
 import { TextUpdateEvent, TextRemoveEvent } from "core/text";
-import { CM, Color, toCss } from "core/graphics";
-import { LM } from "core/log";
+import { CameraManager, Color, toCss } from "core/graphics";
+import { LogManager } from "core/log";
 import { PlayerManager } from "core/player";
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class TextManager {
   private textEntities: Record<UUID, HTMLElement> = {};
 
   public initialize(): void {
-    EM.addListener<TextUpdateEvent>('TextUpdateEvent', (event) => {
+    EventManager.addListener<TextUpdateEvent>('TextUpdateEvent', (event) => {
       const { id, isStatic = true, text, x, y, color } = event.data;
       let element = this.textEntities[id];
       if (!element) {
@@ -33,7 +33,7 @@ export class TextManager {
       this.updateText(element, text, x, y, color);
     });
 
-    EM.addListener<TextRemoveEvent>('TextRemoveEvent', (event) => {
+    EventManager.addListener<TextRemoveEvent>('TextRemoveEvent', (event) => {
       const { id } = event.data;
       const element = this.textEntities[id];
       element?.parentElement?.removeChild(element);
@@ -50,7 +50,7 @@ export class TextManager {
     }
 
     if (typeof worldX === 'number' && typeof worldY === 'number') {
-      const { x, y } = CM.toScreenSpace(worldX, worldY);
+      const { x, y } = CameraManager.toScreenSpace(worldX, worldY);
       const screenX = '' + (x - element.clientWidth / 2) + 'px';
       const screenY = '' + (y - element.clientHeight / 2) + 'px';
 

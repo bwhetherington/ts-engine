@@ -1,14 +1,14 @@
-import { EM } from 'core/event';
-import { Timer, ServerLogger, TM } from 'server/util';
-import { LM as InternalLogger } from 'core/log';
+import { EventManager } from 'core/event';
+import { Timer, ServerLogger, TimerManager } from 'server/util';
+import { LogManager } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
-import { NM, SyncEvent } from 'core/net';
+import { NetworkManager, SyncEvent } from 'core/net';
 import { ChatManager } from 'server/chat';
 import { WorldManager, Unit } from 'core/entity';
 import { Geometry } from 'core/entity/Geometry';
 import { Rectangle } from 'core/geometry';
 import { PlayerManager } from 'core/player';
-import { FM } from 'core/form';
+import { FormManager } from 'core/form';
 import { registerJoinForm } from 'core/form';
 import { MetricsManager } from 'server/metrics';
 import { WeaponManager } from 'core/weapon';
@@ -17,7 +17,7 @@ import { promisify } from 'util';
 
 const readFile = promisify(readFileNonPromise);
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 async function loadGeometry(file: string): Promise<void> {
   const text = await readFile(file, 'utf-8');
@@ -44,7 +44,7 @@ async function loadGeometry(file: string): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  InternalLogger.initialize(new ServerLogger());
+  LogManager.initialize(new ServerLogger());
 
   const httpServer = await createServer({
     dir: './',
@@ -62,7 +62,7 @@ async function main(): Promise<void> {
   await loadGeometry('world.json');
 
   PlayerManager.initialize();
-  FM.initialize();
+  FormManager.initialize();
   registerJoinForm();
 
   MetricsManager.initialize();
@@ -90,7 +90,7 @@ async function main(): Promise<void> {
 
   const timer = new Timer((dt) => {
     NetworkManager.send({ foo: 'foo', bar: 'bar' });
-    EM.step(dt);
+    EventManager.step(dt);
 
     const event = {
       type: 'SyncEvent',
@@ -102,9 +102,9 @@ async function main(): Promise<void> {
 
     NetworkManager.send(event);
   }, 1 / 30);
-  TM.initialize(timer);
+  TimerManager.initialize(timer);
 }
 
 main().catch((ex) => {
-  LM.error('error occurred');
+  log.error('error occurred');
 });

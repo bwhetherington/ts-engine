@@ -1,8 +1,8 @@
 import { Entity, Unit } from 'core/entity';
 import { Rectangle } from 'core/geometry';
-import { LM } from 'core/log';
+import { LogManager } from 'core/log';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export enum CollisionLayer {
   Geometry,

@@ -1,4 +1,4 @@
-import { Unit, Text, WorldManager } from 'core/entity';
+import { Unit, Text, WorldManager, DamageEvent } from 'core/entity';
 import {
   KeyEvent,
   KeyAction,
@@ -6,17 +6,15 @@ import {
   MouseEvent,
   MouseAction,
 } from 'core/input';
-import { EventData, Event, EM, StepEvent } from 'core/event';
+import { EventData, Event, EventManager, StepEvent } from 'core/event';
 import { Data } from 'core/serialize';
 import { Player, PlayerManager } from 'core/player';
-import { LM } from 'core/log';
-import { NM, SyncEvent } from 'core/net';
-import { CM, GraphicsContext, rgb } from 'core/graphics';
+import { LogManager } from 'core/log';
+import { NetworkManager, SyncEvent } from 'core/net';
+import { CameraManager, GraphicsContext, rgb } from 'core/graphics';
 import { BarUpdateEvent, sleep } from 'core/util';
-import { debug } from 'console';
-import { DamageEvent } from './util';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class Hero extends Unit {
   public static typeName: string = 'Hero';
@@ -119,7 +117,7 @@ export class Hero extends Unit {
   public setMaxLife(maxLife: number): void {
     super.setMaxLife(maxLife);
     if (this.getPlayer()?.isActivePlayer()) {
-      EM.emit({
+      EventManager.emit({
         type: 'BarUpdateEvent',
         data: <BarUpdateEvent>{
           id: 'life-bar',
@@ -133,7 +131,7 @@ export class Hero extends Unit {
   public setLife(life: number): void {
     super.setLife(life);
     if (this.getPlayer()?.isActivePlayer()) {
-      EM.emit({
+      EventManager.emit({
         type: 'BarUpdateEvent',
         data: <BarUpdateEvent>{
           id: 'life-bar',
@@ -147,7 +145,7 @@ export class Hero extends Unit {
   public step(dt: number): void {
     super.step(dt);
     if (this.getPlayer()?.isActivePlayer()) {
-      CM.setTargetXY(this.boundingBox.centerX, this.boundingBox.centerY);
+      CameraManager.setTargetXY(this.boundingBox.centerX, this.boundingBox.centerY);
     }
   }
 

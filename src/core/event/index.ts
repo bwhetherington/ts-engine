@@ -8,7 +8,7 @@ import {
   isEvent,
 } from 'core/event/util';
 
-export const EM = new EventManager();
+const EM = new EventManager();
 export {
   Handler,
   GameHandler,
@@ -16,5 +16,6 @@ export {
   Event,
   EventData,
   StepEvent,
+  EM as EventManager,
   isEvent,
 };

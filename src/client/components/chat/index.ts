@@ -1,7 +1,7 @@
 import { Component } from 'client/components/util';
-import { EM, StepEvent, Event } from 'core/event';
+import { EventManager, StepEvent, Event } from 'core/event';
 import { SizedQueue } from 'core/util';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 import {
   TextColor,
   TextComponent,
@@ -10,12 +10,12 @@ import {
 } from 'core/chat';
 import { Color, rgb, toCss } from 'core/graphics';
 import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
-import { NM, DisconnectEvent } from 'core/net';
+import { NetworkManager, DisconnectEvent } from 'core/net';
 import template from 'client/components/chat/template.html';
 import { iterator } from 'core/iterator';
 import { KeyEvent, KeyAction, Key } from 'core/input';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
@@ -80,26 +80,26 @@ export class ChatComponent extends Component {
       });
     }
 
-    EM.addListener<DisconnectEvent>('DisconnectEvent', (event) => {
+    EventManager.addListener<DisconnectEvent>('DisconnectEvent', (event) => {
       const components = renderError('Disconnected from server.');
       const element = this.renderComponents(components);
       this.addMessage(element);
     });
 
-    EM.addListener<TextMessageOutEvent>('TextMessageOutEvent', (event) => {
+    EventManager.addListener<TextMessageOutEvent>('TextMessageOutEvent', (event) => {
       const { components } = event.data;
       const element = this.renderComponents(components);
       this.addMessage(element);
     });
 
-    EM.addListener<StepEvent>('StepEvent', (event) => {
+    EventManager.addListener<StepEvent>('StepEvent', (event) => {
       this.timer = Math.max(0, this.timer - event.data.dt);
       if (this.timer === 0) {
         this.hide();
       }
     });
 
-    EM.addListener<KeyEvent>('KeyEvent', (event) => {
+    EventManager.addListener<KeyEvent>('KeyEvent', (event) => {
       const { action, key } = event.data;
       if (action === KeyAction.KeyDown && key === Key.Enter) {
         this.input?.focus();
@@ -143,7 +143,7 @@ export class ChatComponent extends Component {
         };
         NetworkManager.send(event);
       } else {
-        LM.error('expected command');
+        log.error('expected command');
       }
     } else if (message.length > 0) {
       // Send message

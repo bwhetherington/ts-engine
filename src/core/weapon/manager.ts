@@ -1,7 +1,7 @@
 import { Weapon, Pistol } from 'core/weapon';
-import { LM } from 'core/log';
+import { LogManager } from 'core/log';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class WeaponManager {
   private weaponConstructors: { [type: string]: new () => Weapon } = {};

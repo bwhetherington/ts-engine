@@ -1,11 +1,11 @@
 import { Player } from 'core/player';
 import { Serializable, Data } from 'core/serialize';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 import { SyncEvent } from 'core/net';
-import { EM } from 'core/event';
+import { EventManager } from 'core/event';
 import { diff } from 'core/util';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class PlayerManager implements Serializable {
   private players: Record<string, Player> = {};
@@ -14,9 +14,9 @@ export class PlayerManager implements Serializable {
   private activePlayer: number = -1;
 
   public initialize(): void {
-    LM.debug('PlayerManager initialized');
+    log.debug('PlayerManager initialized');
 
-    EM.addListener<SyncEvent>('SyncEvent', (event) => {
+    EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
       this.deserialize(event.data.playerData);
     });
   }

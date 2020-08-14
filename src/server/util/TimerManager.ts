@@ -1,7 +1,7 @@
 import { Timer } from 'server/util';
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class TimerManager {
   private timer?: Timer;
@@ -9,12 +9,12 @@ export class TimerManager {
 
   public initialize(timer: Timer): void {
     this.timer = timer;
-    LM.debug('TimerManager initialized');
+    log.debug('TimerManager initialized');
   }
 
   public wake(): void {
     if (!this.isRunning) {
-      LM.debug('waking timer');
+      log.debug('waking timer');
       this.timer?.start();
       this.isRunning = true;
     }
@@ -28,7 +28,7 @@ export class TimerManager {
 
   public sleep(): void {
     if (this.isRunning) {
-      LM.debug('sleeping timer');
+      log.debug('sleeping timer');
       this.timer?.stop();
       this.isRunning = false;
     }

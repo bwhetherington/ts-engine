@@ -1,6 +1,6 @@
 import { Component } from 'client/components/util';
 import template from 'client/components/bar/template.html';
-import { EM, Event } from 'core/event';
+import { EventManager, Event } from 'core/event';
 import { BarUpdateEvent } from 'core/util';
 
 export class BarComponent extends Component {
@@ -62,7 +62,7 @@ export class BarComponent extends Component {
   }
 
   private registerListeners(): void {
-    EM.addListener('BarUpdateEvent', (event: Event<BarUpdateEvent>) => {
+    EventManager.addListener('BarUpdateEvent', (event: Event<BarUpdateEvent>) => {
       const { id, value, maxValue } = event.data;
       if (this.id === id) {
         const old = this.value;

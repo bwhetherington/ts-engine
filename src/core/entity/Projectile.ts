@@ -1,12 +1,12 @@
 import { Entity, CollisionEvent, Unit, WorldManager } from 'core/entity';
 import { GraphicsContext } from 'core/graphics';
-import { LM } from 'core/log';
-import { CollisionLayer, DamageEvent } from './util';
+import { LogManager } from 'core/log';
+import { CollisionLayer } from './util';
 import { Data } from 'core/serialize';
-import { NM } from 'core/net';
+import { NetworkManager } from 'core/net';
 import { Explosion } from './Explosion';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class Projectile extends Entity {
   public static typeName: string = 'Projectile';

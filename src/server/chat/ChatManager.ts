@@ -1,5 +1,5 @@
-import { EM, Event } from 'core/event';
-import { Socket, NM } from 'core/net';
+import { EventManager, Event } from 'core/event';
+import { Socket, NetworkManager } from 'core/net';
 import {
   TextMessageInEvent,
   SetNameEvent,
@@ -10,12 +10,12 @@ import {
   renderWarn,
   renderError,
 } from 'core/chat';
-import { LM } from 'core/log';
+import { LogManager } from 'core/log';
 import { PlayerManager } from 'core/player';
 import { WorldManager, Unit } from 'core/entity';
-import { TM } from 'server/util';
+import { TimerManager } from 'server/util';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 const DEFAULT_NAME = 'Unknown';
 
@@ -80,7 +80,7 @@ export class ChatManager {
   public initialize(): void {
     log.debug('ChatManager initialized');
 
-    EM.addListener<SetNameEvent>('SetNameEvent', (event) => {
+    EventManager.addListener<SetNameEvent>('SetNameEvent', (event) => {
       const { data, socket } = event;
 
       if (socket !== undefined) {
@@ -96,7 +96,7 @@ export class ChatManager {
       }
     });
 
-    EM.addListener<TextMessageInEvent>('TextMessageInEvent', (event) => {
+    EventManager.addListener<TextMessageInEvent>('TextMessageInEvent', (event) => {
       const { data, socket } = event;
 
       let name = DEFAULT_NAME;
@@ -110,7 +110,7 @@ export class ChatManager {
       log.info(`<${name}> ${data.content}`);
     });
 
-    EM.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
+    EventManager.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
       const { socket, data } = event;
       if (socket !== undefined) {
         this.handleCommand(socket, data.command, data.args);
@@ -239,7 +239,7 @@ export class ChatManager {
 
         this.info(intervalString + ',' + interval);
 
-        TM.setInterval(interval);
+        TimerManager.setInterval(interval);
       },
       'Sets the server clock interval.'
     );

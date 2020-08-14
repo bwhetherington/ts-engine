@@ -14,6 +14,7 @@ export {
   isCollisionLayer,
   shuntOutOf,
   CollisionEvent,
+  DamageEvent,
 } from 'core/entity/util';
 
 const WM = new WorldManager(new Rectangle(1000, 1000, -500, -500));

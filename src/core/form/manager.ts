@@ -1,12 +1,12 @@
-import { LM } from 'core/log';
+import { LogManager } from 'core/log';
 import { Player, PlayerManager } from 'core/player';
 import { Data } from 'core/serialize';
-import { EM } from 'core/event';
+import { EventManager } from 'core/event';
 import { FormSubmitEvent, Form, FormShowEvent, FormEntry } from 'core/form';
-import { NM } from 'core/net';
+import { NetworkManager } from 'core/net';
 import { sleep } from 'core/util';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 type FormResolver = (response: Data) => void;
 
@@ -17,7 +17,7 @@ export class FormManager {
     log.debug('FormManager initialized');
 
     if (NetworkManager.isClient()) {
-      EM.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
+      EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
         NetworkManager.send(event);
       });
     }
@@ -38,19 +38,19 @@ export class FormManager {
     player.send(event);
 
     const promise = new Promise<Data>(async (resolve, reject) => {
-      const id = EM.addListener<FormSubmitEvent>(
+      const id = EventManager.addListener<FormSubmitEvent>(
         'FormSubmitEvent',
         (event, id) => {
           const { socket, data } = event;
           if (socket === player.socket) {
             resolve(data.data);
-            EM.removeListener('FormSubmitEvent', id);
+            EventManager.removeListener('FormSubmitEvent', id);
           }
         }
       );
       log.info('timeout: ' + timeout);
       await sleep(timeout);
-      EM.removeListener('FormSubmitEvent', id);
+      EventManager.removeListener('FormSubmitEvent', id);
       log.warn(`form [${id}] timed out`);
       reject(new Error('Timeout'));
     });
@@ -81,7 +81,7 @@ export class FormManager {
     log.debug(`form ${formEntry.name} registered`);
     const { name, form, validate, onSubmit } = formEntry;
     this.forms[name] = form;
-    EM.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
+    EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
       const { socket, data } = event;
       const player = PlayerManager.getPlayer(socket);
       if (player) {

@@ -1,8 +1,8 @@
 import { Rectangle, QuadTree, Bounded, Vector } from 'core/geometry';
-import { GraphicsContext, CM } from 'core/graphics';
+import { GraphicsContext, CameraManager } from 'core/graphics';
 import { Entity, Unit, Hero, Geometry, Text, Projectile, Explosion, CollisionEvent } from 'core/entity';
-import { LM } from 'core/log';
-import { EM, GameEvent, StepEvent } from 'core/event';
+import { LogManager } from 'core/log';
+import { EventManager, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
 import { Iterator, iterateObject, iterator } from 'core/iterator';
 import { diff } from 'core/util';
@@ -10,7 +10,7 @@ import { SyncEvent } from 'core/net';
 import { WALL_COLOR } from './Geometry';
 import { WHITE } from 'core/graphics/color';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class WorldManager implements Bounded, Serializable {
   public quadTree: QuadTree<Entity>;
@@ -42,11 +42,11 @@ export class WorldManager implements Bounded, Serializable {
 
     this.registerEntities();
 
-    EM.addListener<SyncEvent>('SyncEvent', (event) => {
+    EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
       this.deserialize(event.data.worldData);
     });
 
-    EM.addListener<StepEvent>('StepEvent', (event) => {
+    EventManager.addListener<StepEvent>('StepEvent', (event) => {
       this.step(event.data.dt);
     });
   }
@@ -56,8 +56,8 @@ export class WorldManager implements Bounded, Serializable {
     ctx.begin();
     ctx.resetTransform();
 
-    const camBounds = CM.boundingBox;
-    ctx.setScale(CM.scale);
+    const camBounds = CameraManager.boundingBox;
+    ctx.setScale(CameraManager.scale);
     ctx.translate(-camBounds.x, -camBounds.y);
 
     ctx.pushOptions({
@@ -190,7 +190,7 @@ export class WorldManager implements Bounded, Serializable {
               collider: entity,
             },
           };
-          EM.emit(event);
+          EventManager.emit(event);
         }
 
         entity.addPositionXY(dx, dy);

@@ -74,7 +74,7 @@ export interface FormShowEvent {
   form: Form;
 }
 
-export const FM = new FormManager();
+const FM = new FormManager();
 
 export interface FormEntry<T> {
   name: string;
@@ -83,4 +83,4 @@ export interface FormEntry<T> {
   validate(data: Data): data is T;
 }
 
-export { registerJoinForm };
+export { FM as FormManager, registerJoinForm };

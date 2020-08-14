@@ -1,7 +1,7 @@
-import { LM as InternalLogger } from 'core/log';
+import { LogManager } from 'core/log';
 import { v1 as genUuid } from 'uuid';
 
-const LM = InternalLogger.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export abstract class Component extends HTMLElement {
   protected root?: ShadowRoot;
@@ -24,7 +24,7 @@ export function registerComponent(
   Custom: (new () => Component) & typeof Component
 ) {
   const name = Custom.componentName;
-  LM.debug(`<${name}> registered`);
+  log.debug(`<${name}> registered`);
   window.customElements.define(Custom.componentName, Custom);
 }
 

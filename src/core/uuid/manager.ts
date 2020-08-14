@@ -1,8 +1,8 @@
 import { UUID } from 'core/uuid';
-import { NM } from 'core/net';
-import { LM } from 'core/log';
+import { NetworkManager } from 'core/net';
+import { LogManager } from 'core/log';
 
-const log = LM.forFile(__filename);
+const log = LogManager.forFile(__filename);
 
 export class UUIDManager {
   private generated: Set<UUID> = new Set();
