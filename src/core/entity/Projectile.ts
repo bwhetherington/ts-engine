@@ -75,7 +75,6 @@ export class Projectile extends Entity {
   }
 
   public hit(unit: Unit): void {
-    log.debug(`${this.toString()} hit ${unit.toString()}`);
     unit.damage(this.damage, this.parent);
     unit.applyForce(this.velocity, this.mass);
   }

@@ -277,7 +277,7 @@ export class WorldManager implements Bounded, Serializable {
       if (entity && (createdEntity || entity.doSync)) {
         entity.deserialize(entry);
       } else {
-        log.error(`failed to create entity from data: ${JSON.stringify(entry)}`);
+        log.warn(`failed to create entity from data: ${JSON.stringify(entry)}`);
       }
     }
 

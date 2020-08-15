@@ -76,9 +76,10 @@ export class Hero extends Tank {
       });
     } else {
       this.addListener<KillEvent>('KillEvent', (event) => {
-        log.debug('kill ' + event.data.target.toString());
         const { source } = event.data;
+        log.debug(`this = ${this.toString()}, source = ${source?.toString()}`);
         if (this === source) {
+          log.debug('kill ' + event.data.target.toString());
           const player = this.getPlayer();
           if (player) {
             player.score += 1;

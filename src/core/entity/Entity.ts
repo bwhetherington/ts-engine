@@ -1,5 +1,5 @@
 import { Bounded, Rectangle, Vector } from 'core/geometry';
-import { GraphicsContext, Color, invert } from 'core/graphics';
+import { GraphicsContext, Color, invert, CameraManager } from 'core/graphics';
 import { WHITE, isColor } from 'core/graphics/color';
 import { v1 as genUuid } from 'uuid';
 import { CollisionLayer, WorldManager, CollisionEvent } from 'core/entity';
@@ -7,6 +7,7 @@ import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
 import { EventData, Handler, EventManager, Event } from 'core/event';
 import { UUIDManager } from 'core/uuid';
+import { NetworkManager } from 'core/net';
 
 export type Uuid = string;
 
@@ -123,6 +124,9 @@ export class Entity implements Bounded, Serializable {
   }
 
   public step(dt: number): void {
+    if (NetworkManager.isClient() && !CameraManager.boundingBox.intersects(this.boundingBox)) {
+      return;
+    }
     this.updatePosition(dt);
   }
 
