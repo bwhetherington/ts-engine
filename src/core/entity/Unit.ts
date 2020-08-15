@@ -5,6 +5,7 @@ import { Vector } from 'core/geometry';
 import { clamp } from 'core/util';
 import { Weapon, WeaponManager } from 'core/weapon';
 import { EventManager } from 'core/event';
+import { NetworkManager } from 'core/net';
 
 const ACCELERATION = 2000;
 
@@ -186,7 +187,12 @@ export class Unit extends Entity {
   }
 
   public kill(source?: Unit): void {
-    this.markForDelete();
+    if (NetworkManager.isServer()) {
+      this.markForDelete();
+    } else {
+      this.isVisible = false;
+      this.isCollidable = false;
+    }
 
     EventManager.emit<KillEvent>({
       type: 'KillEvent',

@@ -113,7 +113,7 @@ export class WorldManager implements Bounded, Serializable {
 
   public add(entity: Entity): void {
     this.entities[entity.id] = entity;
-    log.debug('add ' + entity.toString());
+    log.trace('add ' + entity.toString());
     this.entityCount += 1;
   }
 
@@ -126,7 +126,7 @@ export class WorldManager implements Bounded, Serializable {
     }
     actual?.cleanup();
     if (actual) {
-      log.debug('remove ' + actual.toString());
+      log.trace('remove ' + actual.toString());
       delete this.entities[actual.id];
       this.entityCount -= 1;
     }
@@ -220,7 +220,7 @@ export class WorldManager implements Bounded, Serializable {
   public registerEntity(Type: (new () => Entity) & typeof Entity) {
     const name = Type.typeName;
     this.entityConstructors[name] = Type;
-    log.debug(`entity ${name} registered`);
+    log.trace(`entity ${name} registered`);
   }
 
   public spawn<T extends Entity>(

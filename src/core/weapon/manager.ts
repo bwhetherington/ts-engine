@@ -9,7 +9,7 @@ export class WeaponManager {
   public registerWeapon(Type: (new () => Weapon) & typeof Weapon): void {
     const name = Type.typeName;
     this.weaponConstructors[name] = Type;
-    log.debug(`weapon ${name} registered`);
+    log.trace(`weapon ${name} registered`);
   }
 
   private registerWeapons(): void {

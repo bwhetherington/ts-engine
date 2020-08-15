@@ -42,7 +42,7 @@ export class EventManager {
     const id = UUIDManager.generate();
     handlers[id] = handler;
     this.listenerCount += 1;
-    log.debug(`add listener ${type}[${id}]`);
+    log.trace(`add listener ${type}[${id}]`);
     return id;
   }
 
@@ -52,7 +52,7 @@ export class EventManager {
       this.listenerCount -= 1;
       delete handlers[id];
       UUIDManager.free(id);
-      log.debug(`remove listener ${type}[${id}]`);
+      log.trace(`remove listener ${type}[${id}]`);
     } else {
       log.warn(`failed to remove listener ${type}[${id}]`);
     }

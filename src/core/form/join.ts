@@ -3,6 +3,7 @@ import {
   FormManager,
   StringEntry,
   FormEntry,
+  FormResult,
 } from 'core/form';
 import { EventManager } from 'core/event';
 import { ConnectEvent } from 'core/net';
@@ -29,6 +30,7 @@ export const JOIN_FORM: Form = {
       type: 'text',
       name: 'name',
       label: 'Display Name',
+      maxLength: 10,
     },
     {
       type: 'checkbox',
@@ -54,7 +56,12 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
   onSubmit(player: Player, response: JoinForm): void {
     player.name = response.name.value;
   },
-  validate(x: Data): x is JoinForm {
+  checkType(x: Data): x is JoinForm {
     return isJoinForm(x);
   },
+  validate(input: JoinForm): FormResult {
+    return {
+      isValid: true
+    };
+  }
 };

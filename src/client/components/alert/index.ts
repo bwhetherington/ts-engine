@@ -119,7 +119,27 @@ export class AlertComponent extends Component {
     const input = document.createElement('input');
     input.className = 'form-value';
     input.type = item.type;
-    input.name = item.name;
+
+    switch (item.type) {
+      case 'text':
+        const { minLength, maxLength } = item;
+        if (minLength !== undefined) {
+          input.minLength = minLength;
+        }
+        if (maxLength !== undefined) {
+          input.maxLength = maxLength;
+        }
+        break;
+      case 'number':
+        const { min, max } = item;
+        if (min !== undefined) {
+          input.min = '' + min;
+        }
+        if (max !== undefined) {
+          input.max = '' + max;
+        }
+    }
+
     input.addEventListener('change', (_) => {
       let entry: Entry;
       switch (item.type) {

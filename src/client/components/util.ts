@@ -24,7 +24,7 @@ export function registerComponent(
   Custom: (new () => Component) & typeof Component
 ) {
   const name = Custom.componentName;
-  log.debug(`<${name}> registered`);
+  log.trace(`<${name}> registered`);
   window.customElements.define(Custom.componentName, Custom);
 }
 

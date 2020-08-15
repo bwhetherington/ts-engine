@@ -16,7 +16,7 @@ import { TextManager } from 'client/text';
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
-  LogManager.initialize(new ClientLogger());
+  LogManager.initialize('info', new ClientLogger());
   UIM.initialize();
 
   const game = document.getElementById('game');

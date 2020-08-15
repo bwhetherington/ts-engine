@@ -26,7 +26,7 @@ export class Hero extends Tank {
   public constructor() {
     super();
 
-    this.armor = 10;
+    this.armor = 3;
 
     this.type = Hero.typeName;
 
@@ -76,11 +76,12 @@ export class Hero extends Tank {
       });
     } else {
       this.addListener<KillEvent>('KillEvent', (event) => {
+        log.debug('kill ' + event.data.target.toString());
         const { source } = event.data;
         if (this === source) {
           const player = this.getPlayer();
           if (player) {
-            player.score += 5;
+            player.score += 1;
           }
         }
       });
@@ -140,9 +141,8 @@ export class Hero extends Tank {
     if (this.label) {
       const player = this.getPlayer();
       if (player) {
-        // console.log(player);
         this.label.text = player.name;
-        this.label.tag = '[' + player.score + ']';
+        this.label.tag = '' + player.score;
       }
     }
   }

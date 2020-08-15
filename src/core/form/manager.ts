@@ -78,15 +78,15 @@ export class FormManager {
   }
 
   public registerForm<T extends Data>(formEntry: FormEntry<T>): void {
-    log.debug(`form ${formEntry.name} registered`);
-    const { name, form, validate, onSubmit } = formEntry;
+    log.trace(`form ${formEntry.name} registered`);
+    const { name, form, checkType, onSubmit } = formEntry;
     this.forms[name] = form;
     EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
       const { socket, data } = event;
       const player = PlayerManager.getPlayer(socket);
       if (player) {
         const { name, data: response } = data;
-        if (name === name && validate(response)) {
+        if (name === name && checkType(response)) {
           onSubmit(player, response);
         }
       }

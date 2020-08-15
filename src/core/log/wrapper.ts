@@ -1,4 +1,4 @@
-import { AbstractLogger } from 'core/log';
+import { AbstractLogger, LogLevel } from 'core/log';
 
 export class LoggerWrapper extends AbstractLogger {
   protected logger?: AbstractLogger;
@@ -7,7 +7,19 @@ export class LoggerWrapper extends AbstractLogger {
     this.logger = logger;
   }
 
-  public logRaw(content: string) {
+  public setLogLevel(level: LogLevel): void {
+    this.logger?.setLogLevel(level);
+  }
+
+  public getLogLevel(): LogLevel {
+    return this.logger?.getLogLevel() ?? 'trace';
+  }
+
+  public getPriority(): number {
+    return this.logger?.getPriority() ?? 4;
+  }
+
+  public logRaw(content: string): void {
     this.logger?.logRaw(content);
   }
 }

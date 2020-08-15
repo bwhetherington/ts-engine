@@ -35,7 +35,6 @@ export class Player implements Serializable {
       this.id = id;
     }
     if (typeof name === 'string') {
-      console.log('name', name);
       this.name = name;
     }
     if (typeof socket === 'number') {

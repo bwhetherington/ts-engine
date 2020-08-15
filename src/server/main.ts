@@ -44,7 +44,7 @@ async function loadGeometry(file: string): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  LogManager.initialize(new ServerLogger());
+  LogManager.initialize('trace', new ServerLogger());
 
   const httpServer = await createServer({
     dir: './',

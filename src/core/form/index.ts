@@ -15,6 +15,8 @@ export interface StringField {
   label: string;
   name: string;
   default?: string;
+  minLength?: number;
+  maxLength?: number;
 }
 
 export interface NumberField {
@@ -22,6 +24,8 @@ export interface NumberField {
   label: string;
   name: string;
   default?: number;
+  min?: number;
+  max?: number;
 }
 
 export interface BooleanField {
@@ -76,11 +80,17 @@ export interface FormShowEvent {
 
 const FM = new FormManager();
 
+export interface FormResult {
+  isValid: boolean;
+  message?: string;
+}
+
 export interface FormEntry<T> {
   name: string;
   form: Form;
   onSubmit(player: Player, response: T): void;
-  validate(data: Data): data is T;
+  checkType(data: Data): data is T;
+  validate(input: T): FormResult;
 }
 
 export { FM as FormManager, registerJoinForm };

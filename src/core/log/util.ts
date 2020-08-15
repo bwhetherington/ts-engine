@@ -1,4 +1,4 @@
-export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
+export type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'trace';
 
 type LogPriorities = {
   [level in LogLevel]: number;
@@ -9,13 +9,14 @@ const LOG_PRIORITIES: LogPriorities = {
   warn: 1,
   info: 2,
   debug: 3,
+  trace: 4,
 };
 
 function getLevelPriority(level: LogLevel): number {
   return LOG_PRIORITIES[level];
 }
 
-const DEFAULT_LEVEL = 'debug';
+const DEFAULT_LEVEL = 'trace';
 
 const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   hour: 'numeric',
@@ -48,10 +49,14 @@ export abstract class AbstractLogger {
     this.tags = [];
   }
 
-  public setLogLevel(level: LogLevel) {
+  public setLogLevel(level: LogLevel): void {
     const priority = getLevelPriority(level);
     this.priotityInternal = priority;
     this.levelInternal = level;
+  }
+
+  public getLogLevel(): LogLevel {
+    return this.levelInternal;
   }
 
   public getDate(): number {
@@ -74,7 +79,7 @@ export abstract class AbstractLogger {
     method = this.logRaw.bind(this)
   ): void {
     // Check level
-    if (getLevelPriority(level) <= this.priotityInternal) {
+    if (getLevelPriority(level) <= this.getPriority()) {
       // Only log if
       const date = this.getDate();
       const text = this.format(level, date, message);
@@ -106,5 +111,13 @@ export abstract class AbstractLogger {
 
   public debug(message: string): void {
     this.log('debug', message);
+  }
+
+  public trace(message: string): void {
+    this.log('trace', message);
+  }
+
+  public getPriority(): number {
+    return this.priotityInternal;
   }
 }

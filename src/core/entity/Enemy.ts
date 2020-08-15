@@ -24,6 +24,10 @@ export class Enemy extends Tank {
         this.selectTarget();
       }
     });
+
+    if (this.label) {
+      this.label.tag = 'AI';
+    }
   }
 
   public damage(amount: number, source?: Unit): void {
@@ -69,7 +73,7 @@ export class Enemy extends Tank {
 
       const { target } = this;
       if (target && target.isAlive) {
-        if (target.position.distanceTo(this.position) > 200) {
+        if (target.position.distanceTo(this.position) > 150) {
           // Calculate movement to reach target
           const dx = this.position.x - target.position.x;
           const dy = this.position.y - target.position.y;
