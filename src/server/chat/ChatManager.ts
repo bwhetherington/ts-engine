@@ -147,7 +147,7 @@ export class ChatManager {
         }
         this.sendComponents(components, socket);
       },
-      'Lists all commands and their help messages.',
+      'Lists all commands and their help messages',
       'h'
     );
 
@@ -156,7 +156,7 @@ export class ChatManager {
       (socket) => {
         this.info('Pong!', socket);
       },
-      "Responds to the user's ping with a pong.",
+      "Responds to the user's ping with a pong",
       'p'
     );
 
@@ -170,10 +170,10 @@ export class ChatManager {
             this.info(`Set name to '${name}'`, socket);
           }
         } else {
-          this.error('Name not specified.', socket);
+          this.error('Name not specified', socket);
         }
       },
-      "Sets the player's name.",
+      "Sets the player's name",
       'rn',
       'nick'
     );
@@ -182,19 +182,19 @@ export class ChatManager {
       'spawn',
       (socket, countString) => {
         if (countString === undefined) {
-          this.error('No entity count specified.', socket);
+          this.error('No entity count specified', socket);
           return;
         }
         const count = parseInt(countString);
         if (Number.isNaN(count)) {
-          this.error(`Could not parse '${countString}' as integer.`, socket);
+          this.error(`Could not parse '${countString}' as integer`, socket);
           return;
         }
 
         for (let i = 0; i < count; i++) {
           const entity = WorldManager.spawn(Enemy);
 
-          const color = randomColor(0.5, 0.75);
+          const color = randomColor(0.35, 0.75);
           entity.setColor(color);
 
           const x =
@@ -216,9 +216,9 @@ export class ChatManager {
           entity.setWeapon(weapon);
         }
 
-        this.info(`Spawning ${count} entities.`);
+        this.info(`Spawning ${count} entities`);
       },
-      'Spawns a number of AI units.'
+      'Spawns a number of AI units'
     );
 
     this.registerCommand(
@@ -229,22 +229,22 @@ export class ChatManager {
           .forEach((unit) => {
             unit.kill();
           });
-        this.info('Removed all units.');
+        this.info('Removed all units');
       },
-      'Kills all units.'
+      'Kills all units'
     );
 
     this.registerCommand(
       'setinterval',
       (socket, intervalString) => {
         if (intervalString === undefined) {
-          this.error('No interval specified.', socket);
+          this.error('No interval specified', socket);
           return;
         }
 
         const interval = parseFloat(intervalString);
         if (Number.isNaN(interval)) {
-          this.error(`Could not parse '${intervalString}' as a float.`, socket);
+          this.error(`Could not parse '${intervalString}' as a float`, socket);
           return;
         }
 
@@ -252,7 +252,7 @@ export class ChatManager {
 
         TimerManager.setInterval(interval);
       },
-      'Sets the server clock interval.'
+      'Sets the server clock interval'
     );
   }
 

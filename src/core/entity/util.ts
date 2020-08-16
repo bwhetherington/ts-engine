@@ -109,11 +109,11 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
     }
   }
 
-  if (Math.abs(dx) > 0) {
+  if (Math.abs(dx) > 0 && Math.sign(dx) !== xAxis) {
     entity.velocity.x *= -entity.bounce;
   }
 
-  if (Math.abs(dy) > 0) {
+  if (Math.abs(dy) > 0 && Math.sign(dy) !== yAxis) {
     entity.velocity.y *= -entity.bounce;
   }
 

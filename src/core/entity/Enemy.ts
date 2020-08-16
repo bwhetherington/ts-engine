@@ -1,11 +1,8 @@
-import { Tank } from './Tank';
-import { Unit } from './Unit';
-import { WorldManager, Entity } from '.';
+import { WorldManager, Unit, Tank, KillEvent } from 'core/entity';
 import { clamp } from 'core/util';
 import { MovementDirection } from 'core/input';
 import { NetworkManager } from 'core/net';
 import { LogManager } from 'core/log';
-import { KillEvent } from './util';
 
 const log = LogManager.forFile(__filename);
 

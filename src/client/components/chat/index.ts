@@ -8,7 +8,7 @@ import {
   TextCommandEvent,
   renderError,
 } from 'core/chat';
-import { Color, rgb, toCss } from 'core/graphics';
+import { Color, rgb, toCss, rgba } from 'core/graphics';
 import { TextMessageInEvent, TextMessageOutEvent } from 'core/chat';
 import { NetworkManager, DisconnectEvent } from 'core/net';
 import template from 'client/components/chat/template.html';
@@ -21,7 +21,7 @@ const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
   red: rgb(1, 0.4, 0.4),
   orange: rgb(0.9, 0.6, 0.3),
-  yellow: rgb(1, 1, 0.3),
+  yellow: rgba(1, 1, 1, 0.75),
   green: rgb(0.3, 0.6, 0.3),
   aqua: rgb(0.3, 0.8, 1),
   blue: rgb(0.5, 0.5, 1),
@@ -80,7 +80,7 @@ export class ChatComponent extends Component {
     }
 
     EventManager.addListener<DisconnectEvent>('DisconnectEvent', (event) => {
-      const components = renderError('Disconnected from server.');
+      const components = renderError('Disconnected from server');
       const element = this.renderComponents(components);
       this.addMessage(element);
     });

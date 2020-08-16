@@ -2,7 +2,7 @@ import { Serializable, Data } from 'core/serialize';
 import { Unit } from 'core/entity';
 import { EventManager, StepEvent, Event } from 'core/event';
 import { UUID } from 'core/uuid';
-import { FireEvent } from '.';
+import { FireEvent } from 'core/weapon';
 import { NetworkManager } from 'core/net';
 
 export abstract class Weapon implements Serializable {

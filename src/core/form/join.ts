@@ -56,7 +56,7 @@ function spawnHero(player: Player): Hero {
   hero.setPlayer(player);
   const weapon = new Pistol();
   hero.setWeapon(weapon);
-  const color = randomColor(0.5, 0.75);
+  const color = randomColor(0.35, 0.75);
   hero.setColor(color);
   return hero;
 }
