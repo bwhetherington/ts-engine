@@ -54,10 +54,16 @@ export class CameraManager implements Bounded {
   }
 
   public toWorldSpace(x: number, y: number): Vector {
-    return new Vector(x / this.scale + this.boundingBox.x, y / this.scale + this.boundingBox.y);
+    return new Vector(
+      x / this.scale + this.boundingBox.x,
+      y / this.scale + this.boundingBox.y
+    );
   }
 
   public toScreenSpace(x: number, y: number): Vector {
-    return new Vector((x - this.boundingBox.x) * this.scale, (y - this.boundingBox.y) * this.scale);
+    return new Vector(
+      (x - this.boundingBox.x) * this.scale,
+      (y - this.boundingBox.y) * this.scale
+    );
   }
 }

@@ -59,7 +59,6 @@ export class ChatComponent extends Component {
         this.show();
       });
       this.input.addEventListener('blur', () => {
-
         this.isFocused = false;
         if (this.timer === 0) {
           this.hide();
@@ -86,11 +85,14 @@ export class ChatComponent extends Component {
       this.addMessage(element);
     });
 
-    EventManager.addListener<TextMessageOutEvent>('TextMessageOutEvent', (event) => {
-      const { components } = event.data;
-      const element = this.renderComponents(components);
-      this.addMessage(element);
-    });
+    EventManager.addListener<TextMessageOutEvent>(
+      'TextMessageOutEvent',
+      (event) => {
+        const { components } = event.data;
+        const element = this.renderComponents(components);
+        this.addMessage(element);
+      }
+    );
 
     EventManager.addListener<StepEvent>('StepEvent', (event) => {
       this.timer = Math.max(0, this.timer - event.data.dt);
@@ -104,7 +106,7 @@ export class ChatComponent extends Component {
       if (action === KeyAction.KeyDown && key === Key.Enter) {
         this.input?.focus();
       }
-    })
+    });
   }
 
   private show(): void {

@@ -1,7 +1,7 @@
-import { Entity } from "./Entity";
-import { EventManager } from "core/event";
-import { TextUpdateEvent, TextRemoveEvent } from "core/text";
-import { Data } from "core/serialize";
+import { Entity } from './Entity';
+import { EventManager } from 'core/event';
+import { TextUpdateEvent, TextRemoveEvent } from 'core/text';
+import { Data } from 'core/serialize';
 
 export class Text extends Entity {
   public static typeName: string = 'Text';

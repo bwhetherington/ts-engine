@@ -42,7 +42,7 @@ body,
 }
 
 .col > *:not(:last-child) {
-  margin-bottom: var(--ui-margin);
+  margin-bottom: calc(var(--ui-margin) / 2);
 }
 
 .dialog {

@@ -6,7 +6,7 @@ import { Form } from 'core/form';
 
 const log = LogManager.forFile(__filename);
 
-export interface Dialog { }
+export interface Dialog {}
 
 export class AlertManager {
   private element?: AlertComponent;

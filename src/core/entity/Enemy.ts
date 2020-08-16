@@ -1,11 +1,11 @@
-import { Tank } from "./Tank";
-import { Unit } from "./Unit";
-import { WorldManager, Entity } from ".";
-import { clamp } from "core/util";
-import { MovementDirection } from "core/input";
-import { NetworkManager } from "core/net";
-import { LogManager } from "core/log";
-import { KillEvent } from "./util";
+import { Tank } from './Tank';
+import { Unit } from './Unit';
+import { WorldManager, Entity } from '.';
+import { clamp } from 'core/util';
+import { MovementDirection } from 'core/input';
+import { NetworkManager } from 'core/net';
+import { LogManager } from 'core/log';
+import { KillEvent } from './util';
 
 const log = LogManager.forFile(__filename);
 
@@ -42,14 +42,20 @@ export class Enemy extends Tank {
     const [target] = WorldManager.getEntities()
       .filter((entity) => this !== entity)
       .filterType((entity): entity is Unit => entity instanceof Unit)
-      .map<[Unit | undefined, number]>((entity) => [entity, entity.position.distanceTo(this.position)])
-      .fold([<Unit | undefined>undefined, Number.POSITIVE_INFINITY], (min, cur) => {
-        if (cur[1] < min[1]) {
-          return cur;
-        } else {
-          return min;
+      .map<[Unit | undefined, number]>((entity) => [
+        entity,
+        entity.position.distanceTo(this.position),
+      ])
+      .fold(
+        [<Unit | undefined>undefined, Number.POSITIVE_INFINITY],
+        (min, cur) => {
+          if (cur[1] < min[1]) {
+            return cur;
+          } else {
+            return min;
+          }
         }
-      });
+      );
     if (target) {
       log.debug('select target ' + target.toString());
       this.target = target;
@@ -60,8 +66,7 @@ export class Enemy extends Tank {
     super.step(dt);
 
     if (NetworkManager.isServer()) {
-
-      if (Math.random() < clamp((0.1 * dt), 0, 1)) {
+      if (Math.random() < clamp(0.1 * dt, 0, 1)) {
         this.selectTarget();
       }
 

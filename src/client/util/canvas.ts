@@ -190,7 +190,14 @@ export class HDCanvas implements GraphicsContext {
   public resetTransform() {
     const ctx = this.curContext;
     if (ctx) {
-      ctx.setTransform(this.ratio * this.scale, 0, 0, this.ratio * this.scale, 0, 0);
+      ctx.setTransform(
+        this.ratio * this.scale,
+        0,
+        0,
+        this.ratio * this.scale,
+        0,
+        0
+      );
     }
   }
 

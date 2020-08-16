@@ -4,7 +4,7 @@
 <head>
   <title>Test</title>
   <meta charset="utf-8" />
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap" rel="stylesheet" />
   <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
 </head>
@@ -16,13 +16,14 @@
     <debug-component class="top left"></debug-component>
     <div class="bottom left col">
       <chat-component id="chat-box"></chat-component>
-      <div class="dialog">
-        <bar-component id="life-bar"></bar-component>
+      <div class="dialog col">
+        <bar-component name="HP" type="life" id="life-bar"></bar-component>
+        <bar-component name="XP" type="xp" id="xp-bar"></bar-component>
       </div>
     </div>
   </div>
   <alert-component id="alert"></alert-component>
-  <script src="/build/client/bundle.js"></script>
+  <script src="/bundle.js"></script>
 </body>
 
 </html>

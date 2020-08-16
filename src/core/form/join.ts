@@ -61,7 +61,7 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
   },
   validate(input: JoinForm): FormResult {
     return {
-      isValid: true
+      isValid: true,
     };
-  }
+  },
 };

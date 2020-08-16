@@ -1,7 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../build/client"
+    "outDir": "../../build/client",
+    "lib": [
+      "ES2020",
+      "DOM",
+      "WebWorker",
+    ]
   },
-  "exclude": ["../../src/server"]
+  "exclude": [
+    "../../src/server"
+  ]
 }

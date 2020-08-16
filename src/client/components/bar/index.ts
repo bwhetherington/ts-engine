@@ -15,6 +15,19 @@ export class BarComponent extends Component {
     super(template);
 
     this.bar = this.queryChild('#bar-value');
+
+    const type = this.getAttribute('type');
+    if (type) {
+      this.bar?.setAttribute('type', type);
+    }
+
+    const nameField = this.queryChild('#bar-name');
+    const nameValue = this.getAttribute('name');
+
+    if (nameField && nameValue) {
+      nameField.innerText = nameValue + ' ';
+    }
+
     this.label = this.queryChild('#bar-label');
 
     this.registerListeners();
@@ -62,18 +75,21 @@ export class BarComponent extends Component {
   }
 
   private registerListeners(): void {
-    EventManager.addListener('BarUpdateEvent', (event: Event<BarUpdateEvent>) => {
-      const { id, value, maxValue } = event.data;
-      if (this.id === id) {
-        const old = this.value;
-        if (value !== undefined) {
-          this.valueInternal = value;
+    EventManager.addListener(
+      'BarUpdateEvent',
+      (event: Event<BarUpdateEvent>) => {
+        const { id, value, maxValue } = event.data;
+        if (this.id === id) {
+          const old = this.value;
+          if (value !== undefined) {
+            this.valueInternal = value;
+          }
+          if (maxValue !== undefined) {
+            this.maxValueInternal = maxValue;
+          }
+          this.updateElement(old === 0 ? -1 : old, this.value);
         }
-        if (maxValue !== undefined) {
-          this.maxValueInternal = maxValue;
-        }
-        this.updateElement(old, this.value);
       }
-    });
+    );
   }
 }

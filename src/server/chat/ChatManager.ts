@@ -97,19 +97,22 @@ export class ChatManager {
       }
     });
 
-    EventManager.addListener<TextMessageInEvent>('TextMessageInEvent', (event) => {
-      const { data, socket } = event;
+    EventManager.addListener<TextMessageInEvent>(
+      'TextMessageInEvent',
+      (event) => {
+        const { data, socket } = event;
 
-      let name = DEFAULT_NAME;
-      if (socket !== undefined) {
-        name = PlayerManager.getPlayer(socket)?.name ?? DEFAULT_NAME;
+        let name = DEFAULT_NAME;
+        if (socket !== undefined) {
+          name = PlayerManager.getPlayer(socket)?.name ?? DEFAULT_NAME;
+        }
+
+        const components = this.formatMessage(name, event.data.content);
+        this.sendComponents(components);
+
+        log.info(`<${name}> ${data.content}`);
       }
-
-      const components = this.formatMessage(name, event.data.content);
-      this.sendComponents(components);
-
-      log.info(`<${name}> ${data.content}`);
-    });
+    );
 
     EventManager.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
       const { socket, data } = event;
@@ -196,8 +199,12 @@ export class ChatManager {
             blue: Math.random() * 0.2 + 0.7,
           };
 
-          const x = Math.random() * WorldManager.boundingBox.width + WorldManager.boundingBox.x;
-          const y = Math.random() * WorldManager.boundingBox.height + WorldManager.boundingBox.y;
+          const x =
+            Math.random() * WorldManager.boundingBox.width +
+            WorldManager.boundingBox.x;
+          const y =
+            Math.random() * WorldManager.boundingBox.height +
+            WorldManager.boundingBox.y;
 
           // const dx = (Math.random() - 0.5) * 200;
           // const dy = (Math.random() - 0.5) * 200;
@@ -207,7 +214,7 @@ export class ChatManager {
 
           const weapon = new Pistol();
           weapon.rate = 0.85;
-          weapon.damage = 12;
+          weapon.damage = 1;
           entity.setWeapon(weapon);
         }
 

@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   LogManager.initialize('debug', new ServerLogger());
 
   const httpServer = await createServer({
-    dir: './',
+    dirs: ['./static/', './build/client/'],
     index: './static/index.html',
   });
 
@@ -78,8 +78,12 @@ async function main(): Promise<void> {
       blue: Math.random() * 0.2 + 0.7,
     };
 
-    const x = Math.random() * WorldManager.boundingBox.width + WorldManager.boundingBox.x;
-    const y = Math.random() * WorldManager.boundingBox.height + WorldManager.boundingBox.y;
+    const x =
+      Math.random() * WorldManager.boundingBox.width +
+      WorldManager.boundingBox.x;
+    const y =
+      Math.random() * WorldManager.boundingBox.height +
+      WorldManager.boundingBox.y;
 
     const dx = (Math.random() - 0.5) * 200;
     const dy = (Math.random() - 0.5) * 200;

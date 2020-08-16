@@ -124,7 +124,10 @@ export class Entity implements Bounded, Serializable {
   }
 
   public step(dt: number): void {
-    if (NetworkManager.isClient() && !CameraManager.boundingBox.intersects(this.boundingBox)) {
+    if (
+      NetworkManager.isClient() &&
+      !CameraManager.boundingBox.intersects(this.boundingBox)
+    ) {
       return;
     }
     this.updatePosition(dt);

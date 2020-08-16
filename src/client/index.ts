@@ -13,9 +13,22 @@ import { FormManager } from 'core/form';
 import { WeaponManager } from 'core/weapon';
 import { TextManager } from 'client/text';
 
+import Work from 'worker-loader!client/test.worker.ts';
+
 const log = LogManager.forFile(__filename);
 
+function callWorker(worker: Work, data: any): Promise<any> {
+  return new Promise((resolve) => {
+    worker.postMessage(data);
+    worker.onmessage = (event) => resolve(event.data);
+  });
+}
+
 async function main(): Promise<void> {
+
+  const work = new Work();
+  callWorker(work, 10).then(console.log);
+
   LogManager.initialize('info', new ClientLogger());
   UIM.initialize();
 

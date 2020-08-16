@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/static/style.css" />
+<link rel="stylesheet" href="/style.css" />
 <style>
   .bar-container {
     height: 1.75em;
@@ -12,13 +12,20 @@
   }
 
   #bar-value {
-    background-color: rgb(192, 32, 32);
     box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
     height: 100%;
     transition: width 0.25s;
   }
 
-  #bar-label {
+  #bar-value[type="life"] {
+    background-color: rgb(192, 32, 32);
+  }
+
+  #bar-value[type="xp"] {
+    background-color: rgba(32, 128, 192);
+  }
+
+  .label {
     position: absolute;
     top: 20%;
     width: 100%;
@@ -26,8 +33,19 @@
     line-height: 100%;
     color: rgba(255, 255, 255, 0.5);
   }
+
+  #bar-name {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: bold;
+  }
+
+  #bar-label {
+    color: rgba(255, 255, 255, 0.5);
+  }
 </style>
 <div class="bar-container">
   <div id="bar-value"></div>
-  <div id="bar-label"></div>
+  <div class="label">
+    <span id="bar-name"></span><span id="bar-label"></span>
+  </div>
 </div>

@@ -23,7 +23,7 @@ function* filter<T>(gen: Generator<T>, fn: (x: T) => boolean): Generator<T> {
 
 function* filterType<T, U extends T>(
   gen: Generator<T>,
-  typeCheck: (x: T) => x is U,
+  typeCheck: (x: T) => x is U
 ): Generator<U> {
   for (const x of gen) {
     if (typeCheck(x)) {

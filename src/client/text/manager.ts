@@ -1,9 +1,9 @@
-import { UUID } from "core/uuid";
-import { EventManager } from "core/event";
-import { TextUpdateEvent, TextRemoveEvent } from "core/text";
-import { CameraManager, Color, toCss } from "core/graphics";
-import { LogManager } from "core/log";
-import { PlayerManager } from "core/player";
+import { UUID } from 'core/uuid';
+import { EventManager } from 'core/event';
+import { TextUpdateEvent, TextRemoveEvent } from 'core/text';
+import { CameraManager, Color, toCss } from 'core/graphics';
+import { LogManager } from 'core/log';
+import { PlayerManager } from 'core/player';
 
 const log = LogManager.forFile(__filename);
 
@@ -63,7 +63,14 @@ export class TextManager {
     });
   }
 
-  private updateText(entry: TextEntry, text?: string, tag?: string, worldX?: number, worldY?: number, color?: Color) {
+  private updateText(
+    entry: TextEntry,
+    text?: string,
+    tag?: string,
+    worldX?: number,
+    worldY?: number,
+    color?: Color
+  ) {
     if (text) {
       if (text.length > MAX_LENGTH) {
         text = text.slice(0, MAX_LENGTH - 3) + '...';

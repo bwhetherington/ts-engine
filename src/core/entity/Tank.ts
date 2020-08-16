@@ -1,12 +1,12 @@
-import { Unit, Text, WorldManager } from "core/entity";
-import { GraphicsContext } from "core/graphics";
-import { StepEvent } from "core/event";
-import { DamageEvent } from "./util";
-import { WHITE } from "core/graphics/color";
-import { Data } from "core/serialize";
-import { FireEvent } from "core/weapon";
-import { NetworkManager } from "core/net";
-import { Explosion } from "./Explosion";
+import { Unit, Text, WorldManager, Explosion } from 'core/entity';
+import { GraphicsContext } from 'core/graphics';
+import { WHITE } from 'core/graphics/color';
+import { Data } from 'core/serialize';
+import { FireEvent } from 'core/weapon';
+import { NetworkManager } from 'core/net';
+import { LogManager } from 'core/log';
+
+const log = LogManager.forFile(__filename);
 
 const FIRE_DURATION = 0.25;
 const FLASH_DURATION = 0.2;
@@ -31,8 +31,8 @@ export class Tank extends Unit {
     this.boundingBox.width = 30;
     this.boundingBox.height = 30;
 
-    this.setMaxLife(100);
-    this.setLife(100);
+    this.setMaxLife(10);
+    this.setLife(10);
 
     this.addListener<FireEvent>('FireEvent', (event) => {
       if (this.id === event.data.sourceID) {
@@ -67,8 +67,9 @@ export class Tank extends Unit {
   }
 
   public damage(amount: number, source?: Unit): void {
-    const damage = Math.max(1, amount - this.armor);
-    super.damage(damage, source);
+    log.debug('damage ' + amount + ', source ' + source?.toString());
+    const actualAmount = Math.max(1, amount - this.armor);
+    super.damage(actualAmount, source);
     this.flash();
   }
 

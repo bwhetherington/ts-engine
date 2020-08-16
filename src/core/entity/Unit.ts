@@ -12,9 +12,9 @@ const ACCELERATION = 2000;
 export class Unit extends Entity {
   public static typeName: string = 'Unit';
 
-  private maxLife: number = 100;
-  private life: number = 100;
-  private lifeRegen: number = 5;
+  private maxLife: number = 10;
+  private life: number = 10;
+  private lifeRegen: number = 0;
   private speed: number = 250;
   private isAliveInternal: boolean = true;
   private movement = {
@@ -74,7 +74,7 @@ export class Unit extends Entity {
         source,
         amount,
       },
-    })
+    });
   }
 
   public getMaxLife(): number {

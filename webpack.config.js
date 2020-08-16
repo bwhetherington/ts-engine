@@ -32,6 +32,10 @@ module.exports = {
         },
         exclude: /node_modules/,
       },
+      {
+        test: /\.worker\.js/,
+        use: 'worker-loader'
+      }
     ],
   },
   resolve: {

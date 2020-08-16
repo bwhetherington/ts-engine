@@ -14,7 +14,7 @@ export class Timer extends AbstractTimer {
     super(onTick);
     this.previous = performance.now();
 
-    this.trigger = (time) => {
+    this.trigger = (time: number) => {
       let dt = (time - this.previous) / 1000;
       // if (dt - this.target > MIN_TOLERANCE) {
       //   LM.warn("can't keep up");

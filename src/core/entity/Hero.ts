@@ -1,4 +1,11 @@
-import { Text, WorldManager, DamageEvent, Tank, Unit } from 'core/entity';
+import {
+  Text,
+  WorldManager,
+  DamageEvent,
+  Tank,
+  KillEvent,
+  Unit,
+} from 'core/entity';
 import {
   KeyEvent,
   KeyAction,
@@ -6,16 +13,32 @@ import {
   MouseEvent,
   MouseAction,
 } from 'core/input';
-import { EventData, Event, EventManager, StepEvent } from 'core/event';
+import { EventData, Event, EventManager } from 'core/event';
 import { Data } from 'core/serialize';
 import { Player, PlayerManager } from 'core/player';
 import { LogManager } from 'core/log';
 import { NetworkManager, SyncEvent } from 'core/net';
-import { CameraManager, GraphicsContext, rgb } from 'core/graphics';
+import { CameraManager, rgb } from 'core/graphics';
 import { BarUpdateEvent, sleep } from 'core/util';
-import { KillEvent } from './util';
 
 const log = LogManager.forFile(__filename);
+
+function experienceForLevel(level: number): number {
+  if (level < 1) {
+    return 0;
+  }
+  return 3 + Math.ceil(level * level * 3);
+}
+
+function lifeForLevel(level: number): number {
+  return 5 + level * 5;
+}
+
+function armorForLevel(level: number): number {
+  return Math.floor(level / 2);
+}
+
+// 5 10 25 
 
 export class Hero extends Tank {
   public static typeName: string = 'Hero';
@@ -23,12 +46,16 @@ export class Hero extends Tank {
   private player?: Player;
   private mouseDown: boolean = false;
 
+  private xp: number = 0;
+  private level: number = 0;
+
   public constructor() {
     super();
 
-    this.armor = 3;
-
     this.type = Hero.typeName;
+
+    this.setExperience(0);
+    this.setLevel(1);
 
     this.addListener<MouseEvent>('MouseEvent', (event) => {
       if (this.isEventSubject(event)) {
@@ -60,12 +87,18 @@ export class Hero extends Tank {
     if (NetworkManager.isClient()) {
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
         const { target, source, amount } = event.data;
-        if (this.getPlayer()?.isActivePlayer() && (this === target || this === source)) {
+        if (
+          this.getPlayer()?.isActivePlayer() &&
+          (this === target || this === source)
+        ) {
           const label = '' + amount;
           const text = WorldManager.spawn(Text, target.position);
           text.color = rgb(192, 128, 128);
           text.isStatic = false;
-          text.position.addXY((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 20);
+          text.position.addXY(
+            (Math.random() - 0.5) * 20,
+            (Math.random() - 0.5) * 20
+          );
           text.text = label;
           text.tag = 'dmg';
           text.velocity.setXY(25 + Math.random() * 25, 0);
@@ -77,15 +110,38 @@ export class Hero extends Tank {
     } else {
       this.addListener<KillEvent>('KillEvent', (event) => {
         const { source } = event.data;
-        log.debug(`this = ${this.toString()}, source = ${source?.toString()}`);
         if (this === source) {
-          log.debug('kill ' + event.data.target.toString());
-          const player = this.getPlayer();
-          if (player) {
-            player.score += 1;
-          }
+          this.setExperience(this.xp + 5);
         }
       });
+    }
+  }
+
+  public setExperience(amount: number): void {
+    this.xp = amount;
+    while (this.xp >= experienceForLevel(this.level)) {
+      this.setLevel(this.level + 1);
+    }
+
+    if (this.getPlayer()?.isActivePlayer()) {
+      const prevXp = experienceForLevel(this.level - 1);
+      EventManager.emit({
+        type: 'BarUpdateEvent',
+        data: <BarUpdateEvent>{
+          id: 'xp-bar',
+          value: (this.xp - prevXp),
+          maxValue: experienceForLevel(this.level) - prevXp,
+        },
+      });
+    }
+  }
+
+  private setLevel(level: number): void {
+    if (level !== this.level) {
+      this.level = level;
+      this.setMaxLife(lifeForLevel(level));
+      this.setLife(this.getMaxLife());
+      this.armor = armorForLevel(level);
     }
   }
 
@@ -115,8 +171,8 @@ export class Hero extends Tank {
     }
   }
 
-  public setLife(life: number): void {
-    super.setLife(life);
+  public setLife(life: number, source?: Unit): void {
+    super.setLife(life, source);
     if (this.getPlayer()?.isActivePlayer()) {
       EventManager.emit({
         type: 'BarUpdateEvent',
@@ -132,7 +188,10 @@ export class Hero extends Tank {
   public step(dt: number): void {
     super.step(dt);
     if (this.getPlayer()?.isActivePlayer()) {
-      CameraManager.setTargetXY(this.boundingBox.centerX, this.boundingBox.centerY);
+      CameraManager.setTargetXY(
+        this.boundingBox.centerX,
+        this.boundingBox.centerY
+      );
     }
 
     if (this.mouseDown && NetworkManager.isServer()) {
@@ -143,7 +202,7 @@ export class Hero extends Tank {
       const player = this.getPlayer();
       if (player) {
         this.label.text = player.name;
-        this.label.tag = '' + player.score;
+        this.label.tag = '' + this.level;
       }
     }
   }
@@ -152,6 +211,7 @@ export class Hero extends Tank {
     return {
       ...super.serialize(),
       playerID: this.player?.id,
+      xp: this.xp,
     };
   }
 
@@ -160,7 +220,7 @@ export class Hero extends Tank {
     const { angle: oldAngle } = this;
 
     super.deserialize(data);
-    const { playerID } = data;
+    const { playerID, xp } = data;
 
     if (playerID !== undefined) {
       this.setPlayer(playerID);
@@ -168,6 +228,10 @@ export class Hero extends Tank {
       if (player && player.hero !== this) {
         player.setHero(this);
       }
+    }
+
+    if (typeof xp === 'number') {
+      this.setExperience(xp);
     }
 
     if (this.getPlayer()?.isActivePlayer()) {

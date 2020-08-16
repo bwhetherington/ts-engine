@@ -26,13 +26,13 @@ export function fileExists(path: fs.PathLike): Promise<boolean> {
 }
 
 interface Options {
-  dir: string;
+  dirs: string[];
   index: string;
   encoding?: string;
 }
 
 export async function createServer(options: Options): Promise<http.Server> {
-  const { dir, index, encoding = 'utf8' } = options;
+  const { dirs, index, encoding = 'utf8' } = options;
 
   return http.createServer(async (req, res) => {
     try {
@@ -44,20 +44,23 @@ export async function createServer(options: Options): Promise<http.Server> {
           res.write(file);
           res.end();
         } else {
-          const filePath = path.join(dir, req.url);
-          if (await fileExists(filePath)) {
-            const mimeType =
-              mime.lookup(path.extname(filePath)) || 'text/plain';
-            const file = await readFile(filePath, encoding);
-            log.debug(`read file: ${filePath} (${mimeType})`);
-            res.writeHead(200, { 'Content-Type': mimeType });
-            res.write(file);
-            res.end();
-          } else {
-            log.error(`file ${filePath} does not exist`);
-            res.writeHead(404, 'File not found');
-            res.end();
+          // Search for file in each static directory
+          for (const dir of dirs) {
+            const filePath = path.join(dir, req.url);
+            if (await fileExists(filePath)) {
+              const mimeType =
+                mime.lookup(path.extname(filePath)) || 'text/plain';
+              const file = await readFile(filePath, encoding);
+              log.debug(`read file: ${filePath} (${mimeType})`);
+              res.writeHead(200, { 'Content-Type': mimeType });
+              res.write(file);
+              res.end();
+              return;
+            }
           }
+          log.error(`file ${req.url} does not exist`);
+          res.writeHead(404, 'File not found');
+          res.end();
         }
       } else {
         res.writeHead(504, 'No request URL specified.');

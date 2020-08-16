@@ -1,6 +1,17 @@
 import { Rectangle, QuadTree, Bounded, Vector } from 'core/geometry';
 import { GraphicsContext, CameraManager } from 'core/graphics';
-import { Entity, Unit, Hero, Geometry, Text, Projectile, Explosion, CollisionEvent, Tank, Enemy } from 'core/entity';
+import {
+  Entity,
+  Unit,
+  Hero,
+  Geometry,
+  Text,
+  Projectile,
+  Explosion,
+  CollisionEvent,
+  Tank,
+  Enemy,
+} from 'core/entity';
 import { LogManager } from 'core/log';
 import { EventManager, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';

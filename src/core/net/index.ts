@@ -12,6 +12,4 @@ export {
 export { HTTPClient, HTTPResponse } from 'core/net/http';
 
 const NM = new NetworkManager();
-export {
-  NM as NetworkManager,
-};
+export { NM as NetworkManager };
