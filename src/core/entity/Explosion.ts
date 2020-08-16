@@ -42,6 +42,6 @@ export class Explosion extends Entity {
     const t = this.timeRemaining / DURATION;
     const r = explodeFunction(t) * this.radius;
     const { x, y } = this.position;
-    ctx.ellipse(x - r, y - r, 2 * r, 2 * r, this.color);
+    ctx.ellipse(x - r, y - r, 2 * r, 2 * r, this.getColor());
   }
 }

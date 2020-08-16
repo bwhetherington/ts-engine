@@ -7,7 +7,7 @@ export class Pistol extends Weapon {
   public constructor() {
     super();
     this.type = Pistol.typeName;
-    this.rate = 0.1;
+    this.rate = 0.75;
     this.damage = 3;
   }
 
@@ -16,7 +16,7 @@ export class Pistol extends Weapon {
     projectile.parent = source;
     projectile.bounce = 0;
     projectile.damage = this.damage;
-    projectile.mass = 0.025;
+    projectile.mass = 0.1;
     projectile.velocity.setXY(1, 0);
     const offset = (Math.random() - 0.5) * 0.15;
     projectile.velocity.angle = angle + offset;

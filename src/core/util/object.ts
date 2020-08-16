@@ -9,20 +9,22 @@ export function diff(
   let isModified = false;
 
   for (const key in to) {
-    const a = from[key];
-    const b = to[key];
-    const inequal = a !== b;
-    if (inequal) {
-      isModified = true;
-    }
-    if (inequal || include.includes(key)) {
-      if (typeof a === 'object') {
-        const obj = a instanceof Array ? <any[]>[] : <Data>{};
-        if (diff(a, b, obj)) {
-          diffObj[key] = obj;
+    if (from) {
+      const a = from[key];
+      const b = to[key];
+      const inequal = a !== b;
+      if (inequal) {
+        isModified = true;
+      }
+      if (inequal || include.includes(key)) {
+        if (typeof a === 'object') {
+          const obj = a instanceof Array ? <any[]>[] : <Data>{};
+          if (diff(a, b, obj)) {
+            diffObj[key] = obj;
+          }
+        } else {
+          diffObj[key] = b;
         }
-      } else {
-        diffObj[key] = b;
       }
     }
   }

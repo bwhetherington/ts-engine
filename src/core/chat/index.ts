@@ -40,6 +40,12 @@ export type TextComponents = (string | null | TextComponent)[];
 export function renderInfo(message: string): TextComponents {
   return [
     {
+      content: '[',
+      style: {
+        color: 'yellow',
+      },
+    },
+    {
       content: 'Info:',
       style: {
         color: 'yellow',
@@ -53,11 +59,23 @@ export function renderInfo(message: string): TextComponents {
         color: 'yellow',
       },
     },
+    {
+      content: ']',
+      style: {
+        color: 'yellow',
+      },
+    },
   ];
 }
 
 export function renderWarn(message: string): TextComponents {
   return [
+    {
+      content: '[',
+      style: {
+        color: 'orange',
+      },
+    },
     {
       content: 'Warn:',
       style: {
@@ -72,11 +90,23 @@ export function renderWarn(message: string): TextComponents {
         color: 'orange',
       },
     },
+    {
+      content: ']',
+      style: {
+        color: 'orange',
+      },
+    },
   ];
 }
 
 export function renderError(message: string): TextComponents {
   return [
+    {
+      content: '[',
+      style: {
+        color: 'red',
+      },
+    },
     {
       content: 'Error:',
       style: {
@@ -87,6 +117,12 @@ export function renderError(message: string): TextComponents {
     ' ',
     {
       content: message,
+      style: {
+        color: 'red',
+      },
+    },
+    {
+      content: ']',
       style: {
         color: 'red',
       },

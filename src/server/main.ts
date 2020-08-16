@@ -68,30 +68,6 @@ async function main(): Promise<void> {
   MetricsManager.initialize();
   WeaponManager.initialize();
 
-  const ENTITIES = 0;
-  for (let i = 0; i < ENTITIES; i++) {
-    const entity = WorldManager.spawn(Unit);
-
-    entity.color = {
-      red: Math.random() * 0.2 + 0.7,
-      green: Math.random() * 0.2 + 0.7,
-      blue: Math.random() * 0.2 + 0.7,
-    };
-
-    const x =
-      Math.random() * WorldManager.boundingBox.width +
-      WorldManager.boundingBox.x;
-    const y =
-      Math.random() * WorldManager.boundingBox.height +
-      WorldManager.boundingBox.y;
-
-    const dx = (Math.random() - 0.5) * 200;
-    const dy = (Math.random() - 0.5) * 200;
-
-    entity.position.setXY(x, y);
-    entity.velocity.setXY(dx, dy);
-  }
-
   const timer = new Timer((dt) => {
     NetworkManager.send({ foo: 'foo', bar: 'bar' });
     EventManager.step(dt);

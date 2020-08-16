@@ -12,9 +12,10 @@ import {
 } from 'core/chat';
 import { LogManager } from 'core/log';
 import { PlayerManager } from 'core/player';
-import { WorldManager, Tank, Enemy } from 'core/entity';
+import { WorldManager, Tank, Enemy, Unit } from 'core/entity';
 import { TimerManager } from 'server/util';
 import { Pistol } from 'core/weapon';
+import { randomColor } from 'core/graphics/color';
 
 const log = LogManager.forFile(__filename);
 
@@ -193,11 +194,8 @@ export class ChatManager {
         for (let i = 0; i < count; i++) {
           const entity = WorldManager.spawn(Enemy);
 
-          entity.color = {
-            red: Math.random() * 0.2 + 0.7,
-            green: Math.random() * 0.2 + 0.7,
-            blue: Math.random() * 0.2 + 0.7,
-          };
+          const color = randomColor(0.5, 0.75);
+          entity.setColor(color);
 
           const x =
             Math.random() * WorldManager.boundingBox.width +
@@ -227,9 +225,9 @@ export class ChatManager {
       'kill',
       (socket) => {
         WorldManager.getEntities()
-          .filter((entity) => entity.type === 'Enemy')
-          .forEach((entity) => {
-            entity.markForDelete();
+          .filterType((entity): entity is Unit => entity instanceof Unit)
+          .forEach((unit) => {
+            unit.kill();
           });
         this.info('Removed all units.');
       },

@@ -186,12 +186,11 @@ export class Unit extends Entity {
     }
   }
 
+  public cleanupLocal(): void { }
+
   public kill(source?: Unit): void {
     if (NetworkManager.isServer()) {
       this.markForDelete();
-    } else {
-      this.isVisible = false;
-      this.isCollidable = false;
     }
 
     EventManager.emit<KillEvent>({

@@ -46,15 +46,17 @@ export class EventManager {
     return id;
   }
 
-  public removeListener(type: string, id: string): void {
+  public removeListener(type: string, id: string): boolean {
     const handlers = this.getHandlers(type);
     if (id in handlers) {
       this.listenerCount -= 1;
       delete handlers[id];
       UUIDManager.free(id);
       log.trace(`remove listener ${type}[${id}]`);
+      return true;
     } else {
       log.warn(`failed to remove listener ${type}[${id}]`);
+      return false;
     }
   }
 

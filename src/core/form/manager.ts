@@ -2,7 +2,7 @@ import { LogManager } from 'core/log';
 import { Player, PlayerManager } from 'core/player';
 import { Data } from 'core/serialize';
 import { EventManager } from 'core/event';
-import { FormSubmitEvent, Form, FormShowEvent, FormEntry } from 'core/form';
+import { FormSubmitEvent, Form, FormShowEvent, FormEntry, FormRejectEvent } from 'core/form';
 import { NetworkManager } from 'core/net';
 import { sleep } from 'core/util';
 
@@ -38,6 +38,7 @@ export class FormManager {
     player.send(event);
 
     const promise = new Promise<Data>(async (resolve, reject) => {
+      let hasResolved = false;
       const id = EventManager.addListener<FormSubmitEvent>(
         'FormSubmitEvent',
         (event, id) => {
@@ -45,14 +46,17 @@ export class FormManager {
           if (socket === player.socket) {
             resolve(data.data);
             EventManager.removeListener('FormSubmitEvent', id);
+            hasResolved = true;
           }
         }
       );
       log.info('timeout: ' + timeout);
       await sleep(timeout);
-      EventManager.removeListener('FormSubmitEvent', id);
-      log.warn(`form [${id}] timed out`);
-      reject(new Error('Timeout'));
+      if (!hasResolved) {
+        EventManager.removeListener('FormSubmitEvent', id);
+        log.warn(`form [${id}] timed out`);
+        reject(new Error('Timeout'));
+      }
     });
 
     return promise;
@@ -62,11 +66,12 @@ export class FormManager {
     player: Player,
     formName: string,
     timeout: number = 60
-  ): Promise<void> {
+  ): Promise<boolean> {
     const form = this.forms[formName];
     if (form) {
       try {
         await this.sendFormInternal(player, form, timeout);
+        return true;
       } catch (ex) {
         if (ex instanceof Error) {
           log.error(ex.message);
@@ -75,11 +80,18 @@ export class FormManager {
     } else {
       log.error(`form ${formName} not found`);
     }
+
+    EventManager.emit<FormRejectEvent>({
+      type: 'FormRejectEvent',
+      data: { player },
+    });
+
+    return false;
   }
 
   public registerForm<T extends Data>(formEntry: FormEntry<T>): void {
     log.trace(`form ${formEntry.name} registered`);
-    const { name, form, checkType, onSubmit } = formEntry;
+    const { name, form, checkType, onSubmit, onReject } = formEntry;
     this.forms[name] = form;
     EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
       const { socket, data } = event;
@@ -91,5 +103,11 @@ export class FormManager {
         }
       }
     });
+    if (onReject) {
+      EventManager.addListener<FormRejectEvent>('FormRejectEvent', (event) => {
+        const { player } = event.data;
+        onReject(player);
+      });
+    }
   }
 }

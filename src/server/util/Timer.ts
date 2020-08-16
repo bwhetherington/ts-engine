@@ -26,11 +26,11 @@ export class Timer extends AbstractTimer {
   }
 
   private async run(): Promise<void> {
-    let start = 0,
-      stop = now(),
-      dt = 0,
-      duration = 0,
-      remaining = 0;
+    let start = 0;
+    let stop = now();
+    let dt = 0;
+    let duration = 0;
+    let remaining = 0;
     while (this.isRunning) {
       start = now();
       dt = start - stop;

@@ -2,6 +2,7 @@ import { FormManager } from 'core/form/manager';
 import { Data } from 'core/serialize';
 import { Player } from 'core/player';
 import { registerJoinForm } from 'core/form/join';
+import { Socket } from 'dgram';
 
 export interface Form {
   name: string;
@@ -68,6 +69,10 @@ export interface FormSubmitEvent {
   data: Record<string, Entry>;
 }
 
+export interface FormRejectEvent {
+  player: Player;
+}
+
 export interface FormType<T extends FormData> {
   name: string;
   form: Form;
@@ -89,6 +94,7 @@ export interface FormEntry<T> {
   name: string;
   form: Form;
   onSubmit(player: Player, response: T): void;
+  onReject?: (player: Player) => void;
   checkType(data: Data): data is T;
   validate(input: T): FormResult;
 }

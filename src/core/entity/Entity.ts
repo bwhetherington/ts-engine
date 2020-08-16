@@ -19,7 +19,7 @@ export class Entity implements Bounded, Serializable {
   public velocity: Vector = new Vector(0, 0);
   public vectorBuffer: Vector = new Vector(0, 0);
   public id: Uuid;
-  public color: Color = WHITE;
+  private color: Color = WHITE;
   public collisionLayer: CollisionLayer = CollisionLayer.Unit;
   public highlight: boolean = false;
   public type: string;
@@ -140,7 +140,7 @@ export class Entity implements Bounded, Serializable {
       mass: this.mass,
       friction: this.friction,
       bounce: this.bounce,
-      color: this.color,
+      color: this.getColor(),
       collisionLayer: this.collisionLayer,
       isVisible: this.isVisible,
       doSync: this.doSync,
@@ -192,7 +192,7 @@ export class Entity implements Bounded, Serializable {
       this.doSync = true;
     }
     if (isColor(color)) {
-      this.color = color;
+      this.setColor(color);
     }
     if (isCollisionLayer(collisionLayer)) {
       this.collisionLayer = collisionLayer;
@@ -206,6 +206,14 @@ export class Entity implements Bounded, Serializable {
     if (velocity !== undefined) {
       this.velocity.deserialize(velocity);
     }
+  }
+
+  public setColor(color: Color): void {
+    this.color = color;
+  }
+
+  public getColor(): Color {
+    return this.color;
   }
 
   public markForDelete(): void {

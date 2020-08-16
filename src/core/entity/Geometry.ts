@@ -19,11 +19,6 @@ export class Geometry extends Entity {
     super();
     this.type = Geometry.typeName;
     this.collisionLayer = CollisionLayer.Geometry;
-    this.color = WALL_COLOR;
+    this.setColor(WALL_COLOR);
   }
-
-  // public render(ctx: GraphicsContext): void {
-  //   const { x, y, width, height } = this.boundingBox;
-  //   ctx.rect(x, y, width, height, this.color);
-  // }
 }

@@ -11,6 +11,10 @@ export class NetworkManager {
     log.debug('NetworkManager initialized');
   }
 
+  public disconnect(socket: Socket): void {
+    this.node.disconnect(socket);
+  }
+
   public send(msg: Message, socket: Socket = -1) {
     this.node.send(msg, socket);
   }

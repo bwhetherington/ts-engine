@@ -48,6 +48,7 @@ export class Hero extends Tank {
 
   private xp: number = 0;
   private level: number = 0;
+  private isInitialized: boolean = false;
 
   public constructor() {
     super();
@@ -93,7 +94,7 @@ export class Hero extends Tank {
         ) {
           const label = '' + amount;
           const text = WorldManager.spawn(Text, target.position);
-          text.color = rgb(192, 128, 128);
+          text.setColor(rgb(192, 128, 128));
           text.isStatic = false;
           text.position.addXY(
             (Math.random() - 0.5) * 20,
@@ -234,7 +235,7 @@ export class Hero extends Tank {
       this.setExperience(xp);
     }
 
-    if (this.getPlayer()?.isActivePlayer()) {
+    if (this.getPlayer()?.isActivePlayer() && this.isInitialized) {
       // Use our angle
       this.angle = oldAngle;
 
@@ -255,6 +256,8 @@ export class Hero extends Tank {
       };
       NetworkManager.send(syncEvent);
     }
+
+    this.isInitialized = true;
   }
 
   private isEventSubject<E extends EventData>(event: Event<E>): boolean {

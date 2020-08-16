@@ -6,6 +6,9 @@ import { UUIDManager, UUID } from 'core/uuid';
 import { EventData, Handler, EventManager } from 'core/event';
 import { sleep } from 'core/util';
 import { Pistol } from 'core/weapon';
+import { LogManager } from 'core/log';
+
+const log = LogManager.forFile(__filename);
 
 export class Player implements Serializable {
   public name: string = 'Anonymous';
@@ -28,10 +31,20 @@ export class Player implements Serializable {
       this.addListener<KillEvent>('KillEvent', async (event) => {
         if (event.data.target === this.hero) {
           await sleep(3);
+
+          // Check that we haven't already respawned
           if (event.data.target === this.hero) {
             const hero = WorldManager.spawn(Hero);
-            hero.color = this.hero.color;
-            hero.setWeapon(new Pistol());
+
+            const x = (Math.random() - 0.5) * 1120;
+            const y = (Math.random() - 0.5) * 1120;
+            log.debug('respawn ' + x + ',' + y);
+            hero.setPositionXY(x, y);
+
+            const weapon = new Pistol();
+            hero.setWeapon(weapon);
+
+            hero.setColor(this.hero.getColor());
             this.setHero(hero);
           }
         }
@@ -90,7 +103,10 @@ export class Player implements Serializable {
   }
 
   public setHero(hero: Hero): void {
-    this.hero = hero;
+    if (hero !== this.hero) {
+      this.hero?.markForDelete();
+      this.hero = hero;
+    }
     if (hero.getPlayer() !== this) {
       hero.setPlayer(this);
     }
@@ -116,5 +132,9 @@ export class Player implements Serializable {
     if (this.socket > -1) {
       NetworkManager.send(packet, this.socket);
     }
+  }
+
+  public disconnect(): void {
+    NetworkManager.disconnect(this.socket);
   }
 }

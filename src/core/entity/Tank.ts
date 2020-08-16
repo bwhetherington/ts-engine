@@ -1,6 +1,6 @@
 import { Unit, Text, WorldManager, Explosion } from 'core/entity';
 import { GraphicsContext } from 'core/graphics';
-import { WHITE } from 'core/graphics/color';
+import { WHITE, Color, reshade } from 'core/graphics/color';
 import { Data } from 'core/serialize';
 import { FireEvent } from 'core/weapon';
 import { NetworkManager } from 'core/net';
@@ -21,6 +21,7 @@ export class Tank extends Unit {
 
   private fireTimer: number = 0;
   private flashTimer: number = 0;
+  private flashColor?: Color;
 
   public constructor() {
     super();
@@ -46,6 +47,14 @@ export class Tank extends Unit {
     }
   }
 
+  public setColor(color: Color): void {
+    super.setColor(color);
+
+    const newColor = this.getColor();
+    const flashColor = reshade(newColor, -0.4);
+    this.flashColor = flashColor;
+  }
+
   public flash(): void {
     this.flashTimer = FLASH_DURATION;
   }
@@ -67,16 +76,16 @@ export class Tank extends Unit {
   }
 
   public damage(amount: number, source?: Unit): void {
-    log.debug('damage ' + amount + ', source ' + source?.toString());
+    log.trace('damage ' + amount + ', source ' + source?.toString());
     const actualAmount = Math.max(1, amount - this.armor);
     super.damage(actualAmount, source);
     this.flash();
   }
 
   public render(ctx: GraphicsContext): void {
-    const color = this.flashTimer > 0 ? WHITE : this.color;
-    const oldColor = this.color;
-    this.color = color;
+    const color = this.flashTimer > 0 ? (this.flashColor ?? this.getColor()) : this.getColor();
+    const oldColor = this.getColor();
+    this.setColor(color);
     super.render(ctx);
     const { centerX, centerY } = this.boundingBox;
 
@@ -87,13 +96,13 @@ export class Tank extends Unit {
     // Scale turret to allow it to animate when firing
     const cannonScale = (this.fireTimer / FIRE_DURATION) * 0.2 + 1;
     ctx.setScale(cannonScale);
-    ctx.rect(-5, -5, 25, 10, this.color);
+    ctx.rect(-5, -5, 25, 10, this.getColor());
 
     // Reset transformations
     ctx.setScale(1 / cannonScale);
     ctx.rotate(-this.angle);
     ctx.translate(-centerX, -centerY);
-    this.color = oldColor;
+    this.setColor(oldColor);
   }
 
   public serialize(): Data {
@@ -113,6 +122,9 @@ export class Tank extends Unit {
 
   public markForDelete(): void {
     super.markForDelete();
+  }
+
+  public cleanupLocal(): void {
     this.label?.markForDelete();
   }
 
@@ -120,13 +132,14 @@ export class Tank extends Unit {
     if (NetworkManager.isClient()) {
       const explosion = WorldManager.spawn(Explosion, this.position);
       explosion.radius = 35;
-      explosion.color = {
+      explosion.setColor({
         red: 1.0,
         green: 0.6,
         blue: 0.3,
         alpha: 0.8,
-      };
+      });
     }
+    this.label?.markForDelete();
     super.cleanup();
   }
 }

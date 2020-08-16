@@ -9,11 +9,13 @@ import { Node, Message, Socket } from 'core/net';
 import { LogManager } from 'core/log';
 import { EventManager, Event } from 'core/event';
 import { TimerManager } from 'server/util';
-import { WorldManager, Hero } from 'core/entity';
+import { WorldManager, Hero, Entity } from 'core/entity';
 import { PlayerManager, Player } from 'core/player';
 import { InitialSyncEvent } from 'core/net/util';
 import { Pistol } from 'core/weapon';
 import process from 'process';
+import { randomColor } from 'core/graphics/color';
+import { Data } from 'core/serialize';
 
 const log = LogManager.forFile(__filename);
 
@@ -42,7 +44,7 @@ export class Server extends Node {
     });
   }
 
-  private disconnect(index: Socket) {
+  public disconnect(index: Socket) {
     const socket = this.connections[index];
     if (socket !== undefined) {
       socket.close();
@@ -96,7 +98,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => {});
+    this.wsServer.on('close', (connection) => { });
   }
 
   private sendRaw(data: string, socket: Socket) {
@@ -134,23 +136,6 @@ export class Server extends Node {
     // Initialize player
     const player = new Player();
     player.socket = socket;
-
-    const hero = new Hero();
-    hero.setPositionXY(-500, -500);
-    hero.setPlayer(player);
-
-    const weapon = new Pistol();
-    hero.setWeapon(weapon);
-
-    hero.color = {
-      red: Math.random() * 0.6 + 0.4,
-      green: Math.random() * 0.6 + 0.4,
-      blue: Math.random() * 0.6 + 0.4,
-    };
-
-    player.hero = hero;
-
-    WorldManager.add(hero);
     PlayerManager.add(player);
 
     const event = {

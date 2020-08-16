@@ -17,7 +17,7 @@ import { EventManager, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
 import { Iterator, iterateObject, iterator } from 'core/iterator';
 import { diff } from 'core/util';
-import { SyncEvent } from 'core/net';
+import { SyncEvent, NetworkManager } from 'core/net';
 import { WALL_COLOR } from './Geometry';
 import { WHITE } from 'core/graphics/color';
 
@@ -262,7 +262,12 @@ export class WorldManager implements Bounded, Serializable {
       boundingBox: this.boundingBox.serialize(),
     };
     for (const key in this.entities) {
-      out.entities[key] = this.entities[key].serialize();
+      const entity = this.entities[key];
+      if (entity.markedForDelete) {
+        out.deleted.push(entity.id);
+      } else {
+        out.entities[key] = this.entities[key].serialize();
+      }
     }
     return out;
   }
@@ -295,7 +300,8 @@ export class WorldManager implements Bounded, Serializable {
     if (deleted instanceof Array) {
       iterator(deleted)
         .map((id) => this.getEntity(id))
-        .forEach((entity) => entity?.markForDelete());
+        .filterType((entity): entity is Entity => !!entity)
+        .forEach((entity) => entity.markForDelete());
     }
 
     if (boundingBox) {

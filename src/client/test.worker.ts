@@ -1,10 +1,8 @@
-import { square } from 'client/foo';
-import { sleep } from 'core/util';
+import { fibonacci } from 'client/foo';
 
 const ctx: Worker = self as any;
 
-ctx.addEventListener('message', async (event) => {
+ctx.addEventListener('message', (event) => {
   const { data } = event;
-  await sleep(1);
-  ctx.postMessage(square(data) + 5);
-})
+  ctx.postMessage(fibonacci(data));
+});

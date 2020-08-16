@@ -19,12 +19,12 @@ export class Projectile extends Entity {
     super();
     this.type = Projectile.typeName;
     this.bounce = 1;
-    this.color = {
+    this.setColor({
       red: 1.0,
       green: 0.6,
       blue: 0.3,
       alpha: 0.8,
-    };
+    });
     this.registerListeners();
   }
 
@@ -56,7 +56,7 @@ export class Projectile extends Entity {
     if (NetworkManager.isClient()) {
       const explosion = new Explosion();
       explosion.setPosition(this.position);
-      explosion.color = this.color;
+      explosion.setColor(this.getColor());
       WorldManager.add(explosion);
       this.hasExploded = true;
     }
@@ -81,7 +81,7 @@ export class Projectile extends Entity {
 
   public render(ctx: GraphicsContext): void {
     const { x, y, width, height } = this.boundingBox;
-    ctx.ellipse(x, y, width, height, this.color);
+    ctx.ellipse(x, y, width, height, this.getColor());
   }
 
   public serialize(): Data {

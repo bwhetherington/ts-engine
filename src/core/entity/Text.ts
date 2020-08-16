@@ -27,7 +27,7 @@ export class Text extends Entity {
         isStatic: this.isStatic,
         text: this.text,
         tag: this.tag,
-        color: this.color,
+        color: this.getColor(),
         x: this.position.x,
         y: this.position.y,
       },

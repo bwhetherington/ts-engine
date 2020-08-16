@@ -13,6 +13,8 @@ export type Socket = number;
 export abstract class Node {
   public abstract send(msg: Message, socket: Socket): void;
 
+  public abstract disconnect(socket: Socket): void;
+
   public onMessage(message: Message, socket: Socket) {
     const event = {
       type: 'NetworkMessageEvent',
@@ -64,19 +66,23 @@ export abstract class Node {
 }
 
 export class DefaultNode extends Node {
-  public send(msg: Message, socket: Socket) {
+  public disconnect(socket: Socket): void {
     log.warn('default network node in use');
   }
 
-  public onMessage(msg: Message, socket: Socket) {
+  public send(msg: Message, socket: Socket): void {
     log.warn('default network node in use');
   }
 
-  public onConnect(socket: Socket) {
+  public onMessage(msg: Message, socket: Socket): void {
     log.warn('default network node in use');
   }
 
-  public onDisconnect(socket: Socket) {
+  public onConnect(socket: Socket): void {
+    log.warn('default network node in use');
+  }
+
+  public onDisconnect(socket: Socket): void {
     log.warn('default network node in use');
   }
 }
