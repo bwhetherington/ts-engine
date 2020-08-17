@@ -54,7 +54,7 @@ export class Enemy extends Tank {
         }
       );
     if (target) {
-      log.debug('select target ' + target.toString());
+      log.trace('select target ' + target.toString());
       this.target = target;
     }
   }

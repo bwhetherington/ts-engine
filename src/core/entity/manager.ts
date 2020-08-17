@@ -1,5 +1,5 @@
 import { Rectangle, QuadTree, Bounded, Vector } from 'core/geometry';
-import { GraphicsContext, CameraManager } from 'core/graphics';
+import { GraphicsContext, CameraManager, Renderable } from 'core/graphics';
 import {
   Entity,
   Unit,
@@ -20,18 +20,24 @@ import { diff } from 'core/util';
 import { SyncEvent, NetworkManager } from 'core/net';
 import { WALL_COLOR } from './Geometry';
 import { WHITE } from 'core/graphics/color';
+import { Graph } from './pathfinding';
+import { CollisionLayer } from './util';
+import { BombProjectile } from './BombProjectile';
 
 const log = LogManager.forFile(__filename);
 
-export class WorldManager implements Bounded, Serializable {
+export class WorldManager implements Bounded, Serializable, Renderable {
   public quadTree: QuadTree<Entity>;
-  private entities: { [id: string]: Entity } = {};
+  private entities: Record<string, Entity> = {};
   public boundingBox: Rectangle;
   private collisionLayers: Entity[][] = [[], []];
-  private entityConstructors: { [type: string]: new () => Entity } = {};
+  private entityConstructors: Record<string, new () => Entity> = {};
   public previousState: Record<string, Data> = {};
   private toDelete: string[] = [];
   private entityCount: number = 0;
+
+  private graph?: Graph;
+  private shouldPopulateGraph: boolean = false;
 
   constructor(boundingBox: Rectangle) {
     this.quadTree = new QuadTree(boundingBox);
@@ -43,8 +49,9 @@ export class WorldManager implements Bounded, Serializable {
     this.registerEntity(Unit);
     this.registerEntity(Hero);
     this.registerEntity(Geometry);
-    this.registerEntity(Projectile);
     this.registerEntity(Explosion);
+    this.registerEntity(Projectile);
+    this.registerEntity(BombProjectile);
     this.registerEntity(Text);
     this.registerEntity(Tank);
     this.registerEntity(Enemy);
@@ -108,6 +115,9 @@ export class WorldManager implements Bounded, Serializable {
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
       .forEach((entity) => entity.renderInternal(ctx));
+
+
+    // this.graph?.render(ctx);
   }
 
   private *getEntitiesLayerOrderedInternal(): Generator<Entity> {
@@ -122,10 +132,21 @@ export class WorldManager implements Bounded, Serializable {
     return iterator(this.getEntitiesLayerOrderedInternal());
   }
 
+  private populateGraph(): void {
+    if (this.shouldPopulateGraph) {
+      this.graph = Graph.sample(25);
+      this.shouldPopulateGraph = false;
+    }
+  }
+
   public add(entity: Entity): void {
     this.entities[entity.id] = entity;
     log.trace('add ' + entity.toString());
     this.entityCount += 1;
+
+    if (entity.collisionLayer === CollisionLayer.Geometry) {
+      this.shouldPopulateGraph = true;
+    }
   }
 
   public remove(entity: Entity | string): void {
@@ -221,6 +242,8 @@ export class WorldManager implements Bounded, Serializable {
       const layerIndex = entity.collisionLayer;
       this.collisionLayers[layerIndex]?.push(entity);
     }
+
+    this.populateGraph();
 
     // Delete marked entities
     for (const entity of this.toDelete) {

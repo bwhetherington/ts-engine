@@ -15,6 +15,8 @@ export class Projectile extends Entity {
   private hasExploded: boolean = false;
   public parent?: Unit;
 
+  public onHit?: (target?: Unit) => void;
+
   constructor() {
     super();
     this.type = Projectile.typeName;
@@ -36,6 +38,7 @@ export class Projectile extends Entity {
           collided === undefined ||
           collided.collisionLayer === CollisionLayer.Geometry
         ) {
+          this.hit();
           this.remove();
           return;
         }
@@ -44,7 +47,7 @@ export class Projectile extends Entity {
           return;
         }
 
-        if (collided instanceof Unit && this.parent?.id !== collided.id) {
+        if (collided instanceof Unit) {
           this.hit(collided);
           this.remove();
         }
@@ -52,14 +55,19 @@ export class Projectile extends Entity {
     });
   }
 
-  private explode(): void {
+  private explodeInternal(): void {
     if (NetworkManager.isClient()) {
-      const explosion = new Explosion();
-      explosion.setPosition(this.position);
-      explosion.setColor(this.getColor());
-      WorldManager.add(explosion);
+      this.explode();
       this.hasExploded = true;
     }
+  }
+
+  protected explode(): void {
+    const explosion = new Explosion();
+    explosion.radius = 20;
+    explosion.setPosition(this.position);
+    explosion.setColor(this.getColor());
+    WorldManager.add(explosion);
   }
 
   public remove(): void {
@@ -69,14 +77,19 @@ export class Projectile extends Entity {
       this.isVisible = false;
       this.isCollidable = false;
       if (!this.hasExploded) {
-        this.explode();
+        this.explodeInternal();
       }
     }
   }
 
-  public hit(unit: Unit): void {
-    unit.damage(this.damage, this.parent);
-    unit.applyForce(this.velocity, this.mass);
+  public hit(unit?: Unit): void {
+    if (unit) {
+      unit.damage(this.damage, this.parent);
+      unit.applyForce(this.velocity, this.mass);
+    }
+    if (this.onHit) {
+      this.onHit(unit);
+    }
   }
 
   public render(ctx: GraphicsContext): void {
@@ -111,7 +124,7 @@ export class Projectile extends Entity {
 
   public cleanup(): void {
     if (!this.hasExploded) {
-      this.explode();
+      this.explodeInternal();
     }
     super.cleanup();
   }

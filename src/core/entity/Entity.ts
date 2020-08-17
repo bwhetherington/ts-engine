@@ -1,5 +1,5 @@
 import { Bounded, Rectangle, Vector } from 'core/geometry';
-import { GraphicsContext, Color, invert, CameraManager } from 'core/graphics';
+import { GraphicsContext, Color, invert, CameraManager, Renderable } from 'core/graphics';
 import { WHITE, isColor } from 'core/graphics/color';
 import { v1 as genUuid } from 'uuid';
 import { CollisionLayer, WorldManager, CollisionEvent } from 'core/entity';
@@ -11,7 +11,7 @@ import { NetworkManager } from 'core/net';
 
 export type Uuid = string;
 
-export class Entity implements Bounded, Serializable {
+export class Entity implements Bounded, Serializable, Renderable {
   public static typeName: string = 'Entity';
 
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
@@ -124,12 +124,12 @@ export class Entity implements Bounded, Serializable {
   }
 
   public step(dt: number): void {
-    if (
-      NetworkManager.isClient() &&
-      !CameraManager.boundingBox.intersects(this.boundingBox)
-    ) {
-      return;
-    }
+    // if (
+    //   NetworkManager.isClient() &&
+    //   !CameraManager.boundingBox.intersects(this.boundingBox)
+    // ) {
+    //   return;
+    // }
     this.updatePosition(dt);
   }
 

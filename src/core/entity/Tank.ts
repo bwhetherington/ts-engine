@@ -40,11 +40,6 @@ export class Tank extends Unit {
         this.fireTimer = FIRE_DURATION;
       }
     });
-
-    if (NetworkManager.isClient()) {
-      this.label = WorldManager.spawn(Text);
-      this.label.text = 'Tank';
-    }
   }
 
   public setColor(color: Color): void {
@@ -67,19 +62,18 @@ export class Tank extends Unit {
     if (NetworkManager.isClient()) {
       this.label?.setPosition(this.position);
       this.label?.position?.addXY(0, -55);
-
-      if (this.label) {
-        this.label?.setPosition(this.position);
-        this.label?.position?.addXY(0, -55);
-      }
+      this.label?.setPosition(this.position);
+      this.label?.position?.addXY(0, -55);
     }
   }
 
   public damage(amount: number, source?: Unit): void {
     log.trace('damage ' + amount + ', source ' + source?.toString());
-    const actualAmount = Math.max(1, amount - this.armor);
+    const actualAmount = Math.max(0, amount - this.armor);
     super.damage(actualAmount, source);
-    this.flash();
+    if (actualAmount > 0) {
+      this.flash();
+    }
   }
 
   public render(ctx: GraphicsContext): void {

@@ -5,6 +5,7 @@ export { Hero } from 'core/entity/Hero';
 export { Enemy } from 'core/entity/Enemy';
 export { Geometry } from 'core/entity/Geometry';
 export { Projectile } from 'core/entity/Projectile';
+export { BombProjectile } from 'core/entity/BombProjectile';
 export { Explosion } from 'core/entity/Explosion';
 export { Text } from 'core/entity/Text';
 

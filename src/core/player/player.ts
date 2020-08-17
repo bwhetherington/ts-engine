@@ -5,7 +5,7 @@ import { PlayerManager } from 'core/player';
 import { UUIDManager, UUID } from 'core/uuid';
 import { EventData, Handler, EventManager } from 'core/event';
 import { sleep } from 'core/util';
-import { Pistol } from 'core/weapon';
+import { Pistol, Bomb } from 'core/weapon';
 import { LogManager } from 'core/log';
 
 const log = LogManager.forFile(__filename);
@@ -15,6 +15,7 @@ export class Player implements Serializable {
   public id: string;
   public hero?: Hero;
   public socket: Socket = -1;
+  public hasJoined: boolean = false;
 
   private listeners: Record<string, Set<UUID>> = {};
 
@@ -41,7 +42,7 @@ export class Player implements Serializable {
             log.debug('respawn ' + x + ',' + y);
             hero.setPositionXY(x, y);
 
-            const weapon = new Pistol();
+            const weapon = new Bomb();
             hero.setWeapon(weapon);
 
             hero.setColor(this.hero.getColor());

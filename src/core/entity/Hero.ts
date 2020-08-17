@@ -35,7 +35,7 @@ function lifeForLevel(level: number): number {
 }
 
 function armorForLevel(level: number): number {
-  return Math.floor(level / 2);
+  return 10 + Math.floor(level / 2);
 }
 
 // 5 10 25 
@@ -86,9 +86,11 @@ export class Hero extends Tank {
     });
 
     if (NetworkManager.isClient()) {
+      this.label = WorldManager.spawn(Text);
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
         const { target, source, amount } = event.data;
         if (
+          amount > 0 &&
           this.getPlayer()?.isActivePlayer() &&
           (this === target || this === source)
         ) {

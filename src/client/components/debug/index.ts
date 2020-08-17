@@ -33,7 +33,7 @@ export class DebugComponent extends Component {
     EventManager.addListener<StepEvent>('StepEvent', (event) => {
       frameTimes.enqueue(event.data.dt);
       const sum = frameTimes.iterator().fold(0, (acc, x) => acc + x);
-      const fps = 1 / (sum / frameTimes.size());
+      const fps = frameTimes.size() / sum;
       const rounded = Math.round(fps);
       const label = rounded.toString();
 

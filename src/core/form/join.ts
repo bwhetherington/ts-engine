@@ -11,7 +11,7 @@ import { PlayerManager, Player } from 'core/player';
 import { Data } from 'core/serialize';
 import { LogManager } from 'core/log';
 import { WorldManager, Hero } from 'core/entity';
-import { Pistol } from 'core/weapon';
+import { Pistol, Bomb } from 'core/weapon';
 import { randomColor } from 'core/graphics/color';
 
 const log = LogManager.forFile(__filename);
@@ -54,7 +54,7 @@ function spawnHero(player: Player): Hero {
   const y = (Math.random() - 0.5) * 1120;
   hero.setPositionXY(x, y);
   hero.setPlayer(player);
-  const weapon = new Pistol();
+  const weapon = new Bomb();
   hero.setWeapon(weapon);
   const color = randomColor(0.35, 0.75);
   hero.setColor(color);
@@ -68,6 +68,7 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
     player.name = response.name.value;
     const hero = spawnHero(player);
     player.setHero(hero);
+    player.hasJoined = true;
   },
   onReject(player: Player): void {
     player.disconnect();

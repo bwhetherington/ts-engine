@@ -34,7 +34,7 @@ export class Timer extends AbstractTimer {
     while (this.isRunning) {
       start = now();
       dt = start - stop;
-      this.onTick(dt);
+      this.onTick(dt + duration);
       stop = now();
       duration = stop - start;
       remaining = this.interval - duration;

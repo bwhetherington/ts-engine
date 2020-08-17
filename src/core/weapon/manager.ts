@@ -1,4 +1,4 @@
-import { Weapon, Pistol } from 'core/weapon';
+import { Weapon, Pistol, Bomb } from 'core/weapon';
 import { LogManager } from 'core/log';
 
 const log = LogManager.forFile(__filename);
@@ -14,6 +14,7 @@ export class WeaponManager {
 
   private registerWeapons(): void {
     this.registerWeapon(Pistol);
+    this.registerWeapon(Bomb);
   }
 
   public initialize(): void {

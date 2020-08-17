@@ -1,5 +1,5 @@
 import { Rectangle } from 'core/geometry';
-import { GraphicsContext } from 'core/graphics';
+import { GraphicsContext, Renderable } from 'core/graphics';
 import { WHITE } from 'core/graphics/color';
 
 const NODE_POSITION = {
@@ -17,7 +17,7 @@ function calculateMaxDepth(size: number): number {
   return Math.floor(Math.log(size) / (2 * Math.log(2)));
 }
 
-class QuadNode<T extends Bounded> {
+class QuadNode<T extends Bounded> implements Bounded, Renderable {
   public boundingBox: Rectangle;
   public children: T[] = [];
   public nodes: QuadNode<T>[] = [];

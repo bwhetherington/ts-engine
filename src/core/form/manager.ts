@@ -50,7 +50,6 @@ export class FormManager {
           }
         }
       );
-      log.info('timeout: ' + timeout);
       await sleep(timeout);
       if (!hasResolved) {
         EventManager.removeListener('FormSubmitEvent', id);

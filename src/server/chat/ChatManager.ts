@@ -11,7 +11,7 @@ import {
   renderError,
 } from 'core/chat';
 import { LogManager } from 'core/log';
-import { PlayerManager } from 'core/player';
+import { PlayerManager, Player } from 'core/player';
 import { WorldManager, Tank, Enemy, Unit } from 'core/entity';
 import { TimerManager } from 'server/util';
 import { Pistol } from 'core/weapon';
@@ -21,7 +21,7 @@ const log = LogManager.forFile(__filename);
 
 const DEFAULT_NAME = 'Unknown';
 
-type CommandHandler = (socket: Socket, ...args: string[]) => void;
+type CommandHandler = (player: Player, ...args: string[]) => void;
 
 interface Command {
   name: string;
@@ -50,15 +50,15 @@ export class ChatManager {
     }
   }
 
-  private handleCommand(socket: Socket, command: string, args: string[]): void {
+  private handleCommand(player: Player, command: string, args: string[]): void {
     if (command in this.commands) {
       const handler = this.commands[command];
-      handler.handler.apply(null, [socket, ...args]);
+      handler.handler.apply(null, [player, ...args]);
     } else if (command in this.aliases) {
       const handler = this.commands[this.aliases[command]];
-      handler.handler.apply(null, [socket, ...args]);
+      handler.handler.apply(null, [player, ...args]);
     } else {
-      this.error(`command '${command}' is undefined`, socket);
+      this.error(`command '${command}' is undefined`, player);
     }
   }
 
@@ -103,28 +103,29 @@ export class ChatManager {
       (event) => {
         const { data, socket } = event;
 
-        let name = DEFAULT_NAME;
-        if (socket !== undefined) {
-          name = PlayerManager.getPlayer(socket)?.name ?? DEFAULT_NAME;
+        const player = PlayerManager.getPlayer(socket);
+        if (player) {
+          const { name, hasJoined } = player;
+          if (hasJoined) {
+            const components = this.formatMessage(name, event.data.content);
+            this.sendComponents(components);
+            log.info(`[<${name}> ${data.content}]`);
+          }
         }
-
-        const components = this.formatMessage(name, event.data.content);
-        this.sendComponents(components);
-
-        log.info(`<${name}> ${data.content}`);
       }
     );
 
     EventManager.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
       const { socket, data } = event;
-      if (socket !== undefined) {
-        this.handleCommand(socket, data.command, data.args);
+      const player = PlayerManager.getPlayer(socket);
+      if (player && player.hasJoined) {
+        this.handleCommand(player, data.command, data.args);
       }
     });
 
     this.registerCommand(
       'help',
-      (socket) => {
+      (player) => {
         const components = renderInfo('Command Directory');
         for (const command in this.commands) {
           const entry = this.commands[command];
@@ -145,7 +146,7 @@ export class ChatManager {
             }
           );
         }
-        this.sendComponents(components, socket);
+        this.sendComponents(components, player);
       },
       'Lists all commands and their help messages',
       'h'
@@ -153,8 +154,8 @@ export class ChatManager {
 
     this.registerCommand(
       'ping',
-      (socket) => {
-        this.info('Pong!', socket);
+      (player) => {
+        this.info('Pong!', player);
       },
       "Responds to the user's ping with a pong",
       'p'
@@ -162,15 +163,12 @@ export class ChatManager {
 
     this.registerCommand(
       'rename',
-      (socket, name) => {
+      (player, name) => {
         if (typeof name === 'string') {
-          const player = PlayerManager.getPlayer(socket);
-          if (player) {
-            player.name = name;
-            this.info(`Set name to '${name}'`, socket);
-          }
+          player.name = name;
+          this.info(`Set name to '${name}'`, player);
         } else {
-          this.error('Name not specified', socket);
+          this.error('Name not specified', player);
         }
       },
       "Sets the player's name",
@@ -180,14 +178,14 @@ export class ChatManager {
 
     this.registerCommand(
       'spawn',
-      (socket, countString) => {
+      (player, countString) => {
         if (countString === undefined) {
-          this.error('No entity count specified', socket);
+          this.error('No entity count specified', player);
           return;
         }
         const count = parseInt(countString);
         if (Number.isNaN(count)) {
-          this.error(`Could not parse '${countString}' as integer`, socket);
+          this.error(`Could not parse '${countString}' as integer`, player);
           return;
         }
 
@@ -223,7 +221,7 @@ export class ChatManager {
 
     this.registerCommand(
       'kill',
-      (socket) => {
+      () => {
         WorldManager.getEntities()
           .filterType((entity): entity is Unit => entity instanceof Unit)
           .forEach((unit) => {
@@ -236,15 +234,15 @@ export class ChatManager {
 
     this.registerCommand(
       'setinterval',
-      (socket, intervalString) => {
+      (player, intervalString) => {
         if (intervalString === undefined) {
-          this.error('No interval specified', socket);
+          this.error('No interval specified', player);
           return;
         }
 
         const interval = parseFloat(intervalString);
         if (Number.isNaN(interval)) {
-          this.error(`Could not parse '${intervalString}' as a float`, socket);
+          this.error(`Could not parse '${intervalString}' as a float`, player);
           return;
         }
 
@@ -258,7 +256,7 @@ export class ChatManager {
 
   private sendComponents(
     components: (string | null | TextComponent)[],
-    socket: number = -1
+    target: number | Player = -1
   ): void {
     const outEvent = {
       type: 'TextMessageOutEvent',
@@ -266,24 +264,25 @@ export class ChatManager {
         components,
       },
     };
+    const socket = target instanceof Player ? target.socket : target;
     NetworkManager.send(outEvent, socket);
   }
 
-  public info(message: string, socket: number = -1): void {
+  public info(message: string, target: number | Player = -1): void {
     const components = renderInfo(message);
-    this.sendComponents(components, socket);
-    log.info(message);
+    this.sendComponents(components, target);
+    log.info('[' + message + ']');
   }
 
-  public warn(message: string, socket: number = -1): void {
+  public warn(message: string, target: number | Player = -1): void {
     const components = renderWarn(message);
-    this.sendComponents(components, socket);
-    log.warn(message);
+    this.sendComponents(components, target);
+    log.warn('[' + message + ']');
   }
 
-  public error(message: string, socket: number = -1): void {
+  public error(message: string, target: number | Player = -1): void {
     const components = renderError(message);
-    this.sendComponents(components, socket);
-    log.error(message);
+    this.sendComponents(components, target);
+    log.error('[' + message + ']');
   }
 }
