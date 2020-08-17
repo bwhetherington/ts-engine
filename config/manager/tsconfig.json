@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../build/manager"
+    },
+    "exclude": [
+        "../../src/client",
+        "../../src/core",
+        "../../src/server"
+    ]
+}

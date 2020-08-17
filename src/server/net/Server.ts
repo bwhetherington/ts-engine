@@ -16,6 +16,7 @@ import { Pistol } from 'core/weapon';
 import process from 'process';
 import { randomColor } from 'core/graphics/color';
 import { Data } from 'core/serialize';
+import { sleep } from 'core/util';
 
 const log = LogManager.forFile(__filename);
 

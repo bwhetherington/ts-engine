@@ -90,7 +90,6 @@ export class Hero extends Tank {
     });
 
     if (NetworkManager.isClient()) {
-      this.label = WorldManager.spawn(Text);
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
         const { target, source, amount } = event.data;
         if (
@@ -195,23 +194,29 @@ export class Hero extends Tank {
 
   public step(dt: number): void {
     super.step(dt);
-    if (this.getPlayer()?.isActivePlayer()) {
+
+    const player = this.getPlayer();
+
+    if (player?.isActivePlayer()) {
       CameraManager.setTargetXY(
         this.boundingBox.centerX,
         this.boundingBox.centerY
       );
+
+      let label = this.label;
+      if (!label) {
+        label = WorldManager.spawn(Text);
+        this.label = label;
+      }
+
+      label.text = player.name;
+      label.tag = '' + this.level;
+    } else {
+      this.label?.markForDelete();
     }
 
     if (this.mouseDown && NetworkManager.isServer()) {
       this.fire(this.angle);
-    }
-
-    if (this.label) {
-      const player = this.getPlayer();
-      if (player) {
-        this.label.text = player.name;
-        this.label.tag = '' + this.level;
-      }
     }
   }
 
