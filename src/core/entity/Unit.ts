@@ -14,7 +14,7 @@ export class Unit extends Entity {
 
   private maxLife: number = 10;
   private life: number = 10;
-  private lifeRegen: number = 0;
+  protected lifeRegen: number = 0;
   private speed: number = 250;
   private isAliveInternal: boolean = true;
   private movement = {

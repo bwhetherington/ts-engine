@@ -34,8 +34,12 @@ function lifeForLevel(level: number): number {
   return 5 + level * 5;
 }
 
+function regenForLevel(level: number): number {
+  return lifeForLevel(level) / 30;
+}
+
 function armorForLevel(level: number): number {
-  return 10 + Math.floor(level / 2);
+  return Math.floor(level / 2);
 }
 
 // 5 10 25 
@@ -143,8 +147,9 @@ export class Hero extends Tank {
     if (level !== this.level) {
       this.level = level;
       this.setMaxLife(lifeForLevel(level));
-      this.setLife(this.getMaxLife());
+      // this.setLife(this.getMaxLife());
       this.armor = armorForLevel(level);
+      this.lifeRegen = regenForLevel(level);
     }
   }
 

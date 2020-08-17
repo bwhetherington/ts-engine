@@ -253,8 +253,12 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
   public registerEntity(Type: (new () => Entity) & typeof Entity) {
     const name = Type.typeName;
-    this.entityConstructors[name] = Type;
-    log.trace(`entity ${name} registered`);
+    if (name in this.entityConstructors) {
+      log.error(`type ${name} is already registered`);
+    } else {
+      this.entityConstructors[name] = Type;
+      log.trace(`entity ${name} registered`);
+    }
   }
 
   public spawn<T extends Entity>(

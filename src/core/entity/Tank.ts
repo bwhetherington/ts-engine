@@ -69,7 +69,7 @@ export class Tank extends Unit {
 
   public damage(amount: number, source?: Unit): void {
     log.trace('damage ' + amount + ', source ' + source?.toString());
-    const actualAmount = Math.max(0, amount - this.armor);
+    const actualAmount = Math.max(1, amount - this.armor);
     super.damage(actualAmount, source);
     if (actualAmount > 0) {
       this.flash();

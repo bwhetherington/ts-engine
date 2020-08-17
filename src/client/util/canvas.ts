@@ -93,7 +93,11 @@ export class HDCanvas implements GraphicsContext {
       element.height = h * scale;
       element.style.width = w + 'px';
       element.style.height = h + 'px';
-      element.getContext('2d')?.setTransform(scale, 0, 0, scale, 0, 0);
+      const ctx = element.getContext('2d');
+      if (ctx) {
+        ctx.setTransform(scale, 0, 0, scale, 0, 0);
+        ctx.imageSmoothingEnabled = false;
+      }
     }
     CameraManager.setSize(w, h);
   }

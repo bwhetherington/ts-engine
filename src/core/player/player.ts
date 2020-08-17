@@ -42,7 +42,7 @@ export class Player implements Serializable {
             log.debug('respawn ' + x + ',' + y);
             hero.setPositionXY(x, y);
 
-            const weapon = new Bomb();
+            const weapon = new Pistol();
             hero.setWeapon(weapon);
 
             hero.setColor(this.hero.getColor());

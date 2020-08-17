@@ -7,8 +7,8 @@ export class Pistol extends Weapon {
   public constructor() {
     super();
     this.type = Pistol.typeName;
-    this.rate = 0.15;
-    this.damage = 1;
+    this.rate = 0.35;
+    this.damage = 3;
   }
 
   public fire(source: Unit, angle: number): void {
