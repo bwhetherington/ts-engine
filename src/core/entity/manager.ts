@@ -1,4 +1,4 @@
-import { Rectangle, QuadTree, Bounded, Vector } from 'core/geometry';
+import { Rectangle, QuadTree, Bounded, Vector, Partioner, Cell } from 'core/geometry';
 import { GraphicsContext, CameraManager, Renderable } from 'core/graphics';
 import {
   Entity,
@@ -27,7 +27,7 @@ import { BombProjectile } from './BombProjectile';
 const log = LogManager.forFile(__filename);
 
 export class WorldManager implements Bounded, Serializable, Renderable {
-  public quadTree: QuadTree<Entity>;
+  public space: Partioner<Entity>;
   private entities: Record<string, Entity> = {};
   public boundingBox: Rectangle;
   private collisionLayers: Entity[][] = [[], []];
@@ -40,7 +40,8 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   private shouldPopulateGraph: boolean = false;
 
   constructor(boundingBox: Rectangle) {
-    this.quadTree = new QuadTree(boundingBox);
+    this.space = new Cell(boundingBox, 150, 150);
+    // this.space = new QuadTree(boundingBox);
     this.boundingBox = boundingBox;
   }
 
@@ -94,7 +95,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     );
     ctx.popOptions();
 
-    // this.quadTree.render(ctx);
+    // this.space.render(ctx);
 
     ctx.pushOptions({
       lineWidth: 5,
@@ -169,7 +170,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   private *queryInternal(box: Rectangle): Generator<Entity> {
-    for (const entity of this.quadTree.retrieve(box)) {
+    for (const entity of this.space.query(box)) {
       yield entity;
     }
   }
@@ -232,12 +233,12 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     }
 
     // Reinsert each entity into the quad tree
-    this.quadTree.clear();
+    this.space.clear();
     this.collisionLayers = [[], [], [], []];
 
     for (const entity of this.getEntities()) {
       if (entity.isCollidable) {
-        this.quadTree.insert(entity);
+        this.space.insert(entity);
       }
       const layerIndex = entity.collisionLayer;
       this.collisionLayers[layerIndex]?.push(entity);

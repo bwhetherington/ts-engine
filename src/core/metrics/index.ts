@@ -3,4 +3,5 @@ export interface MetricsEvent {
   entities: number;
   listeners: number;
   connections: number;
+  timeElapsed: number;
 }

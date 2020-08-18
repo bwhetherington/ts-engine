@@ -13,6 +13,7 @@ export class EventManager {
   private handlers: Record<string, Record<string, GameHandler>> = {};
   private events: Queue<GameEvent> = new Queue();
   private listenerCount: number = 0;
+  public timeElapsed: number = Math.floor(Date.now() / 1000);
 
   public emit<E extends EventData>(event: Event<E>): void {
     this.events.enqueue(event);
@@ -81,6 +82,7 @@ export class EventManager {
   }
 
   public step(dt: number): void {
+    this.timeElapsed += dt;
     const event = {
       type: 'StepEvent',
       data: { dt },

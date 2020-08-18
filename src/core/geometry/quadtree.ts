@@ -1,6 +1,7 @@
-import { Rectangle } from 'core/geometry';
+import { Rectangle, Bounded } from 'core/geometry';
 import { GraphicsContext } from 'core/graphics';
 import { WHITE } from 'core/graphics/color';
+import { Partioner } from './partioner';
 
 const NODE_POSITION = {
   TOP_LEFT: 0,
@@ -8,10 +9,6 @@ const NODE_POSITION = {
   BOTTOM_LEFT: 2,
   BOTTOM_RIGHT: 3,
 };
-
-export interface Bounded {
-  boundingBox: Rectangle;
-}
 
 function calculateMaxDepth(size: number): number {
   return Math.floor(Math.log(size) / (2 * Math.log(2)));
@@ -167,11 +164,13 @@ class QuadNode<T extends Bounded> {
   }
 }
 
-export class QuadTree<T extends Bounded> {
+export class QuadTree<T extends Bounded> implements Partioner<T> {
   private root: QuadNode<T>;
+  public boundingBox: Rectangle;
 
   constructor(bounds: Rectangle) {
     this.root = new QuadNode(bounds, 0, 4);
+    this.boundingBox = bounds;
   }
 
   public render(ctx: GraphicsContext): void {
@@ -187,7 +186,7 @@ export class QuadTree<T extends Bounded> {
     this.root.insert(element);
   }
 
-  public retrieve(rect: Rectangle): Set<T> {
+  public query(rect: Rectangle): Set<T> {
     return this.root.retrieve(rect);
   }
 

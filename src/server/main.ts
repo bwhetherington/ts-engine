@@ -14,9 +14,7 @@ import { MetricsManager } from 'server/metrics';
 import { WeaponManager } from 'core/weapon';
 import { readFile as readFileNonPromise } from 'fs';
 import { promisify } from 'util';
-import { Worker } from 'worker_threads';
-import { GameWorker } from 'core/worker';
-import { SizedQueue } from 'core/util';
+import process from 'process';
 
 const readFile = promisify(readFileNonPromise);
 
@@ -70,6 +68,11 @@ async function main(): Promise<void> {
 
   MetricsManager.initialize();
   WeaponManager.initialize();
+
+  console.log(process.send);
+  if (process.send) {
+    process.send({ type: 'ready' });
+  }
 
   const timer = new Timer((dt) => {
     NetworkManager.send({ foo: 'foo', bar: 'bar' });

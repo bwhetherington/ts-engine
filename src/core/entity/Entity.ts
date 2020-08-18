@@ -1,15 +1,11 @@
 import { Bounded, Rectangle, Vector } from 'core/geometry';
 import { GraphicsContext, Color, invert, CameraManager, Renderable } from 'core/graphics';
 import { WHITE, isColor } from 'core/graphics/color';
-import { v1 as genUuid } from 'uuid';
 import { CollisionLayer, WorldManager, CollisionEvent } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
 import { EventData, Handler, EventManager, Event } from 'core/event';
-import { UUIDManager } from 'core/uuid';
-import { NetworkManager } from 'core/net';
-
-export type Uuid = string;
+import { UUID, UUIDManager } from 'core/uuid';
 
 export class Entity implements Bounded, Serializable, Renderable {
   public static typeName: string = 'Entity';
@@ -18,7 +14,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
   public vectorBuffer: Vector = new Vector(0, 0);
-  public id: Uuid;
+  public id: UUID;
   private color: Color = WHITE;
   public collisionLayer: CollisionLayer = CollisionLayer.Unit;
   public highlight: boolean = false;
@@ -84,7 +80,7 @@ export class Entity implements Bounded, Serializable, Renderable {
         .filter(
           (candidate) =>
             candidate.isCollidable &&
-            this.id !== candidate.id &&
+            candidate !== this &&
             this.boundingBox.intersects(candidate.boundingBox)
         )
         .forEach((candidate) => {

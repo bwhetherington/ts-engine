@@ -1,5 +1,4 @@
 import { LogManager } from 'core/log';
-import { v1 as genUuid } from 'uuid';
 
 const log = LogManager.forFile(__filename);
 

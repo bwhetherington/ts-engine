@@ -34,6 +34,7 @@ export class MetricsManager {
             entities: WorldManager.getEntityCount(),
             listeners: EventManager.getListenerCount(),
             connections: 0,
+            timeElapsed: EventManager.timeElapsed,
           },
         };
         NetworkManager.send(event);
