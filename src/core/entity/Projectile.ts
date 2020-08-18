@@ -1,12 +1,15 @@
 import { Entity, CollisionEvent, Unit, WorldManager } from 'core/entity';
-import { GraphicsContext } from 'core/graphics';
+import { GraphicsContext, Color, rgb, rgba } from 'core/graphics';
 import { LogManager } from 'core/log';
 import { CollisionLayer } from './util';
 import { Data } from 'core/serialize';
 import { NetworkManager } from 'core/net';
 import { Explosion } from './Explosion';
+import { sleep } from 'core/util';
 
 const log = LogManager.forFile(__filename);
+
+const DURATION = 1;
 
 export class Projectile extends Entity {
   public static typeName: string = 'Projectile';
@@ -15,19 +18,33 @@ export class Projectile extends Entity {
   private hasExploded: boolean = false;
   public parent?: Unit;
 
+  private timeElapsed: number = 0;
+  private originalColor: Color;
+
   public onHit?: (target?: Unit) => void;
 
   constructor() {
     super();
     this.type = Projectile.typeName;
     this.bounce = 1;
-    this.setColor({
-      red: 1.0,
-      green: 0.6,
-      blue: 0.3,
-      alpha: 0.8,
-    });
+    this.originalColor = rgba(1.0, 0.6, 0.3, 0.8);
+    this.setColor(this.originalColor);
     this.registerListeners();
+    this.prepareRemove();
+  }
+
+  private getFadeParameter(): number {
+    // Begin to fade halfway through the projectile life
+    const t = Math.max(0, this.timeElapsed / DURATION - 0.875) * 8;
+    return Math.min(1, t);
+  }
+
+  private async prepareRemove(): Promise<void> {
+    await sleep(DURATION);
+    if (!this.markedForDelete) {
+      this.hasExploded = true;
+      this.remove();
+    }
   }
 
   private registerListeners(): void {
@@ -62,21 +79,34 @@ export class Projectile extends Entity {
     }
   }
 
+  public step(dt: number): void {
+    super.step(dt);
+    this.timeElapsed += dt;
+    const t = this.getFadeParameter();
+
+    // Calculate intermediate color
+    if (t > 0) {
+      const { red, green, blue, alpha = 1 } = this.originalColor;
+      const newAlpha = alpha * (1 - t);
+      this.setColor(rgba(red, green, blue, newAlpha));
+    }
+  }
+
   protected explode(): void {
     const explosion = new Explosion();
     explosion.radius = 20;
     explosion.setPosition(this.position);
-    explosion.setColor(this.getColor());
+    explosion.setColor(this.originalColor);
     WorldManager.add(explosion);
   }
 
-  public remove(): void {
+  public remove(showExplosion: boolean = true): void {
     if (NetworkManager.isServer()) {
       this.markForDelete();
     } else {
       this.isVisible = false;
       this.isCollidable = false;
-      if (!this.hasExploded) {
+      if (showExplosion && !this.hasExploded) {
         this.explodeInternal();
       }
     }

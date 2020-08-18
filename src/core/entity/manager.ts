@@ -111,8 +111,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     );
     ctx.popOptions();
 
-    // ctx.rect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height, WHITE);
-
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
       .forEach((entity) => entity.renderInternal(ctx));

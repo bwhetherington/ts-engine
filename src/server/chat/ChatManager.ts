@@ -220,6 +220,19 @@ export class ChatManager {
     );
 
     this.registerCommand(
+      'heal',
+      (player) => {
+        const { hero } = player;
+        if (hero) {
+          const life = hero.getMaxLife();
+          hero.setLife(life);
+          this.info('Healed to ' + life + ' life', player);
+        }
+      },
+      "Heals the player's hero to maximum life"
+    );
+
+    this.registerCommand(
       'kill',
       () => {
         WorldManager.getEntities()

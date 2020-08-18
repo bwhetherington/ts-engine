@@ -60,8 +60,6 @@ export class DebugComponent extends Component {
       if (this.serverListenersLabel) {
         this.serverListenersLabel.innerText = '' + listeners;
       }
-
-      console.log(event.data.timeElapsed - EventManager.timeElapsed)
     });
   }
 }

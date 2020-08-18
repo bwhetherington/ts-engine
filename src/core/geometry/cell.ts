@@ -37,11 +37,11 @@ export class Cell<T extends Bounded> implements Partioner<T> {
   }
 
   private getRow(y: number): number {
-    return Math.ceil((y - this.boundingBox.y) / this.cellHeight);
+    return Math.floor((y - this.boundingBox.y) / this.cellHeight);
   }
 
   private getCol(x: number): number {
-    return Math.ceil((x - this.boundingBox.x) / this.cellWidth);
+    return Math.floor((x - this.boundingBox.x) / this.cellWidth);
   }
 
   public insert(element: T): void {
@@ -87,9 +87,23 @@ export class Cell<T extends Bounded> implements Partioner<T> {
 
     for (let col = 0; col < this.width; col++) {
       for (let row = 0; row < this.height; row++) {
+        const cell = this.cells[row * this.width + col] ?? [];
+        const color = cell.length > 0 ? BLACK : WHITE;
+
+        if (cell.length > 0) {
+          ctx.pushOptions({
+            lineWidth: 1,
+            doFill: true,
+          });
+        }
+
         const x = (col * this.cellWidth) + this.boundingBox.x;
         const y = (row * this.cellHeight) + this.boundingBox.y;
-        ctx.rect(x, y, this.cellWidth, this.cellHeight, WHITE);
+        ctx.rect(x, y, this.cellWidth, this.cellHeight, color);
+
+        if (cell.length > 0) {
+          ctx.popOptions();
+        }
       }
     }
 

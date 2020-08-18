@@ -30,6 +30,45 @@ const COLOR_MAPPING: { [color in TextColor]: Color } = {
 
 const SHOW_TIME = 5;
 
+function splitWords(str: string): string[] {
+  const words = [];
+  let word = '';
+
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    if (ch === '"') {
+      if (word.length > 0) {
+        words.push(word);
+        word = '';
+      }
+
+      let j = i + 1;
+      for (; j < str.length; j++) {
+        if (str[j] === '"') {
+          words.push(word);
+          word = '';
+          break;
+        }
+        word += str[j];
+      }
+      i = j;
+    } else if (/\s/.test(ch)) {
+      if (word.length > 0) {
+        words.push(word);
+        word = '';
+      }
+    } else {
+      word += ch;
+    }
+  }
+
+  if (word.length > 0) {
+    words.push(word);
+  }
+
+  return words;
+}
+
 export class ChatComponent extends Component {
   public static componentName: string = 'chat-component';
 
@@ -129,7 +168,7 @@ export class ChatComponent extends Component {
     message = message.trim();
     if (message.startsWith('/')) {
       // Send command
-      const argv = iterator(message.slice(1).split(/\s+/))
+      const argv = iterator(splitWords(message.slice(1)))
         .map((word) => word.trim())
         .filter((word) => word.length > 0)
         .toArray();
