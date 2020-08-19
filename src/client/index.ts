@@ -12,9 +12,6 @@ import { PlayerManager } from 'core/player';
 import { FormManager } from 'core/form';
 import { WeaponManager } from 'core/weapon';
 import { TextManager } from 'client/text';
-import { Worker, GameWorker } from 'core/worker';
-
-import Work from 'worker-loader!client/test.worker.ts';
 
 const log = LogManager.forFile(__filename);
 
@@ -26,10 +23,6 @@ function callWorker(worker: Worker, data: any): Promise<any> {
 }
 
 async function main(): Promise<void> {
-  const worker = new GameWorker(new Work());
-  worker.call('fibonacci', 10).then(console.log);
-
-
   LogManager.initialize('info', new ClientLogger());
   UIM.initialize();
 

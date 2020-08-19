@@ -69,7 +69,6 @@ async function main(): Promise<void> {
   MetricsManager.initialize();
   WeaponManager.initialize();
 
-  console.log(process.send);
   if (process.send) {
     process.send({ type: 'ready' });
   }
