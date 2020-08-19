@@ -15,6 +15,8 @@ import template from 'client/components/chat/template.html';
 import { iterator } from 'core/iterator';
 import { KeyEvent, KeyAction, Key } from 'core/input';
 
+console.log('template', template);
+
 const log = LogManager.forFile(__filename);
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {

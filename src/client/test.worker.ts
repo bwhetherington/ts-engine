@@ -1,6 +1,5 @@
 import { fibonacci as fib } from 'client/foo';
 import { WorkerMethods } from 'core/worker';
-import { Data } from 'core/serialize';
 
 const ctx: Worker = self as any;
 
@@ -17,6 +16,8 @@ ctx.onmessage = (event) => {
   if (func) {
     ctx.postMessage(func(value));
   } else {
-    ctx.postMessage(undefined);
+    ctx.postMessage(10);
   }
 }
+
+ctx.postMessage('HELLO');
