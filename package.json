@@ -13,7 +13,8 @@
     "build": "run-p build:client build:server",
     "server": "NODE_ENV=production ts-node -r tsconfig-paths/register --project config/server/tsconfig.json src/server/main.ts",
     "start": "NODE_ENV=production node -r tsconfig-paths/register server/main.js",
-    "dev": "PORT=8000 nodemon",
+    "server:dev": "PORT=8000 nodemon",
+    "dev": "run-p -l -s watch:client server:dev",
     "format": "prettier --write ./src"
   },
   "keywords": [],
