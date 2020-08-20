@@ -2,7 +2,13 @@ import { LogManager } from 'core/log';
 import { Player, PlayerManager } from 'core/player';
 import { Data } from 'core/serialize';
 import { EventManager } from 'core/event';
-import { FormSubmitEvent, Form, FormShowEvent, FormEntry, FormRejectEvent } from 'core/form';
+import {
+  FormSubmitEvent,
+  Form,
+  FormShowEvent,
+  FormEntry,
+  FormRejectEvent,
+} from 'core/form';
 import { NetworkManager } from 'core/net';
 import { sleep } from 'core/util';
 

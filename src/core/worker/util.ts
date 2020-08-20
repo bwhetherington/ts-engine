@@ -1,5 +1,5 @@
-import { Worker } from "core/worker";
-import { Data } from "core/serialize";
+import { Worker } from 'core/worker';
+import { Data } from 'core/serialize';
 
 export class GameWorker {
   private worker: Worker;
@@ -11,7 +11,8 @@ export class GameWorker {
   private setHandler(handler: (arg: any) => void): void {
     if (this.worker.on) {
       this.worker.on('message', handler);
-    } if (this.worker.onmessage !== undefined) {
+    }
+    if (this.worker.onmessage !== undefined) {
       // `null` is an okay value here
       this.worker.onmessage = (message: MessageEvent) => handler(message.data);
     }

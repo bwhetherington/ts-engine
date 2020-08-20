@@ -1,8 +1,8 @@
-import { WorldManager } from ".";
-import { Rectangle } from "core/geometry";
-import { CollisionLayer } from "./util";
-import { GraphicsContext } from "core/graphics";
-import { WHITE, BLACK } from "core/graphics/color";
+import { WorldManager } from '.';
+import { Rectangle } from 'core/geometry';
+import { CollisionLayer } from './util';
+import { GraphicsContext } from 'core/graphics';
+import { WHITE, BLACK } from 'core/graphics/color';
 
 export interface Node {
   x: number;
@@ -43,14 +43,19 @@ export class Graph {
         sampler.centerX = i;
         sampler.centerY = j;
 
-        const isPathable = WorldManager.boundingBox.contains(sampler) && !WorldManager.query(sampler)
-          .any((entity) => entity.collisionLayer === CollisionLayer.Geometry && entity.boundingBox.intersects(sampler));
+        const isPathable =
+          WorldManager.boundingBox.contains(sampler) &&
+          !WorldManager.query(sampler).any(
+            (entity) =>
+              entity.collisionLayer === CollisionLayer.Geometry &&
+              entity.boundingBox.intersects(sampler)
+          );
 
         const node = {
           x: i,
           y: j,
           isPathable,
-          neighborIndices: []
+          neighborIndices: [],
         };
 
         nodes.push(node);

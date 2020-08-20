@@ -10,16 +10,21 @@ export function randomColor(saturation: number, value: number): Color {
   return hsv(hue, saturation, value);
 }
 
-export function hsva(hue: number, saturation: number, value: number, alpha: number): Color {
+export function hsva(
+  hue: number,
+  saturation: number,
+  value: number,
+  alpha: number
+): Color {
   const c = value * saturation;
-  const x = c * (1 - Math.abs((hue / 60) % 2 - 1));
+  const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
   const m = value - c;
 
   let r = 0;
   let g = 0;
   let b = 0;
 
-  const sextant = Math.floor((hue / 60)) % 6;
+  const sextant = Math.floor(hue / 60) % 6;
   switch (sextant) {
     case 0:
       r = c;

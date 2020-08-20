@@ -1,6 +1,6 @@
-import { GraphicsContext } from "core/graphics";
+import { GraphicsContext } from 'core/graphics';
 import { Rectangle, Partioner, Bounded } from 'core/geometry';
-import { BLACK, WHITE } from "core/graphics/color";
+import { BLACK, WHITE } from 'core/graphics/color';
 
 export class Cell<T extends Bounded> implements Partioner<T> {
   public boundingBox: Rectangle;
@@ -97,8 +97,8 @@ export class Cell<T extends Bounded> implements Partioner<T> {
           });
         }
 
-        const x = (col * this.cellWidth) + this.boundingBox.x;
-        const y = (row * this.cellHeight) + this.boundingBox.y;
+        const x = col * this.cellWidth + this.boundingBox.x;
+        const y = row * this.cellHeight + this.boundingBox.y;
         ctx.rect(x, y, this.cellWidth, this.cellHeight, color);
 
         if (cell.length > 0) {

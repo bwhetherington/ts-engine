@@ -15,7 +15,7 @@ export class Unit extends Entity {
   private maxLife: number = 10;
   private life: number = 10;
   protected lifeRegen: number = 0;
-  private speed: number = 250;
+  protected speed: number = 250;
   private isAliveInternal: boolean = true;
   private movement = {
     [MovementDirection.Up]: false,
@@ -110,7 +110,7 @@ export class Unit extends Entity {
     }
 
     this.acceleration.magnitude = ACCELERATION * dt;
-    this.applyForce(this.acceleration);
+    this.applyForce(this.acceleration, (this.mass * this.friction) / 500);
 
     // Handle maximum speed
     if (this.velocity.magnitude > this.speed) {
@@ -134,17 +134,21 @@ export class Unit extends Entity {
       life: this.life,
       maxLife: this.maxLife,
       weapon: this.weapon?.serialize(),
+      speed: this.speed,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const { life, maxLife, movement, weapon } = data;
+    const { life, maxLife, movement, weapon, speed } = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }
     if (typeof life === 'number') {
       this.setLife(life);
+    }
+    if (typeof speed === 'number') {
+      this.speed = speed;
     }
     if (weapon) {
       const { type } = weapon;
@@ -186,7 +190,7 @@ export class Unit extends Entity {
     }
   }
 
-  public cleanupLocal(): void { }
+  public cleanupLocal(): void {}
 
   public kill(source?: Unit): void {
     if (NetworkManager.isServer()) {

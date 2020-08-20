@@ -2,6 +2,7 @@ export { Entity } from 'core/entity/Entity';
 export { Unit } from 'core/entity/Unit';
 export { Tank } from 'core/entity/Tank';
 export { Hero } from 'core/entity/Hero';
+export { Heavy } from 'core/entity/Heavy';
 export { Enemy } from 'core/entity/Enemy';
 export { Geometry } from 'core/entity/Geometry';
 export { Projectile } from 'core/entity/Projectile';

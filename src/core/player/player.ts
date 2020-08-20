@@ -1,4 +1,4 @@
-import { Hero, WorldManager, KillEvent } from 'core/entity';
+import { Hero, WorldManager, KillEvent, Heavy, Entity } from 'core/entity';
 import { Serializable, Data } from 'core/serialize';
 import { Socket, NetworkManager } from 'core/net';
 import { PlayerManager } from 'core/player';
@@ -35,15 +35,12 @@ export class Player implements Serializable {
 
           // Check that we haven't already respawned
           if (event.data.target === this.hero) {
-            const hero = WorldManager.spawn(Hero);
+            const hero = WorldManager.spawn(Heavy);
 
             const x = (Math.random() - 0.5) * 1120;
             const y = (Math.random() - 0.5) * 1120;
             log.debug('respawn ' + x + ',' + y);
             hero.setPositionXY(x, y);
-
-            const weapon = new Pistol();
-            hero.setWeapon(weapon);
 
             hero.setColor(this.hero.getColor());
             this.setHero(hero);
@@ -137,5 +134,16 @@ export class Player implements Serializable {
 
   public disconnect(): void {
     NetworkManager.disconnect(this.socket);
+  }
+
+  public changeClass<T extends Hero>(Type: (new () => T) & typeof Hero): void {
+    if (this.hero) {
+      const newHero = WorldManager.spawn(Type, this.hero.position);
+      this.hero.markForDelete();
+      this.setHero(newHero);
+    } else {
+      const newHero = WorldManager.spawn(Type);
+      this.setHero(newHero);
+    }
   }
 }

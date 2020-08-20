@@ -21,7 +21,7 @@ export class Pistol extends Weapon {
     const offset = (Math.random() - 0.5) * 0.1;
     projectile.velocity.angle = angle + offset;
     projectile.position.add(projectile.velocity, 10);
-    projectile.velocity.magnitude = 750;
+    projectile.velocity.magnitude = 550;
     source.applyForce(projectile.velocity, -projectile.mass);
   }
 }

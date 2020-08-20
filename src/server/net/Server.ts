@@ -99,7 +99,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => { });
+    this.wsServer.on('close', (connection) => {});
   }
 
   private sendRaw(data: string, socket: Socket) {

@@ -1,4 +1,11 @@
-import { Rectangle, QuadTree, Bounded, Vector, Partioner, Cell } from 'core/geometry';
+import {
+  Rectangle,
+  QuadTree,
+  Bounded,
+  Vector,
+  Partioner,
+  Cell,
+} from 'core/geometry';
 import { GraphicsContext, CameraManager, Renderable } from 'core/graphics';
 import {
   Entity,
@@ -23,6 +30,7 @@ import { WHITE } from 'core/graphics/color';
 import { Graph } from './pathfinding';
 import { CollisionLayer } from './util';
 import { BombProjectile } from './BombProjectile';
+import { Heavy } from './Heavy';
 
 const log = LogManager.forFile(__filename);
 
@@ -56,6 +64,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Text);
     this.registerEntity(Tank);
     this.registerEntity(Enemy);
+    this.registerEntity(Heavy);
   }
 
   public initialize(): void {
@@ -114,7 +123,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
       .forEach((entity) => entity.renderInternal(ctx));
-
 
     // this.graph?.render(ctx);
   }

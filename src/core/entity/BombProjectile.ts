@@ -1,8 +1,8 @@
-import { Projectile, Unit, WorldManager, Explosion } from "core/entity";
-import { Rectangle, Vector } from "core/geometry";
-import { rgba } from "core/graphics";
+import { Projectile, Unit, WorldManager, Explosion } from 'core/entity';
+import { Rectangle, Vector } from 'core/geometry';
+import { rgba } from 'core/graphics';
 
-const RADIUS = 150;
+const RADIUS = 50;
 
 export class BombProjectile extends Projectile {
   public static typeName = 'BombProjectile';
@@ -10,7 +10,9 @@ export class BombProjectile extends Projectile {
   public constructor() {
     super();
     this.type = BombProjectile.typeName;
-    this.setColor(rgba(0.8, 0.1, 0.1, 0.5));
+    this.setOriginalColor(rgba(0.8, 0.1, 0.1, 0.5));
+    this.boundingBox.width = 30;
+    this.boundingBox.height = 30;
   }
 
   public hit(unit?: Unit): void {
@@ -27,6 +29,7 @@ export class BombProjectile extends Projectile {
 
     WorldManager.query(rect)
       .filterType((entity): entity is Unit => entity instanceof Unit)
+      .filter((unit) => unit !== this.parent)
       .filter((unit) => unit.boundingBox.intersects(rect))
       .filter((unit) => unit.position.distanceTo(this.position) <= RADIUS)
       .forEach((unit) => {
@@ -34,7 +37,7 @@ export class BombProjectile extends Projectile {
         vec.set(unit.position);
         vec.add(this.position, -1);
         vec.normalize();
-        unit.applyForce(vec, 10000);
+        unit.applyForce(vec, 500);
       });
   }
 

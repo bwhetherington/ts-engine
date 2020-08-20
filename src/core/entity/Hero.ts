@@ -20,29 +20,11 @@ import { LogManager } from 'core/log';
 import { NetworkManager, SyncEvent } from 'core/net';
 import { CameraManager, rgb } from 'core/graphics';
 import { BarUpdateEvent, sleep } from 'core/util';
+import { Pistol } from 'core/weapon';
 
 const log = LogManager.forFile(__filename);
 
-function experienceForLevel(level: number): number {
-  if (level < 1) {
-    return 0;
-  }
-  return 3 + Math.ceil(level * level * 3);
-}
-
-function lifeForLevel(level: number): number {
-  return 5 + level * 5;
-}
-
-function regenForLevel(level: number): number {
-  return lifeForLevel(level) / 30;
-}
-
-function armorForLevel(level: number): number {
-  return Math.floor(level / 2);
-}
-
-// 5 10 25 
+// 5 10 25
 
 export class Hero extends Tank {
   public static typeName: string = 'Hero';
@@ -58,6 +40,12 @@ export class Hero extends Tank {
     super();
 
     this.type = Hero.typeName;
+    this.boundingBox.width = 35;
+    this.boundingBox.height = 35;
+    this.cannonShape.width = 35;
+    this.cannonShape.height = 15;
+
+    this.setWeapon(new Pistol());
 
     this.setExperience(0);
     this.setLevel(1);
@@ -123,20 +111,39 @@ export class Hero extends Tank {
     }
   }
 
+  protected experienceForLevel(level: number): number {
+    if (level < 1) {
+      return 0;
+    }
+    return 3 + Math.ceil(level * level * 3);
+  }
+
+  protected lifeForLevel(level: number): number {
+    return 5 + level * 5;
+  }
+
+  protected regenForLevel(level: number): number {
+    return this.lifeForLevel(level) / 30;
+  }
+
+  protected armorForLevel(level: number): number {
+    return Math.floor(level / 4);
+  }
+
   public setExperience(amount: number): void {
     this.xp = amount;
-    while (this.xp >= experienceForLevel(this.level)) {
+    while (this.xp >= this.experienceForLevel(this.level)) {
       this.setLevel(this.level + 1);
     }
 
     if (this.getPlayer()?.isActivePlayer()) {
-      const prevXp = experienceForLevel(this.level - 1);
+      const prevXp = this.experienceForLevel(this.level - 1);
       EventManager.emit({
         type: 'BarUpdateEvent',
         data: <BarUpdateEvent>{
           id: 'xp-bar',
-          value: (this.xp - prevXp),
-          maxValue: experienceForLevel(this.level) - prevXp,
+          value: this.xp - prevXp,
+          maxValue: this.experienceForLevel(this.level) - prevXp,
         },
       });
     }
@@ -145,10 +152,9 @@ export class Hero extends Tank {
   private setLevel(level: number): void {
     if (level !== this.level) {
       this.level = level;
-      this.setMaxLife(lifeForLevel(level));
-      // this.setLife(this.getMaxLife());
-      this.armor = armorForLevel(level);
-      this.lifeRegen = regenForLevel(level);
+      this.setMaxLife(this.lifeForLevel(level));
+      this.armor = this.armorForLevel(level);
+      this.lifeRegen = this.regenForLevel(level);
     }
   }
 
@@ -272,7 +278,7 @@ export class Hero extends Tank {
     this.isInitialized = true;
   }
 
-  private isEventSubject<E extends EventData>(event: Event<E>): boolean {
+  public isEventSubject<E extends EventData>(event: Event<E>): boolean {
     const { socket } = event;
     const player = this.getPlayer();
     const isLocal = socket === undefined && player?.isActivePlayer();

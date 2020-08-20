@@ -13,6 +13,8 @@ function findRelativePath(fileName: string): string {
 }
 
 export class FileLogger extends LoggerWrapper {
+  private static fileNames: Set<string> = new Set();
+
   public constructor(fileName: string) {
     super();
     this.addTag(findRelativePath(fileName));

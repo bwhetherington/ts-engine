@@ -1,5 +1,11 @@
 import { Bounded, Rectangle, Vector } from 'core/geometry';
-import { GraphicsContext, Color, invert, CameraManager, Renderable } from 'core/graphics';
+import {
+  GraphicsContext,
+  Color,
+  invert,
+  CameraManager,
+  Renderable,
+} from 'core/graphics';
 import { WHITE, isColor } from 'core/graphics/color';
 import { CollisionLayer, WorldManager, CollisionEvent } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
@@ -104,7 +110,7 @@ export class Entity implements Bounded, Serializable, Renderable {
         });
 
       // Apply friction
-      const normal = this.friction * this.mass;
+      const normal = this.friction;
       if (normal > 0) {
         const oldAngle = this.velocity.angle;
         this.vectorBuffer.set(this.velocity);
@@ -228,9 +234,17 @@ export class Entity implements Bounded, Serializable, Renderable {
   public addListener<E extends EventData>(
     type: string,
     handler: Handler<E>
-  ): void {
+  ): UUID {
     const id = EventManager.addListener(type, handler);
     this.getHandlers(type).add(id);
+    return id;
+  }
+
+  public removeListener(type: string, id: UUID): boolean {
+    return (
+      this.getHandlers(type)?.delete(id) &&
+      EventManager.removeListener(type, id)
+    );
   }
 
   public handleEvent<E extends EventData>(type: string, event: Event<E>): void {

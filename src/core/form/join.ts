@@ -10,7 +10,7 @@ import { ConnectEvent } from 'core/net';
 import { PlayerManager, Player } from 'core/player';
 import { Data } from 'core/serialize';
 import { LogManager } from 'core/log';
-import { WorldManager, Hero } from 'core/entity';
+import { WorldManager, Hero, Heavy } from 'core/entity';
 import { Pistol, Bomb } from 'core/weapon';
 import { randomColor } from 'core/graphics/color';
 
@@ -34,7 +34,7 @@ export const JOIN_FORM: Form = {
       name: 'name',
       label: 'Display Name',
       maxLength: 10,
-    }
+    },
   ],
 };
 
@@ -49,13 +49,11 @@ export function registerJoinForm(): void {
 }
 
 function spawnHero(player: Player): Hero {
-  const hero = WorldManager.spawn(Hero);
+  const hero = WorldManager.spawn(Heavy);
   const x = (Math.random() - 0.5) * 1120;
   const y = (Math.random() - 0.5) * 1120;
   hero.setPositionXY(x, y);
   hero.setPlayer(player);
-  const weapon = new Pistol();
-  hero.setWeapon(weapon);
   const color = randomColor(0.35, 0.75);
   hero.setColor(color);
   return hero;

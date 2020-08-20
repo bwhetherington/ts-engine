@@ -2,7 +2,7 @@ import { Queue, SizedQueue } from 'core/util/queue';
 import { TimerHandler, AbstractTimer, sleep } from 'core/util/time';
 import { diff } from 'core/util/object';
 
-function clamp(x: number, low: number, high: number): number {
+export function clamp(x: number, low: number, high: number): number {
   return Math.max(low, Math.min(high, x));
 }
 
@@ -20,5 +20,4 @@ export {
   AbstractTimer,
   sleep,
   diff,
-  clamp,
 };

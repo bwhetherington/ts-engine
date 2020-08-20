@@ -7,8 +7,8 @@ export class Bomb extends Weapon {
   public constructor() {
     super();
     this.type = Bomb.typeName;
-    this.rate = 0.15;
-    this.damage = 10;
+    this.rate = 0.25;
+    this.damage = 5;
   }
 
   public fire(source: Unit, angle: number): void {
@@ -17,12 +17,12 @@ export class Bomb extends Weapon {
     projectile.parent = source;
     projectile.bounce = 0;
     projectile.damage = this.damage;
-    projectile.mass = 0.1;
+    projectile.mass = 1;
     projectile.velocity.setXY(1, 0);
     const offset = (Math.random() - 0.5) * 0.1;
     projectile.velocity.angle = angle + offset;
     projectile.position.add(projectile.velocity, 10);
-    projectile.velocity.magnitude = 550;
+    projectile.velocity.magnitude = 650;
 
     source.applyForce(projectile.velocity, -projectile.mass);
   }

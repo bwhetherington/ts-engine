@@ -6,8 +6,8 @@ const ctx: Worker = self as any;
 const methods: WorkerMethods = {
   fibonacci(value: number): number {
     return fib(value);
-  }
-}
+  },
+};
 
 ctx.onmessage = (event) => {
   const { data } = event;
@@ -18,6 +18,6 @@ ctx.onmessage = (event) => {
   } else {
     ctx.postMessage(10);
   }
-}
+};
 
 ctx.postMessage('HELLO');

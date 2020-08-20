@@ -5,11 +5,13 @@ import { CollisionLayer } from './util';
 import { Data } from 'core/serialize';
 import { NetworkManager } from 'core/net';
 import { Explosion } from './Explosion';
-import { sleep } from 'core/util';
+import { sleep, clamp } from 'core/util';
+import { WHITE } from 'core/graphics/color';
 
 const log = LogManager.forFile(__filename);
 
-const DURATION = 1;
+const DURATION = 1.5;
+const FADE_DURATION = 0.125;
 
 export class Projectile extends Entity {
   public static typeName: string = 'Projectile';
@@ -19,7 +21,7 @@ export class Projectile extends Entity {
   public parent?: Unit;
 
   private timeElapsed: number = 0;
-  private originalColor: Color;
+  private originalColor: Color = WHITE;
 
   public onHit?: (target?: Unit) => void;
 
@@ -27,15 +29,28 @@ export class Projectile extends Entity {
     super();
     this.type = Projectile.typeName;
     this.bounce = 1;
-    this.originalColor = rgba(1.0, 0.6, 0.3, 0.8);
-    this.setColor(this.originalColor);
+    this.setOriginalColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.registerListeners();
     this.prepareRemove();
+    this.boundingBox.width = 20;
+    this.boundingBox.height = 20;
+  }
+
+  protected setOriginalColor(color: Color): void {
+    this.originalColor = color;
+    this.setColor(color);
   }
 
   private getFadeParameter(): number {
     // Begin to fade halfway through the projectile life
-    const t = Math.max(0, this.timeElapsed / DURATION - 0.875) * 8;
+    const fadePeriod = FADE_DURATION / DURATION;
+    const multiplier = 1 / fadePeriod;
+
+    const t = clamp(
+      (this.timeElapsed / DURATION + fadePeriod - 1) * multiplier,
+      0,
+      1
+    );
     return Math.min(1, t);
   }
 
