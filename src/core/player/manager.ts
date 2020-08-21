@@ -4,6 +4,7 @@ import { LogManager } from 'core/log';
 import { SyncEvent } from 'core/net';
 import { EventManager } from 'core/event';
 import { diff } from 'core/util';
+import { Iterator, iterateObject } from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
@@ -91,5 +92,15 @@ export class PlayerManager implements Serializable {
     diff(this.previousState, newState, diffObj);
     this.previousState = newState;
     return diffObj;
+  }
+
+  public getPlayers(): Iterator<Player> {
+    return iterateObject(this.players);
+  }
+
+  public lookup(name: string): Player[] {
+    return this.getPlayers()
+      .filter((player) => player.name === name)
+      .toArray();
   }
 }

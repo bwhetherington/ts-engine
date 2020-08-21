@@ -35,7 +35,7 @@ export class Player implements Serializable {
 
           // Check that we haven't already respawned
           if (event.data.target === this.hero) {
-            const hero = WorldManager.spawn(Heavy);
+            const hero = WorldManager.spawn(Hero);
 
             const x = (Math.random() - 0.5) * 1120;
             const y = (Math.random() - 0.5) * 1120;
@@ -136,14 +136,22 @@ export class Player implements Serializable {
     NetworkManager.disconnect(this.socket);
   }
 
-  public changeClass<T extends Hero>(Type: (new () => T) & typeof Hero): void {
-    if (this.hero) {
-      const newHero = WorldManager.spawn(Type, this.hero.position);
-      this.hero.markForDelete();
+  public setClass(type: string): boolean {
+    const newHero = WorldManager.createEntity(type);
+    if (newHero instanceof Hero) {
+      if (this.hero) {
+        newHero.setPosition(this.hero.position);
+        newHero.setColor(this.hero.getColor());
+        newHero.setExperience(this.hero.getExperience());
+        newHero.setLife(this.hero.getLife());
+        newHero.angle = this.hero.angle;
+        this.hero.markForDelete();
+      }
+      WorldManager.add(newHero);
       this.setHero(newHero);
+      return true;
     } else {
-      const newHero = WorldManager.spawn(Type);
-      this.setHero(newHero);
+      return false;
     }
   }
 }

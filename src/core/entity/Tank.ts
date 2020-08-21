@@ -2,10 +2,10 @@ import { Unit, Text, WorldManager, Explosion } from 'core/entity';
 import { GraphicsContext } from 'core/graphics';
 import { WHITE, Color, reshade, rgb } from 'core/graphics/color';
 import { Data } from 'core/serialize';
-import { FireEvent } from 'core/weapon';
+import { FireEvent, Weapon, WeaponManager } from 'core/weapon';
 import { NetworkManager } from 'core/net';
 import { LogManager } from 'core/log';
-import { Rectangle } from 'core/geometry';
+import { Rectangle, Vector } from 'core/geometry';
 
 const log = LogManager.forFile(__filename);
 
@@ -25,6 +25,7 @@ export class Tank extends Unit {
   private flashTimer: number = 0;
   private flashColor?: Color;
   private hasExploded: boolean = false;
+  private weapon?: Weapon;
 
   public constructor() {
     super();
@@ -104,7 +105,7 @@ export class Tank extends Unit {
       -(this.cannonShape.height * verticalScale) / 2,
       this.cannonShape.width * horizontalScale,
       this.cannonShape.height * verticalScale,
-      rgb(0.65, 0.65, 0.65)
+      this.getColor(),
     );
 
     // Reset transformations
@@ -123,17 +124,30 @@ export class Tank extends Unit {
       ...super.serialize(),
       angle: this.angle,
       cannonShape: this.cannonShape,
+      weapon: this.weapon?.serialize(),
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const { angle, cannonShape } = data;
+    const { angle, cannonShape, weapon } = data;
     if (typeof angle === 'number') {
       this.angle = angle;
     }
     if (cannonShape) {
       this.cannonShape.deserialize(cannonShape);
+    }
+    if (weapon) {
+      const { type } = weapon;
+      if (type && this.weapon?.type !== type) {
+        const newWeapon = WeaponManager.createWeapon(type);
+        if (newWeapon) {
+          newWeapon.deserialize(weapon);
+          this.setWeapon(newWeapon);
+        }
+      } else {
+        this.weapon?.deserialize(weapon);
+      }
     }
   }
 
@@ -147,6 +161,7 @@ export class Tank extends Unit {
 
   public cleanup(): void {
     this.label?.markForDelete();
+    this.weapon?.cleanup();
     super.cleanup();
   }
 
@@ -166,6 +181,27 @@ export class Tank extends Unit {
     super.kill(source);
     if (NetworkManager.isClient() && !this.hasExploded) {
       this.explode();
+    }
+  }
+
+  public getCannonTip(): Vector {
+    this.vectorBuffer.set(this.position);
+    const dx = Math.cos(this.angle);
+    const dy = Math.sin(this.angle);
+    this.vectorBuffer.addXY(dx, dy, this.cannonShape.width);
+    return this.vectorBuffer;
+  }
+
+  public fire(angle: number): void {
+    this.weapon?.fireInternal(this, angle);
+  }
+
+  public setWeapon(weapon?: Weapon): void {
+    if (this.weapon && this.weapon !== weapon) {
+      this.weapon.cleanup();
+      this.weapon = weapon;
+    } else if (weapon) {
+      this.weapon = weapon;
     }
   }
 }

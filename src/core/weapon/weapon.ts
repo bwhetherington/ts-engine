@@ -1,5 +1,5 @@
 import { Serializable, Data } from 'core/serialize';
-import { Unit } from 'core/entity';
+import { Tank } from 'core/entity';
 import { EventManager, StepEvent, Event } from 'core/event';
 import { UUID } from 'core/uuid';
 import { FireEvent } from 'core/weapon';
@@ -27,9 +27,9 @@ export abstract class Weapon implements Serializable {
     }
   }
 
-  public abstract fire(source: Unit, angle: number): void;
+  public abstract fire(source: Tank, angle: number): void;
 
-  public fireInternal(source: Unit, angle: number): void {
+  public fireInternal(source: Tank, angle: number): void {
     if (this.cooldown <= 0) {
       this.cooldown += this.rate;
       this.fire(source, angle);

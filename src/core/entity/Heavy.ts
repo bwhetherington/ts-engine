@@ -12,6 +12,7 @@ export class Heavy extends Hero {
     this.speed = 200;
     this.boundingBox.width = 40;
     this.boundingBox.height = 40;
+    this.cannonShape.width = 35;
     this.cannonShape.height = 25;
     this.setWeapon(new Bomb());
   }

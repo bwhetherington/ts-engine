@@ -40,15 +40,11 @@ export class Hero extends Tank {
     super();
 
     this.type = Hero.typeName;
-    this.boundingBox.width = 35;
-    this.boundingBox.height = 35;
-    this.cannonShape.width = 35;
-    this.cannonShape.height = 15;
 
     this.setWeapon(new Pistol());
 
     this.setExperience(0);
-    this.setLevel(1);
+    this.setLevelInternal(1);
 
     this.addListener<MouseEvent>('MouseEvent', (event) => {
       if (this.isEventSubject(event)) {
@@ -130,10 +126,19 @@ export class Hero extends Tank {
     return Math.floor(level / 4);
   }
 
+  public getExperience(): number {
+    return this.xp;
+  }
+
   public setExperience(amount: number): void {
     this.xp = amount;
+
     while (this.xp >= this.experienceForLevel(this.level)) {
-      this.setLevel(this.level + 1);
+      this.setLevelInternal(this.level + 1);
+    }
+
+    while (this.xp < this.experienceForLevel(this.level - 1)) {
+      this.setLevelInternal(this.level - 1);
     }
 
     if (this.getPlayer()?.isActivePlayer()) {
@@ -149,7 +154,12 @@ export class Hero extends Tank {
     }
   }
 
-  private setLevel(level: number): void {
+  public setLevel(level: number): void {
+    this.setLevelInternal(level);
+    this.setExperience(this.experienceForLevel(level - 1));
+  }
+
+  private setLevelInternal(level: number): void {
     if (level !== this.level) {
       this.level = level;
       this.setMaxLife(this.lifeForLevel(level));

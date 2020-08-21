@@ -24,34 +24,19 @@ export class Unit extends Entity {
     [MovementDirection.Right]: false,
   };
   private acceleration: Vector = new Vector(0, 0);
-  private weapon?: Weapon;
 
   public constructor() {
     super();
     this.type = Unit.typeName;
   }
 
-  public setWeapon(weapon?: Weapon): void {
-    if (this.weapon && this.weapon !== weapon) {
-      this.weapon.cleanup();
-      this.weapon = weapon;
-    } else if (weapon) {
-      this.weapon = weapon;
-    }
-  }
-
   public cleanup(): void {
     super.cleanup();
-    this.weapon?.cleanup();
     this.isAliveInternal = false;
   }
 
   public get isAlive(): boolean {
     return this.isAliveInternal;
-  }
-
-  public fire(angle: number): void {
-    this.weapon?.fireInternal(this, angle);
   }
 
   public getLife(): number {
@@ -133,7 +118,6 @@ export class Unit extends Entity {
       ...super.serialize(),
       life: this.life,
       maxLife: this.maxLife,
-      weapon: this.weapon?.serialize(),
       speed: this.speed,
     };
   }
@@ -149,18 +133,6 @@ export class Unit extends Entity {
     }
     if (typeof speed === 'number') {
       this.speed = speed;
-    }
-    if (weapon) {
-      const { type } = weapon;
-      if (type && this.weapon?.type !== type) {
-        const newWeapon = WeaponManager.createWeapon(type);
-        if (newWeapon) {
-          newWeapon.deserialize(weapon);
-          this.setWeapon(newWeapon);
-        }
-      } else {
-        this.weapon?.deserialize(weapon);
-      }
     }
     if (movement) {
       if (MovementDirection.Up in movement) {
@@ -190,7 +162,7 @@ export class Unit extends Entity {
     }
   }
 
-  public cleanupLocal(): void {}
+  public cleanupLocal(): void { }
 
   public kill(source?: Unit): void {
     if (NetworkManager.isServer()) {

@@ -10,3 +10,5 @@ declare module 'worker-loader!*' {
 
   export default WebpackWorker;
 }
+
+declare var __PRODUCTION__: boolean;

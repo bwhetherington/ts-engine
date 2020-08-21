@@ -1,4 +1,6 @@
 const path = require('path');
+const webpack = require('webpack');
+const process = require('process');
 
 module.exports = {
   entry: path.resolve(__dirname, 'src', 'client', 'index.ts'),
@@ -8,6 +10,11 @@ module.exports = {
     __dirname: true,
   },
   devtool: 'inline-source-map',
+  plugins: [
+    new webpack.DefinePlugin({
+      __PRODUCTION__: JSON.stringify(process.env.NODE_ENV === 'PRODUCTION'),
+    })
+  ],
   module: {
     rules: [
       {
@@ -45,5 +52,5 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build', 'client'),
-  },
+  }
 };

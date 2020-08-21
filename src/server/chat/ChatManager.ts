@@ -246,6 +246,47 @@ export class ChatManager {
     );
 
     this.registerCommand(
+      'setlevel',
+      (player, levelString) => {
+        if (levelString === undefined) {
+          this.error('No level specified', player);
+          return;
+        }
+
+        const level = parseInt(levelString);
+        if (Number.isNaN(level)) {
+          this.error(`Could not parse '${levelString} as an int`, player);
+          return;
+        }
+
+        if (level <= 0) {
+          this.error('Level must be positive', player);
+          return;
+        }
+
+        player.hero?.setLevel(level);
+      },
+      'Sets the level of the player character',
+    );
+
+    this.registerCommand(
+      'setclass',
+      (player, className) => {
+        if (className === undefined) {
+          this.error('No class specified', player);
+          return;
+        }
+
+        if (player.setClass(className)) {
+          this.info(`Set class to '${className}'`, player);
+        } else {
+          this.error(`Could not set class to '${className}'`, player);
+        }
+      },
+      'Changes the player class',
+    );
+
+    this.registerCommand(
       'setinterval',
       (player, intervalString) => {
         if (intervalString === undefined) {
@@ -265,6 +306,60 @@ export class ChatManager {
       },
       'Sets the server clock interval'
     );
+
+    this.registerCommand(
+      'lookup',
+      (player, name) => {
+        if (name === undefined) {
+          this.error('No player specified', player);
+          return;
+        }
+
+        const players = PlayerManager.lookup(name);
+
+        if (players.length === 0) {
+          this.info('No players found', player);
+          return;
+        }
+
+        if (players.length === 1) {
+          this.info('Player ID: ' + players[0].id);
+          return;
+        }
+
+        const inner = players.map((player) => player.id).join(', ');
+        this.info('Player IDs: ' + inner, player);
+      },
+      'Looks up the player ID associated with the given name'
+    );
+
+    this.registerCommand(
+      'kick',
+      (source, id) => {
+        const target = PlayerManager.getPlayer(id);
+        if (target) {
+          this.error('You have been kicked from the game', target);
+          target.disconnect();
+        } else {
+          this.error(`The player '${id}' does not exist`, source);
+        }
+      },
+      'Kicks the player with the specified ID'
+    );
+
+    this.registerCommand(
+      'sudo',
+      (source, id, ...rest) => {
+        const target = PlayerManager.getPlayer(id);
+        const [command, ...args] = rest;
+        if (target && command) {
+          this.handleCommand(target, command, args);
+        } else {
+          this.error(`The player '${id}' does not exist`, source);
+        }
+      },
+      'Executes a command from the specified player',
+    )
   }
 
   private sendComponents(

@@ -49,7 +49,7 @@ export function registerJoinForm(): void {
 }
 
 function spawnHero(player: Player): Hero {
-  const hero = WorldManager.spawn(Heavy);
+  const hero = WorldManager.spawn(Hero);
   const x = (Math.random() - 0.5) * 1120;
   const y = (Math.random() - 0.5) * 1120;
   hero.setPositionXY(x, y);

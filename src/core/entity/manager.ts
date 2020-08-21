@@ -280,7 +280,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     return entity;
   }
 
-  private createEntity(type: string): Entity | undefined {
+  public createEntity(type: string): Entity | undefined {
     const Type = this.entityConstructors[type];
     if (Type) {
       return new Type();

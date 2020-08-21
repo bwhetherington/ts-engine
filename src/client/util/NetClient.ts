@@ -12,6 +12,8 @@ import { InitialSyncEvent } from 'core/net/util';
 import { PlayerManager } from 'core/player';
 import { WorldManager } from 'core/entity';
 
+const log = LogManager.forFile(__filename);
+
 function generateName(): string {
   return uniqueNamesGenerator({
     dictionaries: [colors, animals],
@@ -21,7 +23,9 @@ function generateName(): string {
   });
 }
 
-const log = LogManager.forFile(__filename);
+function getProtocol(): string {
+  return __PRODUCTION__ ? 'wss' : 'ws';
+}
 
 export class Client extends Node {
   private sendBuffer: Message[] = [];
@@ -38,7 +42,7 @@ export class Client extends Node {
     if (addr) {
       connect = addr;
     } else {
-      connect = `ws://${location.host}`;
+      connect = `${getProtocol()}://${location.host}`;
     }
     this.socket = new WebSocket(connect);
     this.initializeSocket(this.socket);

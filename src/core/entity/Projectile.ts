@@ -11,7 +11,7 @@ import { WHITE } from 'core/graphics/color';
 const log = LogManager.forFile(__filename);
 
 const DURATION = 1.5;
-const FADE_DURATION = 0.125;
+const FADE_DURATION = 0.0625;
 
 export class Projectile extends Entity {
   public static typeName: string = 'Projectile';
