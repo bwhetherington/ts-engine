@@ -7,12 +7,15 @@ export class Bomb extends Weapon {
   public constructor() {
     super();
     this.type = Bomb.typeName;
-    this.rate = 0.75;
+    this.rate = 0.15;
     this.damage = 5;
   }
 
   public fire(source: Tank, angle: number): void {
-    const projectile = WorldManager.spawn(BombProjectile, source.getCannonTip());
+    const projectile = WorldManager.spawn(
+      BombProjectile,
+      source.getCannonTip()
+    );
 
     projectile.parent = source;
     projectile.bounce = 0;

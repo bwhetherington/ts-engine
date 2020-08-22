@@ -24,7 +24,7 @@ function generateName(): string {
 }
 
 function getProtocol(): string {
-  return __PRODUCTION__ ? 'wss' : 'ws';
+  return location.protocol === 'https:' ? 'wss:' : 'ws:';
 }
 
 export class Client extends Node {
@@ -42,7 +42,7 @@ export class Client extends Node {
     if (addr) {
       connect = addr;
     } else {
-      connect = `${getProtocol()}://${location.host}`;
+      connect = `${getProtocol()}//${location.host}`;
     }
     this.socket = new WebSocket(connect);
     this.initializeSocket(this.socket);

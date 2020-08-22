@@ -16,6 +16,7 @@ import { WorldManager, Tank, Enemy, Unit } from 'core/entity';
 import { TimerManager } from 'server/util';
 import { Pistol } from 'core/weapon';
 import { randomColor } from 'core/graphics/color';
+import { FormManager } from 'core/form';
 
 const log = LogManager.forFile(__filename);
 
@@ -163,12 +164,9 @@ export class ChatManager {
 
     this.registerCommand(
       'rename',
-      (player, name) => {
-        if (typeof name === 'string') {
-          player.name = name;
-          this.info(`Set name to '${name}'`, player);
-        } else {
-          this.error('Name not specified', player);
+      async (player) => {
+        if (!(await FormManager.sendForm(player, 'RenameForm'))) {
+          this.error('Error handling form', player);
         }
       },
       "Sets the player's name",
@@ -266,7 +264,7 @@ export class ChatManager {
 
         player.hero?.setLevel(level);
       },
-      'Sets the level of the player character',
+      'Sets the level of the player character'
     );
 
     this.registerCommand(
@@ -283,7 +281,7 @@ export class ChatManager {
           this.error(`Could not set class to '${className}'`, player);
         }
       },
-      'Changes the player class',
+      'Changes the player class'
     );
 
     this.registerCommand(
@@ -336,7 +334,7 @@ export class ChatManager {
     this.registerCommand(
       'kick',
       (source, id) => {
-        const target = PlayerManager.getPlayer(id);
+        const target = PlayerManager.findPlayer(id);
         if (target) {
           this.error('You have been kicked from the game', target);
           target.disconnect();
@@ -350,7 +348,7 @@ export class ChatManager {
     this.registerCommand(
       'sudo',
       (source, id, ...rest) => {
-        const target = PlayerManager.getPlayer(id);
+        const target = PlayerManager.findPlayer(id);
         const [command, ...args] = rest;
         if (target && command) {
           this.handleCommand(target, command, args);
@@ -358,8 +356,8 @@ export class ChatManager {
           this.error(`The player '${id}' does not exist`, source);
         }
       },
-      'Executes a command from the specified player',
-    )
+      'Executes a command from the specified player'
+    );
   }
 
   private sendComponents(

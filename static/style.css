@@ -7,6 +7,12 @@
   --checkbox-padding: 6px;
 }
 
+@font-face {
+  font-family: 'roboto-mono';
+  src: local('Roboto Mono');
+  src: url('font/roboto-mono.ttf');
+}
+
 html,
 body,
 #game {

@@ -162,7 +162,7 @@ export class Unit extends Entity {
     }
   }
 
-  public cleanupLocal(): void { }
+  public cleanupLocal(): void {}
 
   public kill(source?: Unit): void {
     if (NetworkManager.isServer()) {

@@ -9,6 +9,7 @@ export { Projectile } from 'core/entity/Projectile';
 export { BombProjectile } from 'core/entity/BombProjectile';
 export { Explosion } from 'core/entity/Explosion';
 export { Text } from 'core/entity/Text';
+export { Bar } from 'core/entity/Bar';
 
 import { WorldManager } from 'core/entity/manager';
 import { Rectangle } from 'core/geometry';

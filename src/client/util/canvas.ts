@@ -8,6 +8,7 @@ import {
   GraphicsOptions,
   CameraManager,
 } from 'core/graphics';
+import { BLACK, WHITE } from 'core/graphics/color';
 
 interface Options {
   width: number;
@@ -15,8 +16,9 @@ interface Options {
   isFullScreen: boolean;
 }
 
-function createFontString(font: string, size: string): string {
-  return `${size} ${font}`;
+function createFontString(font: string, size: number, scale: number): string {
+  const fontSize = size / scale;
+  return `bold ${fontSize}px ${font}`;
 }
 
 const DEFAULT_OPTIONS: Options = {
@@ -46,16 +48,25 @@ export class HDCanvas implements GraphicsContext {
 
     this.element = document.createElement('canvas');
     if (this.element) {
-      if (isFullScreen) {
-        // document.addEventListener("resive", event => {
-        //   event.
-        // });
-      } else {
-        this.setSize(width, height);
-      }
+      this.setSize(width, height);
 
       // Set up auto scaling
+      let ctx;
+      if ((ctx = this.getContext())) {
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
     }
+  }
+
+  private setRound(ctx: CanvasRenderingContext2D): void {
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+
+  private setSquare(ctx: CanvasRenderingContext2D): void {
+    ctx.lineCap = 'square';
+    ctx.lineJoin = 'miter';
   }
 
   public setOptions(options: Partial<GraphicsOptions>): void {
@@ -88,7 +99,7 @@ export class HDCanvas implements GraphicsContext {
     if (element) {
       const ratio = window.devicePixelRatio ?? 1;
       this.ratio = ratio;
-      const scale = this.ratio * this.scale;
+      const scale = this.ratio;
       element.width = w * scale;
       element.height = h * scale;
       element.style.width = w + 'px';
@@ -133,13 +144,18 @@ export class HDCanvas implements GraphicsContext {
   public text(x: number, y: number, text: string, style: TextStyle) {
     const ctx = this.curContext;
     if (ctx) {
-      const { font = 'sans-serif', size = '12px', color } = style;
-      const colorCss = color ? toCss(color) : 'black';
-
+      const scale = this.ratio * this.scale;
+      const { font = 'Roboto Mono', size = 12, color = WHITE } = style;
       ctx.beginPath();
-      ctx.fillStyle = colorCss;
-      ctx.font = createFontString(font, size);
+      ctx.lineWidth = this.options.lineWidth / scale;
+      ctx.fillStyle = toCss(color);
+      ctx.strokeStyle = toCss(reshade(color, 0.35));
+      ctx.textAlign = 'center';
+      ctx.font = createFontString(font, size, scale);
+      this.setRound(ctx);
+      ctx.strokeText(text, x, y);
       ctx.fillText(text, x, y);
+      ctx.closePath();
     }
   }
 
@@ -150,6 +166,7 @@ export class HDCanvas implements GraphicsContext {
       ctx.fillStyle = toCss(color);
       ctx.strokeStyle = toCss(reshade(color));
       ctx.lineWidth = this.options.lineWidth;
+      this.setRound(ctx);
       ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, 2 * Math.PI);
       if (this.options.doFill) {
         ctx.fill();
@@ -157,6 +174,7 @@ export class HDCanvas implements GraphicsContext {
       if (this.options.doStroke) {
         ctx.stroke();
       }
+      ctx.closePath();
     }
   }
 
@@ -167,6 +185,8 @@ export class HDCanvas implements GraphicsContext {
       ctx.fillStyle = toCss(color);
       ctx.strokeStyle = toCss(reshade(color));
       ctx.lineWidth = this.options.lineWidth;
+      ctx.lineJoin = 'round';
+      this.setRound(ctx);
       ctx.rect(x, y, w, h);
       if (this.options.doFill) {
         ctx.fill();
@@ -174,6 +194,7 @@ export class HDCanvas implements GraphicsContext {
       if (this.options.doStroke) {
         ctx.stroke();
       }
+      ctx.closePath();
     }
   }
 
@@ -194,18 +215,12 @@ export class HDCanvas implements GraphicsContext {
   public resetTransform() {
     const ctx = this.curContext;
     if (ctx) {
-      ctx.setTransform(
-        this.ratio * this.scale,
-        0,
-        0,
-        this.ratio * this.scale,
-        0,
-        0
-      );
+      ctx.setTransform(this.ratio, 0, 0, this.ratio, 0, 0);
     }
   }
 
   public setScale(scale: number): void {
     this.curContext?.scale(scale, scale);
+    this.scale = scale;
   }
 }

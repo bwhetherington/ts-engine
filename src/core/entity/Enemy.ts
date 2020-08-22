@@ -23,6 +23,7 @@ export class Enemy extends Tank {
     });
 
     if (this.label) {
+      this.label.text = 'Tank';
       this.label.tag = 'AI';
     }
   }

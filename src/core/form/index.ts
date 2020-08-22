@@ -8,6 +8,7 @@ export interface Form {
   name: string;
   label: string;
   description?: string;
+  messages?: string[];
   items: FormItem[];
 }
 
@@ -42,6 +43,8 @@ export interface FormSubmitEvent {
   name: string;
   data: Record<string, Entry>;
 }
+
+export interface FormValidatedEvent {}
 
 export interface StringEntry {
   type: 'text';
@@ -96,7 +99,7 @@ export interface FormEntry<T> {
   onSubmit(player: Player, response: T): void;
   onReject?: (player: Player) => void;
   checkType(data: Data): data is T;
-  validate(input: T): FormResult;
+  validate(input: T, player?: Player): FormResult;
 }
 
 export { FM as FormManager, registerJoinForm };

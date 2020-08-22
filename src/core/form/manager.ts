@@ -70,12 +70,17 @@ export class FormManager {
   public async sendForm(
     player: Player,
     formName: string,
+    messages: string[] = [],
     timeout: number = 60
   ): Promise<boolean> {
     const form = this.forms[formName];
     if (form) {
       try {
-        await this.sendFormInternal(player, form, timeout);
+        const formWithMessages = {
+          ...form,
+          messages,
+        };
+        await this.sendFormInternal(player, formWithMessages, timeout);
         return true;
       } catch (ex) {
         if (ex instanceof Error) {
@@ -96,15 +101,33 @@ export class FormManager {
 
   public registerForm<T extends Data>(formEntry: FormEntry<T>): void {
     log.trace(`form ${formEntry.name} registered`);
-    const { name, form, checkType, onSubmit, onReject } = formEntry;
+    const { name, form, checkType, validate, onSubmit, onReject } = formEntry;
     this.forms[name] = form;
     EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
       const { socket, data } = event;
       const player = PlayerManager.getPlayer(socket);
       if (player) {
-        const { name, data: response } = data;
-        if (name === name && checkType(response)) {
-          onSubmit(player, response);
+        const { name: responseName, data: response } = data;
+        if (responseName === name) {
+          if (checkType(response)) {
+            const result = validate(response, player);
+            const { isValid, message = 'Error validating form.' } = result;
+            if (isValid) {
+              onSubmit(player, response);
+              player.send({
+                type: 'FormValidatedEvent',
+                data: {},
+              });
+            } else {
+              // Send the form back to the user
+              this.sendForm(player, formEntry.name, [message]);
+            }
+          } else {
+            // Send the form back to the user
+            this.sendForm(player, formEntry.name, [
+              'Response did not include all required fields.',
+            ]);
+          }
         }
       }
     });

@@ -16,17 +16,31 @@
   @keyframes fade-in {
     from {
       opacity: 0%;
-      transform: translateY(50%);
+      /* transform: translateY(50%); */
     }
 
     to {
       opacity: 100%;
-      transform: translateY(0px);
+      /* transform: translateY(0px); */
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 100%;
+    }
+
+    to {
+      opacity: 0%;
     }
   }
 
   .fade-in {
     animation: fade-in 0.125s ease;
+  }
+
+  .fade-out {
+    animation: fade-out 0.5s ease;
   }
 
   header {
@@ -49,6 +63,7 @@
     pointer-events: auto;
     margin: auto;
     margin-top: var(--ui-margin);
+    width: 400px;
   }
 
   .form-item {
@@ -70,15 +85,28 @@
   .padded {
     padding: 20px;
   }
+
+  .footer {
+    margin-top: 10px;
+  }
+
+  .errors {
+    margin-top: 10px;
+  }
+
+  .error {
+    border: 1px solid;
+    border-color: rgba(255, 128, 128, 0.33);
+    color: rgb(255, 102, 102);
+    padding: 5px 10px 5px 10px;
+    border-radius: 4px;
+  }
 </style>
 <div class="container">
   <div id="alert" class="dialog fade-in">
     <header>
       <div id="header" class="header-content">
         Header
-      </div>
-      <div class="header-close">
-        <button id="close" class="close"></button>
       </div>
     </header>
     <div id="body"></div>

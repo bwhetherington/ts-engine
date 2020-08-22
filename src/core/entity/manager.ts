@@ -31,6 +31,7 @@ import { Graph } from './pathfinding';
 import { CollisionLayer } from './util';
 import { BombProjectile } from './BombProjectile';
 import { Heavy } from './Heavy';
+import { Bar } from './Bar';
 
 const log = LogManager.forFile(__filename);
 
@@ -65,6 +66,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Tank);
     this.registerEntity(Enemy);
     this.registerEntity(Heavy);
+    this.registerEntity(Bar);
   }
 
   public initialize(): void {

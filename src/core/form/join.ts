@@ -33,7 +33,8 @@ export const JOIN_FORM: Form = {
       type: 'text',
       name: 'name',
       label: 'Display Name',
-      maxLength: 10,
+      minLength: 3,
+      maxLength: 15,
     },
   ],
 };
@@ -75,8 +76,32 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
     return isJoinForm(x);
   },
   validate(input: JoinForm): FormResult {
-    return {
-      isValid: true,
-    };
+    const { name } = input;
+
+    if (name.value.length < 3) {
+      return {
+        isValid: false,
+        message: 'Name must contain at least 3 characters.',
+      };
+    }
+    if (name.value.length > 15) {
+      return {
+        isValid: false,
+        message: 'Name must contain no more than 15 characters.',
+      };
+    }
+
+    // Check if player already has this name
+    const nameExists = PlayerManager.getPlayers().any(
+      (player) => player.name === name.value
+    );
+    if (nameExists) {
+      return {
+        isValid: false,
+        message: `The name '${name.value}' is already in use.`,
+      };
+    }
+
+    return { isValid: true };
   },
 };

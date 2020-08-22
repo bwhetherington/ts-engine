@@ -103,4 +103,13 @@ export class PlayerManager implements Serializable {
       .filter((player) => player.name === name)
       .toArray();
   }
+
+  public findPlayer(name: string): Player | undefined {
+    const players = this.lookup(name);
+    if (players.length === 1) {
+      return players[0];
+    } else {
+      return undefined;
+    }
+  }
 }

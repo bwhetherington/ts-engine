@@ -18,9 +18,10 @@ import { Data } from 'core/serialize';
 import { Player, PlayerManager } from 'core/player';
 import { LogManager } from 'core/log';
 import { NetworkManager, SyncEvent } from 'core/net';
-import { CameraManager, rgb } from 'core/graphics';
+import { CameraManager, rgb, GraphicsContext } from 'core/graphics';
 import { BarUpdateEvent, sleep } from 'core/util';
 import { Pistol } from 'core/weapon';
+import { WHITE, BLACK } from 'core/graphics/color';
 
 const log = LogManager.forFile(__filename);
 
@@ -83,14 +84,14 @@ export class Hero extends Tank {
         ) {
           const label = '' + amount;
           const text = WorldManager.spawn(Text, target.position);
-          text.setColor(rgb(192, 128, 128));
+          const color = this === target ? rgb(1, 0.4, 0.4) : rgb(1, 1, 0.2);
+          text.setColor(color);
           text.isStatic = false;
           text.position.addXY(
             (Math.random() - 0.5) * 20,
             (Math.random() - 0.5) * 20
           );
           text.text = label;
-          text.tag = 'dmg';
           text.velocity.setXY(25 + Math.random() * 25, 0);
           text.velocity.angle = Math.random() * 2 * Math.PI;
           await sleep(1);
@@ -212,23 +213,18 @@ export class Hero extends Tank {
     super.step(dt);
 
     const player = this.getPlayer();
-
-    if (player?.isActivePlayer()) {
-      CameraManager.setTargetXY(
-        this.boundingBox.centerX,
-        this.boundingBox.centerY
-      );
-
-      let label = this.label;
-      if (!label) {
-        label = WorldManager.spawn(Text);
-        this.label = label;
+    if (player) {
+      if (player.isActivePlayer()) {
+        CameraManager.setTargetXY(
+          this.boundingBox.centerX,
+          this.boundingBox.centerY
+        );
       }
 
-      label.text = player.name;
-      label.tag = '' + this.level;
-    } else {
-      this.label?.markForDelete();
+      if (this.label) {
+        this.label.text = player.name;
+        this.label.tag = 'Level ' + this.level;
+      }
     }
 
     if (this.mouseDown && NetworkManager.isServer()) {
@@ -293,5 +289,9 @@ export class Hero extends Tank {
     const player = this.getPlayer();
     const isLocal = socket === undefined && player?.isActivePlayer();
     return isLocal || socket === player?.socket;
+  }
+
+  public render(ctx: GraphicsContext): void {
+    super.render(ctx);
   }
 }

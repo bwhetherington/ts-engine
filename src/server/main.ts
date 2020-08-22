@@ -15,6 +15,7 @@ import { WeaponManager } from 'core/weapon';
 import { readFile as readFileNonPromise } from 'fs';
 import { promisify } from 'util';
 import process from 'process';
+import { registerRenameForm } from 'core/form/rename';
 
 const readFile = promisify(readFileNonPromise);
 
@@ -65,6 +66,7 @@ async function main(): Promise<void> {
   PlayerManager.initialize();
   FormManager.initialize();
   registerJoinForm();
+  registerRenameForm();
 
   MetricsManager.initialize();
   WeaponManager.initialize();

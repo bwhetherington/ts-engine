@@ -2,7 +2,7 @@ import { Color } from 'core/graphics/color';
 
 export interface TextStyle {
   font?: string;
-  size?: string;
+  size?: number;
   color?: Color;
 }
 

@@ -1,4 +1,4 @@
-import { Unit, Text, WorldManager, Explosion } from 'core/entity';
+import { Unit, Text, Bar, WorldManager, Explosion } from 'core/entity';
 import { GraphicsContext } from 'core/graphics';
 import { WHITE, Color, reshade, rgb } from 'core/graphics/color';
 import { Data } from 'core/serialize';
@@ -19,6 +19,7 @@ export class Tank extends Unit {
   public angle: number = 0;
 
   protected label?: Text;
+  protected hpBar?: Bar;
   protected cannonShape: Rectangle = new Rectangle(25, 15);
 
   private fireTimer: number = 0;
@@ -44,6 +45,11 @@ export class Tank extends Unit {
         this.fireTimer = FIRE_DURATION;
       }
     });
+
+    if (NetworkManager.isClient()) {
+      this.label = WorldManager.spawn(Text, this.position);
+      this.hpBar = WorldManager.spawn(Bar, this.position);
+    }
   }
 
   public setColor(color: Color): void {
@@ -66,6 +72,11 @@ export class Tank extends Unit {
     if (NetworkManager.isClient()) {
       this.label?.setPosition(this.position);
       this.label?.position?.addXY(0, -(this.boundingBox.height + 25));
+      this.hpBar?.setPosition(this.position);
+      this.hpBar?.position?.addXY(0, this.boundingBox.height + 10);
+      if (this.hpBar) {
+        this.hpBar.progress = this.getLife() / this.getMaxLife();
+      }
     }
   }
 
@@ -80,7 +91,7 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderCannon(ctx: GraphicsContext): void { }
+  protected renderCannon(ctx: GraphicsContext): void {}
 
   public render(ctx: GraphicsContext): void {
     const color =
@@ -105,7 +116,7 @@ export class Tank extends Unit {
       -(this.cannonShape.height * verticalScale) / 2,
       this.cannonShape.width * horizontalScale,
       this.cannonShape.height * verticalScale,
-      this.getColor(),
+      this.getColor()
     );
 
     // Reset transformations
@@ -157,10 +168,12 @@ export class Tank extends Unit {
 
   public cleanupLocal(): void {
     this.label?.markForDelete();
+    this.hpBar?.markForDelete();
   }
 
   public cleanup(): void {
     this.label?.markForDelete();
+    this.hpBar?.markForDelete();
     this.weapon?.cleanup();
     super.cleanup();
   }

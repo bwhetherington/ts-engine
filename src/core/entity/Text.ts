@@ -2,6 +2,9 @@ import { Entity } from './Entity';
 import { EventManager } from 'core/event';
 import { TextUpdateEvent, TextRemoveEvent } from 'core/text';
 import { Data } from 'core/serialize';
+import { GraphicsContext } from 'core/graphics';
+import { WHITE, BLACK, rgb } from 'core/graphics/color';
+import { CollisionLayer } from './util';
 
 export class Text extends Entity {
   public static typeName: string = 'Text';
@@ -14,33 +17,34 @@ export class Text extends Entity {
     super();
     this.type = Text.typeName;
     this.isCollidable = false;
-    this.isVisible = false;
+    this.isVisible = true;
+    this.collisionLayer = CollisionLayer.Effect;
   }
 
   public step(dt: number): void {
     super.step(dt);
 
-    EventManager.emit<TextUpdateEvent>({
-      type: 'TextUpdateEvent',
-      data: {
-        id: this.id,
-        isStatic: this.isStatic,
-        text: this.text,
-        tag: this.tag,
-        color: this.getColor(),
-        x: this.position.x,
-        y: this.position.y,
-      },
-    });
+    // EventManager.emit<TextUpdateEvent>({
+    //   type: 'TextUpdateEvent',
+    //   data: {
+    //     id: this.id,
+    //     isStatic: this.isStatic,
+    //     text: this.text,
+    //     tag: this.tag,
+    //     color: this.getColor(),
+    //     x: this.position.x,
+    //     y: this.position.y,
+    //   },
+    // });
   }
 
   public cleanup(): void {
-    EventManager.emit<TextRemoveEvent>({
-      type: 'TextRemoveEvent',
-      data: {
-        id: this.id,
-      },
-    });
+    // EventManager.emit<TextRemoveEvent>({
+    //   type: 'TextRemoveEvent',
+    //   data: {
+    //     id: this.id,
+    //   },
+    // });
 
     super.cleanup();
   }
@@ -62,6 +66,27 @@ export class Text extends Entity {
     }
     if (typeof tag === 'string') {
       this.tag = tag;
+    }
+  }
+
+  public render(ctx: GraphicsContext): void {
+    ctx.pushOptions({
+      lineWidth: 6,
+    });
+    ctx.text(this.position.x, this.position.y, this.text, {
+      size: 26,
+      color: this.getColor(),
+    });
+    ctx.popOptions();
+    if (this.tag) {
+      ctx.pushOptions({
+        lineWidth: 6,
+      });
+      ctx.text(this.position.x, this.position.y + 20, this.tag, {
+        size: 18,
+        color: WHITE,
+      });
+      ctx.popOptions();
     }
   }
 }

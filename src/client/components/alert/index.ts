@@ -6,6 +6,7 @@ import {
   FormSubmitEvent,
   Entry,
   FormShowEvent,
+  FormValidatedEvent,
 } from 'core/form';
 import { EventManager } from 'core/event';
 import { removeChildren } from 'client/components';
@@ -14,7 +15,6 @@ export class AlertComponent extends Component {
   public static componentName: string = 'alert-component';
 
   private container?: HTMLElement;
-  private element?: HTMLElement;
   private header?: HTMLElement;
   private body?: HTMLElement;
 
@@ -25,7 +25,6 @@ export class AlertComponent extends Component {
 
     this.container = this.queryChild('.container');
     this.header = this.queryChild('#header');
-    this.element = this.queryChild('#alert');
     this.body = this.queryChild('#body');
 
     this.queryChild('#close')?.addEventListener('click', () => {
@@ -35,6 +34,11 @@ export class AlertComponent extends Component {
     EventManager.addListener<FormShowEvent>('FormShowEvent', (event) => {
       this.showForm(event.data.form);
       this.show();
+    });
+
+    EventManager.addListener<FormValidatedEvent>('FormValidatedEvent', () => {
+      this.clearDialog();
+      this.hide();
     });
   }
 
@@ -79,10 +83,8 @@ export class AlertComponent extends Component {
           data: this.data,
         },
       };
-      EventManager.emit(submitEvent);
 
-      this.clearDialog();
-      this.hide();
+      EventManager.emit(submitEvent);
     });
 
     if (data.description) {
@@ -96,8 +98,25 @@ export class AlertComponent extends Component {
       form.appendChild(element);
     }
 
+    // Render messages
+    const { messages = [] } = data;
+    if (messages.length > 0) {
+      // Create element
+      const messagesContainer = document.createElement('div');
+      messagesContainer.className = 'col errors';
+
+      for (const message of messages) {
+        const messageElement = document.createElement('div');
+        messageElement.innerText = message;
+        messageElement.className = 'error';
+        messagesContainer.appendChild(messageElement);
+      }
+
+      form.appendChild(messagesContainer);
+    }
+
     const submitRow = document.createElement('div');
-    submitRow.className = 'button-row';
+    submitRow.className = 'button-row footer';
 
     const submit = document.createElement('input');
     submit.type = 'submit';
