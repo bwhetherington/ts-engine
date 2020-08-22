@@ -78,15 +78,5 @@ export class Text extends Entity {
       color: this.getColor(),
     });
     ctx.popOptions();
-    if (this.tag) {
-      ctx.pushOptions({
-        lineWidth: 6,
-      });
-      ctx.text(this.position.x, this.position.y + 20, this.tag, {
-        size: 18,
-        color: WHITE,
-      });
-      ctx.popOptions();
-    }
   }
 }

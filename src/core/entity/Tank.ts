@@ -71,9 +71,9 @@ export class Tank extends Unit {
 
     if (NetworkManager.isClient()) {
       this.label?.setPosition(this.position);
-      this.label?.position?.addXY(0, -(this.boundingBox.height + 25));
+      this.label?.position?.addXY(0, -(this.boundingBox.height + 10));
       this.hpBar?.setPosition(this.position);
-      this.hpBar?.position?.addXY(0, this.boundingBox.height + 10);
+      this.hpBar?.position?.addXY(0, this.boundingBox.height + 12);
       if (this.hpBar) {
         this.hpBar.progress = this.getLife() / this.getMaxLife();
       }
@@ -91,7 +91,7 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderCannon(ctx: GraphicsContext): void {}
+  protected renderCannon(ctx: GraphicsContext): void { }
 
   public render(ctx: GraphicsContext): void {
     const color =

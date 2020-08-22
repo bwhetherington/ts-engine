@@ -26,7 +26,7 @@ import { Iterator, iterateObject, iterator } from 'core/iterator';
 import { diff } from 'core/util';
 import { SyncEvent, NetworkManager } from 'core/net';
 import { WALL_COLOR } from './Geometry';
-import { WHITE } from 'core/graphics/color';
+import { WHITE, BLACK } from 'core/graphics/color';
 import { Graph } from './pathfinding';
 import { CollisionLayer } from './util';
 import { BombProjectile } from './BombProjectile';
@@ -105,6 +105,20 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       WHITE
     );
     ctx.popOptions();
+
+    ctx.withOptions({
+      lineWidth: 2,
+      doFill: false,
+      doStroke: true,
+    }, (ctx) => {
+      const stepSize = 20;
+      for (let x = this.boundingBox.x + stepSize; x < this.boundingBox.farX; x += stepSize) {
+        ctx.line(x, this.boundingBox.y, x, this.boundingBox.farX, WALL_COLOR);
+      }
+      for (let y = this.boundingBox.y + stepSize; y < this.boundingBox.farY; y += stepSize) {
+        ctx.line(this.boundingBox.x, y, this.boundingBox.farX, y, WALL_COLOR);
+      }
+    });
 
     // this.space.render(ctx);
 

@@ -7,8 +7,8 @@ export class Bomb extends Weapon {
   public constructor() {
     super();
     this.type = Bomb.typeName;
-    this.rate = 0.15;
-    this.damage = 5;
+    this.rate = 0.5;
+    this.damage = 2;
   }
 
   public fire(source: Tank, angle: number): void {

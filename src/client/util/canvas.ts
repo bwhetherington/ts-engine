@@ -79,6 +79,7 @@ export class HDCanvas implements GraphicsContext {
     if (options.doFill !== undefined) {
       this.options.doFill = options.doFill;
     }
+    this.options.ignoreScale = !!options.ignoreScale;
   }
 
   public pushOptions(options: Partial<GraphicsOptions>): void {
@@ -144,7 +145,7 @@ export class HDCanvas implements GraphicsContext {
   public text(x: number, y: number, text: string, style: TextStyle) {
     const ctx = this.curContext;
     if (ctx) {
-      const scale = this.ratio * this.scale;
+      const scale = this.scale;
       const { font = 'Roboto Mono', size = 12, color = WHITE } = style;
       ctx.beginPath();
       ctx.lineWidth = this.options.lineWidth / scale;
@@ -178,15 +179,30 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
-  public rect(x: number, y: number, w: number, h: number, color: Color) {
+  public rect(x: number, y: number, w: number, h: number, color: Color, fullW?: number) {
     const ctx = this.curContext;
     if (ctx) {
       ctx.beginPath();
       ctx.fillStyle = toCss(color);
       ctx.strokeStyle = toCss(reshade(color));
+
       ctx.lineWidth = this.options.lineWidth;
-      ctx.lineJoin = 'round';
+
+
       this.setRound(ctx);
+
+      const fullWidth = fullW ?? w;
+
+      if (this.options.ignoreScale) {
+        ctx.lineWidth /= (this.scale);
+        const newWidth = fullWidth / (this.scale);
+        const newHeight = h / (this.scale);
+        x += (fullWidth - newWidth) / 2;
+        y += (h - newHeight) / 2;
+        w /= (this.scale);
+        h /= this.scale;
+      }
+
       ctx.rect(x, y, w, h);
       if (this.options.doFill) {
         ctx.fill();
@@ -222,5 +238,24 @@ export class HDCanvas implements GraphicsContext {
   public setScale(scale: number): void {
     this.curContext?.scale(scale, scale);
     this.scale = scale;
+  }
+
+  public line(x1: number, y1: number, x2: number, y2: number, color: Color): void {
+    const ctx = this.curContext;
+    if (ctx) {
+      ctx.strokeStyle = toCss(color);
+      ctx.lineWidth = this.options.lineWidth;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+
+  public withOptions(options: Partial<GraphicsOptions>, proc: (ctx: GraphicsContext) => void): void {
+    this.pushOptions(options);
+    proc(this);
+    this.popOptions();
   }
 }

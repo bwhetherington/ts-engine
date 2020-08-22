@@ -2,7 +2,7 @@ import { Projectile, Unit, WorldManager, Explosion } from 'core/entity';
 import { Rectangle, Vector } from 'core/geometry';
 import { rgba } from 'core/graphics';
 
-const RADIUS = 100;
+const RADIUS = 300;
 
 export class BombProjectile extends Projectile {
   public static typeName = 'BombProjectile';

@@ -4,7 +4,7 @@ import { LogManager } from 'core/log';
 
 const log = LogManager.forFile(__filename);
 
-const TARGET_HEIGHT = 1000;
+const TARGET_HEIGHT = 700;
 
 export class CameraManager implements Bounded {
   public boundingBox: Rectangle;
