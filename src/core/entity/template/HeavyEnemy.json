@@ -1,0 +1,18 @@
+{
+  "type": "HeavyEnemy",
+  "extends": "Enemy",
+  "mass": 5,
+  "maxLife": 20,
+  "life": 20,
+  "armor": 1,
+  "speed": 200,
+  "boundingBox": {
+    "width": 40,
+    "height": 40
+  },
+  "cannonShape": {
+    "width": 35,
+    "height": 20
+  },
+  "weapon": "HeavyGun"
+}

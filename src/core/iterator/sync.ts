@@ -97,6 +97,12 @@ function* iterateArray<T>(array: T[]): Generator<T> {
   }
 }
 
+function* iterateSet<T>(set: Set<T>): Generator<T> {
+  for (const x of set) {
+    yield x;
+  }
+}
+
 export function iterateObject<T>(obj: IterableObject<T>): Iterator<T> {
   return iterator(iterateObjectInternal(obj));
 }
@@ -105,7 +111,7 @@ export function iterator<T>(gen: Iterable<T>): Iterator<T> {
   return new Iterator(gen);
 }
 
-type Iterable<T> = T[] | Generator<T>;
+type Iterable<T> = T[] | Set<T> | Generator<T>;
 
 export class Iterator<T> implements Generator<T> {
   private generator: Generator<T>;
@@ -113,6 +119,8 @@ export class Iterator<T> implements Generator<T> {
   constructor(generator: Iterable<T>) {
     if (generator instanceof Array) {
       this.generator = iterateArray(generator);
+    } else if (generator instanceof Set) {
+      this.generator = iterateSet(generator);
     } else {
       this.generator = generator;
     }

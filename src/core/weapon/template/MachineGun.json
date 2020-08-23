@@ -1,0 +1,9 @@
+{
+  "type": "MachineGun",
+  "extends": "Gun",
+  "projectileType": "Projectile",
+  "projectileSpread": 0.3,
+  "projectileSpeed": 450,
+  "damage": 2,
+  "rate": 0.15
+}

@@ -2,16 +2,15 @@ import { Bounded, Rectangle, Vector } from 'core/geometry';
 import {
   GraphicsContext,
   Color,
-  invert,
-  CameraManager,
   Renderable,
 } from 'core/graphics';
 import { WHITE, isColor } from 'core/graphics/color';
-import { CollisionLayer, WorldManager, CollisionEvent } from 'core/entity';
+import { CollisionLayer, WorldManager, CollisionEvent, Bar, Text } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
 import { EventData, Handler, EventManager, Event } from 'core/event';
 import { UUID, UUIDManager } from 'core/uuid';
+import { NetworkManager } from 'core/net';
 
 export class Entity implements Bounded, Serializable, Renderable {
   public static typeName: string = 'Entity';
@@ -21,7 +20,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   public velocity: Vector = new Vector(0, 0);
   public vectorBuffer: Vector = new Vector(0, 0);
   public id: UUID;
-  private color: Color = WHITE;
+  public color: Color = WHITE;
   public collisionLayer: CollisionLayer = CollisionLayer.Unit;
   public highlight: boolean = false;
   public type: string;
@@ -69,7 +68,7 @@ export class Entity implements Bounded, Serializable, Renderable {
 
   public render(ctx: GraphicsContext): void {
     const { x, y, width, height } = this.boundingBox;
-    ctx.rect(x, y, width, height, this.color);
+    ctx.rect(x, y, width, height, this.getColor());
   }
 
   private updateBoundingBox(): void {
@@ -108,30 +107,24 @@ export class Entity implements Bounded, Serializable, Renderable {
           };
           EventManager.emit(event);
         });
+    }
 
-      // Apply friction
-      const normal = this.friction;
-      if (normal > 0) {
-        const oldAngle = this.velocity.angle;
-        this.vectorBuffer.set(this.velocity);
-        this.vectorBuffer.normalize();
-        const scale = -dt * normal;
-        this.velocity.add(this.vectorBuffer, scale);
-        const newAngle = this.velocity.angle;
-        if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
-          this.velocity.setXY(0, 0);
-        }
+    // Apply friction
+    const normal = this.friction;
+    if (normal > 0) {
+      const oldAngle = this.velocity.angle;
+      this.vectorBuffer.set(this.velocity);
+      this.vectorBuffer.normalize();
+      const scale = -dt * normal;
+      this.velocity.add(this.vectorBuffer, scale);
+      const newAngle = this.velocity.angle;
+      if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
+        this.velocity.setXY(0, 0);
       }
     }
   }
 
   public step(dt: number): void {
-    // if (
-    //   NetworkManager.isClient() &&
-    //   !CameraManager.boundingBox.intersects(this.boundingBox)
-    // ) {
-    //   return;
-    // }
     this.updatePosition(dt);
   }
 

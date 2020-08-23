@@ -9,14 +9,10 @@ import { Node, Message, Socket } from 'core/net';
 import { LogManager } from 'core/log';
 import { EventManager, Event } from 'core/event';
 import { TimerManager } from 'server/util';
-import { WorldManager, Hero, Entity } from 'core/entity';
+import { WorldManager } from 'core/entity';
 import { PlayerManager, Player } from 'core/player';
 import { InitialSyncEvent } from 'core/net/util';
-import { Pistol } from 'core/weapon';
 import process from 'process';
-import { randomColor } from 'core/graphics/color';
-import { Data } from 'core/serialize';
-import { sleep } from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -99,7 +95,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => {});
+    this.wsServer.on('close', (connection) => { });
   }
 
   private sendRaw(data: string, socket: Socket) {

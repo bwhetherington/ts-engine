@@ -18,20 +18,26 @@ import {
   CollisionEvent,
   Tank,
   Enemy,
+  CollisionLayer,
+  Heavy,
+  Bar,
 } from 'core/entity';
+import {
+  BigProjectile,
+  Feed,
+  HeavyEnemy,
+  Template,
+  SniperHero,
+} from 'core/entity/template';
 import { LogManager } from 'core/log';
 import { EventManager, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
 import { Iterator, iterateObject, iterator } from 'core/iterator';
 import { diff } from 'core/util';
-import { SyncEvent, NetworkManager } from 'core/net';
-import { WALL_COLOR } from './Geometry';
-import { WHITE, BLACK } from 'core/graphics/color';
-import { Graph } from './pathfinding';
-import { CollisionLayer } from './util';
-import { BombProjectile } from './BombProjectile';
-import { Heavy } from './Heavy';
-import { Bar } from './Bar';
+import { SyncEvent } from 'core/net';
+import { WALL_COLOR } from 'core/entity/Geometry';
+import { WHITE, reshade } from 'core/graphics/color';
+import { Graph } from 'core/entity/pathfinding';
 
 const log = LogManager.forFile(__filename);
 
@@ -40,7 +46,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   private entities: Record<string, Entity> = {};
   public boundingBox: Rectangle;
   private collisionLayers: Entity[][] = [[], []];
-  private entityConstructors: Record<string, new () => Entity> = {};
+  private entityConstructors: Record<string, () => Entity> = {};
   public previousState: Record<string, Data> = {};
   private toDelete: string[] = [];
   private entityCount: number = 0;
@@ -54,19 +60,36 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.boundingBox = boundingBox;
   }
 
+  public registerTemplateEntity(template: Template): void {
+    const { type, extends: base } = template;
+    const baseConstructor = this.entityConstructors[base];
+    const gen = () => {
+      const entity = baseConstructor();
+      entity.deserialize(template);
+      return entity;
+    };
+    this.entityConstructors[type] = gen;
+  }
+
   private registerEntities(): void {
+    // Class entities
     this.registerEntity(Entity);
     this.registerEntity(Unit);
     this.registerEntity(Hero);
     this.registerEntity(Geometry);
     this.registerEntity(Explosion);
     this.registerEntity(Projectile);
-    this.registerEntity(BombProjectile);
     this.registerEntity(Text);
     this.registerEntity(Tank);
     this.registerEntity(Enemy);
     this.registerEntity(Heavy);
     this.registerEntity(Bar);
+
+    // Template entities
+    this.registerTemplateEntity(Feed);
+    this.registerTemplateEntity(BigProjectile);
+    this.registerTemplateEntity(HeavyEnemy);
+    this.registerTemplateEntity(SniperHero);
   }
 
   public initialize(): void {
@@ -85,6 +108,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
   public render(ctx: GraphicsContext): void {
     ctx.clear(WALL_COLOR);
+    const GRID_COLOR = reshade(WALL_COLOR, -0.05);
     ctx.begin();
     ctx.resetTransform();
 
@@ -113,10 +137,10 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     }, (ctx) => {
       const stepSize = 20;
       for (let x = this.boundingBox.x + stepSize; x < this.boundingBox.farX; x += stepSize) {
-        ctx.line(x, this.boundingBox.y, x, this.boundingBox.farX, WALL_COLOR);
+        ctx.line(x, this.boundingBox.y, x, this.boundingBox.farX, GRID_COLOR);
       }
       for (let y = this.boundingBox.y + stepSize; y < this.boundingBox.farY; y += stepSize) {
-        ctx.line(this.boundingBox.x, y, this.boundingBox.farX, y, WALL_COLOR);
+        ctx.line(this.boundingBox.x, y, this.boundingBox.farX, y, GRID_COLOR);
       }
     });
 
@@ -256,7 +280,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
     // Reinsert each entity into the quad tree
     this.space.clear();
-    this.collisionLayers = [[], [], [], []];
+    this.collisionLayers = [[], [], [], [], []];
 
     for (const entity of this.getEntities()) {
       if (entity.isCollidable) {
@@ -279,7 +303,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     if (name in this.entityConstructors) {
       log.error(`type ${name} is already registered`);
     } else {
-      this.entityConstructors[name] = Type;
+      this.entityConstructors[name] = () => new Type();
       log.trace(`entity ${name} registered`);
     }
   }
@@ -296,10 +320,20 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     return entity;
   }
 
+  public spawnEntity(type: string, position?: Vector): Entity {
+    const gen = this.entityConstructors[type];
+    const entity = gen();
+    if (position) {
+      entity.position.set(position);
+    }
+    this.add(entity);
+    return entity;
+  }
+
   public createEntity(type: string): Entity | undefined {
     const Type = this.entityConstructors[type];
     if (Type) {
-      return new Type();
+      return Type();
     } else {
       return undefined;
     }

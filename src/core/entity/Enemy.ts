@@ -14,6 +14,8 @@ export class Enemy extends Tank {
   public constructor() {
     super();
     this.type = Enemy.typeName;
+
+    this.setWeapon('Gun');
     this.selectTarget();
 
     this.addListener<KillEvent>('KillEvent', (event) => {

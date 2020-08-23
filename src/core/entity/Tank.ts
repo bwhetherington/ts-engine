@@ -10,7 +10,6 @@ import { Rectangle, Vector } from 'core/geometry';
 const log = LogManager.forFile(__filename);
 
 const FIRE_DURATION = 0.25;
-const FLASH_DURATION = 0.2;
 
 export class Tank extends Unit {
   public static typeName: string = 'Tank';
@@ -18,13 +17,9 @@ export class Tank extends Unit {
   public armor: number = 0;
   public angle: number = 0;
 
-  protected label?: Text;
-  protected hpBar?: Bar;
   protected cannonShape: Rectangle = new Rectangle(25, 15);
 
   private fireTimer: number = 0;
-  private flashTimer: number = 0;
-  private flashColor?: Color;
   private hasExploded: boolean = false;
   private weapon?: Weapon;
 
@@ -48,36 +43,12 @@ export class Tank extends Unit {
 
     if (NetworkManager.isClient()) {
       this.label = WorldManager.spawn(Text, this.position);
-      this.hpBar = WorldManager.spawn(Bar, this.position);
     }
-  }
-
-  public setColor(color: Color): void {
-    super.setColor(color);
-
-    const newColor = this.getColor();
-    const flashColor = reshade(newColor, -0.4);
-    this.flashColor = flashColor;
-  }
-
-  public flash(): void {
-    this.flashTimer = FLASH_DURATION;
   }
 
   public step(dt: number) {
     super.step(dt);
     this.fireTimer = Math.max(0, this.fireTimer - dt);
-    this.flashTimer = Math.max(0, this.flashTimer - dt);
-
-    if (NetworkManager.isClient()) {
-      this.label?.setPosition(this.position);
-      this.label?.position?.addXY(0, -(this.boundingBox.height + 10));
-      this.hpBar?.setPosition(this.position);
-      this.hpBar?.position?.addXY(0, this.boundingBox.height + 12);
-      if (this.hpBar) {
-        this.hpBar.progress = this.getLife() / this.getMaxLife();
-      }
-    }
   }
 
   public damage(amount: number, source?: Unit): void {
@@ -85,21 +56,13 @@ export class Tank extends Unit {
     if (amount > 0) {
       const actualAmount = Math.max(1, amount - this.armor);
       super.damage(actualAmount, source);
-      if (actualAmount > 0) {
-        this.flash();
-      }
     }
   }
 
   protected renderCannon(ctx: GraphicsContext): void { }
 
   public render(ctx: GraphicsContext): void {
-    const color =
-      this.flashTimer > 0
-        ? this.flashColor ?? this.getColor()
-        : this.getColor();
-    const oldColor = this.getColor();
-    this.setColor(color);
+    const color = this.getColor();
 
     const { x, y, width, height, centerX, centerY } = this.boundingBox;
 
@@ -116,7 +79,7 @@ export class Tank extends Unit {
       -(this.cannonShape.height * verticalScale) / 2,
       this.cannonShape.width * horizontalScale,
       this.cannonShape.height * verticalScale,
-      this.getColor()
+      color
     );
 
     // Reset transformations
@@ -125,9 +88,7 @@ export class Tank extends Unit {
     ctx.translate(-centerX, -centerY);
 
     // Draw body
-    ctx.ellipse(x, y, width, height, this.getColor());
-
-    this.setColor(oldColor);
+    ctx.ellipse(x, y, width, height, color);
   }
 
   public serialize(): Data {
@@ -150,7 +111,12 @@ export class Tank extends Unit {
     }
     if (weapon) {
       const { type } = weapon;
-      if (type && this.weapon?.type !== type) {
+      if (typeof weapon === 'string') {
+        if (this.weapon?.type !== weapon) {
+          const newWeapon = WeaponManager.createWeapon(weapon);
+          this.setWeapon(newWeapon);
+        }
+      } else if (type && this.weapon?.type !== type) {
         const newWeapon = WeaponManager.createWeapon(type);
         if (newWeapon) {
           newWeapon.deserialize(weapon);
@@ -166,14 +132,7 @@ export class Tank extends Unit {
     super.markForDelete();
   }
 
-  public cleanupLocal(): void {
-    this.label?.markForDelete();
-    this.hpBar?.markForDelete();
-  }
-
   public cleanup(): void {
-    this.label?.markForDelete();
-    this.hpBar?.markForDelete();
     this.weapon?.cleanup();
     super.cleanup();
   }
@@ -209,12 +168,18 @@ export class Tank extends Unit {
     this.weapon?.fireInternal(this, angle);
   }
 
-  public setWeapon(weapon?: Weapon): void {
-    if (this.weapon && this.weapon !== weapon) {
-      this.weapon.cleanup();
-      this.weapon = weapon;
+  public setWeapon(weapon?: Weapon | string): void {
+    let actualWeapon: Weapon | undefined;
+    if (typeof weapon === 'string') {
+      actualWeapon = WeaponManager.createWeapon(weapon);
     } else if (weapon) {
-      this.weapon = weapon;
+      actualWeapon = weapon;
+    }
+    if (this.weapon && this.weapon !== actualWeapon) {
+      this.weapon.cleanup();
+      this.weapon = actualWeapon;
+    } else if (actualWeapon) {
+      this.weapon = actualWeapon;
     }
   }
 }

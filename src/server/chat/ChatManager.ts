@@ -1,5 +1,5 @@
 import { EventManager, Event } from 'core/event';
-import { Socket, NetworkManager } from 'core/net';
+import { NetworkManager } from 'core/net';
 import {
   TextMessageInEvent,
   SetNameEvent,
@@ -12,11 +12,11 @@ import {
 } from 'core/chat';
 import { LogManager } from 'core/log';
 import { PlayerManager, Player } from 'core/player';
-import { WorldManager, Tank, Enemy, Unit } from 'core/entity';
+import { WorldManager, Enemy, Unit } from 'core/entity';
 import { TimerManager } from 'server/util';
-import { Pistol } from 'core/weapon';
 import { randomColor } from 'core/graphics/color';
 import { FormManager } from 'core/form';
+import * as process from 'process';
 
 const log = LogManager.forFile(__filename);
 
@@ -188,7 +188,9 @@ export class ChatManager {
         }
 
         for (let i = 0; i < count; i++) {
-          const entity = WorldManager.spawn(Enemy);
+          const isHeavy = Math.random() < 0.2;
+          const type = isHeavy ? 'HeavyEnemy' : 'Enemy';
+          const entity = WorldManager.spawnEntity(type) as Enemy;
 
           const color = randomColor(0.35, 0.75);
           entity.setColor(color);
@@ -206,15 +208,44 @@ export class ChatManager {
           entity.position.setXY(x, y);
           // entity.velocity.setXY(dx, dy);
 
-          const weapon = new Pistol();
-          weapon.rate = 0.85;
-          weapon.damage = 1;
-          entity.setWeapon(weapon);
+          // const weapon = new Pistol();
+          // weapon.rate = 0.85;
+          // weapon.damage = 1;
+          // entity.setWeapon(weapon);
         }
 
         this.info(`Spawning ${count} entities`);
       },
       'Spawns a number of AI units'
+    );
+
+    this.registerCommand(
+      'feed',
+      (player, countString) => {
+        if (countString === undefined) {
+          this.error('No entity count specified', player);
+          return;
+        }
+        const count = parseInt(countString);
+        if (Number.isNaN(count)) {
+          this.error(`Could not parse '${countString}' as integer`, player);
+          return;
+        }
+
+        for (let i = 0; i < count; i++) {
+          const entity = WorldManager.spawnEntity('Feed');
+          const x =
+            Math.random() * WorldManager.boundingBox.width +
+            WorldManager.boundingBox.x;
+          const y =
+            Math.random() * WorldManager.boundingBox.height +
+            WorldManager.boundingBox.y;
+          entity.position.setXY(x, y);
+        }
+
+        this.info(`Spawning ${count} entities`);
+      },
+      'Spawns a number of feed units'
     );
 
     this.registerCommand(
@@ -241,6 +272,15 @@ export class ChatManager {
         this.info('Removed all units');
       },
       'Kills all units'
+    );
+
+    this.registerCommand(
+      'stop',
+      (player) => {
+        this.info('Stopping the server');
+        process.exit(0);
+      },
+      'Stops the server'
     );
 
     this.registerCommand(

@@ -1,4 +1,4 @@
-import { Entity, DamageEvent, KillEvent } from 'core/entity';
+import { Entity, DamageEvent, KillEvent, Bar, Text, WorldManager } from 'core/entity';
 import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';
@@ -6,8 +6,10 @@ import { clamp } from 'core/util';
 import { Weapon, WeaponManager } from 'core/weapon';
 import { EventManager } from 'core/event';
 import { NetworkManager } from 'core/net';
+import { Color, reshade, GraphicsContext } from 'core/graphics';
 
 const ACCELERATION = 2000;
+const FLASH_DURATION = 0.1;
 
 export class Unit extends Entity {
   public static typeName: string = 'Unit';
@@ -16,6 +18,13 @@ export class Unit extends Entity {
   private life: number = 10;
   protected lifeRegen: number = 0;
   protected speed: number = 250;
+  private xpWorth: number = 1;
+
+  protected label?: Text;
+  protected hpBar?: Bar;
+
+  private flashTimer: number = 0;
+  private flashColor?: Color;
   private isAliveInternal: boolean = true;
   private movement = {
     [MovementDirection.Up]: false,
@@ -28,9 +37,15 @@ export class Unit extends Entity {
   public constructor() {
     super();
     this.type = Unit.typeName;
+
+    if (NetworkManager.isClient()) {
+      this.hpBar = WorldManager.spawn(Bar, this.position);
+    }
   }
 
   public cleanup(): void {
+    this.label?.markForDelete();
+    this.hpBar?.markForDelete();
     super.cleanup();
     this.isAliveInternal = false;
   }
@@ -60,6 +75,13 @@ export class Unit extends Entity {
         amount,
       },
     });
+    if (amount > 0) {
+      this.flash();
+    }
+  }
+
+  public getXPWorth(): number {
+    return this.xpWorth;
   }
 
   public getMaxLife(): number {
@@ -107,6 +129,18 @@ export class Unit extends Entity {
     }
 
     super.step(dt);
+
+    if (NetworkManager.isClient()) {
+      this.label?.setPosition(this.position);
+      this.label?.position?.addXY(0, -(this.boundingBox.height + 10));
+      this.hpBar?.setPosition(this.position);
+      this.hpBar?.position?.addXY(0, this.boundingBox.height + 12);
+      if (this.hpBar) {
+        this.hpBar.progress = this.getLife() / this.getMaxLife();
+      }
+    }
+
+    this.flashTimer = Math.max(0, this.flashTimer - dt);
   }
 
   public setMovement(direction: MovementDirection, state: boolean): void {
@@ -119,12 +153,13 @@ export class Unit extends Entity {
       life: this.life,
       maxLife: this.maxLife,
       speed: this.speed,
+      xpWorth: this.xpWorth,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const { life, maxLife, movement, weapon, speed } = data;
+    const { life, maxLife, movement, xpWorth, speed } = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }
@@ -133,6 +168,9 @@ export class Unit extends Entity {
     }
     if (typeof speed === 'number') {
       this.speed = speed;
+    }
+    if (typeof xpWorth === 'number') {
+      this.xpWorth = xpWorth;
     }
     if (movement) {
       if (MovementDirection.Up in movement) {
@@ -162,7 +200,10 @@ export class Unit extends Entity {
     }
   }
 
-  public cleanupLocal(): void {}
+  public cleanupLocal(): void {
+    this.label?.markForDelete();
+    this.hpBar?.markForDelete();
+  }
 
   public kill(source?: Unit): void {
     if (NetworkManager.isServer()) {
@@ -176,5 +217,23 @@ export class Unit extends Entity {
         source,
       },
     });
+  }
+
+  public flash(): void {
+    this.flashTimer = FLASH_DURATION;
+  }
+
+  public getColor(): Color {
+    const color =
+      (this.flashTimer > 0 && this.isAlive)
+        ? this.flashColor ?? this.color
+        : this.color;
+    return color;
+  }
+
+  public setColor(color: Color): void {
+    super.setColor(color);
+    const flashColor = reshade(this.color, -0.4);
+    this.flashColor = flashColor;
   }
 }

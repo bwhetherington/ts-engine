@@ -1,0 +1,17 @@
+{
+  "type": "Feed",
+  "extends": "Unit",
+  "color": {
+    "red": 0.75,
+    "green": 0.75,
+    "blue": 0.15
+  },
+  "maxLife": 20,
+  "life": 20,
+  "lifeRegen": 0,
+  "mass": 2,
+  "friction": 50,
+  "bounce": 0.9,
+  "speed": 100,
+  "xpWorth": 5
+}

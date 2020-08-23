@@ -1,6 +1,5 @@
 import { Hero } from 'core/entity';
 import { GraphicsContext } from 'core/graphics';
-import { Bomb } from 'core/weapon';
 
 export class Heavy extends Hero {
   public static typeName = 'Heavy';
@@ -14,7 +13,7 @@ export class Heavy extends Hero {
     this.boundingBox.height = 40;
     this.cannonShape.width = 35;
     this.cannonShape.height = 25;
-    this.setWeapon(new Bomb());
+    this.setWeapon('HeavyGun');
   }
 
   protected lifeForLevel(level: number): number {

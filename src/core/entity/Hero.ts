@@ -20,8 +20,9 @@ import { LogManager } from 'core/log';
 import { NetworkManager, SyncEvent } from 'core/net';
 import { CameraManager, rgb, GraphicsContext } from 'core/graphics';
 import { BarUpdateEvent, sleep } from 'core/util';
-import { Pistol } from 'core/weapon';
 import { WHITE, BLACK } from 'core/graphics/color';
+import { MachineGun } from 'core/weapon/machinegun';
+import { WeaponManager } from 'core/weapon';
 
 const log = LogManager.forFile(__filename);
 
@@ -42,7 +43,7 @@ export class Hero extends Tank {
 
     this.type = Hero.typeName;
 
-    this.setWeapon(new Pistol());
+    this.setWeapon('MachineGun');
 
     this.setExperience(0);
     this.setLevelInternal(1);
@@ -100,12 +101,16 @@ export class Hero extends Tank {
       });
     } else {
       this.addListener<KillEvent>('KillEvent', (event) => {
-        const { source } = event.data;
+        const { source, target } = event.data;
         if (this === source) {
-          this.setExperience(this.xp + 5);
+          this.addExperience(target.getXPWorth());
         }
       });
     }
+  }
+
+  public getXPWorth(): number {
+    return Math.max(1, this.getExperience() / 2);
   }
 
   protected experienceForLevel(level: number): number {
@@ -129,6 +134,10 @@ export class Hero extends Tank {
 
   public getExperience(): number {
     return this.xp;
+  }
+
+  public addExperience(amount: number): void {
+    this.setExperience(this.getExperience() + amount);
   }
 
   public setExperience(amount: number): void {

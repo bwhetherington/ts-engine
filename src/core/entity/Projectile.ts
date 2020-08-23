@@ -7,6 +7,8 @@ import { NetworkManager } from 'core/net';
 import { Explosion } from './Explosion';
 import { sleep, clamp } from 'core/util';
 import { WHITE } from 'core/graphics/color';
+import { UUID } from 'core/uuid';
+import { iterator, iterateObject } from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
@@ -16,19 +18,22 @@ const FADE_DURATION = 0.0625;
 export class Projectile extends Entity {
   public static typeName: string = 'Projectile';
 
+  public pierce: number = 1;
   public damage: number = 15;
   private hasExploded: boolean = false;
   public parent?: Unit;
 
   private timeElapsed: number = 0;
   private originalColor: Color = WHITE;
+  private hitEntities: Set<UUID> = new Set();
 
   public onHit?: (target?: Unit) => void;
 
   constructor() {
     super();
     this.type = Projectile.typeName;
-    this.bounce = 1;
+    this.bounce = 0;
+    this.mass = 0.1;
     this.setOriginalColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.registerListeners();
     this.prepareRemove();
@@ -81,7 +86,6 @@ export class Projectile extends Entity {
 
         if (collided instanceof Unit) {
           this.hit(collided);
-          this.remove();
         }
       }
     });
@@ -127,14 +131,24 @@ export class Projectile extends Entity {
     }
   }
 
-  public hit(unit?: Unit): void {
+  public hit(unit?: Unit): boolean {
     if (unit) {
-      unit.damage(this.damage, this.parent);
-      unit.applyForce(this.velocity, this.mass);
+      if (!this.hitEntities.has(unit.id)) {
+        unit.damage(this.damage, this.parent);
+        unit.applyForce(this.velocity, this.mass);
+        if (this.onHit) {
+          this.onHit(unit);
+        }
+        this.hitEntities.add(unit.id);
+        if (this.hitEntities.size >= this.pierce) {
+          this.remove();
+          return false;
+        }
+      } else {
+        return false;
+      }
     }
-    if (this.onHit) {
-      this.onHit(unit);
-    }
+    return true;
   }
 
   public render(ctx: GraphicsContext): void {
@@ -147,16 +161,22 @@ export class Projectile extends Entity {
       ...super.serialize(),
       damage: this.damage,
       parentID: this.parent?.id,
+      hitEntities: iterator(this.hitEntities).toArray(),
+      pierce: this.pierce,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const { damage, parentID } = data;
+    const { damage, parentID, hitEntities, pierce } = data;
 
     if (typeof damage === 'number') {
       this.damage = damage;
+    }
+
+    if (typeof pierce === 'number') {
+      this.pierce = pierce;
     }
 
     if (typeof parentID === 'string') {
@@ -164,6 +184,11 @@ export class Projectile extends Entity {
       if (parent instanceof Unit) {
         this.parent = parent;
       }
+    }
+
+    if (hitEntities instanceof Array) {
+      this.hitEntities.clear();
+      hitEntities.forEach(entity => this.hitEntities.add(entity));
     }
   }
 

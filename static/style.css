@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;500;700&display=swap');
 
 :root {
   --mouse-x: 0px;
@@ -7,11 +7,11 @@
   --checkbox-padding: 6px;
 }
 
-@font-face {
+/* @font-face {
   font-family: 'roboto-mono';
   src: local('Roboto Mono');
   src: url('font/roboto-mono.ttf');
-}
+} */
 
 html,
 body,
@@ -98,7 +98,7 @@ input[type='submit'] {
   background-color: rgba(255, 255, 255, 0);
   outline: none;
   color: white;
-  font-family: 'Roboto Mono', monospace;
+  font-family: inherit;
   margin: 2px;
   cursor: pointer;
 }

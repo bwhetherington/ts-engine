@@ -18,34 +18,15 @@ export class Text extends Entity {
     this.type = Text.typeName;
     this.isCollidable = false;
     this.isVisible = true;
-    this.collisionLayer = CollisionLayer.Effect;
+    this.collisionLayer = CollisionLayer.HUD;
+    this.friction = 35;
   }
 
   public step(dt: number): void {
     super.step(dt);
-
-    // EventManager.emit<TextUpdateEvent>({
-    //   type: 'TextUpdateEvent',
-    //   data: {
-    //     id: this.id,
-    //     isStatic: this.isStatic,
-    //     text: this.text,
-    //     tag: this.tag,
-    //     color: this.getColor(),
-    //     x: this.position.x,
-    //     y: this.position.y,
-    //   },
-    // });
   }
 
   public cleanup(): void {
-    // EventManager.emit<TextRemoveEvent>({
-    //   type: 'TextRemoveEvent',
-    //   data: {
-    //     id: this.id,
-    //   },
-    // });
-
     super.cleanup();
   }
 

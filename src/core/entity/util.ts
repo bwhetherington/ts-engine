@@ -9,6 +9,7 @@ export enum CollisionLayer {
   Unit,
   Projectile,
   Effect,
+  HUD,
 }
 
 export function isCollisionLayer(input: any): input is CollisionLayer {
@@ -109,11 +110,11 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
     }
   }
 
-  if (Math.abs(dx) > 0 && Math.sign(dx) !== xAxis) {
+  if (Math.abs(dx) > 0 && Math.sign(dx) === xAxis) {
     entity.velocity.x *= -entity.bounce;
   }
 
-  if (Math.abs(dy) > 0 && Math.sign(dy) !== yAxis) {
+  if (Math.abs(dy) > 0 && Math.sign(dy) === yAxis) {
     entity.velocity.y *= -entity.bounce;
   }
 

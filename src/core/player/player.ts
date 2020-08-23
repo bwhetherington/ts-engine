@@ -1,11 +1,10 @@
-import { Hero, WorldManager, KillEvent, Heavy, Entity } from 'core/entity';
+import { Hero, WorldManager, KillEvent } from 'core/entity';
 import { Serializable, Data } from 'core/serialize';
 import { Socket, NetworkManager } from 'core/net';
 import { PlayerManager } from 'core/player';
 import { UUIDManager, UUID } from 'core/uuid';
 import { EventData, Handler, EventManager } from 'core/event';
 import { sleep } from 'core/util';
-import { Pistol, Bomb } from 'core/weapon';
 import { LogManager } from 'core/log';
 
 const log = LogManager.forFile(__filename);

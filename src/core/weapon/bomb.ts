@@ -1,5 +1,5 @@
 import { Weapon } from 'core/weapon';
-import { Tank, WorldManager, BombProjectile } from 'core/entity';
+import { Tank, WorldManager, Projectile } from 'core/entity';
 
 export class Bomb extends Weapon {
   public static typeName: string = 'Bomb';
@@ -7,18 +7,16 @@ export class Bomb extends Weapon {
   public constructor() {
     super();
     this.type = Bomb.typeName;
-    this.rate = 0.5;
-    this.damage = 2;
+    this.rate = 0.8;
+    this.damage = 5;
   }
 
   public fire(source: Tank, angle: number): void {
-    const projectile = WorldManager.spawn(
-      BombProjectile,
+    const projectile = WorldManager.spawnEntity(
+      'BigProjectile',
       source.getCannonTip()
-    );
-
+    ) as Projectile;
     projectile.parent = source;
-    projectile.bounce = 0;
     projectile.damage = this.damage;
     projectile.mass = 1;
     projectile.velocity.setXY(1, 0);

@@ -11,7 +11,6 @@ import { PlayerManager, Player } from 'core/player';
 import { Data } from 'core/serialize';
 import { LogManager } from 'core/log';
 import { WorldManager, Hero, Heavy } from 'core/entity';
-import { Pistol, Bomb } from 'core/weapon';
 import { randomColor } from 'core/graphics/color';
 
 const log = LogManager.forFile(__filename);

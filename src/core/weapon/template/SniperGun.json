@@ -1,0 +1,10 @@
+{
+  "type": "SniperGun",
+  "extends": "Gun",
+  "projectileType": "Projectile",
+  "projectilePierce": 3,
+  "projectileSpread": 0.05,
+  "projectileSpeed": 750,
+  "damage": 5,
+  "rate": 0.6
+}

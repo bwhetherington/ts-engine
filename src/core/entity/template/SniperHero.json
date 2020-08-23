@@ -1,0 +1,9 @@
+{
+  "type": "SniperHero",
+  "extends": "Hero",
+  "weapon": "SniperGun",
+  "cannonShape": {
+    "width": 35,
+    "height": 15
+  }
+}

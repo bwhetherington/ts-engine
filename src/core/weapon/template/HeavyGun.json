@@ -1,0 +1,10 @@
+{
+  "type": "HeavyGun",
+  "extends": "Gun",
+  "projectileType": "BigProjectile",
+  "projectilePierce": 3,
+  "projectileSpread": 0.1,
+  "projectileSpeed": 350,
+  "damage": 5,
+  "rate": 0.8
+}
