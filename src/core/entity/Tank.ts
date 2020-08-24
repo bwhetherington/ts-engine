@@ -6,6 +6,7 @@ import { FireEvent, Weapon, WeaponManager } from 'core/weapon';
 import { NetworkManager } from 'core/net';
 import { LogManager } from 'core/log';
 import { Rectangle, Vector } from 'core/geometry';
+import { Echo } from './Echo';
 
 const log = LogManager.forFile(__filename);
 
@@ -20,7 +21,6 @@ export class Tank extends Unit {
   protected cannonShape: Rectangle = new Rectangle(25, 15);
 
   private fireTimer: number = 0;
-  private hasExploded: boolean = false;
   private weapon?: Weapon;
 
   public constructor() {
@@ -64,10 +64,9 @@ export class Tank extends Unit {
   public render(ctx: GraphicsContext): void {
     const color = this.getColor();
 
-    const { x, y, width, height, centerX, centerY } = this.boundingBox;
+    const { width, height } = this.boundingBox;
 
     // Draw turret
-    ctx.translate(centerX, centerY);
     ctx.rotate(this.angle);
 
     // Scale turret to allow it to animate when firing
@@ -85,10 +84,9 @@ export class Tank extends Unit {
     // Reset transformations
     // ctx.setScale(1 / cannonScale);
     ctx.rotate(-this.angle);
-    ctx.translate(-centerX, -centerY);
 
     // Draw body
-    ctx.ellipse(x, y, width, height, color);
+    ctx.ellipse(-width / 2, -height / 2, width, height, color);
   }
 
   public serialize(): Data {
@@ -135,25 +133,6 @@ export class Tank extends Unit {
   public cleanup(): void {
     this.weapon?.cleanup();
     super.cleanup();
-  }
-
-  protected explode(): void {
-    const explosion = WorldManager.spawn(Explosion, this.position);
-    explosion.radius = 35;
-    explosion.setColor({
-      red: 1.0,
-      green: 0.6,
-      blue: 0.3,
-      alpha: 0.8,
-    });
-    this.hasExploded = true;
-  }
-
-  public kill(source?: Unit): void {
-    super.kill(source);
-    if (NetworkManager.isClient() && !this.hasExploded) {
-      this.explode();
-    }
   }
 
   public getCannonTip(): Vector {

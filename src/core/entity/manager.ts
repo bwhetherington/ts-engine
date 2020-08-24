@@ -13,6 +13,7 @@ import {
   Hero,
   Geometry,
   Text,
+  TimedText,
   Projectile,
   Explosion,
   CollisionEvent,
@@ -21,6 +22,7 @@ import {
   CollisionLayer,
   Heavy,
   Bar,
+  Echo,
 } from 'core/entity';
 import {
   BigProjectile,
@@ -81,9 +83,11 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Projectile);
     this.registerEntity(Text);
     this.registerEntity(Tank);
+    this.registerEntity(TimedText);
     this.registerEntity(Enemy);
     this.registerEntity(Heavy);
     this.registerEntity(Bar);
+    this.registerEntity(Echo);
 
     // Template entities
     this.registerTemplateEntity(Feed);
@@ -130,19 +134,30 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     );
     ctx.popOptions();
 
-    ctx.withOptions({
-      lineWidth: 2,
-      doFill: false,
-      doStroke: true,
-    }, (ctx) => {
-      const stepSize = 20;
-      for (let x = this.boundingBox.x + stepSize; x < this.boundingBox.farX; x += stepSize) {
-        ctx.line(x, this.boundingBox.y, x, this.boundingBox.farX, GRID_COLOR);
+    ctx.withOptions(
+      {
+        lineWidth: 2,
+        doFill: false,
+        doStroke: true,
+      },
+      (ctx) => {
+        const stepSize = 20;
+        for (
+          let x = this.boundingBox.x + stepSize;
+          x < this.boundingBox.farX;
+          x += stepSize
+        ) {
+          ctx.line(x, this.boundingBox.y, x, this.boundingBox.farX, GRID_COLOR);
+        }
+        for (
+          let y = this.boundingBox.y + stepSize;
+          y < this.boundingBox.farY;
+          y += stepSize
+        ) {
+          ctx.line(this.boundingBox.x, y, this.boundingBox.farX, y, GRID_COLOR);
+        }
       }
-      for (let y = this.boundingBox.y + stepSize; y < this.boundingBox.farY; y += stepSize) {
-        ctx.line(this.boundingBox.x, y, this.boundingBox.farX, y, GRID_COLOR);
-      }
-    });
+    );
 
     // this.space.render(ctx);
 
@@ -162,7 +177,12 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
-      .forEach((entity) => entity.renderInternal(ctx));
+      .forEach((entity) => {
+        const { x, y } = entity.position;
+        ctx.translate(x, y);
+        entity.renderInternal(ctx);
+        ctx.translate(-x, -y);
+      });
 
     // this.graph?.render(ctx);
   }

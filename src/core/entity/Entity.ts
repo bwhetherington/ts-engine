@@ -1,11 +1,13 @@
 import { Bounded, Rectangle, Vector } from 'core/geometry';
-import {
-  GraphicsContext,
-  Color,
-  Renderable,
-} from 'core/graphics';
+import { GraphicsContext, Color, Renderable } from 'core/graphics';
 import { WHITE, isColor } from 'core/graphics/color';
-import { CollisionLayer, WorldManager, CollisionEvent, Bar, Text } from 'core/entity';
+import {
+  CollisionLayer,
+  WorldManager,
+  CollisionEvent,
+  Bar,
+  Text,
+} from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
 import { EventData, Handler, EventManager, Event } from 'core/event';
@@ -67,8 +69,8 @@ export class Entity implements Bounded, Serializable, Renderable {
   }
 
   public render(ctx: GraphicsContext): void {
-    const { x, y, width, height } = this.boundingBox;
-    ctx.rect(x, y, width, height, this.getColor());
+    const { width, height } = this.boundingBox;
+    ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
   }
 
   private updateBoundingBox(): void {

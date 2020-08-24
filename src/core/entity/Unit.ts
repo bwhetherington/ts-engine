@@ -1,4 +1,12 @@
-import { Entity, DamageEvent, KillEvent, Bar, Text, WorldManager } from 'core/entity';
+import {
+  Entity,
+  DamageEvent,
+  KillEvent,
+  Bar,
+  Text,
+  WorldManager,
+  Echo,
+} from 'core/entity';
 import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';
@@ -33,6 +41,7 @@ export class Unit extends Entity {
     [MovementDirection.Right]: false,
   };
   private acceleration: Vector = new Vector(0, 0);
+  private hasExploded: boolean = false;
 
   public constructor() {
     super();
@@ -46,6 +55,9 @@ export class Unit extends Entity {
   public cleanup(): void {
     this.label?.markForDelete();
     this.hpBar?.markForDelete();
+    if (NetworkManager.isClient() && !this.hasExploded) {
+      this.explode();
+    }
     super.cleanup();
     this.isAliveInternal = false;
   }
@@ -131,9 +143,11 @@ export class Unit extends Entity {
     super.step(dt);
 
     if (NetworkManager.isClient()) {
-      this.label?.setPosition(this.position);
+      this.label?.position?.set(this.position);
       this.label?.position?.addXY(0, -(this.boundingBox.height + 10));
-      this.hpBar?.setPosition(this.position);
+      this.label?.velocity?.set(this.velocity);
+      this.hpBar?.position?.set(this.position);
+      this.hpBar?.velocity?.set(this.velocity);
       this.hpBar?.position?.addXY(0, this.boundingBox.height + 12);
       if (this.hpBar) {
         this.hpBar.progress = this.getLife() / this.getMaxLife();
@@ -203,11 +217,33 @@ export class Unit extends Entity {
   public cleanupLocal(): void {
     this.label?.markForDelete();
     this.hpBar?.markForDelete();
+    if (!this.hasExploded) {
+      this.explode();
+    }
+  }
+
+  protected explode(): void {
+    const echo = WorldManager.spawn(Echo, this.position);
+    echo.setParent(this);
+
+    if (this.label) {
+      const labelEcho = WorldManager.spawn(Echo, this.label.position);
+      labelEcho.parent = this.label;
+    }
+
+    if (this.hpBar) {
+      const barEcho = WorldManager.spawn(Echo, this.hpBar.position);
+      barEcho.parent = this.hpBar;
+    }
+
+    this.hasExploded = true;
   }
 
   public kill(source?: Unit): void {
     if (NetworkManager.isServer()) {
       this.markForDelete();
+    } else if (!this.hasExploded) {
+      this.explode();
     }
 
     EventManager.emit<KillEvent>({
@@ -225,7 +261,7 @@ export class Unit extends Entity {
 
   public getColor(): Color {
     const color =
-      (this.flashTimer > 0 && this.isAlive)
+      this.flashTimer > 0 && this.isAlive
         ? this.flashColor ?? this.color
         : this.color;
     return color;

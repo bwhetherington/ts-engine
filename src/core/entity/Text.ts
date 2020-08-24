@@ -54,7 +54,7 @@ export class Text extends Entity {
     ctx.pushOptions({
       lineWidth: 6,
     });
-    ctx.text(this.position.x, this.position.y, this.text, {
+    ctx.text(0, 0, this.text, {
       size: 26,
       color: this.getColor(),
     });

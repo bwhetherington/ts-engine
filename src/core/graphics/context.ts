@@ -13,6 +13,8 @@ export interface GraphicsOptions {
   ignoreScale?: boolean;
 }
 
+export type GraphicsProc = (ctx: GraphicsContext) => void;
+
 export interface GraphicsContext {
   setOptions(options: Partial<GraphicsOptions>): void;
   pushOptions(options: Partial<GraphicsOptions>): void;
@@ -22,12 +24,23 @@ export interface GraphicsContext {
   clear(color?: Color): void;
   text(x: number, y: number, text: string, style: TextStyle): void;
   ellipse(x: number, y: number, w: number, h: number, color: Color): void;
-  rect(x: number, y: number, w: number, h: number, color: Color, fullW?: number): void;
+  rect(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    color: Color,
+    fullW?: number
+  ): void;
   line(x1: number, y1: number, x2: number, y2: number, color: Color): void;
   translate(x: number, y: number): void;
   rotate(angle: number): void;
   setScale(scale: number): void;
   resetTransform(): void;
 
-  withOptions(options: Partial<GraphicsOptions>, proc: (ctx: GraphicsContext) => void): void;
+  withAlpha(alpha: number, proc: GraphicsProc): GraphicsContext;
+  withOptions(
+    options: Partial<GraphicsOptions>,
+    proc: (ctx: GraphicsContext) => void
+  ): GraphicsContext;
 }

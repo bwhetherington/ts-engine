@@ -152,8 +152,8 @@ export class Projectile extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    const { x, y, width, height } = this.boundingBox;
-    ctx.ellipse(x, y, width, height, this.getColor());
+    const { width, height } = this.boundingBox;
+    ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
   }
 
   public serialize(): Data {
@@ -188,7 +188,7 @@ export class Projectile extends Entity {
 
     if (hitEntities instanceof Array) {
       this.hitEntities.clear();
-      hitEntities.forEach(entity => this.hitEntities.add(entity));
+      hitEntities.forEach((entity) => this.hitEntities.add(entity));
     }
   }
 

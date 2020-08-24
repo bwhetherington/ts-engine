@@ -18,7 +18,10 @@ export class Gun extends Weapon {
   }
 
   public fire(source: Tank, angle: number): void {
-    const projectile = WorldManager.spawnEntity(this.projectileType, source.getCannonTip()) as Projectile;
+    const projectile = WorldManager.spawnEntity(
+      this.projectileType,
+      source.getCannonTip()
+    ) as Projectile;
     projectile.parent = source;
     projectile.bounce = 0;
     projectile.damage = this.damage;
@@ -42,7 +45,12 @@ export class Gun extends Weapon {
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const { projectileType, projectileSpeed, projectileSpread, projectilePierce } = data;
+    const {
+      projectileType,
+      projectileSpeed,
+      projectileSpread,
+      projectilePierce,
+    } = data;
 
     if (typeof projectileType === 'string') {
       this.projectileType = projectileType;

@@ -1,10 +1,10 @@
 import {
-  Text,
   WorldManager,
   DamageEvent,
   Tank,
   KillEvent,
   Unit,
+  TimedText,
 } from 'core/entity';
 import {
   KeyEvent,
@@ -20,9 +20,6 @@ import { LogManager } from 'core/log';
 import { NetworkManager, SyncEvent } from 'core/net';
 import { CameraManager, rgb, GraphicsContext } from 'core/graphics';
 import { BarUpdateEvent, sleep } from 'core/util';
-import { WHITE, BLACK } from 'core/graphics/color';
-import { MachineGun } from 'core/weapon/machinegun';
-import { WeaponManager } from 'core/weapon';
 
 const log = LogManager.forFile(__filename);
 
@@ -84,7 +81,7 @@ export class Hero extends Tank {
           (this === target || this === source)
         ) {
           const label = '' + amount;
-          const text = WorldManager.spawn(Text, target.position);
+          const text = WorldManager.spawn(TimedText, target.position);
           const color = this === target ? rgb(1, 0.4, 0.4) : rgb(1, 1, 0.2);
           text.setColor(color);
           text.isStatic = false;
@@ -95,8 +92,6 @@ export class Hero extends Tank {
           text.text = label;
           text.velocity.setXY(25 + Math.random() * 25, 0);
           text.velocity.angle = Math.random() * 2 * Math.PI;
-          await sleep(1);
-          text.markForDelete();
         }
       });
     } else {

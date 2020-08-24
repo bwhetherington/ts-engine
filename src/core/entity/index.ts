@@ -8,7 +8,9 @@ export { Geometry } from 'core/entity/Geometry';
 export { Projectile } from 'core/entity/Projectile';
 export { Explosion } from 'core/entity/Explosion';
 export { Text } from 'core/entity/Text';
+export { TimedText } from 'core/entity/TimedText';
 export { Bar } from 'core/entity/Bar';
+export { Echo } from 'core/entity/Echo';
 
 import { WorldManager } from 'core/entity/manager';
 import { Rectangle } from 'core/geometry';

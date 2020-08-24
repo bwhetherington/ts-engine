@@ -29,5 +29,12 @@ export function diff(
     }
   }
 
+  for (const key in diffObj) {
+    const val = diffObj[key];
+    if (typeof val === 'object' && Object.keys(val).length === 0) {
+      delete diffObj[key];
+    }
+  }
+
   return isModified;
 }

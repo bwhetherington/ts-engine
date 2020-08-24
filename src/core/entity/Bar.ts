@@ -41,38 +41,43 @@ export class Bar extends Entity {
   public render(ctx: GraphicsContext): void {
     if (this.progress < 1) {
       const lineWidth = 3;
-      ctx.translate(this.position.x, this.position.y);
-      ctx.pushOptions({
-        lineWidth,
-        doStroke: true,
-        doFill: true,
-        ignoreScale: true,
-      });
-      ctx.rect(
-        -this.boundingBox.width / 2,
-        -this.boundingBox.height / 2,
-        this.boundingBox.width,
-        this.boundingBox.height,
-        rgba(0.35, 0.35, 0.35, 0.75)
-      );
-      ctx.popOptions();
-      ctx.pushOptions({
-        lineWidth,
-        doStroke: true,
-        doFill: true,
-        ignoreScale: true,
-      });
-      const padding = 0;
-      ctx.rect(
-        -this.boundingBox.width / 2 + padding,
-        -this.boundingBox.height / 2 + padding,
-        (this.boundingBox.width - 2 * padding) * this.progress,
-        this.boundingBox.height - 2 * padding,
-        rgb(0.4, 1, 0.4),
-        this.boundingBox.width
-      );
-      ctx.popOptions();
-      ctx.translate(-this.position.x, -this.position.y);
+      ctx
+        .withOptions(
+          {
+            lineWidth,
+            doStroke: true,
+            doFill: true,
+            ignoreScale: true,
+          },
+          (ctx) => {
+            ctx.rect(
+              -this.boundingBox.width / 2,
+              -this.boundingBox.height / 2,
+              this.boundingBox.width,
+              this.boundingBox.height,
+              rgba(0.35, 0.35, 0.35, 0.75)
+            );
+          }
+        )
+        .withOptions(
+          {
+            lineWidth,
+            doStroke: true,
+            doFill: true,
+            ignoreScale: true,
+          },
+          (ctx) => {
+            const padding = 0;
+            ctx.rect(
+              -this.boundingBox.width / 2 + padding,
+              -this.boundingBox.height / 2 + padding,
+              (this.boundingBox.width - 2 * padding) * this.progress,
+              this.boundingBox.height - 2 * padding,
+              rgb(0.4, 1, 0.4),
+              this.boundingBox.width
+            );
+          }
+        );
     }
   }
 }
