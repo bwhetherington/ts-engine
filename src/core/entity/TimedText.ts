@@ -1,59 +1,30 @@
-import { Text } from 'core/entity';
+import { Text, WorldManager } from 'core/entity';
 import { Data } from 'core/serialize';
 import { GraphicsContext } from 'core/graphics';
-import { clamp } from 'core/util';
-
-const FADE_POINT = 0.5;
+import { clamp, sleep } from 'core/util';
+import { Echo } from './Echo';
 
 export class TimedText extends Text {
   public static typeName: string = 'TimedText';
 
-  public duration: number = 1;
+  public duration: number = 0.5;
   public elapsed: number = 0;
+
+  private isInitialized: boolean = false;
 
   public constructor() {
     super();
     this.type = TimedText.typeName;
+    this.initialize();
   }
 
-  public step(dt: number): void {
-    this.elapsed += dt;
-    if (this.elapsed > this.duration) {
+  private async initialize(): Promise<void> {
+    if (!this.isInitialized) {
+      this.isInitialized = true;
+      await sleep(1);
       this.markForDelete();
-    }
-    super.step(dt);
-  }
-
-  public serialize(): Data {
-    return {
-      ...super.serialize(),
-      duration: this.duration,
-      elapsed: this.elapsed,
-    };
-  }
-
-  public deserialize(data: Data): void {
-    super.deserialize(data);
-    const { duration, elapsed } = data;
-    if (typeof duration === 'number') {
-      this.duration = duration;
-    }
-    if (typeof elapsed === 'number') {
-      this.elapsed == elapsed;
-    }
-  }
-
-  private getParameter(): number {
-    const t = (this.elapsed / this.duration - FADE_POINT) / (1 - FADE_POINT);
-    return 1 - clamp(t, 0, 1);
-  }
-
-  public render(ctx: GraphicsContext): void {
-    const alpha = this.getParameter();
-    if (alpha < 1) {
-      ctx.withAlpha(alpha, (ctx) => super.render(ctx));
-    } else {
-      super.render(ctx);
+      const echo = WorldManager.spawn(Echo, this.position);
+      echo.initialize(this, 0.5);
     }
   }
 }

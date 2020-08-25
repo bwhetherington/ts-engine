@@ -72,6 +72,10 @@ export class Vector implements Serializable {
     this.y += dy * scale;
   }
 
+  public zero(): void {
+    this.setXY(0, 0);
+  }
+
   public serialize(): Data {
     return {
       x: this.x,

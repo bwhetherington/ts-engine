@@ -9,6 +9,7 @@ import { sleep, clamp } from 'core/util';
 import { WHITE } from 'core/graphics/color';
 import { UUID } from 'core/uuid';
 import { iterator, iterateObject } from 'core/iterator';
+import { Echo } from './Echo';
 
 const log = LogManager.forFile(__filename);
 
@@ -46,23 +47,9 @@ export class Projectile extends Entity {
     this.setColor(color);
   }
 
-  private getFadeParameter(): number {
-    // Begin to fade halfway through the projectile life
-    const fadePeriod = FADE_DURATION / DURATION;
-    const multiplier = 1 / fadePeriod;
-
-    const t = clamp(
-      (this.timeElapsed / DURATION + fadePeriod - 1) * multiplier,
-      0,
-      1
-    );
-    return Math.min(1, t);
-  }
-
   private async prepareRemove(): Promise<void> {
     await sleep(DURATION);
     if (!this.markedForDelete) {
-      this.hasExploded = true;
       this.remove();
     }
   }
@@ -101,22 +88,12 @@ export class Projectile extends Entity {
   public step(dt: number): void {
     super.step(dt);
     this.timeElapsed += dt;
-    const t = this.getFadeParameter();
-
-    // Calculate intermediate color
-    if (t > 0) {
-      const { red, green, blue, alpha = 1 } = this.originalColor;
-      const newAlpha = alpha * (1 - t);
-      this.setColor(rgba(red, green, blue, newAlpha));
-    }
   }
 
   protected explode(): void {
-    const explosion = new Explosion();
-    explosion.radius = 20;
-    explosion.setPosition(this.position);
-    explosion.setColor(this.originalColor);
-    WorldManager.add(explosion);
+    const echo = WorldManager.spawn(Echo, this.position);
+    echo.initialize(this, 0.5);
+    echo.velocity.zero();
   }
 
   public remove(showExplosion: boolean = true): void {

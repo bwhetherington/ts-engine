@@ -20,6 +20,7 @@ export class Bar extends Entity {
     this.collisionLayer = CollisionLayer.HUD;
     this.boundingBox.width = 65;
     this.boundingBox.height = 8;
+    this.friction = 0;
   }
 
   public serialize(): Data {

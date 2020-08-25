@@ -124,7 +124,6 @@ export class HDCanvas implements GraphicsContext {
     }
     if (this.hidden) {
       CameraManager.setSize(w, h);
-      console.log(this.ratio);
       this.hidden.setSize(w * this.ratio, h * this.ratio, 1);
     }
   }

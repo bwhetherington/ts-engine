@@ -2,9 +2,9 @@
   "type": "HeavyGun",
   "extends": "Gun",
   "projectileType": "BigProjectile",
-  "projectilePierce": 3,
+  "projectilePierce": 5,
   "projectileSpread": 0.1,
-  "projectileSpeed": 350,
-  "damage": 5,
+  "projectileSpeed": 300,
+  "damage": 10,
   "rate": 0.8
 }

@@ -19,7 +19,7 @@ export class Text extends Entity {
     this.isCollidable = false;
     this.isVisible = true;
     this.collisionLayer = CollisionLayer.HUD;
-    this.friction = 35;
+    this.friction = 0;
   }
 
   public step(dt: number): void {
@@ -51,13 +51,13 @@ export class Text extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    ctx.pushOptions({
-      lineWidth: 6,
+    ctx.withOptions({
+      lineWidth: 6
+    }, (ctx) => {
+      ctx.text(0, 0, this.text, {
+        size: 26,
+        color: this.getColor(),
+      });
     });
-    ctx.text(0, 0, this.text, {
-      size: 26,
-      color: this.getColor(),
-    });
-    ctx.popOptions();
   }
 }

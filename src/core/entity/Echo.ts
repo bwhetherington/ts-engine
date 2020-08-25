@@ -3,15 +3,14 @@ import { sleep, clamp } from 'core/util';
 import { StepEvent } from 'core/event';
 import { GraphicsContext } from 'core/graphics';
 
-const DURATION = 0.5;
+const DURATION = 0.25;
 
 export class Echo extends Entity {
   public static typeName: string = 'Echo';
 
-  public radius: number = 20;
-  public parent?: Entity;
-
+  private parent?: Entity;
   private timeRemaining: number = DURATION;
+  private duration: number = DURATION;
 
   public constructor() {
     super();
@@ -30,7 +29,7 @@ export class Echo extends Entity {
   }
 
   private getParameter(): number {
-    const t = this.timeRemaining / DURATION;
+    const t = this.timeRemaining / this.duration;
     return clamp(3 * t * t - 2 * t * t * t, 0, 1);
   }
 
@@ -38,20 +37,21 @@ export class Echo extends Entity {
     this.render(ctx);
   }
 
-  public setParent(entity: Entity): void {
+  public initialize(entity: Entity, duration: number = DURATION): void {
     this.parent = entity;
     this.velocity.set(this.parent.velocity);
     this.mass = this.parent.mass;
-    this.friction = this.parent.friction;
+    this.friction = 0;
+    this.timeRemaining = duration;
+    this.duration = duration;
   }
 
   public render(ctx: GraphicsContext): void {
     const t = this.getParameter();
-    console.log(t);
     ctx.withAlpha(t, (ctx) => {
-      const u = (1 - t) / 3 + 1;
+      const u = (1 - t) + 1;
       ctx.setScale(u);
-      this.parent?.renderInternal(ctx);
+      this.parent?.render(ctx);
       ctx.setScale(1 / u);
     });
   }
