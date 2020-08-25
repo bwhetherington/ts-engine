@@ -43,7 +43,7 @@ export const RenameFormEntry: FormEntry<RenameForm> = {
   checkType(x: Data): x is RenameForm {
     return isRenameForm(x);
   },
-  validate(input: RenameForm, player: Player): FormResult {
+  async validate(input: RenameForm, player: Player): Promise<FormResult> {
     const { name } = input;
     if (name.value.length < 3) {
       return {

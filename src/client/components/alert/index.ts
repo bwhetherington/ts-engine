@@ -17,8 +17,8 @@ export class AlertComponent extends Component {
   private container?: HTMLElement;
   private header?: HTMLElement;
   private body?: HTMLElement;
-
   private data: Record<string, Entry> = {};
+  private inputs: Set<HTMLInputElement> = new Set();
 
   public constructor() {
     super(template);
@@ -62,6 +62,7 @@ export class AlertComponent extends Component {
     if (this.body) {
       removeChildren(this.body);
     }
+    this.inputs.clear();
     this.data = {};
   }
 
@@ -85,6 +86,10 @@ export class AlertComponent extends Component {
       };
 
       EventManager.emit(submitEvent);
+      form.disabled = true;
+      for (const input of this.inputs) {
+        input.disabled = true;
+      }
     });
 
     if (data.description) {
@@ -121,6 +126,7 @@ export class AlertComponent extends Component {
     const submit = document.createElement('input');
     submit.type = 'submit';
     submitRow.appendChild(submit);
+    this.inputs.add(submit);
 
     form.appendChild(submitRow);
 
@@ -194,7 +200,7 @@ export class AlertComponent extends Component {
 
     container.appendChild(label);
     container.appendChild(input);
-
+    this.inputs.add(input);
     return container;
   }
 }

@@ -12,6 +12,7 @@ import { Data } from 'core/serialize';
 import { LogManager } from 'core/log';
 import { WorldManager, Hero, Heavy } from 'core/entity';
 import { randomColor } from 'core/graphics/color';
+import { sleep } from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -74,9 +75,8 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
   checkType(x: Data): x is JoinForm {
     return isJoinForm(x);
   },
-  validate(input: JoinForm): FormResult {
+  async validate(input: JoinForm): Promise<FormResult> {
     const { name } = input;
-
     if (name.value.length < 3) {
       return {
         isValid: false,

@@ -146,6 +146,7 @@ export class Unit extends Entity {
       this.label?.position?.set(this.position);
       this.label?.position?.addXY(0, -(this.boundingBox.height + 10));
       this.label?.velocity?.set(this.velocity);
+
       this.hpBar?.position?.set(this.position);
       this.hpBar?.velocity?.set(this.velocity);
       this.hpBar?.position?.addXY(0, this.boundingBox.height + 12);

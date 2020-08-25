@@ -10,7 +10,7 @@ import {
 } from 'core/graphics';
 import { BLACK, WHITE } from 'core/graphics/color';
 import { GraphicsProc } from 'core/graphics/context';
-import { Vector } from 'core/geometry';
+import { Vector, Bounds, Matrix } from 'core/geometry';
 
 interface Options {
   width: number;
@@ -37,6 +37,11 @@ export class HDCanvas implements GraphicsContext {
   private ratio: number = 1;
   private scale: number = 1;
   private translation: Vector = new Vector();
+  public bounds?: Bounds;
+
+  public transform: Matrix = new Matrix().identity();
+  private src: Matrix = new Matrix();
+  private dst: Matrix = new Matrix();
 
   private options: GraphicsOptions = {
     lineWidth: 5,
@@ -64,7 +69,12 @@ export class HDCanvas implements GraphicsContext {
 
     if (isParent) {
       this.hidden = new HDCanvas(options, false);
+      this.hidden.bounds = new Bounds();
     }
+  }
+
+  public get isHidden(): boolean {
+    return !this.hidden;
   }
 
   private setRound(ctx: CanvasRenderingContext2D): void {
@@ -155,6 +165,7 @@ export class HDCanvas implements GraphicsContext {
         }
       }
     }
+    this.bounds?.clear();
     this.hidden?.clear(color);
   }
 
@@ -173,6 +184,13 @@ export class HDCanvas implements GraphicsContext {
       ctx.strokeText(text, x, y);
       ctx.fillText(text, x, y);
       ctx.closePath();
+
+      // Add text to bounds
+      if (this.bounds) {
+        const width = ctx.measureText(text).width;
+        const height = size;
+        this.bounds?.insertRawTransformed(x - width / 2, y - height / 2, width, height, this.transform);
+      }
     }
   }
 
@@ -192,6 +210,7 @@ export class HDCanvas implements GraphicsContext {
         ctx.stroke();
       }
       ctx.closePath();
+      this.bounds?.insertRawTransformed(x, y, w, h, this.transform);
     }
   }
 
@@ -233,10 +252,15 @@ export class HDCanvas implements GraphicsContext {
         ctx.stroke();
       }
       ctx.closePath();
+      this.bounds?.insertRawTransformed(x, y, w, h, this.transform);
     }
   }
 
   public translate(x: number, y: number) {
+    this.src.translate(x, y);
+    this.transform.multiply(this.src, this.dst);
+    this.transform.set(this.dst);
+
     const ctx = this.curContext;
     if (ctx) {
       ctx.translate(x, y);
@@ -246,6 +270,10 @@ export class HDCanvas implements GraphicsContext {
   }
 
   public rotate(angle: number) {
+    this.src.rotate(angle);
+    this.transform.multiply(this.src, this.dst);
+    this.transform.set(this.dst);
+
     const ctx = this.curContext;
     if (ctx) {
       ctx.rotate(angle);
@@ -254,6 +282,7 @@ export class HDCanvas implements GraphicsContext {
   }
 
   public resetTransform(ratio = this.ratio) {
+    this.transform.identity();
     const ctx = this.curContext;
     if (ctx) {
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -264,6 +293,10 @@ export class HDCanvas implements GraphicsContext {
   }
 
   public setScale(scale: number): void {
+    this.src.scale(scale, scale);
+    this.transform.multiply(this.src, this.dst);
+    this.transform.set(this.dst);
+
     this.curContext?.scale(scale, scale);
     this.scale *= scale;
     this.hidden?.setScale(scale);
@@ -302,24 +335,35 @@ export class HDCanvas implements GraphicsContext {
     alpha: number,
     proc: (ctx: GraphicsContext) => void
   ): GraphicsContext {
-    const ctx = this.curContext;
-    if (ctx && this.hidden && this.hidden.canvas) {
-      const oldAlpha = ctx.globalAlpha;
-      this.hidden.begin();
-      ctx.globalAlpha = alpha;
-      // proc(this);
-      const { scale, translation: { x, y } } = this;
-      const dw = (this.hidden.width - this.width) / 2;
-      const dh = (this.hidden.height - this.height) / 2;
-      this.hidden.translate(x + dw, y + dh);
-      this.hidden.setScale(scale);
-      proc(this.hidden);
-      this.setScale(1 / scale);
-      // this.translate(-x, -y);
-      ctx.drawImage(this.hidden.canvas, -x - dw, -y - dh);
-      // this.translate(x, y);
-      this.setScale(scale);
-      ctx.globalAlpha = oldAlpha;
+    if (this.hidden?.bounds) {
+      const ctx = this.curContext;
+      if (ctx && this.hidden && this.hidden.canvas) {
+        const oldAlpha = ctx.globalAlpha;
+        this.hidden.begin();
+        ctx.globalAlpha = alpha;
+        // proc(this);
+        const { scale, translation: { x, y } } = this;
+        const dw = (this.hidden.width - this.width) / 2;
+        const dh = (this.hidden.height - this.height) / 2;
+        this.hidden.translate(x + dw, y + dh);
+        this.hidden.setScale(scale);
+        proc(this.hidden);
+        this.setScale(1 / scale);
+        let { x: sx, y: sy, width: sw, height: sh } = this.hidden.bounds.boundingBox;
+        const padding = 10;
+        sx -= padding;
+        sy -= padding;
+        sw += padding * 2;
+        sh += padding * 2;
+        ctx.drawImage(this.hidden.canvas, sx, sy, sw, sh, sx - x - dw, sy - y - dh, sw, sh);
+        // ctx.lineWidth = 1;
+        // ctx.strokeStyle = 'black';
+        // ctx.rect(this.hidden.bounds.boundingBox.x - x - dw, this.hidden.bounds.boundingBox.y - y - dh, this.hidden.bounds.boundingBox.width, this.hidden.bounds.boundingBox.height);
+        this.setScale(scale);
+        ctx.globalAlpha = oldAlpha;
+        // Draw bounding box
+        ctx.stroke();
+      }
     }
     return this;
   }

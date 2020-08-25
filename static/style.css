@@ -103,19 +103,24 @@ input[type='submit'] {
   cursor: pointer;
 }
 
+button:disabled, input:disabled {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
+
 button[type='error'] {
   border-color: rgba(255, 160, 160, 0.33);
   background-color: rgba(255, 128, 128, 0);
   color: rgb(255, 0, 0);
 }
 
-button:hover,
-input[type='submit']:hover {
+button:hover:not([disabled]),
+input[type='submit']:hover:not([disabled]) {
   border-color: rgba(255, 255, 255, 0.67);
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-button[type='error']:hover {
+button[type='error']:hover:not([disabled]) {
   border-color: rgba(255, 160, 160, 0.67);
   background-color: rgba(255, 128, 128, 0.1);
 }

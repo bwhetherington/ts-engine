@@ -3,8 +3,8 @@
   "extends": "Gun",
   "projectileType": "Projectile",
   "projectileSpread": 0.3,
-  "projectileSpeed": 450,
+  "projectileSpeed": 650,
   "projectilePierce": 1,
   "damage": 2,
-  "rate": 0.2
+  "rate": 0.025
 }

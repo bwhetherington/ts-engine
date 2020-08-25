@@ -103,14 +103,14 @@ export class FormManager {
     log.trace(`form ${formEntry.name} registered`);
     const { name, form, checkType, validate, onSubmit, onReject } = formEntry;
     this.forms[name] = form;
-    EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
+    EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', async (event) => {
       const { socket, data } = event;
       const player = PlayerManager.getPlayer(socket);
       if (player) {
         const { name: responseName, data: response } = data;
         if (responseName === name) {
           if (checkType(response)) {
-            const result = validate(response, player);
+            const result = await validate(response, player);
             const { isValid, message = 'Error validating form.' } = result;
             if (isValid) {
               onSubmit(player, response);

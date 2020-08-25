@@ -44,7 +44,7 @@ export interface FormSubmitEvent {
   data: Record<string, Entry>;
 }
 
-export interface FormValidatedEvent {}
+export interface FormValidatedEvent { }
 
 export interface StringEntry {
   type: 'text';
@@ -99,7 +99,7 @@ export interface FormEntry<T> {
   onSubmit(player: Player, response: T): void;
   onReject?: (player: Player) => void;
   checkType(data: Data): data is T;
-  validate(input: T, player?: Player): FormResult;
+  validate(input: T, player?: Player): Promise<FormResult>;
 }
 
 export { FM as FormManager, registerJoinForm };
