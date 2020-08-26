@@ -7,7 +7,7 @@ function toSeconds(seconds: number, nanoseconds: number): number {
   return seconds + nanoseconds * 0.000000001;
 }
 
-function now(): number {
+export function now(): number {
   const [seconds, nanoseconds] = process.hrtime();
   const time = toSeconds(seconds, nanoseconds);
   return time;
@@ -42,7 +42,7 @@ export class Timer extends AbstractTimer {
         await sleep(remaining);
       } else {
         const durationMS = Math.round(duration * 1000);
-        log.warn(`Can't keep up! Frame took ${durationMS}ms`);
+        log.warn(`can't keep up! Frame took ${durationMS}ms`);
       }
     }
   }

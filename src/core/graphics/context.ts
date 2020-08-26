@@ -11,6 +11,7 @@ export interface GraphicsOptions {
   doStroke: boolean;
   doFill: boolean;
   ignoreScale?: boolean;
+  useFancyAlpha?: boolean;
 }
 
 export type GraphicsProc = (ctx: GraphicsContext) => void;

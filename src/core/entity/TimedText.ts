@@ -24,7 +24,7 @@ export class TimedText extends Text {
       await sleep(1);
       this.markForDelete();
       const echo = WorldManager.spawn(Echo, this.position);
-      echo.initialize(this, 0.5);
+      echo.initialize(this, false, 0.5);
     }
   }
 }

@@ -7,17 +7,24 @@ import * as http from 'http';
 
 import { Node, Message, Socket } from 'core/net';
 import { LogManager } from 'core/log';
-import { EventManager, Event } from 'core/event';
-import { TimerManager } from 'server/util';
+import { EventManager, Event, StepEvent } from 'core/event';
+import { TimerManager, now } from 'server/util';
 import { WorldManager } from 'core/entity';
 import { PlayerManager, Player } from 'core/player';
 import { InitialSyncEvent } from 'core/net/util';
 import process from 'process';
+import { UUID, UUIDManager } from 'core/uuid';
+import { MetricsManager } from 'server/metrics';
 
 const log = LogManager.forFile(__filename);
 
 interface Connections {
   [key: number]: Connection;
+}
+
+interface PingEntry {
+  startTime: number;
+  resolver(time: number): void;
 }
 
 export class Server extends Node {
@@ -26,18 +33,44 @@ export class Server extends Node {
   private connections: Connections;
   private freedSockets: Socket[];
   private socketCount: number = 0;
-  private names: { [key: number]: string } = {};
+
+  private pingResolvers: Record<UUID, PingEntry> = {};
 
   constructor() {
     super();
     this.connections = {};
     this.freedSockets = [];
 
-    EventManager.addListener('SetName', (event: Event<{ name: string }>) => {
-      const { socket, data } = event;
-      if (socket) {
-        this.names[socket] = data.name;
+    let timeElapsed = 0;
+    EventManager.addListener<StepEvent>('StepEvent', (event) => {
+      timeElapsed += event.data.dt;
+      if (timeElapsed >= 1) {
+        timeElapsed %= 1;
+        this.checkPings();
       }
+    });
+  }
+
+  public async checkPings() {
+    for (const player of PlayerManager.getPlayers()) {
+      this.getPing(player).then((ping) => {
+        MetricsManager.recordPing(player, ping);
+      });
+    }
+  }
+
+  private getPing(player: Player): Promise<number> {
+    return new Promise((resolve) => {
+      const id = UUIDManager.generate();
+      const startTime = now();
+      this.send({
+        type: 'PingEvent',
+        data: { id }
+      }, player.socket);
+      this.pingResolvers[id] = {
+        startTime,
+        resolver: resolve,
+      };
     });
   }
 
@@ -95,7 +128,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => {});
+    this.wsServer.on('close', (connection) => { });
   }
 
   private sendRaw(data: string, socket: Socket) {
@@ -158,6 +191,7 @@ export class Server extends Node {
     const player = PlayerManager.getPlayer(socket);
     if (player) {
       PlayerManager.remove(player);
+      MetricsManager.removePlayer(player);
     }
 
     // Sleep the server clock
@@ -168,5 +202,21 @@ export class Server extends Node {
 
   public isClient(): boolean {
     return false;
+  }
+
+  public onMessage(message: Message, socket: Socket): void {
+    if (message.type === 'PingEvent' && typeof message.data?.id === 'string') {
+      const id = message.data.id as string;
+      const entry = this.pingResolvers[id];
+      if (entry) {
+        const { startTime, resolver } = entry;
+        const endTime = now();
+        resolver(endTime - startTime);
+        delete this.pingResolvers[id];
+        UUIDManager.free(id);
+      }
+    }
+
+    super.onMessage(message, socket);
   }
 }

@@ -4,6 +4,7 @@ import { SizedQueue } from 'core/util';
 import { EventManager, StepEvent, Event } from 'core/event';
 import { WorldManager } from 'core/entity';
 import { MetricsEvent } from 'core/metrics';
+import { PlayerManager } from 'core/player';
 
 export class DebugComponent extends Component {
   public static componentName: string = 'debug-component';
@@ -11,6 +12,7 @@ export class DebugComponent extends Component {
   private fpsLabel?: HTMLElement;
   private entitiesLabel?: HTMLElement;
   private listenersLabel?: HTMLElement;
+  private pingLabel?: HTMLElement;
 
   private serverTpsLabel?: HTMLElement;
   private serverEntitiesLabel?: HTMLElement;
@@ -22,6 +24,7 @@ export class DebugComponent extends Component {
     this.fpsLabel = this.queryChild('#fps-label');
     this.entitiesLabel = this.queryChild('#entities-label');
     this.listenersLabel = this.queryChild('#listeners-label');
+    this.pingLabel = this.queryChild('#ping-label');
 
     this.serverTpsLabel = this.queryChild('#server-tps-label');
     this.serverEntitiesLabel = this.queryChild('#server-entities-label');
@@ -30,7 +33,7 @@ export class DebugComponent extends Component {
     const frameTimes = new SizedQueue<number>(60);
 
     // const timer = new Timer((dt) => {
-    EventManager.addListener<StepEvent>('StepEvent', (event) => {
+    EventManager.addListener<StepEvent>('StepEvent', async (event) => {
       frameTimes.enqueue(event.data.dt);
       const sum = frameTimes.iterator().fold(0, (acc, x) => acc + x);
       const fps = frameTimes.size() / sum;
@@ -49,7 +52,7 @@ export class DebugComponent extends Component {
     });
 
     EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
-      const { tps, entities, listeners } = event.data;
+      const { tps, entities, listeners, pings } = event.data;
       if (this.serverTpsLabel) {
         const rounded = Math.round(tps);
         this.serverTpsLabel.innerText = '' + rounded;
@@ -59,6 +62,14 @@ export class DebugComponent extends Component {
       }
       if (this.serverListenersLabel) {
         this.serverListenersLabel.innerText = '' + listeners;
+      }
+      const player = PlayerManager.getActivePlayer();
+      if (player && this.pingLabel) {
+        const ping = pings[player.id];
+        if (typeof ping === 'number') {
+          const ms = Math.round(ping * 1000);
+          this.pingLabel.innerText = '' + ms + 'ms';
+        }
       }
     });
   }

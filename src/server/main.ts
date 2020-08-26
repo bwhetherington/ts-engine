@@ -16,6 +16,7 @@ import { readFile as readFileNonPromise } from 'fs';
 import { promisify } from 'util';
 import process from 'process';
 import { registerRenameForm } from 'core/form/rename';
+import { isEmpty } from 'core/util/object';
 
 const readFile = promisify(readFileNonPromise);
 
@@ -76,7 +77,6 @@ async function main(): Promise<void> {
   }
 
   const timer = new Timer((dt) => {
-    NetworkManager.send({ foo: 'foo', bar: 'bar' });
     EventManager.step(dt);
 
     const event = {
@@ -87,7 +87,10 @@ async function main(): Promise<void> {
       },
     };
 
-    NetworkManager.send(event);
+    if (!(isEmpty(event.data.worldData) && isEmpty(event.data.playerData))) {
+      NetworkManager.send(event);
+    }
+
   }, 1 / 30);
   TimerManager.initialize(timer);
 }

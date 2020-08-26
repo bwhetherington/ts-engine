@@ -34,12 +34,12 @@ export class Projectile extends Entity {
     super();
     this.type = Projectile.typeName;
     this.bounce = 0;
-    this.mass = 0.1;
+    this.mass = 0.03;
     this.setOriginalColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.registerListeners();
     this.prepareRemove();
-    this.boundingBox.width = 20;
-    this.boundingBox.height = 20;
+    this.boundingBox.width = 15;
+    this.boundingBox.height = 15;
   }
 
   protected setOriginalColor(color: Color): void {
@@ -92,7 +92,7 @@ export class Projectile extends Entity {
 
   protected explode(): void {
     const echo = WorldManager.spawn(Echo, this.position);
-    echo.initialize(this, 0.5);
+    echo.initialize(this, false, 0.5);
     echo.velocity.zero();
   }
 

@@ -11,6 +11,7 @@ export class Echo extends Entity {
   private parent?: Entity;
   private timeRemaining: number = DURATION;
   private duration: number = DURATION;
+  private isFancy: boolean = false;
 
   public constructor() {
     super();
@@ -37,22 +38,25 @@ export class Echo extends Entity {
     this.render(ctx);
   }
 
-  public initialize(entity: Entity, duration: number = DURATION): void {
+  public initialize(entity: Entity, isFancy: boolean = false, duration: number = DURATION): void {
     this.parent = entity;
     this.velocity.set(this.parent.velocity);
     this.mass = this.parent.mass;
     this.friction = 0;
     this.timeRemaining = duration;
     this.duration = duration;
+    this.isFancy = isFancy;
   }
 
   public render(ctx: GraphicsContext): void {
     const t = this.getParameter();
-    ctx.withAlpha(t, (ctx) => {
-      const u = (1 - t) + 1;
-      ctx.setScale(u);
-      this.parent?.render(ctx);
-      ctx.setScale(1 / u);
+    ctx.withOptions({ useFancyAlpha: this.isFancy }, (ctx) => {
+      ctx.withAlpha(t, (ctx) => {
+        const u = (1 - t) + 1;
+        ctx.setScale(u);
+        this.parent?.render(ctx);
+        ctx.setScale(1 / u);
+      });
     });
   }
 }

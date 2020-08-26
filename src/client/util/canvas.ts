@@ -49,7 +49,6 @@ export class HDCanvas implements GraphicsContext {
     doFill: true,
   };
   private optionsStack: Partial<GraphicsOptions>[] = [];
-
   private curContext?: CanvasRenderingContext2D;
 
   constructor(options: Options = DEFAULT_OPTIONS, isParent: boolean = true) {
@@ -98,6 +97,7 @@ export class HDCanvas implements GraphicsContext {
       this.options.doFill = options.doFill;
     }
     this.options.ignoreScale = !!options.ignoreScale;
+    this.options.useFancyAlpha = !!options.useFancyAlpha;
     // this.hidden?.setOptions(options);
   }
 
@@ -335,35 +335,62 @@ export class HDCanvas implements GraphicsContext {
     alpha: number,
     proc: (ctx: GraphicsContext) => void
   ): GraphicsContext {
-    if (this.hidden?.bounds) {
-      const ctx = this.curContext;
-      if (ctx && this.hidden && this.hidden.canvas) {
-        const oldAlpha = ctx.globalAlpha;
-        this.hidden.begin();
-        ctx.globalAlpha = alpha;
-        // proc(this);
-        const { scale, translation: { x, y } } = this;
-        const dw = (this.hidden.width - this.width) / 2;
-        const dh = (this.hidden.height - this.height) / 2;
-        this.hidden.translate(x + dw, y + dh);
-        this.hidden.setScale(scale);
-        proc(this.hidden);
-        this.setScale(1 / scale);
-        let { x: sx, y: sy, width: sw, height: sh } = this.hidden.bounds.boundingBox;
-        const padding = 10;
-        sx -= padding;
-        sy -= padding;
-        sw += padding * 2;
-        sh += padding * 2;
-        ctx.drawImage(this.hidden.canvas, sx, sy, sw, sh, sx - x - dw, sy - y - dh, sw, sh);
-        // ctx.lineWidth = 1;
-        // ctx.strokeStyle = 'black';
-        // ctx.rect(this.hidden.bounds.boundingBox.x - x - dw, this.hidden.bounds.boundingBox.y - y - dh, this.hidden.bounds.boundingBox.width, this.hidden.bounds.boundingBox.height);
-        this.setScale(scale);
-        ctx.globalAlpha = oldAlpha;
-        // Draw bounding box
-        ctx.stroke();
+    if (this.options.useFancyAlpha) {
+      return this.withAlphaFancy(alpha, proc);
+    } else {
+      return this.withAlphaCheap(alpha, proc);
+    }
+  }
+
+  private withAlphaCheap(
+    alpha: number,
+    proc: (ctx: GraphicsContext) => void
+  ): GraphicsContext {
+    const ctx = this.curContext;
+    if (ctx) {
+      const old = ctx.globalAlpha;
+      ctx.globalAlpha = alpha;
+      proc(this);
+      ctx.globalAlpha = old;
+    }
+    return this;
+  }
+
+  private withAlphaFancy(
+    alpha: number,
+    proc: (ctx: GraphicsContext) => void
+  ): GraphicsContext {
+    if (alpha < 1) {
+      if (this.hidden?.bounds) {
+        const ctx = this.curContext;
+        if (ctx && this.hidden && this.hidden.canvas) {
+          const oldAlpha = ctx.globalAlpha;
+          this.hidden.width = this.width * this.ratio;
+          this.hidden.height = this.height * this.ratio;
+          this.hidden.begin();
+          ctx.globalAlpha = alpha;
+          // proc(this);
+          const { scale, translation: { x, y } } = this;
+          const dw = (this.hidden.width - this.width) / 2;
+          const dh = (this.hidden.height - this.height) / 2;
+          this.hidden.translate(x + dw, y + dh);
+          this.hidden.setScale(scale);
+          proc(this.hidden);
+          let { x: sx, y: sy, width: sw, height: sh } = this.hidden.bounds.boundingBox;
+          this.setScale(1 / scale);
+          const padding = 7;
+          sx -= padding;
+          sy -= padding;
+          sw += padding * 2;
+          sh += padding * 2;
+
+          ctx.drawImage(this.hidden.canvas, sx, sy, sw, sh, sx - x - dw, sy - y - dh, sw, sh);
+          this.setScale(scale);
+          ctx.globalAlpha = oldAlpha;
+        }
       }
+    } else {
+      proc(this);
     }
     return this;
   }

@@ -5,6 +5,8 @@ import { Timer } from 'server/util';
 import { MetricsEvent } from 'core/metrics';
 import { WorldManager } from 'core/entity';
 import { NetworkManager } from 'core/net';
+import { UUID } from 'core/uuid';
+import { Player } from 'core/player';
 
 const log = LogManager.forFile(__filename);
 
@@ -16,6 +18,15 @@ function calculateTps(queue: SizedQueue<number>): number {
 
 export class MetricsManager {
   private timer: number = 0;
+  private pings: Record<UUID, number> = {};
+
+  public recordPing(player: Player, ping: number): void {
+    this.pings[player.id] = ping;
+  }
+
+  public removePlayer(player: Player): void {
+    delete this.pings[player.id];
+  }
 
   public initialize(): void {
     log.debug('MetricsManager initialized');
@@ -35,6 +46,7 @@ export class MetricsManager {
             listeners: EventManager.getListenerCount(),
             connections: 0,
             timeElapsed: EventManager.timeElapsed,
+            pings: this.pings,
           },
         };
         NetworkManager.send(event);

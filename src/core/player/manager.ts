@@ -26,6 +26,10 @@ export class PlayerManager implements Serializable {
     this.activePlayer = socket;
   }
 
+  public getActivePlayer(): Player | undefined {
+    return this.socketMap[this.activePlayer];
+  }
+
   public isActivePlayer(player: Player): boolean {
     return this.activePlayer > -1 && player.socket === this.activePlayer;
   }
@@ -77,12 +81,17 @@ export class PlayerManager implements Serializable {
 
   public deserialize(data: Data): void {
     for (const index in data) {
+      let newPlayer = false;
       let player = this.players[index];
       if (!player) {
         player = new Player();
-        this.players[index] = player;
+        player.id = index;
+        newPlayer = true;
       }
       player.deserialize(data[index]);
+      if (newPlayer) {
+        this.add(player);
+      }
     }
   }
 

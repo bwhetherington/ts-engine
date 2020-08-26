@@ -33,6 +33,9 @@ export class Client extends Node {
   private isConnected: boolean = false;
   private name: string = '';
 
+  private startTime: number = 0;
+  private pingResolver?: (x: number) => void;
+
   constructor(addr?: string) {
     super();
 
@@ -56,10 +59,22 @@ export class Client extends Node {
     });
   }
 
+  private getPing(): Promise<number> {
+    this.startTime = EventManager.timeElapsed;
+    return new Promise((resolve) => {
+      this.pingResolver = resolve;
+    });
+  }
+
   private initializeSocket(socket: WebSocket) {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       this.onMessage(data, -1);
+
+      // Immediately respond to pings
+      if (data.type === 'PingEvent') {
+        this.send(data);
+      }
     };
     socket.onopen = () => {
       this.onConnect(-1);

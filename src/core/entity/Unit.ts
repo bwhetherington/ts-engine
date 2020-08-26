@@ -225,16 +225,16 @@ export class Unit extends Entity {
 
   protected explode(): void {
     const echo = WorldManager.spawn(Echo, this.position);
-    echo.initialize(this);
+    echo.initialize(this, true);
 
     if (this.label) {
       const labelEcho = WorldManager.spawn(Echo, this.label.position);
-      labelEcho.initialize(this.label);
+      labelEcho.initialize(this.label, false);
     }
 
     if (this.hpBar) {
       const barEcho = WorldManager.spawn(Echo, this.hpBar.position);
-      barEcho.initialize(this.hpBar);
+      barEcho.initialize(this.hpBar, true);
     }
 
     this.hasExploded = true;
@@ -243,8 +243,6 @@ export class Unit extends Entity {
   public kill(source?: Unit): void {
     if (NetworkManager.isServer()) {
       this.markForDelete();
-    } else if (!this.hasExploded) {
-      this.explode();
     }
 
     EventManager.emit<KillEvent>({
