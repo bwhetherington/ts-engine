@@ -74,8 +74,11 @@ export class Hero extends Tank {
 
     if (NetworkManager.isClient()) {
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
-        const { target, source, amount } = event.data;
+        const { targetID, sourceID, amount } = event.data;
+        const target = WorldManager.getEntity(targetID);
+        const source = WorldManager.getEntity(sourceID);
         if (
+          target &&
           amount > 0 &&
           this.getPlayer()?.isActivePlayer() &&
           (this === target || this === source)
@@ -96,8 +99,10 @@ export class Hero extends Tank {
       });
     } else {
       this.addListener<KillEvent>('KillEvent', (event) => {
-        const { source, target } = event.data;
-        if (this === source) {
+        const { sourceID, targetID } = event.data;
+        const target = WorldManager.getEntity(targetID);
+        const source = WorldManager.getEntity(sourceID);
+        if (target instanceof Unit && this === source) {
           this.addExperience(target.getXPWorth());
         }
       });

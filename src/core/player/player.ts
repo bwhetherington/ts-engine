@@ -29,11 +29,12 @@ export class Player implements Serializable {
 
     if (NetworkManager.isServer()) {
       this.addListener<KillEvent>('KillEvent', async (event) => {
-        if (event.data.target === this.hero) {
+        const target = WorldManager.getEntity(event.data.targetID);
+        if (target && target === this.hero) {
           await sleep(3);
 
           // Check that we haven't already respawned
-          if (event.data.target === this.hero) {
+          if (target === this.hero) {
             const hero = WorldManager.spawn(Hero);
 
             const x = (Math.random() - 0.5) * 1120;

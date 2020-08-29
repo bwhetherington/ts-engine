@@ -69,7 +69,7 @@ export class Client extends Node {
 
   private initializeSocket(socket: WebSocket) {
     socket.onmessage = (event) => {
-      console.log(event.data.length);
+      // console.log(event.data.length);
       const data = SerializeManager.deserialize(event.data);
       this.onMessage(data, -1);
 

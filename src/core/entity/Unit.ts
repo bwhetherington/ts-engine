@@ -11,7 +11,6 @@ import { Data } from 'core/serialize';
 import { MovementDirection } from 'core/input';
 import { Vector } from 'core/geometry';
 import { clamp } from 'core/util';
-import { Weapon, WeaponManager } from 'core/weapon';
 import { EventManager } from 'core/event';
 import { NetworkManager } from 'core/net';
 import { Color, reshade, GraphicsContext } from 'core/graphics';
@@ -79,14 +78,18 @@ export class Unit extends Entity {
 
   public damage(amount: number, source?: Unit): void {
     this.setLife(this.life - amount, source);
-    EventManager.emit<DamageEvent>({
+    const event = {
       type: 'DamageEvent',
       data: {
-        target: this,
-        source,
+        targetID: this.id,
+        sourceID: source?.id,
         amount,
       },
-    });
+    };
+    EventManager.emit<DamageEvent>(event);
+    if (NetworkManager.isServer()) {
+      NetworkManager.send(event);
+    }
     if (amount > 0) {
       this.flash();
     }
@@ -248,8 +251,8 @@ export class Unit extends Entity {
     EventManager.emit<KillEvent>({
       type: 'KillEvent',
       data: {
-        target: this,
-        source,
+        targetID: this.id,
+        sourceID: source?.id,
       },
     });
   }

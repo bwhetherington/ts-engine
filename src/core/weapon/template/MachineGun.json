@@ -4,7 +4,7 @@
   "projectileType": "Projectile",
   "projectileSpread": 0.3,
   "projectileSpeed": 650,
-  "projectilePierce": 5,
+  "projectilePierce": 1,
   "damage": 2,
-  "rate": 0.175
+  "rate": 0.15
 }

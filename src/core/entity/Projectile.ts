@@ -71,7 +71,7 @@ export class Projectile extends Entity {
           return;
         }
 
-        if (collided instanceof Unit) {
+        if (collided instanceof Unit && NetworkManager.isServer()) {
           this.hit(collided);
         }
       }
@@ -110,7 +110,7 @@ export class Projectile extends Entity {
 
   public hit(unit?: Unit): boolean {
     if (unit) {
-      if (!this.hitEntities.has(unit.id)) {
+      if (!this.hitEntities.has(unit.id) && this.hitEntities.size < this.pierce) {
         unit.damage(this.damage, this.parent);
         unit.applyForce(this.velocity, this.mass);
         if (this.onHit) {

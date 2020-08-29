@@ -1,6 +1,7 @@
 import { Entity, Unit } from 'core/entity';
 import { Rectangle } from 'core/geometry';
 import { LogManager } from 'core/log';
+import { UUID } from 'core/uuid';
 
 const log = LogManager.forFile(__filename);
 
@@ -122,12 +123,12 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
 }
 
 export interface DamageEvent {
-  target: Unit;
-  source?: Unit;
+  targetID: UUID;
+  sourceID?: UUID;
   amount: number;
 }
 
 export interface KillEvent {
-  target: Unit;
-  source?: Unit;
+  targetID: UUID;
+  sourceID?: UUID;
 }

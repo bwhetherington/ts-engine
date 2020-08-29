@@ -421,8 +421,8 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     return diffObj;
   }
 
-  public getEntity(id: string): Entity | undefined {
-    return this.entities[id];
+  public getEntity(id?: string): Entity | undefined {
+    return id ? this.entities[id] : undefined;
   }
 
   public getEntityCount(): number {

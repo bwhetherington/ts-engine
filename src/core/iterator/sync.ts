@@ -32,6 +32,18 @@ function* filterType<T, U extends T>(
   }
 }
 
+function* filterMap<T, U>(
+  gen: Generator<T>,
+  fn: (x: T) => U | undefined,
+): Generator<U> {
+  for (const x of gen) {
+    const y = fn(x);
+    if (y !== undefined) {
+      yield y;
+    }
+  }
+}
+
 function* take<T>(gen: Generator<T>, num: number): Generator<T> {
   let i = 0;
   for (const x of gen) {
@@ -156,6 +168,10 @@ export class Iterator<T> implements Generator<T> {
 
   public filterType<U extends T>(fn: (x: T) => x is U): Iterator<U> {
     return iterator(filterType(this.generator, fn));
+  }
+
+  public filterMap<U>(fn: (x: T) => U | undefined): Iterator<U> {
+    return iterator(filterMap(this.generator, fn));
   }
 
   public fold<U>(initial: U, fn: (acc: U, x: T) => U): U {
