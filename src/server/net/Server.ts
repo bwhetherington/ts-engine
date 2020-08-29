@@ -15,6 +15,7 @@ import { InitialSyncEvent } from 'core/net/util';
 import process from 'process';
 import { UUID, UUIDManager } from 'core/uuid';
 import { MetricsManager } from 'server/metrics';
+import { Data, SerializeManager } from 'core/serialize';
 
 const log = LogManager.forFile(__filename);
 
@@ -91,7 +92,7 @@ export class Server extends Node {
     connection.on('message', (data) => {
       const { type, utf8Data } = data;
       if (utf8Data && type === 'utf8') {
-        const parsed: Message = JSON.parse(utf8Data);
+        const parsed: Data = SerializeManager.deserialize(utf8Data);
         this.onMessage(parsed, index);
       }
     });
@@ -137,7 +138,7 @@ export class Server extends Node {
   }
 
   public send(message: Message, socket: Socket = -1) {
-    const data = JSON.stringify(message);
+    const data = SerializeManager.serialize(message);
     if (socket === -1) {
       // Send to all sockets
       for (const index in this.connections) {
@@ -146,7 +147,7 @@ export class Server extends Node {
     } else {
       // Send to just one socket
       const connection = this.connections[socket];
-      connection?.sendUTF(JSON.stringify(message));
+      connection?.sendUTF(data);
     }
   }
 

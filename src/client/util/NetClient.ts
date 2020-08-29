@@ -11,6 +11,7 @@ import { EventManager } from 'core/event';
 import { InitialSyncEvent } from 'core/net/util';
 import { PlayerManager } from 'core/player';
 import { WorldManager } from 'core/entity';
+import { SerializeManager } from 'core/serialize';
 
 const log = LogManager.forFile(__filename);
 
@@ -68,7 +69,8 @@ export class Client extends Node {
 
   private initializeSocket(socket: WebSocket) {
     socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+      console.log(event.data.length);
+      const data = SerializeManager.deserialize(event.data);
       this.onMessage(data, -1);
 
       // Immediately respond to pings
@@ -91,7 +93,8 @@ export class Client extends Node {
   public send(message: Message, socket: Socket = -1) {
     if (socket === -1) {
       if (this.isConnected) {
-        this.socket.send(JSON.stringify(message));
+        const data = SerializeManager.serialize(message);
+        this.socket.send(data);
       } else {
         this.sendBuffer.push(message);
       }
