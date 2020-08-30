@@ -33,13 +33,13 @@ export class Projectile extends Entity {
   constructor() {
     super();
     this.type = Projectile.typeName;
+    this.collisionLayer = CollisionLayer.Projectile;
     this.bounce = 0;
     this.mass = 0.03;
     this.setOriginalColor(rgba(1.0, 0.6, 0.3, 0.8));
-    this.registerListeners();
     this.prepareRemove();
-    this.boundingBox.width = 15;
-    this.boundingBox.height = 15;
+    this.boundingBox.width = 20;
+    this.boundingBox.height = 20;
   }
 
   protected setOriginalColor(color: Color): void {
@@ -54,28 +54,25 @@ export class Projectile extends Entity {
     }
   }
 
-  private registerListeners(): void {
-    this.addListener<CollisionEvent>('CollisionEvent', (event) => {
-      const { collider, collided } = event.data;
-      if (collider === this) {
-        if (
-          collided === undefined ||
-          collided.collisionLayer === CollisionLayer.Geometry
-        ) {
-          this.hit();
-          this.remove();
-          return;
-        }
+  public collide(other?: Entity) {
+    super.collide(other);
 
-        if (collided === this.parent) {
-          return;
-        }
+    if (
+      other === undefined ||
+      other.collisionLayer === CollisionLayer.Geometry
+    ) {
+      this.hit();
+      this.remove();
+      return;
+    }
 
-        if (collided instanceof Unit && NetworkManager.isServer()) {
-          this.hit(collided);
-        }
-      }
-    });
+    if (other === this.parent) {
+      return;
+    }
+
+    if (other instanceof Unit && NetworkManager.isServer()) {
+      this.hit(other);
+    }
   }
 
   private explodeInternal(): void {
@@ -110,7 +107,10 @@ export class Projectile extends Entity {
 
   public hit(unit?: Unit): boolean {
     if (unit) {
-      if (!this.hitEntities.has(unit.id) && this.hitEntities.size < this.pierce) {
+      if (
+        !this.hitEntities.has(unit.id) &&
+        this.hitEntities.size < this.pierce
+      ) {
         unit.damage(this.damage, this.parent);
         unit.applyForce(this.velocity, this.mass);
         if (this.onHit) {

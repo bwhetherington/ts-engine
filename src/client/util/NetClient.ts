@@ -34,9 +34,6 @@ export class Client extends Node {
   private isConnected: boolean = false;
   private name: string = '';
 
-  private startTime: number = 0;
-  private pingResolver?: (x: number) => void;
-
   constructor(addr?: string) {
     super();
 
@@ -57,13 +54,6 @@ export class Client extends Node {
       const { worldData, playerData } = sync;
       WorldManager.deserialize(worldData);
       PlayerManager.deserialize(playerData);
-    });
-  }
-
-  private getPing(): Promise<number> {
-    this.startTime = EventManager.timeElapsed;
-    return new Promise((resolve) => {
-      this.pingResolver = resolve;
     });
   }
 

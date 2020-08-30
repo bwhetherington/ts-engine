@@ -41,7 +41,7 @@ export class Enemy extends Tank {
     // Select the closest unit
     const [target] = WorldManager.getEntities()
       .filter((entity) => this !== entity)
-      .filterMap((entity) => entity instanceof Unit ? entity : undefined)
+      .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
       .map<[Unit | undefined, number]>((entity) => [
         entity,
         entity.position.distanceTo(this.position),

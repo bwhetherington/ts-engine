@@ -1,4 +1,4 @@
-import { UUID } from "core/uuid";
+import { UUID } from 'core/uuid';
 
 export interface MetricsEvent {
   tps: number;

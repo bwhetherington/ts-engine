@@ -38,7 +38,11 @@ export class Echo extends Entity {
     this.render(ctx);
   }
 
-  public initialize(entity: Entity, isFancy: boolean = false, duration: number = DURATION): void {
+  public initialize(
+    entity: Entity,
+    isFancy: boolean = false,
+    duration: number = DURATION
+  ): void {
     this.parent = entity;
     this.velocity.set(this.parent.velocity);
     this.mass = this.parent.mass;
@@ -52,7 +56,7 @@ export class Echo extends Entity {
     const t = this.getParameter();
     ctx.withOptions({ useFancyAlpha: this.isFancy }, (ctx) => {
       ctx.withAlpha(t, (ctx) => {
-        const u = (1 - t) + 1;
+        const u = 1 - t + 1;
         ctx.setScale(u);
         this.parent?.render(ctx);
         ctx.setScale(1 / u);

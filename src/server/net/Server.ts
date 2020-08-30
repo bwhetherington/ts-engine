@@ -64,10 +64,13 @@ export class Server extends Node {
     return new Promise((resolve) => {
       const id = UUIDManager.generate();
       const startTime = now();
-      this.send({
-        type: 'PingEvent',
-        data: { id }
-      }, player.socket);
+      this.send(
+        {
+          type: 'PingEvent',
+          data: { id },
+        },
+        player.socket
+      );
       this.pingResolvers[id] = {
         startTime,
         resolver: resolve,
@@ -129,7 +132,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => { });
+    this.wsServer.on('close', (connection) => {});
   }
 
   private sendRaw(data: string, socket: Socket) {

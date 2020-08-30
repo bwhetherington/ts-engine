@@ -90,7 +90,6 @@ async function main(): Promise<void> {
     if (!(isEmpty(event.data.worldData) && isEmpty(event.data.playerData))) {
       NetworkManager.send(event);
     }
-
   }, 1 / 30);
   TimerManager.initialize(timer);
 }

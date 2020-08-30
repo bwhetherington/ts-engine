@@ -51,13 +51,16 @@ export class Text extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    ctx.withOptions({
-      lineWidth: 6
-    }, (ctx) => {
-      ctx.text(0, 0, this.text, {
-        size: 26,
-        color: this.getColor(),
-      });
-    });
+    ctx.withOptions(
+      {
+        lineWidth: 6,
+      },
+      (ctx) => {
+        ctx.text(0, 0, this.text, {
+          size: 26,
+          color: this.getColor(),
+        });
+      }
+    );
   }
 }

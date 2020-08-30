@@ -100,6 +100,9 @@ export class Entity implements Bounded, Serializable, Renderable {
           }
 
           collided = true;
+
+          this.collide(candidate);
+
           const event = {
             type: 'CollisionEvent',
             data: <CollisionEvent>{
@@ -263,4 +266,6 @@ export class Entity implements Bounded, Serializable, Renderable {
   public toString(): string {
     return this.type + '[' + this.id + ']';
   }
+
+  public collide(other?: Entity): void {}
 }

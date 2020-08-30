@@ -15,13 +15,6 @@ import { TextManager } from 'client/text';
 
 const log = LogManager.forFile(__filename);
 
-function callWorker(worker: Worker, data: any): Promise<any> {
-  return new Promise((resolve) => {
-    worker.postMessage(data);
-    worker.onmessage = (event) => resolve(event.data);
-  });
-}
-
 async function main(): Promise<void> {
   LogManager.initialize('info', new ClientLogger());
   UIM.initialize();

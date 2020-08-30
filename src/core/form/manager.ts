@@ -103,34 +103,37 @@ export class FormManager {
     log.trace(`form ${formEntry.name} registered`);
     const { name, form, checkType, validate, onSubmit, onReject } = formEntry;
     this.forms[name] = form;
-    EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', async (event) => {
-      const { socket, data } = event;
-      const player = PlayerManager.getPlayer(socket);
-      if (player) {
-        const { name: responseName, data: response } = data;
-        if (responseName === name) {
-          if (checkType(response)) {
-            const result = await validate(response, player);
-            const { isValid, message = 'Error validating form.' } = result;
-            if (isValid) {
-              onSubmit(player, response);
-              player.send({
-                type: 'FormValidatedEvent',
-                data: {},
-              });
+    EventManager.addListener<FormSubmitEvent>(
+      'FormSubmitEvent',
+      async (event) => {
+        const { socket, data } = event;
+        const player = PlayerManager.getPlayer(socket);
+        if (player) {
+          const { name: responseName, data: response } = data;
+          if (responseName === name) {
+            if (checkType(response)) {
+              const result = await validate(response, player);
+              const { isValid, message = 'Error validating form.' } = result;
+              if (isValid) {
+                onSubmit(player, response);
+                player.send({
+                  type: 'FormValidatedEvent',
+                  data: {},
+                });
+              } else {
+                // Send the form back to the user
+                this.sendForm(player, formEntry.name, [message]);
+              }
             } else {
               // Send the form back to the user
-              this.sendForm(player, formEntry.name, [message]);
+              this.sendForm(player, formEntry.name, [
+                'Response did not include all required fields.',
+              ]);
             }
-          } else {
-            // Send the form back to the user
-            this.sendForm(player, formEntry.name, [
-              'Response did not include all required fields.',
-            ]);
           }
         }
       }
-    });
+    );
     if (onReject) {
       EventManager.addListener<FormRejectEvent>('FormRejectEvent', (event) => {
         const { player } = event.data;

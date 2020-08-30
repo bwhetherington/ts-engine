@@ -189,7 +189,13 @@ export class HDCanvas implements GraphicsContext {
       if (this.bounds) {
         const width = ctx.measureText(text).width;
         const height = size;
-        this.bounds?.insertRawTransformed(x - width / 2, y - height / 2, width, height, this.transform);
+        this.bounds?.insertRawTransformed(
+          x - width / 2,
+          y - height / 2,
+          width,
+          height,
+          this.transform
+        );
       }
     }
   }
@@ -370,13 +376,21 @@ export class HDCanvas implements GraphicsContext {
           this.hidden.begin();
           ctx.globalAlpha = alpha;
           // proc(this);
-          const { scale, translation: { x, y } } = this;
+          const {
+            scale,
+            translation: { x, y },
+          } = this;
           const dw = (this.hidden.width - this.width) / 2;
           const dh = (this.hidden.height - this.height) / 2;
           this.hidden.translate(x + dw, y + dh);
           this.hidden.setScale(scale);
           proc(this.hidden);
-          let { x: sx, y: sy, width: sw, height: sh } = this.hidden.bounds.boundingBox;
+          let {
+            x: sx,
+            y: sy,
+            width: sw,
+            height: sh,
+          } = this.hidden.bounds.boundingBox;
           this.setScale(1 / scale);
           const padding = 7;
           sx -= padding;
@@ -384,7 +398,17 @@ export class HDCanvas implements GraphicsContext {
           sw += padding * 2;
           sh += padding * 2;
 
-          ctx.drawImage(this.hidden.canvas, sx, sy, sw, sh, sx - x - dw, sy - y - dh, sw, sh);
+          ctx.drawImage(
+            this.hidden.canvas,
+            sx,
+            sy,
+            sw,
+            sh,
+            sx - x - dw,
+            sy - y - dh,
+            sw,
+            sh
+          );
           this.setScale(scale);
           ctx.globalAlpha = oldAlpha;
         }

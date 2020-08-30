@@ -59,7 +59,7 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderCannon(ctx: GraphicsContext): void { }
+  protected renderCannon(ctx: GraphicsContext): void {}
 
   public render(ctx: GraphicsContext): void {
     ctx.withAlpha(1, (ctx) => {

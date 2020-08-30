@@ -6,7 +6,7 @@ export class Encoder {
     this.floatBuf[0] = num;
     this.byteBuf = new Uint8Array(this.floatBuf.buffer);
 
-    let str = "";
+    let str = '';
     for (let i = 0; i < this.byteBuf.length; i++) {
       str += String.fromCharCode(this.byteBuf[i]);
     }

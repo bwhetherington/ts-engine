@@ -14,7 +14,7 @@
   "life": 20,
   "lifeRegen": 0,
   "mass": 2,
-  "friction": 50,
+  "friction": 150,
   "bounce": 0.9,
   "speed": 100,
   "xpWorth": 5

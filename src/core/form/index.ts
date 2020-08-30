@@ -44,7 +44,7 @@ export interface FormSubmitEvent {
   data: Record<string, Entry>;
 }
 
-export interface FormValidatedEvent { }
+export interface FormValidatedEvent {}
 
 export interface StringEntry {
   type: 'text';

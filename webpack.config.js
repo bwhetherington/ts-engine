@@ -1,6 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
-const process = require('process');
 
 module.exports = {
   entry: path.resolve(__dirname, 'src', 'client', 'index.ts'),
@@ -38,10 +36,6 @@ module.exports = {
           },
         },
         exclude: /node_modules/,
-      },
-      {
-        test: /\.worker\.js/,
-        use: 'worker-loader'
       }
     ],
   },

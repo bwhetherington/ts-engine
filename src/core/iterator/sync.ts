@@ -34,7 +34,7 @@ function* filterType<T, U extends T>(
 
 function* filterMap<T, U>(
   gen: Generator<T>,
-  fn: (x: T) => U | undefined,
+  fn: (x: T) => U | undefined
 ): Generator<U> {
   for (const x of gen) {
     const y = fn(x);

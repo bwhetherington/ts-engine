@@ -14,6 +14,7 @@ import { clamp } from 'core/util';
 import { EventManager } from 'core/event';
 import { NetworkManager } from 'core/net';
 import { Color, reshade, GraphicsContext } from 'core/graphics';
+import { CollisionLayer } from './util';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -273,5 +274,18 @@ export class Unit extends Entity {
     super.setColor(color);
     const flashColor = reshade(this.color, -0.4);
     this.flashColor = flashColor;
+  }
+
+  public collide(other?: Entity): void {
+    if (
+      NetworkManager.isServer() &&
+      other &&
+      other.collisionLayer === CollisionLayer.Unit
+    ) {
+      this.vectorBuffer.set(other.position);
+      this.vectorBuffer.add(this.position, -1);
+      this.vectorBuffer.normalize();
+      other.applyForce(this.vectorBuffer, this.mass * 10);
+    }
   }
 }

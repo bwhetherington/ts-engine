@@ -1,4 +1,4 @@
-import { Vector } from ".";
+import { Vector } from '.';
 
 export class Matrix {
   private a0: number = 0;
@@ -44,15 +44,15 @@ export class Matrix {
       dst = new Matrix();
     }
 
-    dst.a0 = (this.a0 * src.a0) + (this.a1 * src.b0) + (this.a2 * src.c0);
-    dst.a1 = (this.a0 * src.a1) + (this.a1 * src.b1) + (this.a2 * src.c1);
-    dst.a2 = (this.a0 * src.a2) + (this.a1 * src.b2) + (this.a2 * src.c2);
-    dst.b0 = (this.b0 * src.a0) + (this.b1 * src.b0) + (this.b2 * src.c0);
-    dst.b1 = (this.b0 * src.a1) + (this.b1 * src.b1) + (this.b2 * src.c1);
-    dst.b2 = (this.b0 * src.a2) + (this.b1 * src.b2) + (this.b2 * src.c2);
-    dst.c0 = (this.c0 * src.a0) + (this.c1 * src.b0) + (this.c2 * src.c0);
-    dst.c1 = (this.c0 * src.a1) + (this.c1 * src.b1) + (this.c2 * src.c1);
-    dst.c2 = (this.c0 * src.a2) + (this.c1 * src.b2) + (this.c2 * src.c2);
+    dst.a0 = this.a0 * src.a0 + this.a1 * src.b0 + this.a2 * src.c0;
+    dst.a1 = this.a0 * src.a1 + this.a1 * src.b1 + this.a2 * src.c1;
+    dst.a2 = this.a0 * src.a2 + this.a1 * src.b2 + this.a2 * src.c2;
+    dst.b0 = this.b0 * src.a0 + this.b1 * src.b0 + this.b2 * src.c0;
+    dst.b1 = this.b0 * src.a1 + this.b1 * src.b1 + this.b2 * src.c1;
+    dst.b2 = this.b0 * src.a2 + this.b1 * src.b2 + this.b2 * src.c2;
+    dst.c0 = this.c0 * src.a0 + this.c1 * src.b0 + this.c2 * src.c0;
+    dst.c1 = this.c0 * src.a1 + this.c1 * src.b1 + this.c2 * src.c1;
+    dst.c2 = this.c0 * src.a2 + this.c1 * src.b2 + this.c2 * src.c2;
 
     return dst;
   }

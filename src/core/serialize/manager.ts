@@ -1,6 +1,6 @@
-import { Data } from "core/serialize";
+import { Data } from 'core/serialize';
 import * as jsonpack from 'jsonpack';
-import { Encoder } from "./encoder";
+import { Encoder } from './encoder';
 
 const encoder = new Encoder();
 
@@ -49,8 +49,14 @@ function compose<T, U, V>(f: (x: T) => U, g: (x: U) => V): (x: T) => V {
 }
 
 export class SerializeManager {
-  private serializer: (input: Data) => string = compose(compress, JSON.stringify);
-  private deserializer: (input: string) => Data = compose(JSON.parse, decompress);
+  private serializer: (input: Data) => string = compose(
+    compress,
+    JSON.stringify
+  );
+  private deserializer: (input: string) => Data = compose(
+    JSON.parse,
+    decompress
+  );
 
   public serialize(data: Data): string {
     return this.serializer(data);

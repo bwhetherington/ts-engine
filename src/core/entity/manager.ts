@@ -291,6 +291,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
               collider: entity,
             },
           };
+          entity.collide();
           EventManager.emit(event);
         }
 

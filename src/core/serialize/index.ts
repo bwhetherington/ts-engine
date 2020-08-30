@@ -10,6 +10,4 @@ export interface Serializable {
 }
 
 const SM = new SerializeManager();
-export {
-  SM as SerializeManager
-};
+export { SM as SerializeManager };

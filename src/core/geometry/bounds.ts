@@ -1,9 +1,15 @@
-import { Bounded } from "core/geometry";
-import { Rectangle } from "./rectangle";
-import { Vector } from "./vector";
-import { Matrix } from "./matrix";
+import { Bounded } from 'core/geometry';
+import { Rectangle } from './rectangle';
+import { Vector } from './vector';
+import { Matrix } from './matrix';
 
-function maxAndMin(a: number, b: number, c: number, d: number, dst: Vector = new Vector()): Vector {
+function maxAndMin(
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  dst: Vector = new Vector()
+): Vector {
   const min = Math.min(a, b, c, d);
   const max = Math.max(a, b, c, d);
   dst.setXY(min, max);
@@ -15,12 +21,23 @@ export class Bounds implements Bounded {
   private isEmptyInternal: boolean = true;
   private dst: Vector = new Vector();
 
-  public insertRawTransformed(x: number, y: number, width: number, height: number, matrix: Matrix, verbose: boolean = false): void {
+  public insertRawTransformed(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    matrix: Matrix,
+    verbose: boolean = false
+  ): void {
     // Transform rectangle
     const { x: x0, y: y0 } = matrix.multiplyPointXY(x, y, this.dst);
     const { x: x1, y: y1 } = matrix.multiplyPointXY(x + width, y, this.dst);
     const { x: x2, y: y2 } = matrix.multiplyPointXY(x, y + height, this.dst);
-    const { x: x3, y: y3 } = matrix.multiplyPointXY(x + width, y + height, this.dst);
+    const { x: x3, y: y3 } = matrix.multiplyPointXY(
+      x + width,
+      y + height,
+      this.dst
+    );
 
     // Compute bounds of transformed rectangle
     const { x: minX, y: maxX } = maxAndMin(x0, x1, x2, x3, this.dst);
@@ -30,7 +47,13 @@ export class Bounds implements Bounded {
     this.insertRaw(minX, minY, maxX - minX, maxY - minY, verbose);
   }
 
-  public insertRaw(x: number, y: number, width: number, height: number, verbose: boolean = false): void {
+  public insertRaw(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    verbose: boolean = false
+  ): void {
     if (this.isEmptyInternal) {
       this.boundingBox.x = x;
       this.boundingBox.y = y;
@@ -42,7 +65,12 @@ export class Bounds implements Bounded {
       let newY = this.boundingBox.y;
       let newWidth = this.boundingBox.width;
       let newHeight = this.boundingBox.height;
-      const { x: nearX1, y: nearY1, farX: farX1, farY: farY1 } = this.boundingBox;
+      const {
+        x: nearX1,
+        y: nearY1,
+        farX: farX1,
+        farY: farY1,
+      } = this.boundingBox;
       const nearX2 = x;
       const nearY2 = y;
       const farX2 = x + width;
