@@ -169,6 +169,10 @@ export class Hero extends Tank {
     this.setExperience(this.experienceForLevel(level - 1));
   }
 
+  public getLevel(): number {
+    return this.level;
+  }
+
   private setLevelInternal(level: number): void {
     if (level !== this.level) {
       this.level = level;

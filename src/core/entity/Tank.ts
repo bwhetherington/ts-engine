@@ -59,36 +59,34 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderCannon(ctx: GraphicsContext): void {}
+  protected renderCannon(ctx: GraphicsContext): void { }
 
   public render(ctx: GraphicsContext): void {
-    ctx.withAlpha(1, (ctx) => {
-      const color = this.getColor();
+    const color = this.getColor();
 
-      const { width, height } = this.boundingBox;
+    const { width, height } = this.boundingBox;
 
-      // Draw turret
-      ctx.rotate(this.angle);
+    // Draw turret
+    ctx.rotate(this.angle);
 
-      // Scale turret to allow it to animate when firing
-      const horizontalScale = (this.fireTimer / FIRE_DURATION) * 0.2 + 1;
-      const verticalScale = horizontalScale / 2 + 0.5;
-      // ctx.setScale(cannonScale);
-      ctx.rect(
-        0,
-        -(this.cannonShape.height * verticalScale) / 2,
-        this.cannonShape.width * horizontalScale,
-        this.cannonShape.height * verticalScale,
-        color
-      );
+    // Scale turret to allow it to animate when firing
+    const horizontalScale = (this.fireTimer / FIRE_DURATION) * 0.2 + 1;
+    const verticalScale = horizontalScale / 2 + 0.5;
+    // ctx.setScale(cannonScale);
+    ctx.rect(
+      0,
+      -(this.cannonShape.height * verticalScale) / 2,
+      this.cannonShape.width * horizontalScale,
+      this.cannonShape.height * verticalScale,
+      color
+    );
 
-      // Reset transformations
-      // ctx.setScale(1 / cannonScale);
-      ctx.rotate(-this.angle);
+    // Reset transformations
+    // ctx.setScale(1 / cannonScale);
+    ctx.rotate(-this.angle);
 
-      // Draw body
-      ctx.ellipse(-width / 2, -height / 2, width, height, color);
-    });
+    // Draw body
+    ctx.ellipse(-width / 2, -height / 2, width, height, color);
   }
 
   public serialize(): Data {

@@ -15,10 +15,11 @@ export class Player implements Serializable {
   public hero?: Hero;
   public socket: Socket = -1;
   public hasJoined: boolean = false;
+  public ping: number = 0;
+  public score: number = 0;
 
   private listeners: Record<string, Set<UUID>> = {};
 
-  public score: number = 0;
 
   public constructor(id?: UUID) {
     if (id) {

@@ -22,6 +22,7 @@ export class MetricsManager {
 
   public recordPing(player: Player, ping: number): void {
     this.pings[player.id] = ping;
+    player.ping = ping;
   }
 
   public removePlayer(player: Player): void {

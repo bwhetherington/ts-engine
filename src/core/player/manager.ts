@@ -1,18 +1,22 @@
-import { Player } from 'core/player';
+import { Player, PlayerLeaveEvent } from 'core/player';
 import { Serializable, Data } from 'core/serialize';
 import { LogManager } from 'core/log';
-import { SyncEvent } from 'core/net';
+import { SyncEvent, NetworkManager } from 'core/net';
 import { EventManager } from 'core/event';
 import { diff } from 'core/util';
 import { Iterator, iterateObject } from 'core/iterator';
+import { UUID } from 'core/uuid';
+import { isEmpty } from 'core/util/object';
+import { MetricsEvent } from 'core/metrics';
 
 const log = LogManager.forFile(__filename);
 
 export class PlayerManager implements Serializable {
-  private players: Record<string, Player> = {};
+  private players: Record<UUID, Player> = {};
   private socketMap: Record<number, Player> = {};
   private previousState: Data = {};
   private activePlayer: number = -1;
+  private removed: UUID[] = [];
 
   public initialize(): void {
     log.debug('PlayerManager initialized');
@@ -20,6 +24,21 @@ export class PlayerManager implements Serializable {
     EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
       this.deserialize(event.data.playerData);
     });
+
+    if (NetworkManager.isClient()) {
+      EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
+        const { pings } = event.data;
+        for (const id in pings) {
+          const player = this.getPlayer(id);
+          if (player) {
+            const ping = pings[id];
+            if (typeof ping === 'number') {
+              player.ping = pings[id];
+            }
+          }
+        }
+      });
+    }
   }
 
   public setActivePlayer(socket: number): void {
@@ -42,7 +61,7 @@ export class PlayerManager implements Serializable {
     }
   }
 
-  public remove(player: Player | string): void {
+  public remove(player: Player | UUID): void {
     let id;
     if (typeof player === 'string') {
       id = player;
@@ -58,6 +77,15 @@ export class PlayerManager implements Serializable {
       if (playerObj.socket !== undefined) {
         delete this.socketMap[playerObj.socket];
       }
+
+      EventManager.emit<PlayerLeaveEvent>({
+        type: 'PlayerLeaveEvent',
+        data: {
+          player: playerObj
+        }
+      });
+
+      this.removed.push(playerObj.id);
     }
   }
 
@@ -72,25 +100,44 @@ export class PlayerManager implements Serializable {
   }
 
   public serialize(): Data {
-    const obj: Data = {};
+    const players: Data = {};
     for (const index in this.players) {
-      obj[index] = this.players[index].serialize();
+      players[index] = this.players[index].serialize();
+    }
+    const { removed } = this;
+    this.removed = [];
+
+    const obj: Data = {};
+    if (!isEmpty(players)) {
+      obj.players = players;
+    }
+    if (removed.length > 0) {
+      obj.removed = removed;
     }
     return obj;
   }
 
   public deserialize(data: Data): void {
-    for (const index in data) {
-      let newPlayer = false;
-      let player = this.players[index];
-      if (!player) {
-        player = new Player();
-        player.id = index;
-        newPlayer = true;
+    // console.log(data);
+    const { players, removed } = data;
+    if (players) {
+      for (const index in players) {
+        let newPlayer = false;
+        let player = this.players[index];
+        if (!player) {
+          player = new Player();
+          player.id = index;
+          newPlayer = true;
+        }
+        player.deserialize(players[index]);
+        if (newPlayer) {
+          this.add(player);
+        }
       }
-      player.deserialize(data[index]);
-      if (newPlayer) {
-        this.add(player);
+    }
+    if (removed) {
+      for (const id of removed) {
+        this.remove(id);
       }
     }
   }

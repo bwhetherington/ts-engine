@@ -8,10 +8,11 @@ import { UIM } from 'client/components';
 import { CameraManager } from 'core/graphics';
 import { AlertManager } from 'client/alert';
 import { InputManager } from 'client/input';
-import { PlayerManager } from 'core/player';
+import { PlayerManager, Player, PlayerLeaveEvent } from 'core/player';
 import { FormManager } from 'core/form';
 import { WeaponManager } from 'core/weapon';
 import { TextManager } from 'client/text';
+import { TableUpdateEvent, TableRemoveRowEvent } from './components/table';
 
 const log = LogManager.forFile(__filename);
 
@@ -31,6 +32,60 @@ async function main(): Promise<void> {
   FormManager.initialize();
   TextManager.initialize();
   WeaponManager.initialize();
+
+  // Scoreboard
+  EventManager.emit<TableUpdateEvent>({
+    type: 'TableUpdateEvent',
+    data: {
+      id: 'scoreboard',
+      data: {
+        labels: [
+          {
+            field: 'name',
+            value: 'Name',
+          },
+          {
+            field: 'level',
+            value: 'Level',
+          },
+          {
+            field: 'ping',
+            value: 'Ping',
+          },
+        ]
+      }
+    },
+  });
+
+  EventManager.addListener<StepEvent>('StepEvent', () => {
+    const players = PlayerManager.getPlayers().map((player) => ({
+      id: player.id,
+      name: player.name,
+      level: player.hero?.getLevel() ?? 0,
+      ping: Math.round(player.ping * 1000) + 'ms',
+    }));
+    const update = {
+      type: 'TableUpdateEvent',
+      data: {
+        id: 'scoreboard',
+        data: {
+          rows: players
+        }
+      }
+    };
+    EventManager.emit<TableUpdateEvent>(update);
+  });
+
+  EventManager.addListener<PlayerLeaveEvent>('PlayerLeaveEvent', (event) => {
+    const { player } = event.data;
+    EventManager.emit<TableRemoveRowEvent>({
+      type: 'TableRemoveRowEvent',
+      data: {
+        id: 'scoreboard',
+        row: player.id,
+      }
+    });
+  });
 
   if (game) {
     const canvas = new HDCanvas();

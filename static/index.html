@@ -12,11 +12,12 @@
   <div id="game" tabindex="0" autofocus></div>
   <div id="text-pane"></div>
   <div class="ui-pane">
+    <table-component id="scoreboard" class="top right"></table-component>
     <debug-component class="top left"></debug-component>
     <div class="bottom left col">
       <chat-component id="chat-box"></chat-component>
-      <div class="dialog">
-        <!-- <bar-component name="HP" type="life" id="life-bar"></bar-component> -->
+      <div class="dialog col">
+        <bar-component name="HP" type="life" id="life-bar"></bar-component>
         <bar-component name="XP" type="xp" id="xp-bar"></bar-component>
       </div>
     </div>

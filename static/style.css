@@ -230,3 +230,11 @@ input[type="checkbox"]:checked::after {
   user-select: none;
   z-index: 1px;
 }
+
+td {
+  text-align: center;
+}
+
+thead td {
+  font-weight: bold;
+}
