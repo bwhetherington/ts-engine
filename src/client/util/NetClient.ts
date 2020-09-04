@@ -33,6 +33,7 @@ export class Client extends Node {
   private socket: WebSocket;
   private isConnected: boolean = false;
   private name: string = '';
+  private bytesIn: number = 0;
 
   constructor(addr?: string) {
     super();
@@ -60,6 +61,9 @@ export class Client extends Node {
   private initializeSocket(socket: WebSocket) {
     socket.onmessage = (event) => {
       // console.log(event.data.length);
+      // this.bytesIn += event.data.length;
+      // console.log(Math.round(this.bytesIn / EventManager.timeElapsed / 1000) + " kB/s");
+
       const data = SerializeManager.deserialize(event.data);
       this.onMessage(data, -1);
 

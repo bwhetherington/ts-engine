@@ -1,4 +1,4 @@
-import { Component } from 'client/components/util';
+import { Component, ElementFactory } from 'client/components';
 import { EventManager, StepEvent, Event } from 'core/event';
 import { SizedQueue } from 'core/util';
 import { LogManager } from 'core/log';
@@ -218,9 +218,9 @@ export class ChatComponent extends Component {
   private renderComponent(
     component: string | null | TextComponent
   ): HTMLElement {
-    let element = document.createElement('span');
+    let element = ElementFactory.span();
     if (component === null) {
-      element = document.createElement('br');
+      element = ElementFactory.create('br');
     } else if (typeof component === 'string') {
       element.innerText = component;
     } else {
@@ -241,7 +241,7 @@ export class ChatComponent extends Component {
   private renderComponents(
     components: (string | null | TextComponent)[]
   ): HTMLElement {
-    const element = document.createElement('div');
+    const element = ElementFactory.div();
     element.className = 'message';
 
     for (const component of components) {

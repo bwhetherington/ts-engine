@@ -1,6 +1,11 @@
 import { Data, Serializable } from 'core/serialize';
 
-export class Vector implements Serializable {
+export interface VectorLike {
+  x: number;
+  y: number;
+}
+
+export class Vector implements Serializable, VectorLike {
   public x: number = 0;
   public y: number = 0;
 
@@ -38,7 +43,7 @@ export class Vector implements Serializable {
     }
   }
 
-  public distanceTo(v: Vector): number {
+  public distanceTo(v: VectorLike): number {
     const { x, y } = this;
     this.add(v, -1);
     const dist = this.magnitude;
@@ -54,7 +59,7 @@ export class Vector implements Serializable {
     return angle;
   }
 
-  public set(v: Vector): void {
+  public set(v: VectorLike): void {
     this.setXY(v.x, v.y);
   }
 
@@ -63,7 +68,7 @@ export class Vector implements Serializable {
     this.y = y;
   }
 
-  public add(v: Vector, scale: number = 1): void {
+  public add(v: VectorLike, scale: number = 1): void {
     this.addXY(v.x, v.y, scale);
   }
 

@@ -1,4 +1,3 @@
-import { Component } from 'client/components';
 import template from 'client/components/alert/template.html';
 import {
   FormItem,
@@ -9,7 +8,7 @@ import {
   FormValidatedEvent,
 } from 'core/form';
 import { EventManager } from 'core/event';
-import { removeChildren } from 'client/components';
+import { removeChildren, ElementFactory, Component } from 'client/components';
 
 export class AlertComponent extends Component {
   public static componentName: string = 'alert-component';
@@ -73,7 +72,7 @@ export class AlertComponent extends Component {
 
     this.clearDialog();
 
-    const form = document.createElement('form');
+    const form = ElementFactory.form();
     form.addEventListener('submit', (event) => {
       event.preventDefault();
 
@@ -93,7 +92,7 @@ export class AlertComponent extends Component {
     });
 
     if (data.description) {
-      const description = document.createElement('p');
+      const description = ElementFactory.create('p');
       description.innerText = data.description;
       form.appendChild(description);
     }
@@ -107,11 +106,11 @@ export class AlertComponent extends Component {
     const { messages = [] } = data;
     if (messages.length > 0) {
       // Create element
-      const messagesContainer = document.createElement('div');
+      const messagesContainer = ElementFactory.div();
       messagesContainer.className = 'col errors';
 
       for (const message of messages) {
-        const messageElement = document.createElement('div');
+        const messageElement = ElementFactory.div();
         messageElement.innerText = message;
         messageElement.className = 'error';
         messagesContainer.appendChild(messageElement);
@@ -120,10 +119,10 @@ export class AlertComponent extends Component {
       form.appendChild(messagesContainer);
     }
 
-    const submitRow = document.createElement('div');
+    const submitRow = ElementFactory.div();
     submitRow.className = 'button-row footer';
 
-    const submit = document.createElement('input');
+    const submit = ElementFactory.input();
     submit.type = 'submit';
     submitRow.appendChild(submit);
     this.inputs.add(submit);
@@ -134,14 +133,14 @@ export class AlertComponent extends Component {
   }
 
   private renderItem(item: FormItem): HTMLElement {
-    const container = document.createElement('div');
+    const container = ElementFactory.div();
     container.className = 'form-item';
 
-    const label = document.createElement('span');
+    const label = ElementFactory.span();
     label.className = 'form-label';
     label.innerText = item.label;
 
-    const input = document.createElement('input');
+    const input = ElementFactory.input();
     input.className = 'form-value';
     input.type = item.type;
 

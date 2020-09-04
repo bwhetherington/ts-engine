@@ -1,4 +1,5 @@
 import { Color } from 'core/graphics/color';
+import { GraphicsPipeline } from 'core/graphics/pipe';
 
 export interface TextStyle {
   font?: string;
@@ -36,7 +37,7 @@ export interface GraphicsContext {
   line(x1: number, y1: number, x2: number, y2: number, color: Color): void;
   translate(x: number, y: number): void;
   rotate(angle: number): void;
-  setScale(scale: number): void;
+  scale(scale: number): void;
   resetTransform(): void;
 
   withAlpha(alpha: number, proc: GraphicsProc): GraphicsContext;
@@ -44,4 +45,6 @@ export interface GraphicsContext {
     options: Partial<GraphicsOptions>,
     proc: (ctx: GraphicsContext) => void
   ): GraphicsContext;
+
+  pipe(): GraphicsPipeline;
 }

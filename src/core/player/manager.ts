@@ -81,8 +81,8 @@ export class PlayerManager implements Serializable {
       EventManager.emit<PlayerLeaveEvent>({
         type: 'PlayerLeaveEvent',
         data: {
-          player: playerObj
-        }
+          player: playerObj,
+        },
       });
 
       this.removed.push(playerObj.id);

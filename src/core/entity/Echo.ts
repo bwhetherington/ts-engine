@@ -1,5 +1,5 @@
 import { Entity, CollisionLayer } from 'core/entity';
-import { sleep, clamp } from 'core/util';
+import { sleep, clamp, smoothStep } from 'core/util';
 import { StepEvent } from 'core/event';
 import { GraphicsContext } from 'core/graphics';
 
@@ -31,7 +31,7 @@ export class Echo extends Entity {
 
   private getParameter(): number {
     const t = this.timeRemaining / this.duration;
-    return clamp(3 * t * t - 2 * t * t * t, 0, 1);
+    return smoothStep(t);
   }
 
   public renderInternal(ctx: GraphicsContext): void {
@@ -53,14 +53,13 @@ export class Echo extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    const t = this.getParameter();
-    ctx.withOptions({ useFancyAlpha: this.isFancy }, (ctx) => {
-      ctx.withAlpha(t, (ctx) => {
-        const u = 1 - t + 1;
-        ctx.setScale(u);
-        this.parent?.render(ctx);
-        ctx.setScale(1 / u);
-      });
-    });
+    if (this.parent) {
+      const t = this.getParameter();
+      const u = 2 - t;
+      ctx.pipe()
+        .alpha(t, this.isFancy)
+        .scale(u)
+        .run(this.parent.render.bind(this.parent));
+    }
   }
 }

@@ -1,8 +1,12 @@
-import { Component, removeChildren } from 'client/components/util';
+import { Component, ElementFactory, removeChildren } from 'client/components';
 import template from 'client/components/table/template.html';
 import { EventManager } from 'core/event';
 import { UUID } from 'core/uuid';
 import { Data } from 'core/serialize';
+import { LogManager } from 'core/log';
+import { iterateKeys } from 'core/iterator';
+
+const log = LogManager.forFile(__filename);
 
 interface TableEntry {
   field: string;
@@ -45,7 +49,6 @@ function compare(a: any, b: any): number {
 export class TableComponent extends Component {
   public static componentName: string = 'table-component';
 
-  private titleLabel?: HTMLElement;
   private head?: HTMLElement;
   private body?: HTMLElement;
 
@@ -58,18 +61,42 @@ export class TableComponent extends Component {
   public constructor() {
     super(template);
 
-    this.titleLabel = this.queryChild('#title');
     this.head = this.queryChild('#head');
     this.body = this.queryChild('#body');
 
-    EventManager.addListener<TableRemoveRowEvent>('TableRemoveRowEvent', (event) => {
-      const { id, row } = event.data;
-      if (id === this.id) {
-        this.removeRow(row);
+    // Create labels
+    const cols = this.getAttribute('data-cols');
+    if (cols) {
+      try {
+        const data: Data = JSON.parse(cols);
+        const labels = iterateKeys(data)
+          .filterMap((key) => {
+            const value = data[key];
+            if (value && typeof value === 'string') {
+              return { field: key, value };
+            }
+          })
+          .toArray();
+        this.initialize(labels);
+      } catch (ex) {
+        log.error('could not initialize table cols');
       }
-    });
+    } else {
+      log.error('no table cols specified');
+    }
+
+    EventManager.addListener<TableRemoveRowEvent>(
+      'TableRemoveRowEvent',
+      (event) => {
+        const { id, row } = event.data;
+        if (id === this.id) {
+          this.removeRow(row);
+        }
+      }
+    );
 
     EventManager.addListener<TableUpdateEvent>('TableUpdateEvent', (event) => {
+      console.log(cols);
       const { id, data } = event.data;
       if (id === this.id) {
         const { labels, rows } = data;
@@ -120,10 +147,10 @@ export class TableComponent extends Component {
 
     this.fields = [];
 
-    const tr = document.createElement('tr');
+    const tr = ElementFactory.tr();
     for (const { field, value } of labels) {
       this.fields.push(field);
-      const td = document.createElement('td');
+      const td = ElementFactory.td();
       td.innerText = value;
       tr.appendChild(td);
     }
@@ -171,13 +198,13 @@ export class TableComponent extends Component {
   }
 
   private createRow(id: UUID, row: Data): RowData {
-    const tr = document.createElement('tr');
+    const tr = ElementFactory.tr();
     tr.id = id;
     const tds: Record<string, HTMLElement> = {};
 
     for (const field of this.fields) {
       const value = row[field];
-      const td = document.createElement('td');
+      const td = ElementFactory.td();
       td.innerText = value;
       tr.appendChild(td);
       tds[field] = td;

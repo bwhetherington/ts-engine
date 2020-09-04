@@ -14,10 +14,11 @@ export class AlertManager {
 
   public initialize() {
     const element = document.getElementById('alert');
+    console.log(element);
     if (element instanceof AlertComponent) {
       this.element = element;
     } else {
-      log.error('<alert-component> could not be found');
+      log.error('<alert-component /> could not be found');
     }
 
     EventManager.addListener('StepEvent', (event: Event<StepEvent>) => {

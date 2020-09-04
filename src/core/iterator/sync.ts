@@ -103,6 +103,16 @@ function* iterateObjectInternal<T>(obj: IterableObject<T>): Generator<T> {
   }
 }
 
+function* iterateKeysInternal<T>(obj: IterableObject<T>): Generator<string> {
+  for (const key in obj) {
+    yield key;
+  }
+}
+
+export function iterateKeys<T>(obj: IterableObject<T>): Iterator<string> {
+  return iterator(iterateKeysInternal(obj));
+}
+
 function* iterateArray<T>(array: T[]): Generator<T> {
   for (let i = 0; i < array.length; i++) {
     yield array[i];

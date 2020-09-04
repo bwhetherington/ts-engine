@@ -1,28 +1,22 @@
-export { Entity } from 'core/entity/Entity';
-export { Unit } from 'core/entity/Unit';
-export { Tank } from 'core/entity/Tank';
-export { Hero } from 'core/entity/Hero';
-export { Heavy } from 'core/entity/Heavy';
-export { Enemy } from 'core/entity/Enemy';
-export { Geometry } from 'core/entity/Geometry';
-export { Projectile } from 'core/entity/Projectile';
-export { Explosion } from 'core/entity/Explosion';
-export { Text } from 'core/entity/Text';
-export { TimedText } from 'core/entity/TimedText';
-export { Bar } from 'core/entity/Bar';
-export { Echo } from 'core/entity/Echo';
+export * from 'core/entity/Entity';
+export * from 'core/entity/Unit';
+export * from 'core/entity/Tank';
+export * from 'core/entity/Hero';
+export * from 'core/entity/Heavy';
+export * from 'core/entity/Enemy';
+export * from 'core/entity/Geometry';
+export * from 'core/entity/Projectile';
+export * from 'core/entity/Explosion';
+export * from 'core/entity/Ray';
+export * from 'core/entity/Text';
+export * from 'core/entity/TimedText';
+export * from 'core/entity/Bar';
+export * from 'core/entity/Echo';
 
 import { WorldManager } from 'core/entity/manager';
 import { Rectangle } from 'core/geometry';
 
-export {
-  CollisionLayer,
-  isCollisionLayer,
-  shuntOutOf,
-  CollisionEvent,
-  DamageEvent,
-  KillEvent,
-} from 'core/entity/util';
+export * from 'core/entity/util';
 
 const WM = new WorldManager(new Rectangle(1000, 1000, -500, -500));
 export { WM as WorldManager };

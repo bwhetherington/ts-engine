@@ -13,7 +13,7 @@ export class EventManager {
   private handlers: Record<string, Record<string, GameHandler>> = {};
   private events: Queue<GameEvent> = new Queue();
   private listenerCount: number = 0;
-  public timeElapsed: number = Math.floor(Date.now() / 1000);
+  public timeElapsed: number = 0;
 
   public emit<E extends EventData>(event: Event<E>): void {
     this.events.enqueue(event);

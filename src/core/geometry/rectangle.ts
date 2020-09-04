@@ -1,6 +1,14 @@
 import { Data, Serializable } from 'core/serialize';
+import { VectorLike } from 'core/geometry';
 
-export class Rectangle implements Serializable {
+export interface RectangleLike {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export class Rectangle implements Serializable, RectangleLike {
   constructor(
     public width: number = 0,
     public height: number = 0,
@@ -51,6 +59,15 @@ export class Rectangle implements Serializable {
 
   public get diagonal(): number {
     return Math.sqrt(this.width * this.width + this.height * this.height);
+  }
+
+  public setCenterXY(x: number, y: number): void {
+    this.centerX = x;
+    this.centerY = y;
+  }
+
+  public setCenter(v: VectorLike): void {
+    this.setCenterXY(v.x, v.y);
   }
 
   public containsPointXY(x: number, y: number): boolean {

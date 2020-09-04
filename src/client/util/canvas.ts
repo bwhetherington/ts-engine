@@ -11,6 +11,7 @@ import {
 import { BLACK, WHITE } from 'core/graphics/color';
 import { GraphicsProc } from 'core/graphics/context';
 import { Vector, Bounds, Matrix } from 'core/geometry';
+import { GraphicsPipeline } from 'core/graphics/pipe';
 
 interface Options {
   width: number;
@@ -35,7 +36,7 @@ export class HDCanvas implements GraphicsContext {
   private width: number = 1;
   private height: number = 1;
   private ratio: number = 1;
-  private scale: number = 1;
+  private scaleValue: number = 1;
   private translation: Vector = new Vector();
   public bounds?: Bounds;
 
@@ -44,7 +45,7 @@ export class HDCanvas implements GraphicsContext {
   private dst: Matrix = new Matrix();
 
   private options: GraphicsOptions = {
-    lineWidth: 5,
+    lineWidth: 4,
     doStroke: true,
     doFill: true,
   };
@@ -172,14 +173,14 @@ export class HDCanvas implements GraphicsContext {
   public text(x: number, y: number, text: string, style: TextStyle) {
     const ctx = this.curContext;
     if (ctx) {
-      const scale = this.scale;
+      const scaleValue = this.scaleValue;
       const { font = 'Roboto Mono', size = 12, color = WHITE } = style;
       ctx.beginPath();
-      ctx.lineWidth = this.options.lineWidth / scale;
+      ctx.lineWidth = this.options.lineWidth / scaleValue;
       ctx.fillStyle = toCss(color);
       ctx.strokeStyle = toCss(reshade(color, 0.35));
       ctx.textAlign = 'center';
-      ctx.font = createFontString(font, size, scale);
+      ctx.font = createFontString(font, size, scaleValue);
       this.setRound(ctx);
       ctx.strokeText(text, x, y);
       ctx.fillText(text, x, y);
@@ -241,13 +242,13 @@ export class HDCanvas implements GraphicsContext {
       const fullWidth = fullW ?? w;
 
       if (this.options.ignoreScale) {
-        ctx.lineWidth /= this.scale;
-        const newWidth = fullWidth / this.scale;
-        const newHeight = h / this.scale;
+        ctx.lineWidth /= this.scaleValue;
+        const newWidth = fullWidth / this.scaleValue;
+        const newHeight = h / this.scaleValue;
         x += (fullWidth - newWidth) / 2;
         y += (h - newHeight) / 2;
-        w /= this.scale;
-        h /= this.scale;
+        w /= this.scaleValue;
+        h /= this.scaleValue;
       }
 
       ctx.rect(x, y, w, h);
@@ -292,20 +293,20 @@ export class HDCanvas implements GraphicsContext {
     const ctx = this.curContext;
     if (ctx) {
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      this.scale = 1;
+      this.scaleValue = 1;
       this.translation.setXY(0, 0);
     }
     this.hidden?.resetTransform();
   }
 
-  public setScale(scale: number): void {
+  public scale(scale: number): void {
     this.src.scale(scale, scale);
     this.transform.multiply(this.src, this.dst);
     this.transform.set(this.dst);
 
     this.curContext?.scale(scale, scale);
-    this.scale *= scale;
-    this.hidden?.setScale(scale);
+    this.scaleValue *= scale;
+    this.hidden?.scale(scale);
   }
 
   public line(
@@ -377,13 +378,13 @@ export class HDCanvas implements GraphicsContext {
           ctx.globalAlpha = alpha;
           // proc(this);
           const {
-            scale,
+            scaleValue,
             translation: { x, y },
           } = this;
           const dw = (this.hidden.width - this.width) / 2;
           const dh = (this.hidden.height - this.height) / 2;
           this.hidden.translate(x + dw, y + dh);
-          this.hidden.setScale(scale);
+          this.hidden.scale(scaleValue);
           proc(this.hidden);
           let {
             x: sx,
@@ -391,7 +392,7 @@ export class HDCanvas implements GraphicsContext {
             width: sw,
             height: sh,
           } = this.hidden.bounds.boundingBox;
-          this.setScale(1 / scale);
+          this.scale(1 / scaleValue);
           const padding = 7;
           sx -= padding;
           sy -= padding;
@@ -409,7 +410,7 @@ export class HDCanvas implements GraphicsContext {
             sw,
             sh
           );
-          this.setScale(scale);
+          this.scale(scaleValue);
           ctx.globalAlpha = oldAlpha;
         }
       }
@@ -417,5 +418,9 @@ export class HDCanvas implements GraphicsContext {
       proc(this);
     }
     return this;
+  }
+
+  public pipe(): GraphicsPipeline {
+    return new GraphicsPipeline(this);
   }
 }

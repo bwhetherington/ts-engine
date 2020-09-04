@@ -4,21 +4,20 @@ import { LogManager } from 'core/log';
 import { WorldManager } from 'core/entity';
 
 import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
-import { UIM } from 'client/components';
 import { CameraManager } from 'core/graphics';
 import { AlertManager } from 'client/alert';
 import { InputManager } from 'client/input';
 import { PlayerManager, Player, PlayerLeaveEvent } from 'core/player';
 import { FormManager } from 'core/form';
 import { WeaponManager } from 'core/weapon';
-import { TextManager } from 'client/text';
 import { TableUpdateEvent, TableRemoveRowEvent } from './components/table';
+import { registerComponents } from 'client/components';
 
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
-  LogManager.initialize('info', new ClientLogger());
-  UIM.initialize();
+  LogManager.initialize('trace', new ClientLogger());
+  registerComponents();
 
   const game = document.getElementById('game');
 
@@ -30,32 +29,31 @@ async function main(): Promise<void> {
   CameraManager.initialize();
   AlertManager.initialize();
   FormManager.initialize();
-  TextManager.initialize();
   WeaponManager.initialize();
 
   // Scoreboard
-  EventManager.emit<TableUpdateEvent>({
-    type: 'TableUpdateEvent',
-    data: {
-      id: 'scoreboard',
-      data: {
-        labels: [
-          {
-            field: 'name',
-            value: 'Name',
-          },
-          {
-            field: 'level',
-            value: 'Level',
-          },
-          {
-            field: 'ping',
-            value: 'Ping',
-          },
-        ]
-      }
-    },
-  });
+  // EventManager.emit<TableUpdateEvent>({
+  //   type: 'TableUpdateEvent',
+  //   data: {
+  //     id: 'scoreboard',
+  //     data: {
+  //       labels: [
+  //         {
+  //           field: 'name',
+  //           value: 'Name',
+  //         },
+  //         {
+  //           field: 'level',
+  //           value: 'Level',
+  //         },
+  //         {
+  //           field: 'ping',
+  //           value: 'Ping',
+  //         },
+  //       ]
+  //     }
+  //   },
+  // });
 
   EventManager.addListener<StepEvent>('StepEvent', () => {
     const players = PlayerManager.getPlayers().map((player) => ({
@@ -69,9 +67,9 @@ async function main(): Promise<void> {
       data: {
         id: 'scoreboard',
         data: {
-          rows: players
-        }
-      }
+          rows: players,
+        },
+      },
     };
     EventManager.emit<TableUpdateEvent>(update);
   });
@@ -83,7 +81,7 @@ async function main(): Promise<void> {
       data: {
         id: 'scoreboard',
         row: player.id,
-      }
+      },
     });
   });
 
@@ -92,7 +90,7 @@ async function main(): Promise<void> {
     canvas.attachTo(game);
     canvas.setSize(window.innerWidth, window.innerHeight);
     canvas.pushOptions({
-      lineWidth: 5,
+      lineWidth: 4,
       doFill: true,
       doStroke: true,
     });

@@ -40,7 +40,7 @@ export class Hero extends Tank {
 
     this.type = Hero.typeName;
 
-    this.setWeapon('MachineGun');
+    this.setWeapon('RayGun');
 
     this.setExperience(0);
     this.setLevelInternal(1);

@@ -1,14 +1,12 @@
+export { EF as ElementFactory } from 'client/components/factory';
+export { Component, removeChildren } from 'client/components/util';
+
+import { registerComponent } from 'client/components/util';
 import { BarComponent } from 'client/components/bar';
 import { ChatComponent } from 'client/components/chat';
-import {
-  Component,
-  registerComponent,
-  removeChildren,
-} from 'client/components/util';
 import { DebugComponent } from 'client/components/debug';
-import { AlertComponent } from './alert';
-import { UIManager } from './ui';
-import { TableComponent } from './table';
+import { AlertComponent } from 'client/components/alert';
+import { TableComponent } from 'client/components/table';
 
 export function registerComponents() {
   registerComponent(BarComponent);
@@ -18,13 +16,11 @@ export function registerComponents() {
   registerComponent(TableComponent);
 }
 
-export const UIM = new UIManager();
-
 export {
-  Component,
+  registerComponent,
   BarComponent,
   ChatComponent,
   DebugComponent,
   AlertComponent,
-  removeChildren,
+  TableComponent,
 };

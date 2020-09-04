@@ -23,6 +23,9 @@ import {
   Heavy,
   Bar,
   Echo,
+  Ray,
+  RayCastResult,
+  DisplayRayEvent,
 } from 'core/entity';
 import {
   BigProjectile,
@@ -80,6 +83,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Hero);
     this.registerEntity(Geometry);
     this.registerEntity(Explosion);
+    this.registerEntity(Ray);
     this.registerEntity(Projectile);
     this.registerEntity(Text);
     this.registerEntity(Tank);
@@ -108,6 +112,14 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     EventManager.addListener<StepEvent>('StepEvent', (event) => {
       this.step(event.data.dt);
     });
+
+    EventManager.addListener<DisplayRayEvent>('DisplayRayEvent', (event) => {
+      const { start, stop, color } = event.data;
+      const ray = new Ray();
+      ray.initialize(start, stop);
+      ray.setColor(color);
+      this.add(ray);
+    });
   }
 
   public render(ctx: GraphicsContext): void {
@@ -117,11 +129,11 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     ctx.resetTransform();
 
     const camBounds = CameraManager.boundingBox;
-    ctx.setScale(CameraManager.scale);
+    ctx.scale(CameraManager.scale);
     ctx.translate(-camBounds.x, -camBounds.y);
 
     ctx.pushOptions({
-      lineWidth: 5,
+      lineWidth: 4,
       doFill: true,
       doStroke: false,
     });
@@ -161,27 +173,28 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
     // this.space.render(ctx);
 
-    ctx.pushOptions({
-      lineWidth: 5,
-      doFill: false,
-      doStroke: true,
-    });
-    ctx.rect(
-      this.boundingBox.x,
-      this.boundingBox.y,
-      this.boundingBox.width,
-      this.boundingBox.height,
-      WALL_COLOR
-    );
-    ctx.popOptions();
+    ctx.pipe()
+      .options({
+        lineWidth: 4,
+        doFill: false,
+        doStroke: true,
+      })
+      .run((ctx) => {
+        ctx.rect(
+          this.boundingBox.x,
+          this.boundingBox.y,
+          this.boundingBox.width,
+          this.boundingBox.height,
+          WALL_COLOR
+        );
+      });
 
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
       .forEach((entity) => {
-        const { x, y } = entity.position;
-        ctx.translate(x, y);
-        entity.renderInternal(ctx);
-        ctx.translate(-x, -y);
+        ctx.pipe()
+          .translate(entity.position.x, entity.position.y)
+          .run(entity.renderInternal.bind(entity));
       });
 
     // this.graph?.render(ctx);
@@ -208,6 +221,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
   public add(entity: Entity): void {
     this.entities[entity.id] = entity;
+    entity.load();
     log.trace('add ' + entity.toString());
     this.entityCount += 1;
 
@@ -243,6 +257,10 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
   public query(box: Rectangle): Iterator<Entity> {
     return iterator(this.queryInternal(box));
+  }
+
+  public querySet(box: Rectangle): Set<Entity> {
+    return this.space.query(box);
   }
 
   public step(dt: number): void {
@@ -428,5 +446,67 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
   public getEntityCount(): number {
     return this.entityCount;
+  }
+
+  public isInBounds(rect: Rectangle): boolean {
+    return this.boundingBox.contains(rect);
+  }
+
+  public castRay(
+    from: Vector,
+    angle: number,
+    maxDist: number,
+    maxTargets: number,
+    validate: (x: Entity) => boolean
+  ): RayCastResult {
+    const stepSize = 5;
+    let traveled = 0;
+
+    const hit: Set<Entity> = new Set();
+    const vecBuffer = new Vector(1, 0);
+
+    vecBuffer.angle = angle;
+    vecBuffer.magnitude = stepSize;
+
+    const cursor = new Rectangle(stepSize * 2, stepSize * 2);
+    cursor.setCenter(from);
+
+    while (
+      traveled < maxDist &&
+      hit.size < maxTargets &&
+      this.isInBounds(cursor)
+    ) {
+      // Check if we collide with any entities
+      const query = this.querySet(cursor);
+
+      const candidates = iterator(query)
+        .filter((candidate) => candidate.boundingBox.intersects(cursor))
+        .filter(validate);
+      for (const candidate of candidates) {
+        hit.add(candidate);
+        if (hit.size >= maxTargets) {
+          break;
+        }
+      }
+
+      const hitWall = iterator(query)
+        .filter((candidate) => candidate.boundingBox.intersects(cursor))
+        .any((candidate) => candidate.collisionLayer === CollisionLayer.Geometry);
+      if (hitWall) {
+        break;
+      }
+
+      // Move cursor forwards
+      cursor.centerX += vecBuffer.x;
+      cursor.centerY += vecBuffer.y;
+      traveled += stepSize;
+    }
+
+    vecBuffer.setXY(cursor.centerX, cursor.centerY);
+
+    return {
+      hit,
+      end: vecBuffer,
+    };
   }
 }

@@ -20,7 +20,6 @@ export class Player implements Serializable {
 
   private listeners: Record<string, Set<UUID>> = {};
 
-
   public constructor(id?: UUID) {
     if (id) {
       this.id = id;
@@ -30,12 +29,12 @@ export class Player implements Serializable {
 
     if (NetworkManager.isServer()) {
       this.addListener<KillEvent>('KillEvent', async (event) => {
-        const target = WorldManager.getEntity(event.data.targetID);
-        if (target && target === this.hero) {
+        const { targetID } = event.data;
+        if (targetID && this.hero && targetID === this.hero.id) {
           await sleep(3);
 
           // Check that we haven't already respawned
-          if (target === this.hero) {
+          if (targetID === this.hero.id) {
             const hero = WorldManager.spawn(Hero);
 
             const x = (Math.random() - 0.5) * 1120;

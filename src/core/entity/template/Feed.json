@@ -13,7 +13,7 @@
   "maxLife": 20,
   "life": 20,
   "lifeRegen": 0,
-  "mass": 2,
+  "mass": 1,
   "friction": 150,
   "bounce": 0.9,
   "speed": 100,
