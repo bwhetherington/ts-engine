@@ -1,91 +1,107 @@
-import { GraphicsContext, GraphicsOptions } from ".";
-import { GraphicsProc } from "./context";
+import { GraphicsContext, GraphicsOptions } from '.';
+import { GraphicsProc } from './context';
 
 export class GraphicsPipeline {
-  protected ctx: GraphicsContext;
   protected parent?: GraphicsPipeline;
 
-  public constructor(ctx: GraphicsContext, parent?: GraphicsPipeline) {
-    this.ctx = ctx;
+  public constructor(parent?: GraphicsPipeline) {
     this.parent = parent;
   }
 
-  public run(proc: GraphicsProc): void {
+  public static pipe(): GraphicsPipeline {
+    return new GraphicsPipeline();
+  }
+
+  public run(ctx: GraphicsContext, proc: GraphicsProc): void {
     if (this.parent) {
-      const oldCtx = this.ctx;
-      this.parent.run((ctx) => {
-        this.ctx = ctx;
-        this.runInternal(proc);
-        this.ctx = oldCtx;
+      this.parent.run(ctx, (ctx) => {
+        this.runInternal(ctx, proc);
       });
     } else {
-      proc(this.ctx);
+      proc(ctx);
     }
   }
 
-  protected runInternal(proc: GraphicsProc): void {
-    proc(this.ctx);
+  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+    proc(ctx);
   }
 
   public alpha(alpha: number, isFancy: boolean = false): GraphicsPipeline {
     let parent: GraphicsPipeline = this;
     if (isFancy) {
-      parent = this.options({ useFancyAlpha: isFancy })
+      parent = this.options({ useFancyAlpha: isFancy });
     }
-    return new AlphaPipeline(alpha, this.ctx, parent);
+    return new AlphaPipeline(alpha, parent);
   }
 
   public options(options: Partial<GraphicsOptions>): GraphicsPipeline {
-    return new OptionsPipeline(options, this.ctx, this);
+    return new OptionsPipeline(options, this);
   }
 
   public translate(tx: number, ty: number): GraphicsPipeline {
-    return new TranslatePipeline(tx, ty, this.ctx, this);
+    return new TranslatePipeline(tx, ty, this);
   }
 
   public scale(scale: number): GraphicsPipeline {
-    return new ScalePipeline(scale, this.ctx, this);
+    return new ScalePipeline(scale, this);
+  }
+
+  public rotate(angle: number): GraphicsPipeline {
+    return new RotatePipeline(angle, this);
+  }
+
+  public chain(pipeline: GraphicsPipeline): GraphicsPipeline {
+    let current = pipeline;
+    while (current.parent !== undefined) {
+      // Find top parent
+      current = current.parent;
+    }
+    current.parent = this;
+    return pipeline;
   }
 }
 
 class AlphaPipeline extends GraphicsPipeline {
   private alphaInternal: number;
 
-  public constructor(alpha: number, ctx: GraphicsContext, parent?: GraphicsPipeline) {
-    super(ctx, parent);
+  public constructor(alpha: number, parent?: GraphicsPipeline) {
+    super(parent);
     this.alphaInternal = alpha;
   }
 
-  protected runInternal(proc: GraphicsProc): void {
-    this.ctx.withAlpha(this.alphaInternal, proc);
+  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+    ctx.withAlpha(this.alphaInternal, proc);
   }
 }
 
 class OptionsPipeline extends GraphicsPipeline {
   private optionsInternal: Partial<GraphicsOptions>;
 
-  public constructor(options: Partial<GraphicsOptions>, ctx: GraphicsContext, parent?: GraphicsPipeline) {
-    super(ctx, parent);
+  public constructor(
+    options: Partial<GraphicsOptions>,
+    parent?: GraphicsPipeline
+  ) {
+    super(parent);
     this.optionsInternal = options;
   }
 
-  protected runInternal(proc: GraphicsProc): void {
-    this.ctx.withOptions(this.optionsInternal, proc);
+  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+    ctx.withOptions(this.optionsInternal, proc);
   }
 }
 
 class ScalePipeline extends GraphicsPipeline {
   private scaleInternal: number;
 
-  public constructor(scale: number, ctx: GraphicsContext, parent?: GraphicsPipeline) {
-    super(ctx, parent);
+  public constructor(scale: number, parent?: GraphicsPipeline) {
+    super(parent);
     this.scaleInternal = scale;
   }
 
-  protected runInternal(proc: GraphicsProc): void {
-    this.ctx.scale(this.scaleInternal);
-    proc(this.ctx);
-    this.ctx.scale(1 / this.scaleInternal);
+  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+    ctx.scale(this.scaleInternal);
+    proc(ctx);
+    ctx.scale(1 / this.scaleInternal);
   }
 }
 
@@ -93,15 +109,30 @@ class TranslatePipeline extends GraphicsPipeline {
   private tx: number;
   private ty: number;
 
-  public constructor(tx: number, ty: number, ctx: GraphicsContext, parent?: GraphicsPipeline) {
-    super(ctx, parent);
+  public constructor(tx: number, ty: number, parent?: GraphicsPipeline) {
+    super(parent);
     this.tx = tx;
     this.ty = ty;
   }
 
-  protected runInternal(proc: GraphicsProc): void {
-    this.ctx.translate(this.tx, this.ty);
-    proc(this.ctx);
-    this.ctx.translate(-this.tx, -this.ty);
+  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+    ctx.translate(this.tx, this.ty);
+    proc(ctx);
+    ctx.translate(-this.tx, -this.ty);
+  }
+}
+
+class RotatePipeline extends GraphicsPipeline {
+  private angle: number;
+
+  public constructor(angle: number, parent?: GraphicsPipeline) {
+    super(parent);
+    this.angle = angle;
+  }
+
+  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+    ctx.rotate(this.angle);
+    proc(ctx);
+    ctx.rotate(-this.angle);
   }
 }

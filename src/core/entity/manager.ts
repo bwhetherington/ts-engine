@@ -43,6 +43,7 @@ import { SyncEvent } from 'core/net';
 import { WALL_COLOR } from 'core/entity/Geometry';
 import { WHITE, reshade } from 'core/graphics/color';
 import { Graph } from 'core/entity/pathfinding';
+import { GraphicsPipeline } from 'core/graphics/pipe';
 
 const log = LogManager.forFile(__filename);
 
@@ -173,13 +174,13 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
     // this.space.render(ctx);
 
-    ctx.pipe()
+    GraphicsPipeline.pipe()
       .options({
         lineWidth: 4,
         doFill: false,
         doStroke: true,
       })
-      .run((ctx) => {
+      .run(ctx, (ctx) => {
         ctx.rect(
           this.boundingBox.x,
           this.boundingBox.y,
@@ -192,9 +193,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
       .forEach((entity) => {
-        ctx.pipe()
+        GraphicsPipeline.pipe()
           .translate(entity.position.x, entity.position.y)
-          .run(entity.renderInternal.bind(entity));
+          .run(ctx, entity.renderInternal.bind(entity));
       });
 
     // this.graph?.render(ctx);
@@ -491,7 +492,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
       const hitWall = iterator(query)
         .filter((candidate) => candidate.boundingBox.intersects(cursor))
-        .any((candidate) => candidate.collisionLayer === CollisionLayer.Geometry);
+        .any(
+          (candidate) => candidate.collisionLayer === CollisionLayer.Geometry
+        );
       if (hitWall) {
         break;
       }

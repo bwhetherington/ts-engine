@@ -1,9 +1,10 @@
-import { Entity, CollisionLayer, WorldManager, Echo } from "core/entity";
-import { GraphicsContext } from "core/graphics";
-import { Vector, VectorLike } from "core/geometry";
-import { sleep, clamp, smoothStep } from "core/util";
-import { LogManager } from "core/log";
-import { WHITE } from "core/graphics/color";
+import { Entity, CollisionLayer, WorldManager, Echo } from 'core/entity';
+import { GraphicsContext } from 'core/graphics';
+import { Vector, VectorLike } from 'core/geometry';
+import { sleep, clamp, smoothStep } from 'core/util';
+import { LogManager } from 'core/log';
+import { WHITE } from 'core/graphics/color';
+import { GraphicsPipeline } from 'core/graphics/pipe';
 
 const log = LogManager.forFile(__filename);
 
@@ -67,12 +68,18 @@ export class Ray extends Entity {
 
   public render(ctx: GraphicsContext): void {
     const t = this.getParameter();
-    ctx.pipe()
+    GraphicsPipeline.pipe()
       .alpha(t)
       .options({ lineWidth: BASE_THICKNESS * t })
       .translate(-this.position.x, -this.position.y)
-      .run((ctx) => {
-        ctx.line(this.start.x, this.start.y, this.stop.x, this.stop.y, this.getColor());
+      .run(ctx, (ctx) => {
+        ctx.line(
+          this.start.x,
+          this.start.y,
+          this.stop.x,
+          this.stop.y,
+          this.getColor()
+        );
       });
   }
 }

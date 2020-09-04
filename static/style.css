@@ -103,7 +103,8 @@ input[type='submit'] {
   cursor: pointer;
 }
 
-button:disabled, input:disabled {
+button:disabled,
+input:disabled {
   color: rgba(255, 255, 255, 0.5);
   cursor: not-allowed;
 }
@@ -153,12 +154,15 @@ button[type='error']:hover:not([disabled]) {
   transform: translateX(0px) translateY(-5px) rotate(-45deg);
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   margin: 0.5em;
   text-align: center;
 }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   appearance: none;
   width: 1.5em;
   height: 1.5em;
@@ -169,16 +173,16 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-input[type="checkbox"]:hover {
+input[type='checkbox']:hover {
   background-color: rgb(255, 255, 255, 0.25);
 }
 
-input[type="checkbox"]:checked::after {
+input[type='checkbox']:checked::after {
   background-color: rgba(255, 255, 255, 0.67);
   display: block;
   content: '';
   position: relative;
-  
+
   left: var(--checkbox-padding);
   right: var(--checkbox-padding);
   top: var(--checkbox-padding);

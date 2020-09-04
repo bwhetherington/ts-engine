@@ -45,6 +45,4 @@ export interface GraphicsContext {
     options: Partial<GraphicsOptions>,
     proc: (ctx: GraphicsContext) => void
   ): GraphicsContext;
-
-  pipe(): GraphicsPipeline;
 }

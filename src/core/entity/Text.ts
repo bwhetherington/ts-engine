@@ -5,6 +5,7 @@ import { Data } from 'core/serialize';
 import { GraphicsContext } from 'core/graphics';
 import { WHITE, BLACK, rgb } from 'core/graphics/color';
 import { CollisionLayer } from './util';
+import { GraphicsPipeline } from 'core/graphics/pipe';
 
 export class Text extends Entity {
   public static typeName: string = 'Text';
@@ -51,16 +52,13 @@ export class Text extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    ctx.withOptions(
-      {
-        lineWidth: 6,
-      },
-      (ctx) => {
+    GraphicsPipeline.pipe()
+      .options({ lineWidth: 6 })
+      .run(ctx, (ctx) => {
         ctx.text(0, 0, this.text, {
           size: 26,
           color: this.getColor(),
         });
-      }
-    );
+      });
   }
 }

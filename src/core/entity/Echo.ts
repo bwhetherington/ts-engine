@@ -2,6 +2,7 @@ import { Entity, CollisionLayer } from 'core/entity';
 import { sleep, clamp, smoothStep } from 'core/util';
 import { StepEvent } from 'core/event';
 import { GraphicsContext } from 'core/graphics';
+import { GraphicsPipeline } from 'core/graphics/pipe';
 
 const DURATION = 0.25;
 
@@ -20,13 +21,14 @@ export class Echo extends Entity {
     this.doSync = false;
     this.isCollidable = false;
     this.isVisible = true;
+  }
 
-    this.addListener<StepEvent>('StepEvent', (event) => {
-      this.timeRemaining -= event.data.dt;
-      if (this.timeRemaining <= 0) {
-        this.markForDelete();
-      }
-    });
+  public step(dt: number): void {
+    super.step(dt);
+    this.timeRemaining -= dt;
+    if (this.timeRemaining <= 0) {
+      this.markForDelete();
+    }
   }
 
   private getParameter(): number {
@@ -56,10 +58,10 @@ export class Echo extends Entity {
     if (this.parent) {
       const t = this.getParameter();
       const u = 2 - t;
-      ctx.pipe()
+      GraphicsPipeline.pipe()
         .alpha(t, this.isFancy)
         .scale(u)
-        .run(this.parent.render.bind(this.parent));
+        .run(ctx, this.parent.render.bind(this.parent));
     }
   }
 }
