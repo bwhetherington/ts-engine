@@ -419,8 +419,4 @@ export class HDCanvas implements GraphicsContext {
     }
     return this;
   }
-
-  public pipe(): GraphicsPipeline {
-    return GraphicsPipeline.pipe();
-  }
 }
