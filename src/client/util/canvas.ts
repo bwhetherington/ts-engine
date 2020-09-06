@@ -62,7 +62,7 @@ export class HDCanvas implements GraphicsContext {
       // Set up auto scaling
       let ctx;
       if ((ctx = this.getContext())) {
-        ctx.lineCap = 'round';
+        ctx.lineCap = 'square';
         ctx.lineJoin = 'round';
       }
     }
@@ -78,7 +78,7 @@ export class HDCanvas implements GraphicsContext {
   }
 
   private setRound(ctx: CanvasRenderingContext2D): void {
-    ctx.lineCap = 'round';
+    ctx.lineCap = 'square';
     ctx.lineJoin = 'round';
   }
 

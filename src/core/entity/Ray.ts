@@ -62,7 +62,6 @@ export class Ray extends Entity {
   }
 
   public load(): void {
-    console.log('load');
     this.loadInternal().catch((why) => log.error(why));
   }
 
