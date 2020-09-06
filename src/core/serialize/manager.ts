@@ -1,6 +1,7 @@
 import { Data } from 'core/serialize';
 import * as jsonpack from 'jsonpack';
 import { Encoder } from './encoder';
+import * as bson from 'bson';
 
 const encoder = new Encoder();
 
@@ -44,19 +45,21 @@ export function decompress(obj: Data): Data {
   return newObj;
 }
 
-function compose<T, U, V>(f: (x: T) => U, g: (x: U) => V): (x: T) => V {
+function pipe<T, U, V>(f: (x: T) => U, g: (x: U) => V): (x: T) => V {
   return (x) => g(f(x));
 }
 
+function bufferify(s: string): Buffer {
+  return Buffer.from(s, 'utf-8');
+}
+
+function unbufferify(b: Buffer): string {
+  return b.toString('utf-8');
+}
+
 export class SerializeManager {
-  private serializer: (input: Data) => string = compose(
-    compress,
-    JSON.stringify
-  );
-  private deserializer: (input: string) => Data = compose(
-    JSON.parse,
-    decompress
-  );
+  private serializer: (input: Data) => string = JSON.stringify;
+  private deserializer: (input: string) => Data = JSON.parse;
 
   public serialize(data: Data): string {
     return this.serializer(data);
