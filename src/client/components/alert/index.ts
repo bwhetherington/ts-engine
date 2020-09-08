@@ -6,6 +6,9 @@ import {
   Entry,
   FormShowEvent,
   FormValidatedEvent,
+  NumberEntry,
+  StringEntry,
+  BooleanEntry,
 } from 'core/form';
 import { EventManager } from 'core/event';
 import { removeChildren, ElementFactory, Component } from 'client/components';
@@ -85,6 +88,7 @@ export class AlertComponent extends Component {
       };
 
       EventManager.emit(submitEvent);
+      console.log(submitEvent);
       form.disabled = true;
       for (const input of this.inputs) {
         input.disabled = true;
@@ -144,7 +148,14 @@ export class AlertComponent extends Component {
     input.className = 'form-value';
     input.type = item.type;
 
+    let entry: Entry | undefined = undefined;
     switch (item.type) {
+      case 'checkbox':
+        entry = {
+          type: 'boolean',
+          value: false,
+        };
+        break;
       case 'text':
         const { minLength, maxLength } = item;
         if (minLength !== undefined) {
@@ -153,15 +164,38 @@ export class AlertComponent extends Component {
         if (maxLength !== undefined) {
           input.maxLength = maxLength;
         }
+        entry = {
+          type: 'text',
+          value: '',
+        };
         break;
+      case 'range':
       case 'number':
-        const { min, max } = item;
+        const { min, max, default: value } = item;
         if (min !== undefined) {
           input.min = '' + min;
         }
         if (max !== undefined) {
           input.max = '' + max;
         }
+        if (value !== undefined) {
+          input.value = '' + value;
+          entry = {
+            type: 'number',
+            value,
+          };
+        }
+        break;
+    }
+
+    if (entry) {
+      this.data[item.name] = entry;
+    }
+
+    let valueLabel: HTMLElement | null = null;
+    if (item.type === 'range') {
+      valueLabel = ElementFactory.span();
+      valueLabel.innerText = '' + (item.default ?? 0);
     }
 
     input.addEventListener('change', (_) => {
@@ -173,6 +207,12 @@ export class AlertComponent extends Component {
             value: input.value,
           };
           break;
+        case 'range':
+          if (valueLabel) {
+            valueLabel.innerText = input.value;
+          }
+        // Deliberately do not break here
+        // This allows us to cascade into 'number'
         case 'number':
           entry = {
             type: 'number',
@@ -198,6 +238,9 @@ export class AlertComponent extends Component {
     }
 
     container.appendChild(label);
+    if (valueLabel) {
+      container.appendChild(valueLabel);
+    }
     container.appendChild(input);
     this.inputs.add(input);
     return container;

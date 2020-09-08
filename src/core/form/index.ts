@@ -30,6 +30,15 @@ export interface NumberField {
   max?: number;
 }
 
+export interface RangeField {
+  type: 'range';
+  label: string;
+  name: string;
+  default: number;
+  min: number;
+  max: number;
+}
+
 export interface BooleanField {
   type: 'checkbox';
   label: string;
@@ -37,7 +46,7 @@ export interface BooleanField {
   default?: boolean;
 }
 
-export type FormItem = StringField | NumberField | BooleanField;
+export type FormItem = StringField | NumberField | BooleanField | RangeField;
 
 export interface FormSubmitEvent {
   name: string;

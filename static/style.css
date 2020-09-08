@@ -243,3 +243,46 @@ td {
 thead td {
   font-weight: bold;
 }
+
+input[type="range"] {
+  appearance: none;
+  outline: none;
+  margin: 2px;
+  flex-grow: 1;
+  font-family: inherit;
+  border: none;
+  background: rgba(0, 0, 0, 0.67);
+  height: 1.5em;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: inherit;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background-color: rgb(255, 255, 255, 1);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.5em;
+  height: 1.25em;
+  background-color: rgba(255, 255, 255, 0.67);
+  border-radius: 2px;
+}
+
+/* input[type="range"]::-webkit-slider-thumb:hover {
+  background-color: rgba(255, 255, 255, 1);
+} */
+
+input[type="range"]::-moz-slider-thumb {
+  appearance: none;
+  width: 0.5em;
+  height: 1.25em;
+  background-color: rgba(255, 255, 255, 0.67);
+  border-radius: 2px;
+}
+
+input[type="range"]::-moz-slider-thumb:hover {
+  background-color: rgba(255, 255, 255, 1);
+}

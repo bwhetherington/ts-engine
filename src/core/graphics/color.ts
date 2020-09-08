@@ -5,7 +5,10 @@ export interface Color {
   alpha?: number;
 }
 
-export function randomColor(saturation: number = 0.65, value: number = 0.9): Color {
+export function randomColor(
+  saturation: number = 0.65,
+  value: number = 0.9
+): Color {
   const hue = Math.random() * 360;
   return hsv(hue, saturation, value);
 }
