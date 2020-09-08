@@ -1,5 +1,12 @@
 import { Weapon } from 'core/weapon';
-import { WorldManager, Ray, Tank, Entity, Unit, DisplayRayEvent } from 'core/entity';
+import {
+  WorldManager,
+  Ray,
+  Tank,
+  Entity,
+  Unit,
+  DisplayRayEvent,
+} from 'core/entity';
 import { iterator } from 'core/iterator';
 import { EventManager } from 'core/event';
 import { BLACK, Color } from 'core/graphics/color';
@@ -36,7 +43,9 @@ export class RayGun extends Weapon {
       (entity: Entity) => entity instanceof Unit && entity !== source
     );
     iterator(hit)
-      .filterMap((entity: Entity) => entity instanceof Unit ? entity : undefined)
+      .filterMap((entity: Entity) =>
+        entity instanceof Unit ? entity : undefined
+      )
       .forEach((unit: Unit) => unit.damage(this.damage, source));
     const event = {
       type: 'DisplayRayEvent',

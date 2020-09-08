@@ -49,14 +49,9 @@ function compose<T, U, V>(f: (x: T) => U, g: (x: U) => V): (x: T) => V {
 }
 
 export class SerializeManager {
-  private serializer: (input: Data) => string = compose(
-    compress,
-    JSON.stringify
-  );
-  private deserializer: (input: string) => Data = compose(
-    JSON.parse,
-    decompress
-  );
+  private serializer: (input: Data) => string = JSON.stringify;
+
+  private deserializer: (input: string) => Data = JSON.parse;
 
   public serialize(data: Data): string {
     return this.serializer(data);

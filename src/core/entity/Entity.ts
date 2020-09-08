@@ -151,6 +151,24 @@ export class Entity implements Bounded, Serializable, Renderable {
     };
   }
 
+  private deserializeColor(data: Data): void {
+    const { red, green, blue, alpha } = data;
+    const newColor = { ...this.color };
+    if (typeof red === 'number') {
+      newColor.red = red;
+    }
+    if (typeof green === 'number') {
+      newColor.green = green;
+    }
+    if (typeof blue === 'number') {
+      newColor.blue = blue;
+    }
+    if (typeof alpha === 'number') {
+      newColor.alpha = alpha;
+    }
+    this.setColor(newColor);
+  }
+
   public deserialize(data: Data): void {
     const {
       id,
@@ -191,8 +209,8 @@ export class Entity implements Bounded, Serializable, Renderable {
     if (typeof doSync === 'boolean') {
       this.doSync = true;
     }
-    if (isColor(color)) {
-      this.setColor(color);
+    if (color) {
+      this.deserializeColor(color);
     }
     if (isCollisionLayer(collisionLayer)) {
       this.collisionLayer = collisionLayer;

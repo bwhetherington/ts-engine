@@ -96,7 +96,6 @@ export class TableComponent extends Component {
     );
 
     EventManager.addListener<TableUpdateEvent>('TableUpdateEvent', (event) => {
-      console.log(cols);
       const { id, data } = event.data;
       if (id === this.id) {
         const { labels, rows } = data;

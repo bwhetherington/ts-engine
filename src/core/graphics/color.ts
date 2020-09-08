@@ -5,10 +5,14 @@ export interface Color {
   alpha?: number;
 }
 
-export function randomColor(saturation: number, value: number): Color {
+export function randomColor(saturation: number = 0.65, value: number = 0.9): Color {
   const hue = Math.random() * 360;
   return hsv(hue, saturation, value);
 }
+
+const RED_LIGHTNESS = 0.2126;
+const GREEN_LIGHTNESS = 0.7152;
+const BLUE_LIGHTNESS = 0.0722;
 
 export function hsva(
   hue: number,
@@ -52,10 +56,15 @@ export function hsva(
       break;
   }
 
+  // Weight red green and blue according to lightness
+  r += m;
+  g += m;
+  b += m;
+
   return {
-    red: r + m,
-    green: g + m,
-    blue: b + m,
+    red: r,
+    green: g,
+    blue: b,
     alpha,
   };
 }

@@ -6,7 +6,7 @@ import { Form } from 'core/form';
 
 const log = LogManager.forFile(__filename);
 
-export interface Dialog {}
+export interface Dialog { }
 
 export class AlertManager {
   private element?: AlertComponent;
@@ -14,7 +14,6 @@ export class AlertManager {
 
   public initialize() {
     const element = document.getElementById('alert');
-    console.log(element);
     if (element instanceof AlertComponent) {
       this.element = element;
     } else {

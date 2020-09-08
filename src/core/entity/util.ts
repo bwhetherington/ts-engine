@@ -140,7 +140,7 @@ export interface RayCastResult {
 }
 
 export interface DisplayRayEvent {
-  start: VectorLike,
-  stop: VectorLike,
+  start: VectorLike;
+  stop: VectorLike;
   color: Color;
 }

@@ -262,6 +262,10 @@ export class Unit extends Entity {
     this.flashTimer = FLASH_DURATION;
   }
 
+  public getBaseColor(): Color {
+    return this.color;
+  }
+
   public getColor(): Color {
     const color =
       this.flashTimer > 0 && this.isAlive

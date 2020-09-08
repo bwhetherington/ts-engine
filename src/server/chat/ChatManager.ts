@@ -17,6 +17,9 @@ import { TimerManager } from 'server/util';
 import { randomColor } from 'core/graphics/color';
 import { FormManager } from 'core/form';
 import * as process from 'process';
+import { CommandEntry } from 'server/chat';
+import * as commands from 'server/chat/commands';
+import { iterateObject } from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
@@ -33,6 +36,19 @@ interface Command {
 export class ChatManager {
   private commands: { [command: string]: Command } = {};
   private aliases: { [alias: string]: string } = {};
+
+  private loadCommands(): void {
+    iterateObject(commands).forEach(this.registerCommandEntry.bind(this));
+  }
+
+  public registerCommandEntry(command: CommandEntry): void {
+    this.registerCommand(
+      command.name,
+      command.handler,
+      command.help,
+      ...(command.aliases ?? [])
+    );
+  }
 
   public registerCommand(
     command: string,
@@ -192,7 +208,7 @@ export class ChatManager {
           const type = isHeavy ? 'HeavyEnemy' : 'Enemy';
           const entity = WorldManager.spawnEntity(type) as Enemy;
 
-          const color = randomColor(0.35, 0.75);
+          const color = randomColor();
           entity.setColor(color);
 
           const x =
@@ -398,6 +414,8 @@ export class ChatManager {
       },
       'Executes a command from the specified player'
     );
+
+    this.loadCommands();
   }
 
   private sendComponents(

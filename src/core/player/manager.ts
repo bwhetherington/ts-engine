@@ -118,7 +118,6 @@ export class PlayerManager implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    // console.log(data);
     const { players, removed } = data;
     if (players) {
       for (const index in players) {

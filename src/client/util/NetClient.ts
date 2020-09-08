@@ -39,13 +39,7 @@ export class Client extends Node {
     super();
 
     this.name = generateName();
-
-    let connect;
-    if (addr) {
-      connect = addr;
-    } else {
-      connect = `${getProtocol()}//${location.host}`;
-    }
+    const connect = addr ?? `${getProtocol()}//${location.host}`;
     this.socket = new WebSocket(connect);
     this.initializeSocket(this.socket);
 

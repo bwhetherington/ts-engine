@@ -22,6 +22,7 @@ export class Gun extends Weapon {
       this.projectileType,
       source.getCannonTip()
     ) as Projectile;
+    projectile.setColor(source.getBaseColor());
     projectile.parent = source;
     projectile.bounce = 0;
     projectile.damage = this.damage;
