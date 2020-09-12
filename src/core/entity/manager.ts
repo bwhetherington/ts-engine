@@ -61,9 +61,14 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   private shouldPopulateGraph: boolean = false;
 
   constructor(boundingBox: Rectangle) {
-    this.space = new Cell(boundingBox, 150, 150);
-    // this.space = new QuadTree(boundingBox);
+    // this.space = new Cell(boundingBox, 150, 150);
+    this.space = new QuadTree(boundingBox);
     this.boundingBox = boundingBox;
+  }
+
+  public resize(bounds: Rectangle): void {
+    this.boundingBox.deserialize(bounds);
+    this.space.resize(bounds);
   }
 
   public registerTemplateEntity(template: Template): void {
@@ -160,7 +165,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
           x < this.boundingBox.farX;
           x += stepSize
         ) {
-          ctx.line(x, this.boundingBox.y, x, this.boundingBox.farX, GRID_COLOR);
+          ctx.line(x, this.boundingBox.y, x, this.boundingBox.farY, GRID_COLOR);
         }
         for (
           let y = this.boundingBox.y + stepSize;
@@ -511,5 +516,33 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       hit,
       end: vecBuffer,
     };
+  }
+
+  public loadLevel(level: Data): void {
+    const { boundingBox, geometry } = level;
+    if (boundingBox && geometry) {
+      // Erase previous geometry
+      this.getEntities()
+        .filter((entity) => entity.collisionLayer === CollisionLayer.Geometry)
+        .forEach((entity) => entity.markForDelete());
+
+      this.boundingBox.deserialize(boundingBox);
+      this.boundingBox.centerX = 0;
+      this.boundingBox.centerY = 0;
+
+      this.resize(this.boundingBox);
+
+      for (const element of geometry) {
+        const rect = new Rectangle();
+        const { x, y, width, height } = element;
+        rect.width = width;
+        rect.height = height;
+        rect.centerX = x;
+        rect.centerY = y;
+
+        const entity = Geometry.fromRectangle(rect);
+        this.add(entity);
+      }
+    }
   }
 }

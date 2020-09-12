@@ -100,6 +100,10 @@ export class Unit extends Entity {
     return this.xpWorth;
   }
 
+  public setXPWorth(amount: number): void {
+    this.xpWorth = amount;
+  }
+
   public getMaxLife(): number {
     return this.maxLife;
   }

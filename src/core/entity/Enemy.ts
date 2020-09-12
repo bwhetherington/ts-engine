@@ -28,6 +28,8 @@ export class Enemy extends Tank {
       this.label.text = 'Tank';
       this.label.tag = 'AI';
     }
+
+    this.setXPWorth(5);
   }
 
   public damage(amount: number, source?: Unit): void {

@@ -195,6 +195,7 @@ export class AlertComponent extends Component {
     let valueLabel: HTMLElement | null = null;
     if (item.type === 'range') {
       valueLabel = ElementFactory.span();
+      valueLabel.className = 'range-label';
       valueLabel.innerText = '' + (item.default ?? 0);
     }
 

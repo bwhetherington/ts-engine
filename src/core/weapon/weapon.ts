@@ -72,4 +72,9 @@ export abstract class Weapon implements Serializable {
       this.damage = damage;
     }
   }
+
+  protected rollDamage(): number {
+    const roll = Math.round((Math.random() - 0.5) * 2 * (this.damage / 3));
+    return Math.max(1, this.damage + roll);
+  }
 }

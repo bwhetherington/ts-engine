@@ -148,6 +148,14 @@ export class Iterator<T> implements Generator<T> {
     }
   }
 
+  public static array<T>(array: T[]): Iterator<T> {
+    return iterator(iterateArray(array));
+  }
+
+  public static set<T>(set: Set<T>): Iterator<T> {
+    return iterator(iterateSet(set));
+  }
+
   public next(): IteratorResult<T, any> {
     return this.generator.next();
   }

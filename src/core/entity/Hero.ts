@@ -121,7 +121,7 @@ export class Hero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return 5 + level * 5;
+    return 50 + level * 10;
   }
 
   protected regenForLevel(level: number): number {

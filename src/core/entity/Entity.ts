@@ -285,7 +285,7 @@ export class Entity implements Bounded, Serializable, Renderable {
     return this.type + '[' + this.id + ']';
   }
 
-  public collide(other?: Entity): void {}
+  public collide(other?: Entity): void { }
 
-  public load(): void {}
+  public load(): void { }
 }

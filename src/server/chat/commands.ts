@@ -1,5 +1,7 @@
 import { CommandEntry, ChatManager } from 'server/chat';
 import { hsv } from 'core/graphics/color';
+import { readFile } from 'fs/promises';
+import { WorldManager } from 'core/entity';
 
 export const setColor: CommandEntry = {
   name: 'setcolor',
@@ -17,6 +19,29 @@ export const setColor: CommandEntry = {
       if (hero) {
         hero.setColor(color);
       }
+    } else {
+      ChatManager.error('Must specify 1 argument', player);
     }
   },
+};
+
+export const loadLevel: CommandEntry = {
+  name: 'loadlevel',
+  help: 'Loads the specified level.',
+  async handler(player, ...args) {
+    if (args.length === 1) {
+      // Attempt to load the map file
+      try {
+        const file = await readFile(args[0], 'utf8');
+        const level = JSON.parse(file);
+        WorldManager.loadLevel(level);
+        ChatManager.info(`Set level to: ${args[0]}`);
+      } catch (ex) {
+        ChatManager.error('Failed to load level', player);
+        console.error(ex);
+      }
+    } else {
+      ChatManager.error('Must specify 1 argument');
+    }
+  }
 };

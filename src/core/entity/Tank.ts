@@ -33,8 +33,8 @@ export class Tank extends Unit {
     this.boundingBox.width = 30;
     this.boundingBox.height = 30;
 
-    this.setMaxLife(10);
-    this.setLife(10);
+    this.setMaxLife(50);
+    this.setLife(50);
 
     this.addListener<FireEvent>('FireEvent', (event) => {
       if (this.id === event.data.sourceID) {
@@ -60,7 +60,7 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderCannon(ctx: GraphicsContext): void {}
+  protected renderCannon(ctx: GraphicsContext): void { }
 
   public render(ctx: GraphicsContext): void {
     const color = this.getColor();

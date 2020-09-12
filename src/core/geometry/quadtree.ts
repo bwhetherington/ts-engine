@@ -1,7 +1,9 @@
 import { Rectangle, Bounded } from 'core/geometry';
 import { GraphicsContext } from 'core/graphics';
-import { WHITE } from 'core/graphics/color';
+import { WHITE, BLACK } from 'core/graphics/color';
 import { Partioner } from './partioner';
+import { Iterator } from 'core/iterator';
+import { GraphicsPipeline } from 'core/graphics/pipe';
 
 const NODE_POSITION = {
   TOP_LEFT: 0,
@@ -36,7 +38,7 @@ class QuadNode<T extends Bounded> {
 
   public render(ctx: GraphicsContext): void {
     const { x, y, width, height } = this.boundingBox;
-    ctx.rect(x, y, width, height, WHITE);
+    ctx.rect(x, y, width, height, BLACK);
     for (const childNode of this.nodes) {
       childNode.render(ctx);
     }
@@ -80,9 +82,7 @@ class QuadNode<T extends Bounded> {
     } else {
       for (const index of this.findIndices(element.boundingBox)) {
         const node = this.nodes[index];
-        // if (node.boundingBox.intersects(element.boundingBox)) {
-        this.nodes[index].insert(element);
-        // }
+        node.insert(element);
       }
     }
   }
@@ -162,6 +162,19 @@ class QuadNode<T extends Bounded> {
   public retrieve(rect: Rectangle): Set<T> {
     return new Set(this.retrieveInternal(rect));
   }
+
+  private *getAllInternal(): Generator<T> {
+    for (const child of this.children) {
+      yield child;
+    }
+    for (const node of this.nodes) {
+      yield* node.getAllInternal();
+    }
+  }
+
+  public getAll(): Set<T> {
+    return new Set(this.getAllInternal());
+  }
 }
 
 export class QuadTree<T extends Bounded> implements Partioner<T> {
@@ -173,13 +186,19 @@ export class QuadTree<T extends Bounded> implements Partioner<T> {
     this.boundingBox = bounds;
   }
 
+  public resize(bounds: Rectangle): void {
+    const elements = this.root.getAll();
+    this.boundingBox = bounds;
+    this.root = new QuadNode(this.boundingBox, 0, 4);
+    for (const element of elements) {
+      this.insert(element);
+    }
+  }
+
   public render(ctx: GraphicsContext): void {
-    ctx.pushOptions({
-      lineWidth: 1,
-      doFill: false,
-    });
-    this.root.render(ctx);
-    ctx.popOptions();
+    GraphicsPipeline.pipe()
+      .options({ lineWidth: 2, doFill: false, doStroke: true })
+      .run(ctx, (ctx) => this.root.render(ctx));
   }
 
   public insert(element: T): void {

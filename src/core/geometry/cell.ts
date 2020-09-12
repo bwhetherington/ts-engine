@@ -3,28 +3,47 @@ import { Rectangle, Partioner, Bounded } from 'core/geometry';
 import { BLACK, WHITE } from 'core/graphics/color';
 
 export class Cell<T extends Bounded> implements Partioner<T> {
-  public boundingBox: Rectangle;
+  public boundingBox: Rectangle = new Rectangle(1, 1);
   private cells: T[][] = [];
 
   private cellWidth: number;
   private cellHeight: number;
 
-  private width: number;
-  private height: number;
+  private width: number = 1;
+  private height: number = 1;
 
   public constructor(bounds: Rectangle, cellWidth: number, cellHeight: number) {
-    this.boundingBox = bounds;
-
     this.cellWidth = cellWidth;
     this.cellHeight = cellHeight;
-    this.width = Math.ceil(bounds.width / cellWidth) + 1;
-    this.height = Math.ceil(bounds.height / cellHeight) + 1;
+    this.initializeSize(bounds);
   }
 
-  private getCellIndex(x: number, y: number): number {
-    x = Math.ceil(x / this.cellWidth);
-    y = Math.ceil(y / this.cellHeight);
-    return y * this.width + x;
+  private initializeSize(bounds: Rectangle): void {
+    this.boundingBox = bounds;
+    this.width = Math.ceil(bounds.width / this.cellWidth) + 1;
+    this.height = Math.ceil(bounds.height / this.cellHeight) + 1;
+    console.log(this.width, this.height);
+  }
+
+  public resize(bounds: Rectangle): void {
+    const elements = this.getAll();
+    this.cells = [];
+    this.initializeSize(bounds);
+    for (const element of elements) {
+      this.insert(element);
+    }
+  }
+
+  private getAll(): Set<T> {
+    const elements = new Set<T>();
+    for (const cell of this.cells) {
+      if (cell) {
+        for (const element of cell) {
+          elements.add(element);
+        }
+      }
+    }
+    return elements;
   }
 
   private getCell(index: number): T[] {

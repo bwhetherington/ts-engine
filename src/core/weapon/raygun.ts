@@ -26,7 +26,7 @@ export class RayGun extends Weapon {
     super();
     this.type = RayGun.typeName;
     this.rate = 0.25;
-    this.damage = 5;
+    this.damage = 15;
   }
 
   public fire(source: Tank, angle: number): void {
@@ -46,7 +46,7 @@ export class RayGun extends Weapon {
       .filterMap((entity: Entity) =>
         entity instanceof Unit ? entity : undefined
       )
-      .forEach((unit: Unit) => unit.damage(this.damage, source));
+      .forEach((unit: Unit) => unit.damage(this.rollDamage(), source));
     const event = {
       type: 'DisplayRayEvent',
       data: {

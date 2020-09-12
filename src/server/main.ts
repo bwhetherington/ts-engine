@@ -25,25 +25,7 @@ const log = LogManager.forFile(__filename);
 async function loadGeometry(file: string): Promise<void> {
   const text = await readFile(file, 'utf-8');
   const obj = JSON.parse(text);
-
-  const { boundingBox, geometry } = obj;
-  if (boundingBox && geometry) {
-    WorldManager.boundingBox.deserialize(boundingBox);
-    WorldManager.boundingBox.centerX = 0;
-    WorldManager.boundingBox.centerY = 0;
-
-    for (const element of geometry) {
-      const rect = new Rectangle();
-      const { x, y, width, height } = element;
-      rect.width = width;
-      rect.height = height;
-      rect.centerX = x;
-      rect.centerY = y;
-
-      const entity = Geometry.fromRectangle(rect);
-      WorldManager.add(entity);
-    }
-  }
+  WorldManager.loadLevel(obj);
 }
 
 async function main(): Promise<void> {

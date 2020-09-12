@@ -14,7 +14,7 @@ export class Gun extends Weapon {
     super();
     this.type = Gun.typeName;
     this.rate = 0.35;
-    this.damage = 3;
+    this.damage = 1;
   }
 
   public fire(source: Tank, angle: number): void {
@@ -25,7 +25,7 @@ export class Gun extends Weapon {
     projectile.setColor(source.getBaseColor());
     projectile.parent = source;
     projectile.bounce = 0;
-    projectile.damage = this.damage;
+    projectile.damage = this.rollDamage();
     projectile.pierce = this.projectilePierce;
     projectile.velocity.setXY(1, 0);
     const offset = (Math.random() - 0.5) * this.projectileSpread;
