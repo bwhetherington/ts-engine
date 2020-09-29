@@ -34,6 +34,7 @@ export class Gun extends Weapon {
     source.applyForce(projectile.velocity, -projectile.mass);
   }
 
+  // foo
   public serialize(): Data {
     return {
       ...super.serialize(),

@@ -54,10 +54,6 @@ export class Client extends Node {
 
   private initializeSocket(socket: WebSocket) {
     socket.onmessage = (event) => {
-      // console.log(event.data.length);
-      // this.bytesIn += event.data.length;
-      // console.log(Math.round(this.bytesIn / EventManager.timeElapsed / 1000) + " kB/s");
-
       const data = SerializeManager.deserialize(event.data);
       this.onMessage(data, -1);
 

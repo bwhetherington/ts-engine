@@ -1,11 +1,13 @@
 import { Hero, WorldManager, KillEvent } from 'core/entity';
 import { Serializable, Data } from 'core/serialize';
 import { Socket, NetworkManager } from 'core/net';
-import { PlayerManager } from 'core/player';
+import { PlayerManager, Account } from 'core/player';
 import { UUIDManager, UUID } from 'core/uuid';
 import { EventData, Handler, EventManager } from 'core/event';
-import { sleep } from 'core/util';
+import { capitalize, sleep } from 'core/util';
 import { LogManager } from 'core/log';
+import { BasicAuth } from 'core/net/http';
+import { randomColor } from 'core/graphics/color';
 
 const log = LogManager.forFile(__filename);
 
@@ -17,6 +19,10 @@ export class Player implements Serializable {
   public hasJoined: boolean = false;
   public ping: number = 0;
   public score: number = 0;
+
+  private permissionLevel: number = 0;
+
+  private auth?: BasicAuth;
 
   private listeners: Record<string, Set<UUID>> = {};
 
@@ -50,6 +56,14 @@ export class Player implements Serializable {
     }
   }
 
+  public getPermissionLevel(): number {
+    return this.permissionLevel ?? 0;
+  }
+
+  public isAdmin(): boolean {
+    return this.getPermissionLevel() > 0;
+  }
+
   private getListeners(type: string): Set<UUID> {
     let set = this.listeners[type];
 
@@ -75,11 +89,12 @@ export class Player implements Serializable {
       heroID: this.hero?.id ?? null,
       socket: this.socket,
       score: this.score,
+      hasJoined: this.hasJoined,
     };
   }
 
   public deserialize(data: Data): void {
-    const { name, id, socket, heroID, score } = data;
+    const { name, id, socket, heroID, score, hasJoined } = data;
     if (typeof id === 'string') {
       this.id = id;
     }
@@ -98,6 +113,9 @@ export class Player implements Serializable {
     if (typeof score === 'number') {
       this.score = score;
     }
+    if (typeof hasJoined === 'boolean') {
+      this.hasJoined = hasJoined;
+    }
   }
 
   public setHero(hero: Hero): void {
@@ -110,7 +128,7 @@ export class Player implements Serializable {
     }
   }
 
-  public cleanup(): void {
+  public async cleanup(): Promise<void> {
     this.hero?.markForDelete();
     UUIDManager.free(this.id);
 
@@ -119,6 +137,68 @@ export class Player implements Serializable {
       for (const id of handlerSet) {
         EventManager.removeListener(type, id);
       }
+    }
+
+    log.info('cleanup ' + this.name);
+    await this.save();
+  }
+
+  public setAuth(auth: BasicAuth): void {
+    this.auth = auth;
+  }
+
+  private spawnHero(): Hero {
+    const hero = WorldManager.spawn(Hero);
+    const x = (Math.random() - 0.5) * 1120;
+    const y = (Math.random() - 0.5) * 1120;
+    hero.setPositionXY(x, y);
+    hero.setPlayer(this);
+    const color = randomColor();
+    hero.setColor(color);
+    return hero;
+  }
+
+  public load(account: Account): void {
+    // Delete the current hero, if it exists
+    this.hero?.markForDelete();
+
+    const { xp, permissionLevel, username, className } = account;
+
+    this.name = capitalize(username);
+    const hero = this.spawnHero();
+    const color = randomColor();
+    hero.setColor(color);
+    this.setHero(hero);
+    this.hasJoined = true;
+    hero.setExperience(xp ?? 0);
+    hero.setLife(hero.getMaxLife());
+    this.setClass(className);
+    this.permissionLevel = permissionLevel;
+  }
+
+  public async save(): Promise<void> {
+    if (this.auth) {
+      const account = this.createAccountUpdate();
+      await this.write(account);
+      log.trace('player ' + this.name + ' saved');
+    }
+  }
+
+  private createAccountUpdate(): Partial<Account> {
+    return {
+      username: this.auth?.username,
+      xp: this.hero?.getExperience(),
+      className: this.hero?.type
+    };
+  }
+
+  private async write(account: Partial<Account>): Promise<void> {
+    if (NetworkManager.isServer() && NetworkManager.http && this.auth) {
+      await NetworkManager.http.post(
+        '/update',
+        account,
+        this.auth
+      );
     }
   }
 

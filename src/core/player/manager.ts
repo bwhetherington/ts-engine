@@ -39,6 +39,12 @@ export class PlayerManager implements Serializable {
         }
       });
     }
+
+    if (NetworkManager.isServer()) {
+      setInterval(() => {
+        this.saveAll();
+      }, 60 * 1000);
+    }
   }
 
   public setActivePlayer(socket: number): void {
@@ -155,7 +161,7 @@ export class PlayerManager implements Serializable {
 
   public lookup(name: string): Player[] {
     return this.getPlayers()
-      .filter((player) => player.name === name)
+      .filter((player) => player.name.toLowerCase() === name.toLowerCase())
       .toArray();
   }
 
@@ -166,5 +172,16 @@ export class PlayerManager implements Serializable {
     } else {
       return undefined;
     }
+  }
+
+  public async saveAll(): Promise<void> {
+    log.trace('saving all players');
+    await Promise.all(this.getPlayers().map((player) => player.save()).toArray());
+    log.trace('all players saved');
+  }
+
+  public async cleanup(): Promise<void> {
+    // Save all players currently connected
+    await this.saveAll();
   }
 }

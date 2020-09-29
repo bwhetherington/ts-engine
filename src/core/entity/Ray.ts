@@ -8,7 +8,7 @@ import { GraphicsPipeline } from 'core/graphics/pipe';
 
 const log = LogManager.forFile(__filename);
 
-const DURATION = 0.5;
+const DURATION = 0.25;
 const BASE_THICKNESS = 8;
 
 export class Ray extends Entity {

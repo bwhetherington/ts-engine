@@ -16,6 +16,7 @@ import process from 'process';
 import { UUID, UUIDManager } from 'core/uuid';
 import { MetricsManager } from 'server/metrics';
 import { Data, SerializeManager } from 'core/serialize';
+import { ServerHTTPClient } from '.';
 
 const log = LogManager.forFile(__filename);
 

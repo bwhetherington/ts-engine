@@ -17,6 +17,7 @@ import { promisify } from 'util';
 import process from 'process';
 import { registerRenameForm } from 'core/form/rename';
 import { isEmpty } from 'core/util/object';
+import { randomColor } from 'core/graphics/color';
 
 const readFile = promisify(readFileNonPromise);
 
@@ -38,13 +39,13 @@ async function main(): Promise<void> {
 
   const server = new Server();
   server.initialize(httpServer);
-  NetworkManager.initialize(server);
+  NetworkManager.initialize(server, new ServerHTTPClient());
   ChatManager.initialize();
   server.start(parseInt(process.env.PORT ?? '0') || 8080);
 
   WorldManager.initialize();
 
-  await loadGeometry('world.json');
+  await loadGeometry('world2.json');
 
   PlayerManager.initialize();
   FormManager.initialize();
@@ -58,9 +59,7 @@ async function main(): Promise<void> {
     process.send({ type: 'ready' });
   }
 
-  const timer = new Timer((dt) => {
-    EventManager.step(dt);
-
+  function sync() {
     const event = {
       type: 'SyncEvent',
       data: <SyncEvent>{
@@ -72,8 +71,29 @@ async function main(): Promise<void> {
     if (!(isEmpty(event.data.worldData) && isEmpty(event.data.playerData))) {
       NetworkManager.send(event);
     }
+  }
+
+  const timer = new Timer((dt) => {
+    EventManager.step(dt);
+    sync();
   }, 1 / 30);
   TimerManager.initialize(timer);
+
+  const cleanup = async () => {
+    await PlayerManager.cleanup();
+    process.exit(0);
+  };
+
+  setInterval(() => {
+    if (WorldManager.getEntityCount() < 40) {
+      const position = WorldManager.getRandomPosition();
+      const entity = WorldManager.spawnEntity('Enemy', position);
+      entity.setColor(randomColor());
+    }
+  }, 1000);
+
+  process.once('SIGINT', cleanup);
+  process.once('SIGTERM', cleanup);
 }
 
 main().catch((ex) => {

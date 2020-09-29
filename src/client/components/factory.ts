@@ -41,6 +41,10 @@ export class ElementFactory {
   public canvas(props: Props = {}): HTMLCanvasElement {
     return this.create('canvas', props) as HTMLCanvasElement;
   }
+
+  public button(props: Props = {}): HTMLButtonElement {
+    return this.create('button', props) as HTMLButtonElement;
+  }
 }
 
 export const EF = new ElementFactory();

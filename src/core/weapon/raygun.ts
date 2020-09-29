@@ -9,7 +9,7 @@ import {
 } from 'core/entity';
 import { iterator } from 'core/iterator';
 import { EventManager } from 'core/event';
-import { BLACK, Color } from 'core/graphics/color';
+import { BLACK, Color, reshade } from 'core/graphics/color';
 import { NetworkManager } from 'core/net';
 
 const COLOR: Color = {
@@ -47,12 +47,17 @@ export class RayGun extends Weapon {
         entity instanceof Unit ? entity : undefined
       )
       .forEach((unit: Unit) => unit.damage(this.rollDamage(), source));
+
+    const color = reshade(source.getBaseColor());
+    color.alpha = (color.alpha ?? 1) * (2 / 3);
+
+
     const event = {
       type: 'DisplayRayEvent',
       data: {
         start: { x: start.x, y: start.y },
         stop: { x: end.x, y: end.y },
-        color: COLOR,
+        color,
       },
     };
     if (NetworkManager.isServer()) {

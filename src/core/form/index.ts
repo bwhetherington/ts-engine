@@ -10,6 +10,7 @@ export interface Form {
   description?: string;
   messages?: string[];
   items: FormItem[];
+  submitMethods?: SubmitMethod[];
 }
 
 export interface StringField {
@@ -19,6 +20,7 @@ export interface StringField {
   default?: string;
   minLength?: number;
   maxLength?: number;
+  isPassword?: boolean;
 }
 
 export interface NumberField {
@@ -48,12 +50,7 @@ export interface BooleanField {
 
 export type FormItem = StringField | NumberField | BooleanField | RangeField;
 
-export interface FormSubmitEvent {
-  name: string;
-  data: Record<string, Entry>;
-}
-
-export interface FormValidatedEvent {}
+export interface FormValidatedEvent { }
 
 export interface StringEntry {
   type: 'text';
@@ -76,19 +73,20 @@ export interface FormData {
   [key: string]: Entry | undefined;
 }
 
+export interface SubmitMethod {
+  name: string;
+  label: string;
+  isOpaque: boolean;
+}
+
 export interface FormSubmitEvent {
   name: string;
   data: Record<string, Entry>;
+  method?: string;
 }
 
 export interface FormRejectEvent {
   player: Player;
-}
-
-export interface FormType<T extends FormData> {
-  name: string;
-  form: Form;
-  validate(x: FormData): x is T;
 }
 
 export interface FormShowEvent {
@@ -100,15 +98,16 @@ const FM = new FormManager();
 export interface FormResult {
   isValid: boolean;
   message?: string;
+  data?: Data;
 }
 
 export interface FormEntry<T> {
   name: string;
   form: Form;
-  onSubmit(player: Player, response: T): void;
+  onSubmit(player: Player, response: T, method: string, validatedData?: Data): void;
   onReject?: (player: Player) => void;
   checkType(data: Data): data is T;
-  validate(input: T, player?: Player): Promise<FormResult>;
+  validate(input: T, method: string, player?: Player): Promise<FormResult>;
 }
 
 export { FM as FormManager, registerJoinForm };

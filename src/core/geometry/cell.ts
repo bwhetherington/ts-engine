@@ -22,7 +22,6 @@ export class Cell<T extends Bounded> implements Partioner<T> {
     this.boundingBox = bounds;
     this.width = Math.ceil(bounds.width / this.cellWidth) + 1;
     this.height = Math.ceil(bounds.height / this.cellHeight) + 1;
-    console.log(this.width, this.height);
   }
 
   public resize(bounds: Rectangle): void {

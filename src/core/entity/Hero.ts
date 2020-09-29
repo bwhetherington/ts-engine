@@ -228,9 +228,13 @@ export class Hero extends Tank {
     const player = this.getPlayer();
     if (player) {
       if (player.isActivePlayer()) {
+        const { x: dx, y: dy } = this.velocity;
+        const { centerX: x, centerY: y } = this.boundingBox;
+        const { angle } = this;
+
         CameraManager.setTargetXY(
-          this.boundingBox.centerX,
-          this.boundingBox.centerY
+          x,
+          y,
         );
       }
 

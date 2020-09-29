@@ -218,6 +218,16 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     return iterator(this.getEntitiesLayerOrderedInternal());
   }
 
+  public getRandomPosition(): Vector {
+    const x =
+      Math.random() * this.boundingBox.width +
+      this.boundingBox.x;
+    const y =
+      Math.random() * this.boundingBox.height +
+      this.boundingBox.y;
+    return new Vector(x, y);
+  }
+
   private populateGraph(): void {
     if (this.shouldPopulateGraph) {
       this.graph = Graph.sample(25);

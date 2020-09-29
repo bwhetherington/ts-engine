@@ -7,5 +7,6 @@
     "src/client/*"
   ],
   "exec": "npm run server",
-  "ext": "ts"
+  "ext": "ts",
+  "signal": "SIGTERM"
 }

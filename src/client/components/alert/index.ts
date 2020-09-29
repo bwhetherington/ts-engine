@@ -12,6 +12,9 @@ import {
 } from 'core/form';
 import { EventManager } from 'core/event';
 import { removeChildren, ElementFactory, Component } from 'client/components';
+import { LogManager } from 'core/log';
+
+const log = LogManager.forFile(__filename);
 
 export class AlertComponent extends Component {
   public static componentName: string = 'alert-component';
@@ -21,6 +24,9 @@ export class AlertComponent extends Component {
   private body?: HTMLElement;
   private data: Record<string, Entry> = {};
   private inputs: Set<HTMLInputElement> = new Set();
+  private name?: string;
+  private form?: HTMLFormElement;
+  private submitMethod: string = 'submit';
 
   public constructor() {
     super(template);
@@ -68,6 +74,27 @@ export class AlertComponent extends Component {
     this.data = {};
   }
 
+  private onSubmit(): void {
+    if (this.name && this.data && this.form) {
+      console.log('submit');
+      const submitEvent = {
+        type: 'FormSubmitEvent',
+        data: <FormSubmitEvent>{
+          name: this.name,
+          data: this.data,
+          method: this.submitMethod ?? 'submit'
+        },
+      };
+
+      EventManager.emit(submitEvent);
+      log.debug('submit ' + JSON.stringify(submitEvent));
+      this.form.disabled = true;
+      for (const input of this.inputs) {
+        input.disabled = true;
+      }
+    }
+  }
+
   public showForm(data: Form): void {
     if (this.header) {
       this.header.innerText = data.label;
@@ -76,23 +103,12 @@ export class AlertComponent extends Component {
     this.clearDialog();
 
     const form = ElementFactory.form();
+    this.form = form;
+    this.name = data.name;
     form.addEventListener('submit', (event) => {
+      console.log(event);
       event.preventDefault();
-
-      const submitEvent = {
-        type: 'FormSubmitEvent',
-        data: <FormSubmitEvent>{
-          name: data.name,
-          data: this.data,
-        },
-      };
-
-      EventManager.emit(submitEvent);
-      console.log(submitEvent);
-      form.disabled = true;
-      for (const input of this.inputs) {
-        input.disabled = true;
-      }
+      this.onSubmit();
     });
 
     if (data.description) {
@@ -126,10 +142,32 @@ export class AlertComponent extends Component {
     const submitRow = ElementFactory.div();
     submitRow.className = 'button-row footer';
 
-    const submit = ElementFactory.input();
-    submit.type = 'submit';
-    submitRow.appendChild(submit);
-    this.inputs.add(submit);
+    // Create submit row
+    if (data.submitMethods) {
+      for (const method of data.submitMethods) {
+        const item = ElementFactory.button();
+        item.innerText = method.label;
+
+        if (method.isOpaque) {
+          item.setAttribute('style', 'opaque');
+        }
+
+        item.addEventListener('click', (event) => {
+          event.preventDefault();
+          this.submitMethod = method.name;
+          this.onSubmit();
+        });
+
+        submitRow.appendChild(item);
+
+        console.log(item);
+      }
+    } else {
+      // const submit = ElementFactory.button();
+      // submit.type = 'submit';
+      // submit.innerText = 'Submit';
+      // submitRow.appendChild(submit);
+    }
 
     form.appendChild(submitRow);
 
@@ -163,6 +201,9 @@ export class AlertComponent extends Component {
         }
         if (maxLength !== undefined) {
           input.maxLength = maxLength;
+        }
+        if (item.isPassword) {
+          input.type = 'password';
         }
         entry = {
           type: 'text',

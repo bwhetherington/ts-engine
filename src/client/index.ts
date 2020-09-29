@@ -16,7 +16,7 @@ import { registerComponents } from 'client/components';
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
-  LogManager.initialize('trace', new ClientLogger());
+  LogManager.initialize('info', new ClientLogger());
   registerComponents();
 
   const game = document.getElementById('game');
@@ -56,12 +56,14 @@ async function main(): Promise<void> {
   // });
 
   EventManager.addListener<StepEvent>('StepEvent', () => {
-    const players = PlayerManager.getPlayers().map((player) => ({
-      id: player.id,
-      name: player.name,
-      level: player.hero?.getLevel() ?? 0,
-      ping: Math.round(player.ping * 1000) + 'ms',
-    }));
+    const players = PlayerManager.getPlayers()
+      .filter((player) => player.hasJoined)
+      .map((player) => ({
+        id: player.id,
+        name: player.name,
+        level: player.hero?.getLevel() ?? 0,
+        ping: Math.round(player.ping * 1000) + 'ms',
+      }));
     const update = {
       type: 'TableUpdateEvent',
       data: {

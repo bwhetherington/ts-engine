@@ -109,13 +109,13 @@ export class FormManager {
         const { socket, data } = event;
         const player = PlayerManager.getPlayer(socket);
         if (player) {
-          const { name: responseName, data: response } = data;
+          const { name: responseName, data: response, method = 'submit' } = data;
           if (responseName === name) {
             if (checkType(response)) {
-              const result = await validate(response, player);
-              const { isValid, message = 'Error validating form.' } = result;
+              const result = await validate(response, method, player);
+              const { isValid, message = 'Error validating form.', data } = result;
               if (isValid) {
-                onSubmit(player, response);
+                onSubmit(player, response, method, data);
                 player.send({
                   type: 'FormValidatedEvent',
                   data: {},

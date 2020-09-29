@@ -5,6 +5,7 @@ export interface CommandEntry {
   name: string;
   handler: (player: Player, ...args: string[]) => void;
   help: string;
+  permissionLevel?: number;
   aliases?: [];
 }
 
