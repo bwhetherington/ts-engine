@@ -76,7 +76,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     const baseConstructor = this.entityConstructors[base];
     const gen = () => {
       const entity = baseConstructor();
-      entity.deserialize(template);
+      entity.deserialize(template, false);
       return entity;
     };
     this.entityConstructors[type] = gen;

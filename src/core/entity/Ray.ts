@@ -50,10 +50,19 @@ export class Ray extends Entity {
     this.start.set(from);
     this.stop.set(to);
 
-    this.position.set(from);
-    this.position.add(to, -1 / 2);
-    this.boundingBox.width = to.x - from.x;
-    this.boundingBox.height = to.y - from.y;
+    const minX = Math.min(from.x, to.x);
+    const maxX = Math.max(from.x, to.x);
+    const minY = Math.min(from.y, to.y);
+    const maxY = Math.max(from.y, to.y);
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+
+    this.boundingBox.x = minX;
+    this.boundingBox.y = minY;
+    this.boundingBox.width = width;
+    this.boundingBox.height = height;
+    this.setPositionXY(this.boundingBox.centerX, this.boundingBox.centerY);
   }
 
   private async loadInternal(): Promise<void> {

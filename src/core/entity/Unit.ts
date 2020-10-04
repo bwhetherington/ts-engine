@@ -18,6 +18,7 @@ import { CollisionLayer } from './util';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
+let foo = false;
 
 export class Unit extends Entity {
   public static typeName: string = 'Unit';
@@ -72,6 +73,10 @@ export class Unit extends Entity {
 
   public setLife(life: number, source?: Unit): void {
     this.life = clamp(life, 0, this.maxLife);
+    if (!foo) {
+      console.log('setLife', life, this.life);
+      foo = true;
+    }
     if (this.life === 0) {
       this.kill(source);
     }
@@ -185,9 +190,11 @@ export class Unit extends Entity {
     const { life, maxLife, movement, xpWorth, speed } = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
+      // console.log('maxLife', maxLife, this.maxLife);
     }
     if (typeof life === 'number') {
       this.setLife(life);
+      // console.log('life', life, this.life);
     }
     if (typeof speed === 'number') {
       this.speed = speed;

@@ -23,8 +23,6 @@ import { BarUpdateEvent, sleep } from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
-// 5 10 25
-
 export class Hero extends Tank {
   public static typeName: string = 'Hero';
 
@@ -33,7 +31,6 @@ export class Hero extends Tank {
 
   private xp: number = 0;
   private level: number = 0;
-  private isInitialized: boolean = false;
 
   public constructor() {
     super();
@@ -258,6 +255,12 @@ export class Hero extends Tank {
   }
 
   public deserialize(data: Data): void {
+    if (data.hasOwnProperty('type')) {
+      console.log('deserialize', data);
+      console.log(this);
+      console.log('===================');
+    }
+
     const { x: oldX, y: oldY } = this.position;
     const { angle: oldAngle } = this;
 
@@ -297,8 +300,6 @@ export class Hero extends Tank {
       };
       NetworkManager.send(syncEvent);
     }
-
-    this.isInitialized = true;
   }
 
   public isEventSubject<E extends EventData>(event: Event<E>): boolean {

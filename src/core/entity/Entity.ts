@@ -34,6 +34,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   public isCollidable: boolean = true;
   public doSync: boolean = true;
   private handlers: Record<string, Set<string>> = {};
+  public isInitialized: boolean = false;
 
   constructor() {
     this.id = UUIDManager.generate();
@@ -169,7 +170,7 @@ export class Entity implements Bounded, Serializable, Renderable {
     this.setColor(newColor);
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data, setInitialized: boolean = false): void {
     const {
       id,
       type,
@@ -223,6 +224,10 @@ export class Entity implements Bounded, Serializable, Renderable {
     }
     if (velocity !== undefined) {
       this.velocity.deserialize(velocity);
+    }
+
+    if (setInitialized) {
+      this.isInitialized = true;
     }
   }
 

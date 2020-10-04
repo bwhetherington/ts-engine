@@ -10,8 +10,6 @@ export class TimedText extends Text {
   public duration: number = 0.5;
   public elapsed: number = 0;
 
-  private isInitialized: boolean = false;
-
   public constructor() {
     super();
     this.type = TimedText.typeName;

@@ -76,7 +76,6 @@ export class AlertComponent extends Component {
 
   private onSubmit(): void {
     if (this.name && this.data && this.form) {
-      console.log('submit');
       const submitEvent = {
         type: 'FormSubmitEvent',
         data: <FormSubmitEvent>{
@@ -106,7 +105,6 @@ export class AlertComponent extends Component {
     this.form = form;
     this.name = data.name;
     form.addEventListener('submit', (event) => {
-      console.log(event);
       event.preventDefault();
       this.onSubmit();
     });
@@ -159,8 +157,6 @@ export class AlertComponent extends Component {
         });
 
         submitRow.appendChild(item);
-
-        console.log(item);
       }
     } else {
       // const submit = ElementFactory.button();

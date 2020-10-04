@@ -14,7 +14,7 @@ export class Gun extends Weapon {
     super();
     this.type = Gun.typeName;
     this.rate = 0.35;
-    this.damage = 1;
+    this.damage = 5;
   }
 
   public fire(source: Tank, angle: number): void {

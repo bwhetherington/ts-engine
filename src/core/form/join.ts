@@ -40,13 +40,18 @@ export const JOIN_FORM: Form = {
   description: 'Please enter a name when joining the game.',
   submitMethods: [
     {
-      name: 'submit',
-      label: 'Submit',
+      name: 'login',
+      label: 'Login',
       isOpaque: false,
     },
     {
       name: 'register',
       label: 'Register',
+      isOpaque: false,
+    },
+    {
+      name: 'noAccount',
+      label: 'No Account',
       isOpaque: false,
     }
   ],
@@ -154,7 +159,6 @@ async function handleRegister(player: Player, response: JoinForm): Promise<void>
     password: response.password.value,
   };
   const res = await NetworkManager.http?.post('/register', auth);
-  console.log(res);
   if (res && isOk(res.code)) {
     player.load({
       username: res.data.username,
@@ -165,15 +169,36 @@ async function handleRegister(player: Player, response: JoinForm): Promise<void>
   }
 }
 
+function validateNoAccount(res: JoinForm): FormResult {
+  const username = res.username.value;
+
+  if (PlayerManager.findPlayer(username)) {
+    return { isValid: false, message: 'A player already has that name.' };
+  }
+
+  return { isValid: true };
+}
+
+function handleNoAccount(player: Player, res: JoinForm): void {
+  player.load({
+    username: res.username.value,
+    xp: 0,
+    className: 'Hero',
+    permissionLevel: 0,
+  });
+}
+
 export const JoinFormEntry: FormEntry<JoinForm> = {
   name: 'JoinForm',
   form: JOIN_FORM,
   async onSubmit(player: Player, response: JoinForm, method: string, data?: Data): Promise<void> {
     switch (method) {
-      case 'submit':
+      case 'login':
         return await handleSubmit(player, response, data);
       case 'register':
         return await handleRegister(player, response);
+      case 'noAccount':
+        return handleNoAccount(player, response);
     }
     await handleSubmit(player, response, data);
   },
@@ -185,10 +210,12 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
   },
   async validate(input: JoinForm, method: string): Promise<FormResult> {
     switch (method) {
-      case 'submit':
+      case 'login':
         return await validateSubmit(input);
       case 'register':
         return await validateRegister(input);
+      case 'noAccount':
+        return validateNoAccount(input);
       default:
         return { isValid: false, message: 'Unknown submission method.' };
     }
