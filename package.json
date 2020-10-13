@@ -39,7 +39,7 @@
     "@types/node-fetch": "^2.5.7",
     "jsonpack": "^1.1.5",
     "mime-types": "^2.1.27",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "ts-node": "^8.10.2",
     "tsconfig-paths": "^3.9.0",
     "unique-names-generator": "^4.3.0",
