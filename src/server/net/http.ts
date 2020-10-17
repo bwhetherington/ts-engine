@@ -37,14 +37,9 @@ export class ServerHTTPClient implements HTTPClient {
     });
 
     log.info(`GET ${uri} ${response.status}`);
-
-    if (response.ok) {
-      const code = response.status;
-      const data = await response.json();
-      return { code, data };
-    } else {
-      return { code: response.status, data: {} };
-    }
+    const code = response.status;
+    const body = await response.json();
+    return { code, data: body };
   }
 
   async post(uri: string, data: object, auth?: BasicAuth): Promise<HTTPResponse> {
@@ -61,13 +56,8 @@ export class ServerHTTPClient implements HTTPClient {
     });
 
     log.info(`POST ${uri} ${response.status}`);
-
-    if (response.ok) {
-      const code = response.status;
-      const data = await response.json();
-      return { code, data };
-    } else {
-      return { code: response.status, data: {} };
-    }
+    const code = response.status;
+    const body = await response.json();
+    return { code, data: body };
   }
 }

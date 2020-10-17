@@ -8,11 +8,6 @@ module.exports = {
     __dirname: true,
   },
   devtool: 'inline-source-map',
-  // plugins: [
-  //   new webpack.DefinePlugin({
-  //     __PRODUCTION__: JSON.stringify(process.env.NODE_ENV === 'PRODUCTION'),
-  //   })
-  // ],
   module: {
     rules: [
       {

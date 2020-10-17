@@ -26,6 +26,7 @@ import {
   Ray,
   RayCastResult,
   DisplayRayEvent,
+  HomingProjectile,
 } from 'core/entity';
 import {
   BigProjectile,
@@ -98,6 +99,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Heavy);
     this.registerEntity(Bar);
     this.registerEntity(Echo);
+    this.registerEntity(HomingProjectile);
 
     // Template entities
     this.registerTemplateEntity(Feed);

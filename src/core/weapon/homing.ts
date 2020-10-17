@@ -1,0 +1,53 @@
+import { HomingProjectile, KillEvent, Projectile, Tank, Unit, WorldManager } from 'core/entity';
+import { Gun } from 'core/weapon';
+
+export class HomingGun extends Gun {
+  public static typeName: string = 'HomingGun';
+
+  public constructor() {
+    super();
+    this.type = HomingGun.typeName;
+    this.projectileType = HomingProjectile.typeName;
+    this.projectileSpeed = 300;
+    this.rate = 0.15;
+    this.projectileSpread = 1;
+    this.projectilePierce = 1;
+  }
+
+  private selectTarget(projectile: HomingProjectile, source: Tank): Unit | undefined {
+    const [target] = WorldManager.getEntities()
+      .filter((entity) => !(source === entity || projectile === entity))
+      .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
+      .map<[Unit | undefined, number]>((entity) => [
+        entity,
+        entity.position.distanceTo(projectile.position),
+      ])
+      .fold(
+        [<Unit | undefined>undefined, Number.POSITIVE_INFINITY],
+        (min, cur) => {
+          if (cur[1] < min[1]) {
+            return cur;
+          } else {
+            return min;
+          }
+        }
+      );
+    return target;
+  }
+
+  protected createProjectile(source: Tank, angle: number): Projectile {
+    const base = super.createProjectile(source, angle) as HomingProjectile;
+    base.turnSpeed = this.projectileSpeed / 5;
+    base.maxSpeed = this.projectileSpeed;
+    base.target = this.selectTarget(base, source);
+
+    base.addListener<KillEvent>('KillEvent', (event) => {
+      if (event.data.targetID === base.target?.id) {
+        base.target = this.selectTarget(base, source);
+      }
+    });
+
+    base.duration = 3;
+    return base;
+  }
+}

@@ -84,14 +84,14 @@ async function main(): Promise<void> {
     process.exit(0);
   };
 
-  // setInterval(() => {
-  //   if (WorldManager.getEntityCount() < 40) {
-  //     const type = Math.random() < 0.3 ? 'HeavyEnemy' : 'Enemy';
-  //     const position = WorldManager.getRandomPosition();
-  //     const entity = WorldManager.spawnEntity(type, position);
-  //     entity.setColor(randomColor());
-  //   }
-  // }, 1000);
+  setInterval(() => {
+    if (WorldManager.getEntityCount() < 40) {
+      const type = Math.random() < 0.3 ? 'HeavyEnemy' : 'Enemy';
+      const position = WorldManager.getRandomPosition();
+      const entity = WorldManager.spawnEntity(type, position);
+      entity.setColor(randomColor());
+    }
+  }, 5000);
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);

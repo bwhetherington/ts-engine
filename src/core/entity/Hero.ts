@@ -255,12 +255,6 @@ export class Hero extends Tank {
   }
 
   public deserialize(data: Data): void {
-    if (data.hasOwnProperty('type')) {
-      console.log('deserialize', data);
-      console.log(this);
-      console.log('===================');
-    }
-
     const { x: oldX, y: oldY } = this.position;
     const { angle: oldAngle } = this;
 

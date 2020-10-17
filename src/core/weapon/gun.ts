@@ -5,10 +5,10 @@ import { Data } from 'core/serialize';
 export class Gun extends Weapon {
   public static typeName: string = 'Gun';
 
-  private projectileType: string = 'Projectile';
-  private projectileSpeed: number = 500;
-  private projectileSpread: number = 0.1;
-  private projectilePierce: number = 1;
+  protected projectileType: string = 'Projectile';
+  protected projectileSpeed: number = 500;
+  protected projectileSpread: number = 0.1;
+  protected projectilePierce: number = 1;
 
   public constructor() {
     super();
@@ -17,7 +17,7 @@ export class Gun extends Weapon {
     this.damage = 5;
   }
 
-  public fire(source: Tank, angle: number): void {
+  protected createProjectile(source: Tank, angle: number): Projectile {
     const projectile = WorldManager.spawnEntity(
       this.projectileType,
       source.getCannonTip()
@@ -31,6 +31,11 @@ export class Gun extends Weapon {
     const offset = (Math.random() - 0.5) * this.projectileSpread;
     projectile.velocity.angle = angle + offset;
     projectile.velocity.magnitude = this.projectileSpeed;
+    return projectile;
+  }
+
+  public fire(source: Tank, angle: number): void {
+    const projectile = this.createProjectile(source, angle);
     source.applyForce(projectile.velocity, -projectile.mass);
   }
 

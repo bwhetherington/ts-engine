@@ -14,7 +14,6 @@ import { Echo } from './Echo';
 const log = LogManager.forFile(__filename);
 
 const DURATION = 1.5;
-const FADE_DURATION = 0.0625;
 
 export class Projectile extends Entity {
   public static typeName: string = 'Projectile';
@@ -23,9 +22,9 @@ export class Projectile extends Entity {
   public damage: number = 15;
   private hasExploded: boolean = false;
   public parent?: Unit;
+  public duration: number = DURATION;
+  private hasBegun: boolean = false;
 
-  private timeElapsed: number = 0;
-  private originalColor: Color = WHITE;
   private hitEntities: Set<UUID> = new Set();
 
   public onHit?: (target?: Unit) => void;
@@ -36,19 +35,20 @@ export class Projectile extends Entity {
     this.collisionLayer = CollisionLayer.Projectile;
     this.bounce = 0;
     this.mass = 0.03;
-    this.setOriginalColor(rgba(1.0, 0.6, 0.3, 0.8));
-    this.prepareRemove();
+    this.setColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.boundingBox.width = 20;
     this.boundingBox.height = 20;
   }
 
-  protected setOriginalColor(color: Color): void {
-    this.originalColor = color;
-    this.setColor(color);
+  public initialize(): void {
+    if (!this.hasBegun) {
+      this.prepareRemove();
+      this.hasBegun = true;
+    }
   }
 
   private async prepareRemove(): Promise<void> {
-    await sleep(DURATION);
+    await sleep(this.duration);
     if (!this.markedForDelete) {
       this.remove();
     }
@@ -80,11 +80,6 @@ export class Projectile extends Entity {
       this.explode();
       this.hasExploded = true;
     }
-  }
-
-  public step(dt: number): void {
-    super.step(dt);
-    this.timeElapsed += dt;
   }
 
   protected explode(): void {
@@ -140,13 +135,18 @@ export class Projectile extends Entity {
       parentID: this.parent?.id,
       hitEntities: iterator(this.hitEntities).toArray(),
       pierce: this.pierce,
+      duration: this.duration,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const { damage, parentID, hitEntities, pierce } = data;
+    const { damage, parentID, hitEntities, pierce, duration } = data;
+
+    if (typeof duration === 'number') {
+      this.duration = duration;
+    }
 
     if (typeof damage === 'number') {
       this.damage = damage;
@@ -166,6 +166,10 @@ export class Projectile extends Entity {
     if (hitEntities instanceof Array) {
       this.hitEntities.clear();
       hitEntities.forEach((entity) => this.hitEntities.add(entity));
+    }
+
+    if (!this.hasBegun) {
+      this.initialize();
     }
   }
 

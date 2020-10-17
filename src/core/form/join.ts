@@ -140,31 +140,33 @@ async function handleSubmit(player: Player, response: JoinForm, data?: Data): Pr
 }
 
 async function validateRegister(input: JoinForm): Promise<FormResult> {
-  const { username } = input;
+  const defaultError = 'Something went wrong'
   try {
-    const res = await NetworkManager.http?.get('/user/' + username.value);
-    if (res && res.code === 404) {
-      return { isValid: true };
+    const auth: BasicAuth = {
+      username: input.username.value,
+      password: input.password.value,
+    };
+    const res = await NetworkManager.http?.post('/register', auth);
+    if (res && isOk(res.code)) {
+      return { isValid: true, data: res.data };
     } else {
-      return { isValid: false, message: 'Cannot create an account with the specified username.' };
+      return { isValid: false, message: res?.data.message ?? defaultError };
     }
   } catch (_) {
-    return { isValid: false, message: 'Cannot create an account with the specified username.' };
+    return { isValid: false, message: defaultError };
   }
 }
 
-async function handleRegister(player: Player, response: JoinForm): Promise<void> {
-  const auth: BasicAuth = {
-    username: response.username.value,
-    password: response.password.value,
-  };
-  const res = await NetworkManager.http?.post('/register', auth);
-  if (res && isOk(res.code)) {
+async function handleRegister(player: Player, response: JoinForm, data?: Data): Promise<void> {
+  if (!data) {
+    const res = await NetworkManager.http?.get('/user/' + response.username.value);
+  }
+  if (data) {
     player.load({
-      username: res.data.username,
-      xp: res.data.xp,
-      className: res.data.className,
-      permissionLevel: res.data.permissionLevel,
+      username: data.username,
+      xp: data.xp,
+      className: data.className,
+      permissionLevel: data.permissionLevel,
     });
   }
 }
@@ -196,7 +198,7 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
       case 'login':
         return await handleSubmit(player, response, data);
       case 'register':
-        return await handleRegister(player, response);
+        return await handleRegister(player, response, data);
       case 'noAccount':
         return handleNoAccount(player, response);
     }
