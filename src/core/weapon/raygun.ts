@@ -11,6 +11,7 @@ import { iterator } from 'core/iterator';
 import { EventManager } from 'core/event';
 import { BLACK, Color, reshade } from 'core/graphics/color';
 import { NetworkManager } from 'core/net';
+import { RNGManager } from 'core/random';
 
 const COLOR: Color = {
   red: 0.8,
@@ -30,7 +31,7 @@ export class RayGun extends Weapon {
   }
 
   public fire(source: Tank, angle: number): void {
-    angle += (Math.random() - 0.5) * 0.05;
+    angle += RNGManager.nextFloat(-0.5, 0.5) * 0.05;
 
     const start = source.getCannonTip();
     const set: Set<Entity> = new Set();
@@ -50,7 +51,6 @@ export class RayGun extends Weapon {
 
     const color = reshade(source.getBaseColor());
     color.alpha = (color.alpha ?? 1) * (2 / 3);
-
 
     const event = {
       type: 'DisplayRayEvent',

@@ -20,6 +20,7 @@ import * as process from 'process';
 import { CommandEntry } from 'server/chat';
 import * as commands from 'server/chat/commands';
 import { iterateObject, Iterator } from 'core/iterator';
+import { RNGManager } from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -74,7 +75,7 @@ export class ChatManager {
   private handleCommand(player: Player, command: string, args: string[]): void {
     if (command in this.commands) {
       const handler = this.commands[command];
-      if ((player.getPermissionLevel() ?? 0) >= (handler.permissionLevel)) {
+      if ((player.getPermissionLevel() ?? 0) >= handler.permissionLevel) {
         handler.handler.apply(null, [player, ...args]);
       } else {
         this.error('Insufficient permissions', player);
@@ -167,36 +168,43 @@ export class ChatManager {
       (player) => {
         // const components = renderInfo('Command Directory');
         const lines = iterateObject(this.commands)
-          .filter((entry) => entry.permissionLevel <= player.getPermissionLevel())
-          .flatMap<null | TextComponent>((entry) => Iterator.array([
-            null,
-            {
-              content: entry.name + ':',
-              style: {
-                color: 'yellow',
-                styles: ['bold'],
+          .filter(
+            (entry) => entry.permissionLevel <= player.getPermissionLevel()
+          )
+          .flatMap<null | TextComponent>((entry) =>
+            Iterator.array([
+              null,
+              {
+                content: entry.name + ':',
+                style: {
+                  color: 'yellow',
+                  styles: ['bold'],
+                },
               },
-            },
-            {
-              content: ' ' + entry.help,
-              style: {
-                color: 'yellow',
+              {
+                content: ' ' + entry.help,
+                style: {
+                  color: 'yellow',
+                },
               },
-            }
-          ]))
+            ])
+          )
           .toArray();
-        const components = [{
-          content: '[Command Directory]',
-          style: {
-            color: 'yellow',
-            styles: ['bold'],
-          },
-        } as TextComponent, ...lines];
+        const components = [
+          {
+            content: '[Command Directory]',
+            style: {
+              color: 'yellow',
+              styles: ['bold'],
+            },
+          } as TextComponent,
+          ...lines,
+        ];
         this.sendComponents(components, player);
       },
       'Lists all commands and their help messages',
       0,
-      'h',
+      'h'
     );
 
     this.registerCommand(
@@ -206,7 +214,7 @@ export class ChatManager {
       },
       "Responds to the user's ping with a pong",
       0,
-      'p',
+      'p'
     );
 
     this.registerCommand(
@@ -236,7 +244,7 @@ export class ChatManager {
         }
 
         for (let i = 0; i < count; i++) {
-          const isHeavy = Math.random() < 0.2;
+          const isHeavy = RNGManager.nextBoolean(0.2);
           const type = isHeavy ? 'HeavyEnemy' : 'Enemy';
           const entity = WorldManager.spawnEntity(type) as Enemy;
 
@@ -244,28 +252,18 @@ export class ChatManager {
           entity.setColor(color);
 
           const x =
-            Math.random() * WorldManager.boundingBox.width +
+            RNGManager.next() * WorldManager.boundingBox.width +
             WorldManager.boundingBox.x;
           const y =
-            Math.random() * WorldManager.boundingBox.height +
+            RNGManager.next() * WorldManager.boundingBox.height +
             WorldManager.boundingBox.y;
-
-          // const dx = (Math.random() - 0.5) * 200;
-          // const dy = (Math.random() - 0.5) * 200;
-
           entity.position.setXY(x, y);
-          // entity.velocity.setXY(dx, dy);
-
-          // const weapon = new Pistol();
-          // weapon.rate = 0.85;
-          // weapon.damage = 1;
-          // entity.setWeapon(weapon);
         }
 
         this.info(`Spawning ${count} entities`);
       },
       'Spawns a number of AI units',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -284,10 +282,10 @@ export class ChatManager {
         for (let i = 0; i < count; i++) {
           const entity = WorldManager.spawnEntity('Feed');
           const x =
-            Math.random() * WorldManager.boundingBox.width +
+            RNGManager.next() * WorldManager.boundingBox.width +
             WorldManager.boundingBox.x;
           const y =
-            Math.random() * WorldManager.boundingBox.height +
+            RNGManager.next() * WorldManager.boundingBox.height +
             WorldManager.boundingBox.y;
           entity.position.setXY(x, y);
         }
@@ -295,7 +293,7 @@ export class ChatManager {
         this.info(`Spawning ${count} entities`);
       },
       'Spawns a number of feed units',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -309,7 +307,7 @@ export class ChatManager {
         }
       },
       "Heals the player's hero to maximum life",
-      1,
+      1
     );
 
     this.registerCommand(
@@ -323,7 +321,7 @@ export class ChatManager {
         this.info('Removed all units');
       },
       'Kills all units',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -333,7 +331,7 @@ export class ChatManager {
         process.exit(0);
       },
       'Stops the server',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -358,7 +356,7 @@ export class ChatManager {
         player.hero?.setLevel(level);
       },
       'Sets the level of the player character',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -376,7 +374,7 @@ export class ChatManager {
         }
       },
       'Changes the player class',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -398,7 +396,7 @@ export class ChatManager {
         TimerManager.setInterval(interval);
       },
       'Sets the server clock interval',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -425,7 +423,7 @@ export class ChatManager {
         this.info('Player IDs: ' + inner, player);
       },
       'Looks up the player ID associated with the given name',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -440,7 +438,7 @@ export class ChatManager {
         }
       },
       'Kicks the player with the specified ID',
-      1,
+      1
     );
 
     this.registerCommand(
@@ -455,7 +453,7 @@ export class ChatManager {
         }
       },
       'Executes a command from the specified player',
-      1,
+      1
     );
 
     this.loadCommands();

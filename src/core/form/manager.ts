@@ -56,7 +56,7 @@ export class FormManager {
           }
         }
       );
-      await sleep(timeout);
+      await EventManager.sleep(timeout);
       if (!hasResolved) {
         EventManager.removeListener('FormSubmitEvent', id);
         log.warn(`form [${id}] timed out`);
@@ -109,11 +109,19 @@ export class FormManager {
         const { socket, data } = event;
         const player = PlayerManager.getPlayer(socket);
         if (player) {
-          const { name: responseName, data: response, method = 'submit' } = data;
+          const {
+            name: responseName,
+            data: response,
+            method = 'submit',
+          } = data;
           if (responseName === name) {
             if (checkType(response)) {
               const result = await validate(response, method, player);
-              const { isValid, message = 'Error validating form.', data } = result;
+              const {
+                isValid,
+                message = 'Error validating form.',
+                data,
+              } = result;
               if (isValid) {
                 onSubmit(player, response, method, data);
                 player.send({

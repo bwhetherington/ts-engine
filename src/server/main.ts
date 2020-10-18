@@ -18,6 +18,8 @@ import process from 'process';
 import { registerRenameForm } from 'core/form/rename';
 import { isEmpty } from 'core/util/object';
 import { randomColor } from 'core/graphics/color';
+import { RNGManager } from 'core/random';
+import { sleep } from 'core/util';
 
 const readFile = promisify(readFileNonPromise);
 
@@ -79,19 +81,19 @@ async function main(): Promise<void> {
   }, 1 / 30);
   TimerManager.initialize(timer);
 
-  const cleanup = async () => {
+  async function cleanup(): Promise<never> {
     await PlayerManager.cleanup();
     process.exit(0);
-  };
+  }
 
-  setInterval(() => {
+  EventManager.runPeriodic(1, () => {
     if (WorldManager.getEntityCount() < 40) {
-      const type = Math.random() < 0.3 ? 'HeavyEnemy' : 'Enemy';
+      const type = RNGManager.nextBoolean(0.3) ? 'HeavyEnemy' : 'Enemy';
       const position = WorldManager.getRandomPosition();
       const entity = WorldManager.spawnEntity(type, position);
       entity.setColor(randomColor());
     }
-  }, 5000);
+  });
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);

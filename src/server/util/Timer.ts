@@ -42,7 +42,7 @@ export class Timer extends AbstractTimer {
         await sleep(remaining);
       } else {
         const durationMS = Math.round(duration * 1000);
-        log.warn(`can't keep up! Frame took ${durationMS}ms`);
+        // log.warn(`can't keep up! Frame took ${durationMS}ms`);
       }
     }
   }

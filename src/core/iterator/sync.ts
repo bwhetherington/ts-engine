@@ -125,12 +125,26 @@ function* iterateSet<T>(set: Set<T>): Generator<T> {
   }
 }
 
+function* enumerate<T>(gen: Generator<T>): Generator<[T, number]> {
+  let i = 0;
+  for (const element of gen) {
+    yield [element, i];
+    i += 1;
+  }
+}
+
 export function iterateObject<T>(obj: IterableObject<T>): Iterator<T> {
   return iterator(iterateObjectInternal(obj));
 }
 
 export function iterator<T>(gen: Iterable<T>): Iterator<T> {
   return new Iterator(gen);
+}
+
+function* iterateReadonlyArray<T>(array: readonly T[]): Generator<Readonly<T>> {
+  for (const element of array) {
+    yield element;
+  }
 }
 
 type Iterable<T> = T[] | Set<T> | Generator<T>;
@@ -152,6 +166,10 @@ export class Iterator<T> implements Generator<T> {
     return iterator(iterateArray(array));
   }
 
+  public static readonlyArray<T>(array: readonly T[]): Iterator<Readonly<T>> {
+    return iterator(iterateReadonlyArray(array));
+  }
+
   public static set<T>(set: Set<T>): Iterator<T> {
     return iterator(iterateSet(set));
   }
@@ -170,6 +188,10 @@ export class Iterator<T> implements Generator<T> {
 
   public [Symbol.iterator](): Generator<T> {
     return this.generator;
+  }
+
+  public enumerate(): Iterator<[T, number]> {
+    return iterator(enumerate(this.generator));
   }
 
   public map<U>(fn: (x: T) => U): Iterator<U> {

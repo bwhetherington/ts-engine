@@ -10,6 +10,7 @@ import { WHITE } from 'core/graphics/color';
 import { UUID } from 'core/uuid';
 import { iterator, iterateObject } from 'core/iterator';
 import { Echo } from './Echo';
+import { EventManager } from 'core/event';
 
 const log = LogManager.forFile(__filename);
 
@@ -48,7 +49,7 @@ export class Projectile extends Entity {
   }
 
   private async prepareRemove(): Promise<void> {
-    await sleep(this.duration);
+    await EventManager.sleep(this.duration);
     if (!this.markedForDelete) {
       this.remove();
     }

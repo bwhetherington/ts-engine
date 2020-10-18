@@ -4,19 +4,17 @@ import {
   StringEntry,
   FormEntry,
   FormResult,
-  BooleanEntry,
-  NumberEntry,
 } from 'core/form';
 import { EventManager } from 'core/event';
 import { ConnectEvent, NetworkManager } from 'core/net';
 import { PlayerManager, Player } from 'core/player';
 import { Data } from 'core/serialize';
 import { LogManager } from 'core/log';
-import { WorldManager, Hero, Heavy } from 'core/entity';
-import { randomColor, hsv } from 'core/graphics/color';
-import { capitalize, sleep } from 'core/util';
-import { updateShorthandPropertyAssignment } from 'typescript';
+import { WorldManager, Hero } from 'core/entity';
+import { randomColor } from 'core/graphics/color';
+import { capitalize } from 'core/util';
 import { BasicAuth, isOk } from 'core/net/http';
+import { RNGManager } from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -53,7 +51,7 @@ export const JOIN_FORM: Form = {
       name: 'noAccount',
       label: 'No Account',
       isOpaque: false,
-    }
+    },
   ],
   items: [
     {
@@ -82,8 +80,8 @@ export function registerJoinForm(): void {
 
 function spawnHero(player: Player): Hero {
   const hero = WorldManager.spawn(Hero);
-  const x = (Math.random() - 0.5) * 1120;
-  const y = (Math.random() - 0.5) * 1120;
+  const x = RNGManager.nextFloat(-560, 560);
+  const y = RNGManager.nextFloat(-560, 560);
   hero.setPositionXY(x, y);
   hero.setPlayer(player);
   const color = randomColor();
@@ -115,7 +113,11 @@ async function validateSubmit(input: JoinForm): Promise<FormResult> {
   }
 }
 
-async function handleSubmit(player: Player, response: JoinForm, data?: Data): Promise<void> {
+async function handleSubmit(
+  player: Player,
+  response: JoinForm,
+  data?: Data
+): Promise<void> {
   const { username, password } = response;
   const auth: BasicAuth = {
     username: username.value,
@@ -140,7 +142,7 @@ async function handleSubmit(player: Player, response: JoinForm, data?: Data): Pr
 }
 
 async function validateRegister(input: JoinForm): Promise<FormResult> {
-  const defaultError = 'Something went wrong'
+  const defaultError = 'Something went wrong';
   try {
     const auth: BasicAuth = {
       username: input.username.value,
@@ -157,17 +159,26 @@ async function validateRegister(input: JoinForm): Promise<FormResult> {
   }
 }
 
-async function handleRegister(player: Player, response: JoinForm, data?: Data): Promise<void> {
+async function handleRegister(
+  player: Player,
+  response: JoinForm,
+  data?: Data
+): Promise<void> {
   if (!data) {
-    const res = await NetworkManager.http?.get('/user/' + response.username.value);
+    log.warn(
+      'account data was not transferring after registration; loading from database'
+    );
+    data = await NetworkManager.http?.get('/user/' + response.username.value);
   }
   if (data) {
     player.load({
       username: data.username,
-      xp: data.xp,
       className: data.className,
+      xp: data.xp,
       permissionLevel: data.permissionLevel,
     });
+  } else {
+    log.warn('could not load account for player: ' + response.username.value);
   }
 }
 
@@ -193,7 +204,12 @@ function handleNoAccount(player: Player, res: JoinForm): void {
 export const JoinFormEntry: FormEntry<JoinForm> = {
   name: 'JoinForm',
   form: JOIN_FORM,
-  async onSubmit(player: Player, response: JoinForm, method: string, data?: Data): Promise<void> {
+  async onSubmit(
+    player: Player,
+    response: JoinForm,
+    method: string,
+    data?: Data
+  ): Promise<void> {
     switch (method) {
       case 'login':
         return await handleSubmit(player, response, data);

@@ -12,12 +12,14 @@ import { FormManager } from 'core/form';
 import { WeaponManager } from 'core/weapon';
 import { TableUpdateEvent, TableRemoveRowEvent } from './components/table';
 import { registerComponents } from 'client/components';
+import { loadReactUI } from 'client/components/react';
 
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
   LogManager.initialize('info', new ClientLogger());
   registerComponents();
+  loadReactUI('ui-pane');
 
   const game = document.getElementById('game');
 

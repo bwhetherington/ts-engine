@@ -50,7 +50,7 @@ export interface BooleanField {
 
 export type FormItem = StringField | NumberField | BooleanField | RangeField;
 
-export interface FormValidatedEvent { }
+export interface FormValidatedEvent {}
 
 export interface StringEntry {
   type: 'text';
@@ -104,7 +104,12 @@ export interface FormResult {
 export interface FormEntry<T> {
   name: string;
   form: Form;
-  onSubmit(player: Player, response: T, method: string, validatedData?: Data): void;
+  onSubmit(
+    player: Player,
+    response: T,
+    method: string,
+    validatedData?: Data
+  ): void;
   onReject?: (player: Player) => void;
   checkType(data: Data): data is T;
   validate(input: T, method: string, player?: Player): Promise<FormResult>;

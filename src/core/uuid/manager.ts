@@ -1,6 +1,7 @@
 import { UUID } from 'core/uuid';
 import { NetworkManager } from 'core/net';
 import { LogManager } from 'core/log';
+import { BasicRNG, RNG, RNGManager } from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -8,8 +9,8 @@ export class UUIDManager {
   private generated: Set<UUID> = new Set();
 
   private generateInternal(): UUID {
-    const a = (Math.random() * 46656) | 0;
-    const b = (Math.random() * 46656) | 0;
+    const a = RNGManager.nextInt(0, 46656) | 0;
+    const b = RNGManager.nextInt(0, 46656) | 0;
     const a2 = ('000' + a.toString(36)).slice(-3);
     const b2 = ('000' + b.toString(36)).slice(-3);
     const flag = NetworkManager.isClient() ? '1' : '0';

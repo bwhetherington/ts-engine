@@ -45,7 +45,7 @@ export const loadLevel: CommandEntry = {
     } else {
       ChatManager.error('Must specify 1 argument');
     }
-  }
+  },
 };
 
 export const saveAll: CommandEntry = {
@@ -61,4 +61,11 @@ export const saveAll: CommandEntry = {
       ChatManager.error('Error saving players', player);
     }
   },
+};
+
+export const roll: CommandEntry = {
+  name: 'roll',
+  help: 'rolls dice',
+  permissionLevel: 0,
+  async handler(player) {},
 };

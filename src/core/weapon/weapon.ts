@@ -4,6 +4,7 @@ import { EventManager, StepEvent, Event } from 'core/event';
 import { UUID } from 'core/uuid';
 import { FireEvent } from 'core/weapon';
 import { NetworkManager } from 'core/net';
+import { RNGManager } from 'core/random';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';
@@ -74,7 +75,9 @@ export abstract class Weapon implements Serializable {
   }
 
   protected rollDamage(): number {
-    const roll = Math.round((Math.random() - 0.5) * 2 * (this.damage / 3));
+    const roll = Math.round(
+      RNGManager.nextFloat(-this.damage / 3, this.damage / 3)
+    );
     return Math.max(1, this.damage + roll);
   }
 }

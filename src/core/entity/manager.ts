@@ -45,6 +45,7 @@ import { WALL_COLOR } from 'core/entity/Geometry';
 import { WHITE, reshade } from 'core/graphics/color';
 import { Graph } from 'core/entity/pathfinding';
 import { GraphicsPipeline } from 'core/graphics/pipe';
+import { RNGManager } from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -221,12 +222,8 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public getRandomPosition(): Vector {
-    const x =
-      Math.random() * this.boundingBox.width +
-      this.boundingBox.x;
-    const y =
-      Math.random() * this.boundingBox.height +
-      this.boundingBox.y;
+    const x = RNGManager.next() * this.boundingBox.width + this.boundingBox.x;
+    const y = RNGManager.next() * this.boundingBox.height + this.boundingBox.y;
     return new Vector(x, y);
   }
 

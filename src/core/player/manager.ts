@@ -41,9 +41,9 @@ export class PlayerManager implements Serializable {
     }
 
     if (NetworkManager.isServer()) {
-      setInterval(() => {
-        this.saveAll();
-      }, 60 * 1000);
+      EventManager.runPeriodic(60, () => {
+        // this.saveAll();
+      });
     }
   }
 
@@ -176,7 +176,11 @@ export class PlayerManager implements Serializable {
 
   public async saveAll(): Promise<void> {
     log.trace('saving all players');
-    await Promise.all(this.getPlayers().map((player) => player.save()).toArray());
+    await Promise.all(
+      this.getPlayers()
+        .map((player) => player.save())
+        .toArray()
+    );
     log.trace('all players saved');
   }
 

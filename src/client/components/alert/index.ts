@@ -81,7 +81,7 @@ export class AlertComponent extends Component {
         data: <FormSubmitEvent>{
           name: this.name,
           data: this.data,
-          method: this.submitMethod ?? 'submit'
+          method: this.submitMethod ?? 'submit',
         },
       };
 

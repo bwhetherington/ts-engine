@@ -3,6 +3,7 @@ import { clamp } from 'core/util';
 import { MovementDirection } from 'core/input';
 import { NetworkManager } from 'core/net';
 import { LogManager } from 'core/log';
+import { RNGManager } from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -68,7 +69,7 @@ export class Enemy extends Tank {
     super.step(dt);
 
     if (NetworkManager.isServer()) {
-      if (Math.random() < clamp(0.1 * dt, 0, 1)) {
+      if (RNGManager.nextBoolean(clamp(0.1 * dt, 0, 1))) {
         this.selectTarget();
       }
 

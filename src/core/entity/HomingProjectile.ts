@@ -21,7 +21,7 @@ export class HomingProjectile extends Projectile {
       this.velocity.add(this.vectorBuffer);
     }
 
-    if (this.velocity.magnitudeSquared > (this.maxSpeed * this.maxSpeed)) {
+    if (this.velocity.magnitudeSquared > this.maxSpeed * this.maxSpeed) {
       this.velocity.magnitude = this.maxSpeed;
     }
 

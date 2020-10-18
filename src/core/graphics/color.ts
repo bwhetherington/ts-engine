@@ -1,3 +1,5 @@
+import { RNGManager } from 'core/random';
+
 export interface Color {
   red: number;
   green: number;
@@ -9,7 +11,7 @@ export function randomColor(
   saturation: number = 0.65,
   value: number = 0.9
 ): Color {
-  const hue = Math.random() * 360;
+  const hue = RNGManager.nextFloat(0, 360);
   return hsv(hue, saturation, value);
 }
 

@@ -1,7 +1,8 @@
 import { Queue } from 'core/util/queue';
 import { Event, GameEvent, GameHandler, Handler, EventData } from 'core/event';
-import { UUIDManager } from 'core/uuid';
+import { UUID, UUIDManager } from 'core/uuid';
 import { LogManager } from 'core/log';
+import { formatData } from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -14,6 +15,7 @@ export class EventManager {
   private events: Queue<GameEvent> = new Queue();
   private listenerCount: number = 0;
   public timeElapsed: number = 0;
+  public stepCount: number = 0;
 
   public emit<E extends EventData>(event: Event<E>): void {
     this.events.enqueue(event);
@@ -64,6 +66,7 @@ export class EventManager {
   private handleEvent(event: GameEvent): void {
     // Check handlers
     const { type } = event;
+    log.trace(`handle event: ${formatData(event)}`);
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
       for (const id in handlers) {
@@ -82,16 +85,41 @@ export class EventManager {
   }
 
   public step(dt: number): void {
-    this.timeElapsed += dt;
     const event = {
       type: 'StepEvent',
       data: { dt },
     };
     this.emit(event);
     this.pollEvents();
+    this.timeElapsed += dt;
+    this.stepCount += 1;
   }
 
   public getListenerCount(): number {
     return this.listenerCount;
+  }
+
+  public sleep(time: number): Promise<void> {
+    return new Promise((resolve) => {
+      let passed = 0;
+      this.addListener<StepEvent>('StepEvent', (event, id) => {
+        passed += event.data.dt;
+        if (passed >= time) {
+          this.removeListener('StepEvent', id);
+          resolve();
+        }
+      });
+    });
+  }
+
+  public runPeriodic(period: number, action: () => void): UUID {
+    let passed = 0;
+    return this.addListener<StepEvent>('StepEvent', (event) => {
+      passed += event.data.dt;
+      while (passed >= period) {
+        passed -= period;
+        action();
+      }
+    });
   }
 }

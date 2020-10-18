@@ -39,7 +39,7 @@ export async function createServer(options: Options): Promise<http.Server> {
       if (req.url !== undefined) {
         if (req.url === '/') {
           const file = await readFile(index, encoding);
-          log.trace(`read file: ${index}`);
+          log.trace(`read file: '${index}'`);
           res.writeHead(200, { 'Content-Type': 'text/html' });
           res.write(file);
           res.end();
@@ -51,7 +51,7 @@ export async function createServer(options: Options): Promise<http.Server> {
               const mimeType =
                 mime.lookup(path.extname(filePath)) || 'text/plain';
               const file = await readFile(filePath, encoding);
-              log.trace(`read file: ${filePath} (${mimeType})`);
+              log.trace(`read file: '${filePath}' (${mimeType})`);
               res.writeHead(200, { 'Content-Type': mimeType });
               res.write(file);
               res.end();

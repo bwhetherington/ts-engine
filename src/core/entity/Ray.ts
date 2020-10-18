@@ -5,6 +5,7 @@ import { sleep, clamp, smoothStep } from 'core/util';
 import { LogManager } from 'core/log';
 import { WHITE } from 'core/graphics/color';
 import { GraphicsPipeline } from 'core/graphics/pipe';
+import { EventManager } from 'core/event';
 
 const log = LogManager.forFile(__filename);
 
@@ -66,7 +67,7 @@ export class Ray extends Entity {
   }
 
   private async loadInternal(): Promise<void> {
-    await sleep(DURATION);
+    await EventManager.sleep(DURATION);
     this.markForDelete();
   }
 

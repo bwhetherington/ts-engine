@@ -1,6 +1,7 @@
 import { Weapon } from 'core/weapon';
 import { WorldManager, Projectile, Tank } from 'core/entity';
 import { Data } from 'core/serialize';
+import { RNGManager } from 'core/random';
 
 export class Gun extends Weapon {
   public static typeName: string = 'Gun';
@@ -28,7 +29,7 @@ export class Gun extends Weapon {
     projectile.damage = this.rollDamage();
     projectile.pierce = this.projectilePierce;
     projectile.velocity.setXY(1, 0);
-    const offset = (Math.random() - 0.5) * this.projectileSpread;
+    const offset = RNGManager.nextFloat(-0.5, 0.5) * this.projectileSpread;
     projectile.velocity.angle = angle + offset;
     projectile.velocity.magnitude = this.projectileSpeed;
     return projectile;

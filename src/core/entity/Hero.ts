@@ -20,6 +20,7 @@ import { LogManager } from 'core/log';
 import { NetworkManager, SyncEvent } from 'core/net';
 import { CameraManager, rgb, GraphicsContext } from 'core/graphics';
 import { BarUpdateEvent, sleep } from 'core/util';
+import { RNGManager } from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -86,12 +87,12 @@ export class Hero extends Tank {
           text.setColor(color);
           text.isStatic = false;
           text.position.addXY(
-            (Math.random() - 0.5) * 20,
-            (Math.random() - 0.5) * 20
+            RNGManager.nextFloat(-10, 10),
+            RNGManager.nextFloat(-10, 10)
           );
           text.text = label;
-          text.velocity.setXY(25 + Math.random() * 25, 0);
-          text.velocity.angle = Math.random() * 2 * Math.PI;
+          text.velocity.setXY(RNGManager.nextFloat(25, 50), 0);
+          text.velocity.angle = RNGManager.nextFloat(0, 2 * Math.PI);
         }
       });
     } else {
@@ -229,10 +230,7 @@ export class Hero extends Tank {
         const { centerX: x, centerY: y } = this.boundingBox;
         const { angle } = this;
 
-        CameraManager.setTargetXY(
-          x,
-          y,
-        );
+        CameraManager.setTargetXY(x, y);
       }
 
       if (this.label) {

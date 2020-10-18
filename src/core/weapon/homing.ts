@@ -1,4 +1,11 @@
-import { HomingProjectile, KillEvent, Projectile, Tank, Unit, WorldManager } from 'core/entity';
+import {
+  HomingProjectile,
+  KillEvent,
+  Projectile,
+  Tank,
+  Unit,
+  WorldManager,
+} from 'core/entity';
 import { Gun } from 'core/weapon';
 
 export class HomingGun extends Gun {
@@ -14,7 +21,10 @@ export class HomingGun extends Gun {
     this.projectilePierce = 1;
   }
 
-  private selectTarget(projectile: HomingProjectile, source: Tank): Unit | undefined {
+  private selectTarget(
+    projectile: HomingProjectile,
+    source: Tank
+  ): Unit | undefined {
     const [target] = WorldManager.getEntities()
       .filter((entity) => !(source === entity || projectile === entity))
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))

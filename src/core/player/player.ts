@@ -8,6 +8,7 @@ import { capitalize, sleep } from 'core/util';
 import { LogManager } from 'core/log';
 import { BasicAuth } from 'core/net/http';
 import { randomColor } from 'core/graphics/color';
+import { RNGManager } from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -37,14 +38,14 @@ export class Player implements Serializable {
       this.addListener<KillEvent>('KillEvent', async (event) => {
         const { targetID } = event.data;
         if (targetID && this.hero && targetID === this.hero.id) {
-          await sleep(3);
+          await EventManager.sleep(3);
 
           // Check that we haven't already respawned
           if (targetID === this.hero.id) {
             const hero = WorldManager.spawn(Hero);
 
-            const x = (Math.random() - 0.5) * 1120;
-            const y = (Math.random() - 0.5) * 1120;
+            const x = RNGManager.nextFloat(-560, 560);
+            const y = RNGManager.nextFloat(-560, 560);
             log.debug('respawn ' + x + ',' + y);
             hero.setPositionXY(x, y);
 
@@ -149,8 +150,8 @@ export class Player implements Serializable {
 
   private spawnHero(): Hero {
     const hero = WorldManager.spawn(Hero);
-    const x = (Math.random() - 0.5) * 1120;
-    const y = (Math.random() - 0.5) * 1120;
+    const x = RNGManager.nextFloat(-560, 560);
+    const y = RNGManager.nextFloat(-560, 560);
     hero.setPositionXY(x, y);
     hero.setPlayer(this);
     const color = randomColor();
@@ -188,17 +189,13 @@ export class Player implements Serializable {
     return {
       username: this.auth?.username,
       xp: this.hero?.getExperience(),
-      className: this.hero?.type
+      className: this.hero?.type,
     };
   }
 
   private async write(account: Partial<Account>): Promise<void> {
     if (NetworkManager.isServer() && NetworkManager.http && this.auth) {
-      await NetworkManager.http.post(
-        '/update',
-        account,
-        this.auth
-      );
+      await NetworkManager.http.post('/update', account, this.auth);
     }
   }
 
