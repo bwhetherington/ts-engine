@@ -34,7 +34,7 @@ const containerStyle: React.CSSProperties = {
 const barStyle: React.CSSProperties = {
   boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.5)',
   height: '100%',
-  transition: 'width 0.25s',
+  // transition: 'width 0.25s',
 };
 
 const labelStyle: React.CSSProperties = {
@@ -53,8 +53,8 @@ export function Bar(props: BarProps): React.ReactElement {
   const widthPercent = (props.value / props.maxValue) * 100 + '%';
   const newBarStyle: React.CSSProperties = {
     ...barStyle,
-    width: widthPercent,
     ...barStyles[props.barStyle],
+    width: widthPercent,
   };
   return (
     <div style={containerStyle}>

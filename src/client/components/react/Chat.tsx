@@ -7,9 +7,11 @@ import {
   TextComponents,
   TextMessageOutEvent,
   TextMessageInEvent,
+  TextCommandEvent,
 } from 'core/chat';
 import { Iterator, iterator } from 'core/iterator';
 import { NetworkManager } from 'core/net';
+import { Event, EventManager, GameEvent, StepEvent } from 'core/event';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
@@ -44,6 +46,9 @@ interface ChatProps {
 interface ChatState {
   lines: Lines;
   message: string;
+  isFocused: boolean;
+  isFresh: boolean;
+  lastFlash: number;
 }
 
 function createComponentStyle(component: TextComponent): React.CSSProperties {
@@ -76,6 +81,45 @@ function renderComponent(
   }
 }
 
+function splitWords(str: string): string[] {
+  const words = [];
+  let word = '';
+
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    if (ch === '"') {
+      if (word.length > 0) {
+        words.push(word);
+        word = '';
+      }
+
+      let j = i + 1;
+      for (; j < str.length; j++) {
+        if (str[j] === '"') {
+          words.push(word);
+          word = '';
+          break;
+        }
+        word += str[j];
+      }
+      i = j;
+    } else if (/\s/.test(ch)) {
+      if (word.length > 0) {
+        words.push(word);
+        word = '';
+      }
+    } else {
+      word += ch;
+    }
+  }
+
+  if (word.length > 0) {
+    words.push(word);
+  }
+
+  return words;
+}
+
 const LINE_STYLE: React.CSSProperties = {};
 
 const CONTAINER_STYLE: React.CSSProperties = {
@@ -88,22 +132,40 @@ const CONTAINER_STYLE: React.CSSProperties = {
 };
 
 const FORM_STYLE: React.CSSProperties = {
-  display: 'flex'
+  display: 'flex',
 };
 
 const INPUT_STYLE: React.CSSProperties = {
-  flexGrow: 1
+  flexGrow: 1,
 };
 
 export class Chat extends Component<ChatProps, ChatState> {
   private endRef = React.createRef<HTMLDivElement>();
 
   public constructor(props: ChatProps) {
-    super(props, { lines: [], message: '' });
+    super(props, {
+      lines: [],
+      message: '',
+      isFocused: false,
+      isFresh: false,
+      lastFlash: -1000,
+    });
+  }
+
+  private isFocused(): boolean {
+    const { isFocused, isFresh } = this.state;
+    return isFocused || isFresh;
   }
 
   private scrollToBottom(): void {
     this.endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  private flash(): void {
+    this.updateState({
+      lastFlash: EventManager.timeElapsed,
+      isFresh: true,
+    });
   }
 
   public componentDidMount(): void {
@@ -113,8 +175,20 @@ export class Chat extends Component<ChatProps, ChatState> {
         event.data.components,
         this.props.lineLimit
       );
-      this.updateState({ lines });
+      this.updateState({
+        lines,
+        lastFlash: EventManager.timeElapsed,
+        isFresh: true,
+      });
       this.scrollToBottom();
+    });
+
+    this.addListener<StepEvent>('StepEvent', () => {
+      if (EventManager.timeElapsed - this.state.lastFlash >= 3) {
+        this.updateState({
+          isFresh: false,
+        });
+      }
     });
   }
 
@@ -127,46 +201,101 @@ export class Chat extends Component<ChatProps, ChatState> {
           .toArray();
       })
       .enumerate()
-      .map(([line, index]) => <div key={index} style={LINE_STYLE}>{line}</div>)
+      .map(([line, index]) => (
+        <div key={index} style={LINE_STYLE}>
+          {line}
+        </div>
+      ))
       .toArray();
   }
 
   private onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.updateState({
-      message: event.target.value
+      message: event.target.value,
     });
   };
 
   private onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     this.sendMessage();
-  }
+  };
 
   private sendMessage(): void {
     // Send message
     if (this.state.message.length > 0) {
-      const outEvent = {
-        type: 'TextMessageInEvent',
-        data: {
-          content: this.state.message,
-        } as TextMessageInEvent,
-      };
-      NetworkManager.send(outEvent);
+      this.handleMessage(this.state.message);
       this.updateState({
-        message: ''
+        message: '',
+      });
+      this.updateState({
+        message: '',
       });
     }
   }
 
+  private handleMessage(message: string): void {
+    if (message.startsWith('/')) {
+      // Handle command
+      const [command, ...args] = splitWords(message.slice(1));
+      const event: Event<TextCommandEvent> = {
+        type: 'TextCommandEvent',
+        data: {
+          command,
+          args,
+        },
+      };
+      NetworkManager.send(event);
+    } else {
+      const outEvent = {
+        type: 'TextMessageInEvent',
+        data: {
+          content: message,
+        } as TextMessageInEvent,
+      };
+      NetworkManager.send(outEvent);
+    }
+  }
+
+  private onFocus = () => {
+    this.updateState({
+      isFocused: true,
+    });
+  };
+
+  private onBlur = () => {
+    this.updateState({
+      isFocused: false,
+    });
+  };
+
   public render(): React.ReactElement {
+    const containerStyle: React.CSSProperties = {
+      ...CONTAINER_STYLE,
+    };
+    const backgroundStyle: React.CSSProperties = {
+      backgroundColor: this.isFocused()
+        ? CONTAINER_STYLE.backgroundColor
+        : 'rgba(0, 0, 0, 0)',
+    };
     return (
-      <div className="dialog col">
-        <div style={CONTAINER_STYLE}>
-          {this.renderLines()}
+      <div className="dialog col" style={backgroundStyle}>
+        <div style={containerStyle}>
+          {this.isFocused() ? this.renderLines() : <div />}
           <div ref={this.endRef} />
         </div>
-        <form style={FORM_STYLE} onSubmit={this.onSubmit}>
-          <input style={INPUT_STYLE} placeholder="Enter message..." type="text" value={this.state.message} onChange={this.onChangeInput} />
+        <form
+          style={FORM_STYLE}
+          onFocus={this.onFocus}
+          onBlur={this.onBlur}
+          onSubmit={this.onSubmit}
+        >
+          <input
+            style={INPUT_STYLE}
+            placeholder="Enter message..."
+            type="text"
+            value={this.state.message}
+            onChange={this.onChangeInput}
+          />
         </form>
       </div>
     );
