@@ -42,14 +42,14 @@ export class InputManager {
       if (button !== undefined) {
         const mouseEvent = {
           type: 'MouseEvent',
-          data: <MouseEvent>{
+          data: {
             action: MouseAction.ButtonDown,
             button,
             x,
             y,
           },
         };
-        NetworkManager.send(mouseEvent);
+        NetworkManager.sendEvent<MouseEvent>(mouseEvent);
         EventManager.emit(mouseEvent);
       } else {
         log.warn('unrecognized button: ' + event.button);

@@ -175,26 +175,24 @@ export class ChatComponent extends Component {
       if (argv.length > 0) {
         const command = argv[0];
         const args = argv.slice(1);
-        const event = {
+        NetworkManager.sendEvent<TextCommandEvent>({
           type: 'TextCommandEvent',
-          data: <TextCommandEvent>{
+          data: {
             command,
             args,
           },
-        };
-        NetworkManager.send(event);
+        });
       } else {
         log.error('expected command');
       }
     } else if (message.length > 0) {
       // Send message
-      const outEvent = {
+      NetworkManager.sendEvent<TextMessageInEvent>({
         type: 'TextMessageInEvent',
         data: <TextMessageInEvent>{
           content: message,
         },
-      };
-      NetworkManager.send(outEvent);
+      });
     }
   }
 

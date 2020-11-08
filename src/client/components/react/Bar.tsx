@@ -9,6 +9,7 @@ interface BarProps {
   value: number;
   maxValue: number;
   barStyle: BarStyle;
+  label?: string;
 }
 
 const barStyles: Record<BarStyle, React.CSSProperties> = {
@@ -45,8 +46,27 @@ const labelStyle: React.CSSProperties = {
   color: 'rgba(255, 255, 255, 0.5)',
 };
 
+const textLabelStyle: React.CSSProperties = {
+  fontWeight: 'bold',
+};
+
 function formatLabel(value: number, maxValue: number): string {
   return `${Math.round(value)}/${Math.round(maxValue)}`;
+}
+
+interface BarLabelProps {
+  value: number;
+  maxValue: number;
+  label?: string;
+}
+
+function BarLabel(props: BarLabelProps): React.ReactElement {
+  return (
+    <span style={labelStyle}>
+      {props.label && <span style={textLabelStyle}>{props.label} </span>}
+      {formatLabel(props.value, props.maxValue)}
+    </span>
+  );
 }
 
 export function Bar(props: BarProps): React.ReactElement {
@@ -56,10 +76,19 @@ export function Bar(props: BarProps): React.ReactElement {
     ...barStyles[props.barStyle],
     width: widthPercent,
   };
+  const numberLabel = formatLabel(props.value, props.maxValue);
+  const labelText = props.label
+    ? `${props.label}: ${numberLabel}`
+    : numberLabel;
+  const label = <span style={labelStyle}>{labelText}</span>;
   return (
     <div style={containerStyle}>
       <div style={newBarStyle} />
-      <span style={labelStyle}>{formatLabel(props.value, props.maxValue)}</span>
+      <BarLabel
+        value={props.value}
+        maxValue={props.maxValue}
+        label={props.label}
+      />
     </div>
   );
 }

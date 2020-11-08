@@ -12,6 +12,7 @@ import {
 import { Iterator, iterator } from 'core/iterator';
 import { NetworkManager } from 'core/net';
 import { Event, EventManager, GameEvent, StepEvent } from 'core/event';
+import { Key, KeyAction, KeyEvent } from 'core/input';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
@@ -63,22 +64,30 @@ function createComponentStyle(component: TextComponent): React.CSSProperties {
   return css;
 }
 
-function renderComponent(
-  component: Readonly<string | null | TextComponent>,
-  index: number
-): React.ReactElement {
+interface TextItemProps {
+  component: Readonly<string | null | TextComponent>;
+}
+
+function TextItem({ component }: TextItemProps): React.ReactElement {
   if (typeof component === 'string') {
-    return <span key={index}>{component}</span>;
+    return <span>{component}</span>;
   } else if (component === null) {
-    return <br key={index} />;
+    return <br />;
   } else {
     const style = createComponentStyle(component);
-    return (
-      <span key={index} style={style}>
-        {component.content}
-      </span>
-    );
+    return <span style={style}>{component.content}</span>;
   }
+}
+
+interface TextLineProps {
+  components: Readonly<TextComponents>;
+}
+
+function TextLine({ components }: TextLineProps): React.ReactElement {
+  const content = components.map((component, index) => (
+    <TextItem component={component} key={index} />
+  ));
+  return <div style={LINE_STYLE}>{content}</div>;
 }
 
 function splitWords(str: string): string[] {
@@ -137,10 +146,12 @@ const FORM_STYLE: React.CSSProperties = {
 
 const INPUT_STYLE: React.CSSProperties = {
   flexGrow: 1,
+  pointerEvents: 'auto',
 };
 
 export class Chat extends Component<ChatProps, ChatState> {
   private endRef = React.createRef<HTMLDivElement>();
+  private inputRef = React.createRef<HTMLInputElement>();
 
   public constructor(props: ChatProps) {
     super(props, {
@@ -161,13 +172,6 @@ export class Chat extends Component<ChatProps, ChatState> {
     this.endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  private flash(): void {
-    this.updateState({
-      lastFlash: EventManager.timeElapsed,
-      isFresh: true,
-    });
-  }
-
   public componentDidMount(): void {
     this.addListener<TextMessageOutEvent>('TextMessageOutEvent', (event) => {
       const lines = concatLine(
@@ -184,29 +188,25 @@ export class Chat extends Component<ChatProps, ChatState> {
     });
 
     this.addListener<StepEvent>('StepEvent', () => {
-      if (EventManager.timeElapsed - this.state.lastFlash >= 3) {
+      if (EventManager.timeElapsed - this.state.lastFlash >= 5) {
         this.updateState({
           isFresh: false,
         });
       }
     });
+
+    this.addListener<KeyEvent>('KeyEvent', (event) => {
+      const { action, key } = event.data;
+      if (action === KeyAction.KeyDown && key === Key.Enter) {
+        this.inputRef?.current?.focus();
+      }
+    });
   }
 
   private renderLines(): React.ReactElement[] {
-    return Iterator.readonlyArray(this.state.lines)
-      .map((components) => {
-        return Iterator.readonlyArray(components)
-          .enumerate()
-          .map(([component, index]) => renderComponent(component, index))
-          .toArray();
-      })
-      .enumerate()
-      .map(([line, index]) => (
-        <div key={index} style={LINE_STYLE}>
-          {line}
-        </div>
-      ))
-      .toArray();
+    return this.state.lines.map((line, index) => (
+      <TextLine components={line} key={index} />
+    ));
   }
 
   private onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -237,22 +237,20 @@ export class Chat extends Component<ChatProps, ChatState> {
     if (message.startsWith('/')) {
       // Handle command
       const [command, ...args] = splitWords(message.slice(1));
-      const event: Event<TextCommandEvent> = {
+      NetworkManager.sendEvent<TextCommandEvent>({
         type: 'TextCommandEvent',
         data: {
           command,
           args,
         },
-      };
-      NetworkManager.send(event);
+      });
     } else {
-      const outEvent = {
+      NetworkManager.sendEvent<TextMessageInEvent>({
         type: 'TextMessageInEvent',
         data: {
           content: message,
-        } as TextMessageInEvent,
-      };
-      NetworkManager.send(outEvent);
+        },
+      });
     }
   }
 
@@ -269,27 +267,27 @@ export class Chat extends Component<ChatProps, ChatState> {
   };
 
   public render(): React.ReactElement {
-    const containerStyle: React.CSSProperties = {
-      ...CONTAINER_STYLE,
-    };
     const backgroundStyle: React.CSSProperties = {
       backgroundColor: this.isFocused()
         ? CONTAINER_STYLE.backgroundColor
         : 'rgba(0, 0, 0, 0)',
+      pointerEvents: this.isFocused() ? 'auto' : 'none',
     };
     return (
       <div className="dialog col" style={backgroundStyle}>
-        <div style={containerStyle}>
+        <div style={CONTAINER_STYLE}>
           {this.isFocused() ? this.renderLines() : <div />}
           <div ref={this.endRef} />
         </div>
         <form
+          spellCheck={false}
           style={FORM_STYLE}
           onFocus={this.onFocus}
           onBlur={this.onBlur}
           onSubmit={this.onSubmit}
         >
           <input
+            ref={this.inputRef}
             style={INPUT_STYLE}
             placeholder="Enter message..."
             type="text"

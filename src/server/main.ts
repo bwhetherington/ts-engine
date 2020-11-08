@@ -1,12 +1,10 @@
 import { EventManager } from 'core/event';
-import { Timer, ServerLogger, TimerManager } from 'server/util';
+import { Timer, ServerLogger, TimerManager, loadWorld } from 'server/util';
 import { LogManager } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NetworkManager, SyncEvent } from 'core/net';
 import { ChatManager } from 'server/chat';
 import { WorldManager, Unit } from 'core/entity';
-import { Geometry } from 'core/entity/Geometry';
-import { Rectangle } from 'core/geometry';
 import { PlayerManager } from 'core/player';
 import { FormManager } from 'core/form';
 import { registerJoinForm } from 'core/form';
@@ -19,17 +17,10 @@ import { registerRenameForm } from 'core/form/rename';
 import { isEmpty } from 'core/util/object';
 import { randomColor } from 'core/graphics/color';
 import { RNGManager } from 'core/random';
-import { sleep } from 'core/util';
 
 const readFile = promisify(readFileNonPromise);
 
 const log = LogManager.forFile(__filename);
-
-async function loadGeometry(file: string): Promise<void> {
-  const text = await readFile(file, 'utf-8');
-  const obj = JSON.parse(text);
-  WorldManager.loadLevel(obj);
-}
 
 async function main(): Promise<void> {
   LogManager.initialize('debug', new ServerLogger());
@@ -47,7 +38,7 @@ async function main(): Promise<void> {
 
   WorldManager.initialize();
 
-  await loadGeometry('world2.json');
+  await loadWorld('open');
 
   PlayerManager.initialize();
   FormManager.initialize();

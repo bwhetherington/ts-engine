@@ -6,6 +6,7 @@ import { BarUpdateEvent } from 'core/util';
 interface EventBarProps {
   id: string;
   barStyle: BarStyle;
+  label?: string;
 }
 
 interface EventBarState {
@@ -39,6 +40,7 @@ export class EventBar extends Component<EventBarProps, EventBarState> {
         barStyle={this.props.barStyle}
         value={this.state.value}
         maxValue={this.state.maxValue}
+        label={this.props.label}
       />
     );
   }

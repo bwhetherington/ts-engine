@@ -1,6 +1,7 @@
 import { Message, Socket, Node, DefaultNode } from 'core/net';
 import { LogManager } from 'core/log';
 import { HTTPClient } from 'core/net/http';
+import { Event, EventData } from 'core/event';
 
 const log = LogManager.forFile(__filename);
 
@@ -22,8 +23,15 @@ export class NetworkManager {
     this.node.disconnect(socket);
   }
 
-  public send(msg: Message, socket: Socket = -1) {
+  public send(msg: Message, socket: Socket = -1): void {
     this.node.send(msg, socket);
+  }
+
+  public sendEvent<E extends EventData>(
+    event: Event<E>,
+    socket: Socket = -1
+  ): void {
+    this.node.send(event, socket);
   }
 
   public isClient(): boolean {

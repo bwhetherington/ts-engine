@@ -3,6 +3,7 @@ import { hsv } from 'core/graphics/color';
 import { readFile } from 'fs/promises';
 import { WorldManager } from 'core/entity';
 import { PlayerManager } from 'core/player';
+import { loadWorld } from 'server/util';
 
 export const setColor: CommandEntry = {
   name: 'setcolor',
@@ -34,9 +35,7 @@ export const loadLevel: CommandEntry = {
     if (args.length === 1) {
       // Attempt to load the map file
       try {
-        const file = await readFile(args[0], 'utf8');
-        const level = JSON.parse(file);
-        WorldManager.loadLevel(level);
+        await loadWorld(args[0]);
         ChatManager.info(`Set level to: ${args[0]}`);
       } catch (ex) {
         ChatManager.error('Failed to load level', player);

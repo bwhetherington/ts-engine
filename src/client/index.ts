@@ -13,13 +13,14 @@ import { WeaponManager } from 'core/weapon';
 import { TableUpdateEvent, TableRemoveRowEvent } from './components/table';
 import { registerComponents } from 'client/components';
 import { loadReactUI } from 'client/components/react';
+import { MetricsManager } from 'client/metrics';
 
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
   LogManager.initialize('info', new ClientLogger());
   registerComponents();
-  loadReactUI('ui-pane');
+  loadReactUI();
 
   const game = document.getElementById('game');
 
@@ -32,6 +33,7 @@ async function main(): Promise<void> {
   AlertManager.initialize();
   FormManager.initialize();
   WeaponManager.initialize();
+  MetricsManager.initialize();
 
   // Scoreboard
   // EventManager.emit<TableUpdateEvent>({
