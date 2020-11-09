@@ -77,14 +77,24 @@ export class Unit extends Entity {
     }
   }
 
+  protected calculateDamageOut(amount: number, target: Unit): number {
+    return amount;
+  }
+
+  protected calculateDamageIn(amount: number, source?: Unit): number {
+    return amount;
+  }
+
   public damage(amount: number, source?: Unit): void {
-    this.setLife(this.life - amount, source);
+    const damageOut = source?.calculateDamageOut(amount, this) ?? amount;
+    const damageIn = this.calculateDamageIn(damageOut, source);
+    this.setLife(this.life - damageIn, source);
     const event = {
       type: 'DamageEvent',
       data: {
         targetID: this.id,
         sourceID: source?.id,
-        amount,
+        amount: damageIn,
       },
     };
     EventManager.emit<DamageEvent>(event);

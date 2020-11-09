@@ -1,10 +1,19 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { Debug, Chat, EventBar, BarStyle } from 'client/components/react';
 
 export function App(): React.ReactElement {
-  return <div>Hello!</div>;
-}
-
-export class BigApp extends React.Component {
-  state = {};
+  return (
+    <>
+      <div className="top left">
+        <Debug />
+      </div>
+      <div className="bottom left col">
+        <Chat lineLimit={100} />
+        <div className="dialog col">
+          <EventBar label="HP" barStyle={BarStyle.Life} id="life-bar" />
+          <EventBar label="XP" barStyle={BarStyle.XP} id="xp-bar" />
+        </div>
+      </div>
+    </>
+  );
 }

@@ -220,16 +220,17 @@ export class Chat extends Component<ChatProps, ChatState> {
     this.sendMessage();
   };
 
+  private clearInput(): void {
+    this.updateState({
+      message: '',
+    });
+  }
+
   private sendMessage(): void {
     // Send message
     if (this.state.message.length > 0) {
       this.handleMessage(this.state.message);
-      this.updateState({
-        message: '',
-      });
-      this.updateState({
-        message: '',
-      });
+      this.clearInput();
     }
   }
 

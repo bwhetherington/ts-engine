@@ -81,7 +81,7 @@ export class Hero extends Tank {
           this.getPlayer()?.isActivePlayer() &&
           (this === target || this === source)
         ) {
-          const label = '' + amount;
+          const label = '' + Math.round(amount);
           const text = WorldManager.spawn(TimedText, target.position);
           const color = this === target ? rgb(1, 0.4, 0.4) : rgb(1, 1, 0.2);
           text.setColor(color);
@@ -109,6 +109,10 @@ export class Hero extends Tank {
 
   public getXPWorth(): number {
     return Math.max(1, this.getExperience() / 2);
+  }
+
+  protected damageBonusForLevel(level: number): number {
+    return 1 + level / 10;
   }
 
   protected experienceForLevel(level: number): number {
@@ -303,5 +307,9 @@ export class Hero extends Tank {
 
   public render(ctx: GraphicsContext): void {
     super.render(ctx);
+  }
+
+  protected calculateDamageOut(amount: number): number {
+    return amount * this.damageBonusForLevel(this.getLevel());
   }
 }
