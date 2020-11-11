@@ -1,6 +1,6 @@
-import { EventData, EventManager, GameEvent, Handler } from 'core/event';
+import { EventData, EventManager, Handler } from 'core/event';
 import { iterateKeys } from 'core/iterator';
-import { UUID } from 'core/uuid';
+import { Props } from 'client/components/react';
 import React from 'react';
 
 type Handlers = Readonly<Record<string, Readonly<string[]>>>;
@@ -10,10 +10,10 @@ interface ComponentState {
 }
 
 export class Component<P = {}, S = {}> extends React.Component<
-  P,
+  Props<P>,
   S & ComponentState
 > {
-  public constructor(props: P, initialState: S) {
+  public constructor(props: Props<P>, initialState: S) {
     super(props);
     this.initializeState(initialState);
   }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Component } from 'client/components/react';
+import styled from 'styled-components';
+import { Component, Props } from 'client/components/react';
 import { Color, rgb, rgba, toCss } from 'core/graphics';
 import {
   TextColor,
@@ -9,10 +10,11 @@ import {
   TextMessageInEvent,
   TextCommandEvent,
 } from 'core/chat';
-import { Iterator, iterator } from 'core/iterator';
 import { NetworkManager } from 'core/net';
-import { Event, EventManager, GameEvent, StepEvent } from 'core/event';
+import { EventManager, StepEvent } from 'core/event';
 import { Key, KeyAction, KeyEvent } from 'core/input';
+import { StringInput } from './inputs';
+import { Column, Panel } from './common';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
@@ -87,7 +89,7 @@ function TextLine({ components }: TextLineProps): React.ReactElement {
   const content = components.map((component, index) => (
     <TextItem component={component} key={index} />
   ));
-  return <div style={LINE_STYLE}>{content}</div>;
+  return <div>{content}</div>;
 }
 
 function splitWords(str: string): string[] {
@@ -129,31 +131,24 @@ function splitWords(str: string): string[] {
   return words;
 }
 
-const LINE_STYLE: React.CSSProperties = {};
+const ChatContainer = styled.div`
+  height: 22vh;
+  width: 22vh;
+  min-width: 400px;
+  min-height: 200px;
+  word-wrap: break-word;
+  overflow-y: auto;
+`;
 
-const CONTAINER_STYLE: React.CSSProperties = {
-  height: '22vh',
-  width: '22vw',
-  minWidth: '400px',
-  minHeight: '200px',
-  wordWrap: 'break-word',
-  overflowY: 'auto',
-};
-
-const FORM_STYLE: React.CSSProperties = {
-  display: 'flex',
-};
-
-const INPUT_STYLE: React.CSSProperties = {
-  flexGrow: 1,
-  pointerEvents: 'auto',
-};
+const ChatForm = styled.form`
+  display: flex;
+`;
 
 export class Chat extends Component<ChatProps, ChatState> {
   private endRef = React.createRef<HTMLDivElement>();
   private inputRef = React.createRef<HTMLInputElement>();
 
-  public constructor(props: ChatProps) {
+  public constructor(props: Props<ChatProps>) {
     super(props, {
       lines: [],
       message: '',
@@ -209,9 +204,9 @@ export class Chat extends Component<ChatProps, ChatState> {
     ));
   }
 
-  private onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+  private onChangeInput = (value: string) => {
     this.updateState({
-      message: event.target.value,
+      message: value,
     });
   };
 
@@ -268,35 +263,32 @@ export class Chat extends Component<ChatProps, ChatState> {
   };
 
   public render(): React.ReactElement {
-    const backgroundStyle: React.CSSProperties = {
-      backgroundColor: this.isFocused()
-        ? CONTAINER_STYLE.backgroundColor
-        : 'rgba(0, 0, 0, 0)',
-      pointerEvents: this.isFocused() ? 'auto' : 'none',
+    const panelStyle: React.CSSProperties = this.isFocused() ? {} : {
+      backgroundColor: 'transparent',
+      pointerEvents: 'none',
     };
     return (
-      <div className="dialog col" style={backgroundStyle}>
-        <div style={CONTAINER_STYLE}>
-          {this.isFocused() ? this.renderLines() : <div />}
-          <div ref={this.endRef} />
-        </div>
-        <form
-          spellCheck={false}
-          style={FORM_STYLE}
-          onFocus={this.onFocus}
-          onBlur={this.onBlur}
-          onSubmit={this.onSubmit}
-        >
-          <input
-            ref={this.inputRef}
-            style={INPUT_STYLE}
-            placeholder="Enter message..."
-            type="text"
-            value={this.state.message}
-            onChange={this.onChangeInput}
-          />
-        </form>
-      </div>
+      <Panel style={panelStyle}>
+        <Column>
+          <ChatContainer>
+            {this.isFocused() ? this.renderLines() : <div />}
+            <div ref={this.endRef} />
+          </ChatContainer>
+          <ChatForm
+            spellCheck={false}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
+            onSubmit={this.onSubmit}
+          >
+            <StringInput
+              ref={this.inputRef}
+              placeholder="Enter message..."
+              value={this.state.message}
+              onChange={this.onChangeInput}
+            />
+          </ChatForm>
+        </Column>
+      </Panel>
     );
   }
 }

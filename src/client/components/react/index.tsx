@@ -1,4 +1,5 @@
 export * from 'client/components/react/Component';
+export * from 'client/components/react/common';
 export * from 'client/components/react/Bar';
 export * from 'client/components/react/EventBar';
 export * from 'client/components/react/Chat';
@@ -9,6 +10,11 @@ import { LogManager } from 'core/log';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+export type Props<P> = {
+  children?: React.ReactChildren;
+  className?: string;
+} & P;
 
 const log = LogManager.forFile(__filename);
 

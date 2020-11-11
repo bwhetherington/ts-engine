@@ -41,6 +41,13 @@ export abstract class AbstractLogger {
   private levelInternal: LogLevel = DEFAULT_LEVEL;
   private tags: string[] = [];
 
+  public meetsLogLevel(logLevel: LogLevel, currentLevel?: LogLevel): boolean {
+    const levelToMeet = currentLevel
+      ? getLevelPriority(currentLevel)
+      : this.getPriority();
+    return getLevelPriority(logLevel) <= levelToMeet;
+  }
+
   public addTag(tag: string): void {
     this.tags.push(tag);
   }
@@ -79,7 +86,7 @@ export abstract class AbstractLogger {
     method = this.logRaw.bind(this)
   ): void {
     // Check level
-    if (getLevelPriority(level) <= this.getPriority()) {
+    if (this.meetsLogLevel(level)) {
       // Only log if
       const date = this.getDate();
       const text = this.format(level, date, message);

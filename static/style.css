@@ -64,7 +64,7 @@ body,
   color: white;
 }
 
-input[type='text'],
+/* input[type='text'],
 input[type='number'],
 input[type='password'] {
   margin: 2px;
@@ -86,7 +86,7 @@ input[type='password'] {
   outline: none;
   border-radius: 2px;
   content: normal;
-}
+} */
 
 .button-row {
   display: flex;

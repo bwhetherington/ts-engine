@@ -1,10 +1,11 @@
 import React from 'react';
-import { Component } from 'client/components/react';
+import { Component, Panel } from 'client/components/react';
 import { EventManager, StepEvent } from 'core/event';
 import { MetricsManager } from 'client/metrics';
 import { WorldManager } from 'core/entity';
 import { MetricsEvent } from 'core/metrics';
 import { PlayerManager } from 'core/player';
+import { Column } from './common';
 
 interface LineProps {
   label: string;
@@ -69,20 +70,22 @@ export class Debug extends Component<{}, DebugState> {
 
   public render(): React.ReactElement {
     return (
-      <div className="dialog">
-        <h3>Client</h3>
-        <Line label="FPS" value={Math.round(this.state.fps)} />
-        <Line label="Entities" value={this.state.clientEntities} />
-        <Line label="Listeners" value={this.state.clientListeners} />
-        <h3>Server</h3>
-        <Line label="FPS" value={Math.round(this.state.tps)} />
-        <Line label="Entities" value={this.state.serverEntities} />
-        <Line label="Listeners" value={this.state.serverListeners} />
-        <Line
-          label="Latency"
-          value={Math.round(this.state.ping * 1000) + 'ms'}
-        />
-      </div>
+      <Panel>
+        <Column>
+          <h3>Client</h3>
+          <Line label="FPS" value={Math.round(this.state.fps)} />
+          <Line label="Entities" value={this.state.clientEntities} />
+          <Line label="Listeners" value={this.state.clientListeners} />
+          <h3>Server</h3>
+          <Line label="FPS" value={Math.round(this.state.tps)} />
+          <Line label="Entities" value={this.state.serverEntities} />
+          <Line label="Listeners" value={this.state.serverListeners} />
+          <Line
+            label="Latency"
+            value={Math.round(this.state.ping * 1000) + 'ms'}
+          />
+        </Column>
+      </Panel>
     );
   }
 }
