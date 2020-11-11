@@ -263,10 +263,12 @@ export class Chat extends Component<ChatProps, ChatState> {
   };
 
   public render(): React.ReactElement {
-    const panelStyle: React.CSSProperties = this.isFocused() ? {} : {
-      backgroundColor: 'transparent',
-      pointerEvents: 'none',
-    };
+    const panelStyle: React.CSSProperties = this.isFocused()
+      ? {}
+      : {
+          backgroundColor: 'transparent',
+          pointerEvents: 'none',
+        };
     return (
       <Panel style={panelStyle}>
         <Column>
