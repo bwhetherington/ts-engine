@@ -1,6 +1,6 @@
 import template from 'client/components/alert/template.html';
 import {
-  FormItem,
+  Field,
   Form,
   FormSubmitEvent,
   Entry,
@@ -170,7 +170,7 @@ export class AlertComponent extends Component {
     this.body?.appendChild(form);
   }
 
-  private renderItem(item: FormItem): HTMLElement {
+  private renderItem(item: Field): HTMLElement {
     const container = ElementFactory.div();
     container.className = 'form-item';
 

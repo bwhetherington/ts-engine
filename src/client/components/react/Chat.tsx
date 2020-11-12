@@ -13,8 +13,12 @@ import {
 import { NetworkManager } from 'core/net';
 import { EventManager, StepEvent } from 'core/event';
 import { Key, KeyAction, KeyEvent } from 'core/input';
-import { StringInput } from './inputs';
-import { Column, Panel } from './common';
+import {
+  BooleanInput,
+  Column,
+  Panel,
+  StringInput,
+} from 'client/components/react/common';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
@@ -138,6 +142,7 @@ const ChatContainer = styled.div`
   min-height: 200px;
   word-wrap: break-word;
   overflow-y: auto;
+  user-select: auto;
 `;
 
 const ChatForm = styled.form`

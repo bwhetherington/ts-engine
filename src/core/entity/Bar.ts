@@ -1,10 +1,7 @@
-import { Entity } from './Entity';
-import { EventManager } from 'core/event';
-import { TextUpdateEvent, TextRemoveEvent } from 'core/text';
 import { Data } from 'core/serialize';
 import { GraphicsContext } from 'core/graphics';
-import { WHITE, BLACK, rgb, rgba } from 'core/graphics/color';
-import { CollisionLayer } from './util';
+import { rgb, rgba } from 'core/graphics/color';
+import { CollisionLayer, Entity } from 'core/entity';
 
 export class Bar extends Entity {
   public static typeName: string = 'Bar';

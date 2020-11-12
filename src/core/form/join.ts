@@ -78,17 +78,6 @@ export function registerJoinForm(): void {
   FormManager.registerForm(JoinFormEntry);
 }
 
-function spawnHero(player: Player): Hero {
-  const hero = WorldManager.spawn(Hero);
-  const x = RNGManager.nextFloat(-560, 560);
-  const y = RNGManager.nextFloat(-560, 560);
-  hero.setPositionXY(x, y);
-  hero.setPlayer(player);
-  const color = randomColor();
-  hero.setColor(color);
-  return hero;
-}
-
 async function validateSubmit(input: JoinForm): Promise<FormResult> {
   const { username, password } = input;
   try {

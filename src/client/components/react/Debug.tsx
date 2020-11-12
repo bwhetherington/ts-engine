@@ -1,11 +1,11 @@
 import React from 'react';
-import { Component, Panel } from 'client/components/react';
+import { Component } from 'client/components/react';
 import { EventManager, StepEvent } from 'core/event';
 import { MetricsManager } from 'client/metrics';
 import { WorldManager } from 'core/entity';
 import { MetricsEvent } from 'core/metrics';
 import { PlayerManager } from 'core/player';
-import { Column } from './common';
+import { Column, Panel } from 'client/components/react/common';
 
 interface LineProps {
   label: string;

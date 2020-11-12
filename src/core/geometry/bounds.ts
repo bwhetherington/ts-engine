@@ -1,7 +1,4 @@
-import { Bounded } from 'core/geometry';
-import { Rectangle } from './rectangle';
-import { Vector } from './vector';
-import { Matrix } from './matrix';
+import { Bounded, Rectangle, Vector, Matrix } from 'core/geometry';
 
 function maxAndMin(
   a: number,

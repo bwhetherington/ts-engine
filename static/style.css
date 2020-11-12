@@ -94,7 +94,7 @@ input[type='password'] {
   justify-content: flex-end;
 }
 
-button,
+/* button,
 input[type='submit'] {
   border: 1px solid;
   border-color: rgba(255, 255, 255, 0.33);
@@ -138,7 +138,7 @@ button:hover:not([disabled])[style='opaque'] {
 button[type='error']:hover:not([disabled]) {
   border-color: rgba(255, 160, 160, 0.67);
   background-color: rgba(255, 128, 128, 0.1);
-}
+} */
 
 .close {
   width: 28px;

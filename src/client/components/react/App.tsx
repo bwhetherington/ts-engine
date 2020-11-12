@@ -1,5 +1,6 @@
 import React from 'react';
 import { Debug, Chat, EventBar, BarStyle } from 'client/components/react';
+import { FormContainer } from './form';
 
 export function App(): React.ReactElement {
   return (
@@ -14,6 +15,7 @@ export function App(): React.ReactElement {
           <EventBar label="XP" barStyle={BarStyle.XP} id="xp-bar" />
         </div>
       </div>
+      <FormContainer />
     </>
   );
 }

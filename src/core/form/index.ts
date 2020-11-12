@@ -9,7 +9,7 @@ export interface Form {
   label: string;
   description?: string;
   messages?: string[];
-  items: FormItem[];
+  items: Field[];
   submitMethods?: SubmitMethod[];
 }
 
@@ -48,7 +48,9 @@ export interface BooleanField {
   default?: boolean;
 }
 
-export type FormItem = StringField | NumberField | BooleanField | RangeField;
+export type Field = StringField | NumberField | BooleanField | RangeField;
+
+export type FieldType = Field['type'];
 
 export interface FormValidatedEvent {}
 
@@ -68,6 +70,8 @@ export interface BooleanEntry {
 }
 
 export type Entry = StringEntry | NumberEntry | BooleanEntry;
+
+export type EntryType = Entry['type'];
 
 export interface FormData {
   [key: string]: Entry | undefined;
