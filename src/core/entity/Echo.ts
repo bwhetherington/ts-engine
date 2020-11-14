@@ -4,7 +4,7 @@ import { StepEvent } from 'core/event';
 import { GraphicsContext } from 'core/graphics';
 import { GraphicsPipeline } from 'core/graphics/pipe';
 
-const DURATION = 0.25;
+const DURATION = 0.5;
 
 export class Echo extends Entity {
   public static typeName: string = 'Echo';

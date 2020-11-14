@@ -35,29 +35,7 @@ async function main(): Promise<void> {
   WeaponManager.initialize();
   MetricsManager.initialize();
 
-  // Scoreboard
-  // EventManager.emit<TableUpdateEvent>({
-  //   type: 'TableUpdateEvent',
-  //   data: {
-  //     id: 'scoreboard',
-  //     data: {
-  //       labels: [
-  //         {
-  //           field: 'name',
-  //           value: 'Name',
-  //         },
-  //         {
-  //           field: 'level',
-  //           value: 'Level',
-  //         },
-  //         {
-  //           field: 'ping',
-  //           value: 'Ping',
-  //         },
-  //       ]
-  //     }
-  //   },
-  // });
+  log.debug('all managers initialized');
 
   EventManager.addListener<StepEvent>('StepEvent', () => {
     const players = PlayerManager.getPlayers()

@@ -85,7 +85,7 @@ export class Projectile extends Entity {
 
   protected explode(): void {
     const echo = WorldManager.spawn(Echo, this.position);
-    echo.initialize(this, false, 0.5);
+    echo.initialize(this, false, 0.35);
     echo.velocity.zero();
   }
 

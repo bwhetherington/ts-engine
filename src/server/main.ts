@@ -17,6 +17,7 @@ import { registerRenameForm } from 'core/form/rename';
 import { isEmpty } from 'core/util/object';
 import { randomColor } from 'core/graphics/color';
 import { RNGManager } from 'core/random';
+import { BasicAuth } from 'core/net/http';
 
 const readFile = promisify(readFileNonPromise);
 
@@ -30,9 +31,14 @@ async function main(): Promise<void> {
     index: './static/index.html',
   });
 
+  const serverAuth: BasicAuth = {
+    username: process.env.GAME_USERNAME ?? 'admin',
+    password: process.env.GAME_PASSWORD ?? 'admin',
+  };
+
   const server = new Server();
   server.initialize(httpServer);
-  NetworkManager.initialize(server, new ServerHTTPClient());
+  NetworkManager.initialize(server, new ServerHTTPClient(serverAuth));
   ChatManager.initialize();
   server.start(parseInt(process.env.PORT ?? '0') || 8080);
 

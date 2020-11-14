@@ -9,6 +9,7 @@ import { LogManager } from 'core/log';
 import { BasicAuth } from 'core/net/http';
 import { randomColor } from 'core/graphics/color';
 import { RNGManager } from 'core/random';
+import { PlayerChatManager } from './chat';
 
 const log = LogManager.forFile(__filename);
 
@@ -20,6 +21,7 @@ export class Player implements Serializable {
   public hasJoined: boolean = false;
   public ping: number = 0;
   public score: number = 0;
+  public chat: PlayerChatManager;
 
   private permissionLevel: number = 0;
 
@@ -55,6 +57,8 @@ export class Player implements Serializable {
         }
       });
     }
+
+    this.chat = new PlayerChatManager(this);
   }
 
   public getPermissionLevel(): number {

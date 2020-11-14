@@ -71,20 +71,18 @@ export class Debug extends Component<{}, DebugState> {
   public render(): React.ReactElement {
     return (
       <Panel>
-        <Column>
-          <h3>Client</h3>
-          <Line label="FPS" value={Math.round(this.state.fps)} />
-          <Line label="Entities" value={this.state.clientEntities} />
-          <Line label="Listeners" value={this.state.clientListeners} />
-          <h3>Server</h3>
-          <Line label="FPS" value={Math.round(this.state.tps)} />
-          <Line label="Entities" value={this.state.serverEntities} />
-          <Line label="Listeners" value={this.state.serverListeners} />
-          <Line
-            label="Latency"
-            value={Math.round(this.state.ping * 1000) + 'ms'}
-          />
-        </Column>
+        <h3>Client</h3>
+        <Line label="FPS" value={Math.round(this.state.fps)} />
+        <Line label="Entities" value={this.state.clientEntities} />
+        <Line label="Listeners" value={this.state.clientListeners} />
+        <h3>Server</h3>
+        <Line label="FPS" value={Math.round(this.state.tps)} />
+        <Line label="Entities" value={this.state.serverEntities} />
+        <Line label="Listeners" value={this.state.serverListeners} />
+        <Line
+          label="Latency"
+          value={Math.round(this.state.ping * 1000) + 'ms'}
+        />
       </Panel>
     );
   }

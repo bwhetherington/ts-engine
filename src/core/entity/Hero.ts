@@ -169,6 +169,7 @@ export class Hero extends Tank {
   public setLevel(level: number): void {
     this.setLevelInternal(level);
     this.setExperience(this.experienceForLevel(level - 1));
+    this.player?.chat.send('test', 'Server');
   }
 
   public getLevel(): number {

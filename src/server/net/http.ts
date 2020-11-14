@@ -24,6 +24,10 @@ function formatURI(uri: string): string {
 }
 
 export class ServerHTTPClient implements HTTPClient {
+  public constructor(
+    private rootAuth: BasicAuth,
+  ) {}
+
   async get(uri: string, auth?: BasicAuth): Promise<HTTPResponse> {
     const headers = {
       'Content-Type': 'application/json',
@@ -47,6 +51,8 @@ export class ServerHTTPClient implements HTTPClient {
     data: object,
     auth?: BasicAuth
   ): Promise<HTTPResponse> {
+    auth = auth ?? this.rootAuth;
+
     const headers = {
       'Content-Type': 'application/json',
     };

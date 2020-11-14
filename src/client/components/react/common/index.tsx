@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const UI_MARGIN = '5px';
 
 export const Panel = styled.div`
-  background-color: rgba(0, 0, 0, 0.67);
+  background-color: rgba(0, 0, 0, 0.75);
   padding: ${UI_MARGIN};
   border-radius: 4px;
   pointer-events: auto;

@@ -9,6 +9,7 @@ import {
   renderInfo,
   renderWarn,
   renderError,
+  renderMessage,
 } from 'core/chat';
 import { LogManager } from 'core/log';
 import { PlayerManager, Player } from 'core/player';
@@ -92,31 +93,11 @@ export class ChatManager {
     author: Player,
     content: string
   ): (string | TextComponent)[] {
-    return [
-      {
-        content: '<',
-        style: {
-          color: 'none',
-          styles: ['bold'],
-        },
-      },
-      {
-        content: author.name,
-        style: {
-          color: author.isAdmin() ? 'red' : 'none',
-          styles: ['bold'],
-        },
-      },
-      {
-        content: '>',
-        style: {
-          color: 'none',
-          styles: ['bold'],
-        },
-      },
-      ' ',
+    return renderMessage(
+      author.name,
       content,
-    ];
+      author.isAdmin() ? 'red' : 'none'
+    );
   }
 
   public initialize(): void {
@@ -142,7 +123,6 @@ export class ChatManager {
       'TextMessageInEvent',
       (event) => {
         const { data, socket } = event;
-
         const player = PlayerManager.getPlayer(socket);
         if (player) {
           const { name, hasJoined } = player;

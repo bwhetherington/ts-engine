@@ -42,7 +42,7 @@ export class PlayerManager implements Serializable {
 
     if (NetworkManager.isServer()) {
       EventManager.runPeriodic(60, () => {
-        // this.saveAll();
+        this.saveAll();
       });
     }
   }

@@ -11,11 +11,7 @@ import {
   Row,
   FlexPadding,
 } from 'client/components/react/common';
-import {
-  Form,
-  Field,
-  Entry,
-} from 'core/form';
+import { Form, Field, Entry } from 'core/form';
 
 const FieldContainer = styled.div`
   display: flex;
@@ -137,7 +133,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     const newData = {
       entries: {
         ...this.state.entries,
-        [name]: {type, value} as Entry,
+        [name]: { type, value } as Entry,
       },
     };
     this.updateState(newData);
@@ -163,7 +159,9 @@ export class FormComponent extends Component<FormProps, FormState> {
   }
 
   private renderMessages(): React.ReactElement | undefined {
-    const res = this.props.form.messages?.map((message, index) => <Message key={index}>{message}</Message>);
+    const res = this.props.form.messages?.map((message, index) => (
+      <Message key={index}>{message}</Message>
+    ));
     if (res && res.length > 0) {
       return <Section>{res}</Section>;
     }
@@ -179,33 +177,39 @@ export class FormComponent extends Component<FormProps, FormState> {
   }
 
   private renderSubmitButtons(): (React.ReactElement | undefined)[] {
-    return this.props.form.submitMethods?.map((method) => {
-      return (
-        <Button key={method.name} type="submit" onClick={() => this.submit(method.name)}>{method.label}</Button>
-      );
-    }) ?? [
-      <Button key="submit">Submit</Button>
-    ];
+    return (
+      this.props.form.submitMethods?.map((method) => {
+        return (
+          <Button
+            key={method.name}
+            type="submit"
+            onClick={() => this.submit(method.name)}
+          >
+            {method.label}
+          </Button>
+        );
+      }) ?? [<Button key="submit">Submit</Button>]
+    );
   }
 
   public render(): React.ReactElement {
     return (
       <Panel>
         <Container>
-            <h1>{this.props.form.label}</h1>
-            {this.props.form.description ? <p>{this.props.form.description}</p> : undefined}
-            <form onSubmit={this.onSubmit}>
-              <Column>
-              {this.renderEntries()}
-              </Column>
-              {this.renderMessages()}
-              <Section>
-                <Row>
-                  <FlexPadding />
-                  {this.renderSubmitButtons()}
-                </Row>
-              </Section>
-            </form>
+          <h1>{this.props.form.label}</h1>
+          {this.props.form.description ? (
+            <p>{this.props.form.description}</p>
+          ) : undefined}
+          <form onSubmit={this.onSubmit}>
+            <Column>{this.renderEntries()}</Column>
+            {this.renderMessages()}
+            <Section>
+              <Row>
+                <FlexPadding />
+                {this.renderSubmitButtons()}
+              </Row>
+            </Section>
+          </form>
         </Container>
       </Panel>
     );

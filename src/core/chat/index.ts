@@ -1,3 +1,5 @@
+import { Player } from 'core/player';
+
 export type TextColor =
   | 'none'
   | 'red'
@@ -36,6 +38,38 @@ export interface TextCommandEvent {
 }
 
 export type TextComponents = (string | null | TextComponent)[];
+
+export function renderMessage(
+  author: string,
+  content: string,
+  authorColor: TextColor = 'none'
+): (string | TextComponent)[] {
+  return [
+    {
+      content: '<',
+      style: {
+        color: 'none',
+        styles: ['bold'],
+      },
+    },
+    {
+      content: author,
+      style: {
+        color: authorColor,
+        styles: ['bold'],
+      },
+    },
+    {
+      content: '>',
+      style: {
+        color: 'none',
+        styles: ['bold'],
+      },
+    },
+    ' ',
+    content,
+  ];
+}
 
 export function renderInfo(message: string): TextComponents {
   return [

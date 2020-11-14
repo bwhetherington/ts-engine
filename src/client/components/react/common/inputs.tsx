@@ -33,7 +33,10 @@ function onValueChange(
   return (e) => onChange(e.target.value);
 }
 
-type StringInputProps = InputProps<string> & { placeholder?: string, isPassword?: boolean };
+type StringInputProps = InputProps<string> & {
+  placeholder?: string;
+  isPassword?: boolean;
+};
 
 export const StringInput = React.forwardRef<HTMLInputElement, StringInputProps>(
   (props, ref) => (
