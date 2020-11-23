@@ -26,7 +26,7 @@ function formatURI(uri: string): string {
 export class ServerHTTPClient implements HTTPClient {
   public constructor(
     private rootAuth: BasicAuth,
-  ) {}
+  ) { }
 
   async get(uri: string, auth?: BasicAuth): Promise<HTTPResponse> {
     const headers = {

@@ -78,10 +78,12 @@ export function registerJoinForm(): void {
   FormManager.registerForm(JoinFormEntry);
 }
 
+const LOGIN_SERVER = process.env.GAME_LOGIN_SERVER ?? '';
+
 async function validateSubmit(input: JoinForm): Promise<FormResult> {
   const { username, password } = input;
   try {
-    const res = await NetworkManager.http?.get('/login', {
+    const res = await NetworkManager.http?.get(LOGIN_SERVER + '/login', {
       username: username.value,
       password: password.value,
     });
