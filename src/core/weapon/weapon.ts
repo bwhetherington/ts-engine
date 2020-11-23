@@ -11,6 +11,8 @@ export abstract class Weapon implements Serializable {
 
   public type: string = Weapon.typeName;
   public rate: number = 1;
+  public shots: number = 1;
+  public shotSpread: number = 0.3;
   public damage: number = 0;
   private cooldown: number = 0;
   private id?: UUID;
@@ -33,14 +35,21 @@ export abstract class Weapon implements Serializable {
   public fireInternal(source: Tank, angle: number): void {
     if (this.cooldown <= 0) {
       this.cooldown += this.rate;
-      this.fire(source, angle);
+
+      // Spread shots out
+      const baseAngleOffset = (this.shots - 1) * this.shotSpread / 2;
+      for (let i = 0; i < this.shots; i++) {
+        const angleOffset = i * this.shotSpread - baseAngleOffset;
+        this.fire(source, angle + angleOffset);
+      }
+
       const event: Event<FireEvent> = {
         type: 'FireEvent',
         data: { sourceID: source.id },
       };
       EventManager.emit(event);
       if (NetworkManager.isServer()) {
-        NetworkManager.send(event);
+        NetworkManager.send(event)
       }
     }
   }
@@ -51,11 +60,13 @@ export abstract class Weapon implements Serializable {
       rate: this.rate,
       cooldown: this.cooldown,
       damage: this.damage,
+      shots: this.shots,
+      shotSpread: this.shotSpread,
     };
   }
 
   public deserialize(data: Data): void {
-    const { type, rate, cooldown, damage } = data;
+    const { type, rate, cooldown, damage, shots, shotSpread } = data;
 
     if (typeof type === 'string') {
       this.type = type;
@@ -71,6 +82,14 @@ export abstract class Weapon implements Serializable {
 
     if (typeof damage === 'number') {
       this.damage = damage;
+    }
+    
+    if (typeof shots === 'number') {
+      this.shots = shots;
+    }
+
+    if (typeof shotSpread === 'number') {
+      this.shotSpread = shotSpread;
     }
   }
 

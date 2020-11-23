@@ -2,9 +2,9 @@
   "type": "MachineGun",
   "extends": "Gun",
   "projectileType": "Projectile",
-  "projectileSpread": 0.3,
+  "projectileSpread": 0.2,
   "projectileSpeed": 650,
-  "projectilePierce": 1,
+  "projectilePierce": 3,
   "damage": 3,
   "rate": 0.15
 }
