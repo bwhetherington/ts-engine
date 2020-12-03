@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises';
 import { WorldManager } from 'core/entity';
 import { PlayerManager } from 'core/player';
 import { loadWorld } from 'server/util';
+import { AssetManager } from 'core/assets';
 
 export const setColor: CommandEntry = {
   name: 'setcolor',
@@ -68,3 +69,36 @@ export const roll: CommandEntry = {
   permissionLevel: 0,
   async handler(player) {},
 };
+
+export const pre: CommandEntry = {
+  name: 'pre',
+  help: 'preformatted message',
+  permissionLevel: 0,
+  async handler(player) {
+    const world = await AssetManager.loadJSON('assets/worlds/open.json');
+    const content = JSON.stringify(player.serialize(), null, 2);
+    ChatManager.sendComponents([
+      'Player',
+      {
+        content: JSON.stringify(player.serialize(), null, 2),
+        style: {
+          pre: true
+        }
+      },
+      'Hero',
+      {
+        content: JSON.stringify(player.hero?.serialize() ?? {}, null, 2),
+        style: {
+          pre: true
+        }
+      },
+      'World',
+      {
+        content: JSON.stringify(WorldManager.serialize(), null, 2),
+        style: {
+          pre: true
+        }
+      }
+    ], player);
+  }
+}

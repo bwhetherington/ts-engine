@@ -2,23 +2,26 @@ import { NetworkManager } from 'core/net';
 import { EventManager, StepEvent, Event } from 'core/event';
 import { LogManager } from 'core/log';
 import { WorldManager } from 'core/entity';
-
-import { Timer, HDCanvas, Client, ClientLogger } from 'client/util';
+import { Timer, HDCanvas, Client, ClientLogger, loadFile } from 'client/util';
 import { CameraManager } from 'core/graphics';
 import { AlertManager } from 'client/alert';
 import { InputManager } from 'client/input';
 import { PlayerManager, Player, PlayerLeaveEvent } from 'core/player';
 import { FormManager } from 'core/form';
 import { WeaponManager } from 'core/weapon';
-import { TableUpdateEvent, TableRemoveRowEvent } from './components/table';
+import { TableUpdateEvent, TableRemoveRowEvent } from 'client/components/table';
 import { registerComponents } from 'client/components';
 import { loadReactUI } from 'client/components/react';
 import { MetricsManager } from 'client/metrics';
+import { AssetManager } from 'core/assets';
+import { join } from 'client/util';
 
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
   LogManager.initialize('info', new ClientLogger());
+  AssetManager.initialize((url) => loadFile(join('assets', url)));
+
   registerComponents();
   loadReactUI();
 
@@ -91,6 +94,12 @@ async function main(): Promise<void> {
       CameraManager.update();
       WorldManager.render(canvas);
     });
+
+    EventManager.sleep(5)
+      .then(async () => {
+        const data = await AssetManager.loadJSON('worlds/arena.json');
+        console.log(data);
+      });
 
     await timer.start();
   }

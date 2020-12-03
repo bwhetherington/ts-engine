@@ -17,6 +17,7 @@ export interface TextComponent {
   style?: {
     color?: TextColor;
     styles?: TextStyle[];
+    pre?: boolean;
   };
 }
 

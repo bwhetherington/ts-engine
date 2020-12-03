@@ -439,7 +439,7 @@ export class ChatManager {
     this.loadCommands();
   }
 
-  private sendComponents(
+  public sendComponents(
     components: (string | null | TextComponent)[],
     target: number | Player = -1
   ): void {

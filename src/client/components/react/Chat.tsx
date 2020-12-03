@@ -14,7 +14,6 @@ import { NetworkManager } from 'core/net';
 import { EventManager, StepEvent } from 'core/event';
 import { Key, KeyAction, KeyEvent } from 'core/input';
 import {
-  BooleanInput,
   Column,
   Panel,
   StringInput,
@@ -60,12 +59,24 @@ interface ChatState {
 
 function createComponentStyle(component: TextComponent): React.CSSProperties {
   const css: React.CSSProperties = {};
-  if (component.style?.color) {
-    css.color = toCss(COLOR_MAPPING[component.style.color]);
-  }
+  if (component.style?.pre) {
+    return {
+      display: 'block',
+      whiteSpace: 'pre',
+      margin: '4px',
+      padding: '4px',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      border: '1px solid rgba(255, 255, 255, 0.25)',
+      borderRadius: '4px',
+    };
+  } else {
+    if (component.style?.color) {
+      css.color = toCss(COLOR_MAPPING[component.style.color]);
+    }
 
-  if (component.style?.styles?.includes('bold')) {
-    css.fontWeight = 'bold';
+    if (component.style?.styles?.includes('bold')) {
+      css.fontWeight = 'bold';
+    }
   }
   return css;
 }

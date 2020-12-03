@@ -1,10 +1,9 @@
 import * as path from 'path';
 import { WorldManager } from 'core/entity';
-import { readFile } from 'fs/promises';
+import { AssetManager } from 'core/assets';
 
 export async function loadWorldFile(file: string): Promise<void> {
-  const text = await readFile(file, 'utf-8');
-  const obj = JSON.parse(text);
+  const obj = await AssetManager.loadJSON(file);
   WorldManager.loadLevel(obj);
 }
 
