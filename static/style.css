@@ -48,7 +48,7 @@ body,
 }
 
 .dialog {
-  background-color: rgba(0, 0, 0, 0.67);
+  background-color: rgba(0, 0, 0, 0.75);
   padding: 6px;
   border-radius: 4px;
   pointer-events: auto;

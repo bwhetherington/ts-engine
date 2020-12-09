@@ -13,6 +13,7 @@ const Background = styled.div`
   bottom: 0px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
 
   &.hidden {
     visibility: hidden;

@@ -10,7 +10,7 @@ import {
 } from 'core/graphics';
 import { BLACK, WHITE } from 'core/graphics/color';
 import { GraphicsProc } from 'core/graphics/context';
-import { Vector, Bounds, Matrix } from 'core/geometry';
+import { Vector, Bounds, Matrix, VectorLike } from 'core/geometry';
 import { GraphicsPipeline } from 'core/graphics/pipe';
 
 interface Options {
@@ -260,6 +260,95 @@ export class HDCanvas implements GraphicsContext {
       }
       ctx.closePath();
       this.bounds?.insertRawTransformed(x, y, w, h, this.transform);
+    }
+  }
+
+  public trapezoid(
+    centerX: number,
+    centerY: number,
+    bottomWidth: number,
+    topWidth: number,
+    height: number,
+    color: Color,
+  ): void {
+    const ctx = this.curContext;
+    if (ctx) {
+      // Compute vertices of trapezoid
+      const topLeft = {
+        y: centerY - topWidth / 2,
+        x: centerX + height / 2,
+      };
+      const topRight = {
+        y: centerY + topWidth / 2,
+        x: centerX + height / 2,
+      };
+      const bottomLeft = {
+        y: centerY - bottomWidth / 2,
+        x: centerX - height / 2,
+      };
+      const bottomRight = {
+        y: centerY + bottomWidth / 2,
+        x: centerX - height / 2,
+      };
+      const vertices = [topLeft, topRight, bottomRight, bottomLeft];
+
+      // Draw vertices as polygon
+      this.polygon(vertices, color);
+
+      // Compute bounds
+      const width = Math.max(topWidth, bottomWidth);
+      
+      this.bounds?.insertRawTransformed(centerX - width / 2, centerY - height / 2, width, height, this.transform);
+    }
+  }
+
+  public regularPolygon(
+    centerX: number,
+    centerY: number,
+    vertexCount: number,
+    radius: number,
+    color: Color,
+  ): void {
+    const vertices = [];
+    for (let i = 0; i < vertexCount; i++) {
+      const angle = (i / vertexCount) * (2 * Math.PI);
+      const x = Math.cos(angle) * radius + centerX;
+      const y = Math.sin(angle) * radius + centerY;
+      vertices.push({ x, y });
+    }
+    this.polygon(vertices, color);
+    this.bounds?.insertRawTransformed(centerX - radius, centerY - radius, radius * 2, radius * 2, this.transform);
+  }
+
+  public polygon(
+    vertices: VectorLike[],
+    color: Color,
+  ): void {
+    const ctx = this.curContext;
+    if (ctx) {
+      ctx.fillStyle = toCss(color);
+      ctx.strokeStyle = toCss(reshade(color));
+
+      ctx.lineWidth = this.options.lineWidth;
+
+      this.setRound(ctx);
+
+      const {x, y} = vertices[0];
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      for (let i = 1; i < vertices.length + 1; i++) {
+        const vertex = vertices[i % vertices.length];
+        ctx.lineTo(vertex.x, vertex.y);
+      }
+      ctx.closePath();
+
+      if (this.options.doFill) {
+        ctx.fill();
+      }
+      if (this.options.doStroke) {
+        ctx.stroke();
+      }
     }
   }
 

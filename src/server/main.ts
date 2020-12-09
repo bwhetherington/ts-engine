@@ -4,7 +4,7 @@ import { LogManager } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NetworkManager, SyncEvent } from 'core/net';
 import { ChatManager } from 'server/chat';
-import { WorldManager, Unit } from 'core/entity';
+import { WorldManager, Unit, FeedVariant, Feed } from 'core/entity';
 import { PlayerManager } from 'core/player';
 import { FormManager } from 'core/form';
 import { registerJoinForm } from 'core/form';
@@ -18,6 +18,8 @@ import { randomColor } from 'core/graphics/color';
 import { RNGManager } from 'core/random';
 import { BasicAuth } from 'core/net/http';
 import { AssetManager } from 'core/assets';
+import { Iterator } from 'core/iterator';
+import { FormatParser, TextFormatter } from 'core/chat/format';
 
 const log = LogManager.forFile(__filename);
 
@@ -82,20 +84,28 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  EventManager.runPeriodic(1, () => {
-    if (WorldManager.getEntityCount() < 40) {
-      const type = RNGManager.nextBoolean(0.3) ? 'HeavyEnemy' : 'Enemy';
+  EventManager.runPeriodic(0.5, () => {
+    if (WorldManager.getEntityCount() < 60) {
+      const num = RNGManager.next();
       const position = WorldManager.getRandomPosition();
-      const entity = WorldManager.spawnEntity(type, position);
-      entity.setColor(randomColor());
+      if (num < 0.5) {
+        let size;
+        if (num < 0.1) {
+          size = FeedVariant.Large;
+        } else if (num < 0.25) {
+          size = FeedVariant.Medium;
+        } else {
+          size = FeedVariant.Small;
+        }
+        const entity = WorldManager.spawnEntity('Feed', position) as Feed;
+        entity.setVariant(size);
+      } else {
+        const type = num < 0.6 ? 'HeavyEnemy' : 'Enemy';
+        const entity = WorldManager.spawnEntity(type, position);
+        entity.setColor(randomColor());
+      }
     }
   });
-
-  EventManager.sleep(5)
-    .then(async () => {
-      const data = await AssetManager.loadJSON('worlds/arena.json');
-      console.log(data);
-    });
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);

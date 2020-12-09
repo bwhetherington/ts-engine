@@ -4,7 +4,6 @@ import { LogManager } from 'core/log';
 import { WorldManager } from 'core/entity';
 import { Timer, HDCanvas, Client, ClientLogger, loadFile } from 'client/util';
 import { CameraManager } from 'core/graphics';
-import { AlertManager } from 'client/alert';
 import { InputManager } from 'client/input';
 import { PlayerManager, Player, PlayerLeaveEvent } from 'core/player';
 import { FormManager } from 'core/form';
@@ -33,7 +32,6 @@ async function main(): Promise<void> {
   WorldManager.initialize();
   PlayerManager.initialize();
   CameraManager.initialize();
-  AlertManager.initialize();
   FormManager.initialize();
   WeaponManager.initialize();
   MetricsManager.initialize();
@@ -95,14 +93,8 @@ async function main(): Promise<void> {
       WorldManager.render(canvas);
     });
 
-    EventManager.sleep(5)
-      .then(async () => {
-        const data = await AssetManager.loadJSON('worlds/arena.json');
-        console.log(data);
-      });
-
     await timer.start();
   }
 }
 
-main().catch(alert);
+main().catch(console.error);

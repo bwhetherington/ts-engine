@@ -169,7 +169,6 @@ export class Hero extends Tank {
   public setLevel(level: number): void {
     this.setLevelInternal(level);
     this.setExperience(this.experienceForLevel(level - 1));
-    this.player?.chat.send('test', 'Server');
   }
 
   public getLevel(): number {
@@ -306,11 +305,30 @@ export class Hero extends Tank {
     return isLocal || socket === player?.socket;
   }
 
-  public render(ctx: GraphicsContext): void {
-    super.render(ctx);
-  }
-
   protected calculateDamageOut(amount: number): number {
     return amount * this.damageBonusForLevel(this.getLevel());
+  }
+
+  protected renderCannon(ctx: GraphicsContext): void {
+    const color = this.getColor();
+    const horizontalScale = this.getFireParameter();
+    const verticalScale = horizontalScale / 2 + 0.5;
+
+    ctx.trapezoid(
+      this.cannonShape.width / 2,
+      0,
+      this.cannonShape.height * 0.6 * verticalScale,
+      this.cannonShape.height * 1.2 * verticalScale,
+      this.cannonShape.width * horizontalScale,
+      color,
+    );
+
+    // ctx.rect(
+    //   0,
+    //   -(this.cannonShape.height * verticalScale) / 2,
+    //   this.cannonShape.width * horizontalScale,
+    //   this.cannonShape.height * verticalScale,
+    //   color
+    // );
   }
 }

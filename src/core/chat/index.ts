@@ -10,7 +10,19 @@ export type TextColor =
   | 'blue'
   | 'purple';
 
+const TEXT_COLORS = ['none', 'red', 'orange', 'yellow', 'green', 'aqua', 'blue', 'purple'];
+
+export function isTextColor(str: string): str is TextColor {
+  return TEXT_COLORS.includes(str);
+}
+
 export type TextStyle = 'normal' | 'bold' | 'italic';
+
+const TEXT_STYLES = ['normal', 'bold', 'italic'];
+
+export function isTextStyle(str: string): str is TextStyle {
+  return TEXT_STYLES.includes(str);
+}
 
 export interface TextComponent {
   content: string;

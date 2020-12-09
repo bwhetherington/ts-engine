@@ -39,12 +39,8 @@ export class Projectile extends Entity {
     this.setColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.boundingBox.width = 20;
     this.boundingBox.height = 20;
-  }
-
-  public initialize(): void {
-    if (!this.hasBegun) {
+    if (NetworkManager.isServer()) {
       this.prepareRemove();
-      this.hasBegun = true;
     }
   }
 
@@ -167,10 +163,6 @@ export class Projectile extends Entity {
     if (hitEntities instanceof Array) {
       this.hitEntities.clear();
       hitEntities.forEach((entity) => this.hitEntities.add(entity));
-    }
-
-    if (!this.hasBegun) {
-      this.initialize();
     }
   }
 

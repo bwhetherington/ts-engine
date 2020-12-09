@@ -1,10 +1,11 @@
 import { CommandEntry, ChatManager } from 'server/chat';
 import { hsv } from 'core/graphics/color';
-import { readFile } from 'fs/promises';
-import { WorldManager } from 'core/entity';
 import { PlayerManager } from 'core/player';
 import { loadWorld } from 'server/util';
-import { AssetManager } from 'core/assets';
+import { LogManager } from 'core/log';
+import { RNGManager } from 'core/random';
+
+const log = LogManager.forFile(__filename);
 
 export const setColor: CommandEntry = {
   name: 'setcolor',
@@ -40,7 +41,6 @@ export const loadLevel: CommandEntry = {
         ChatManager.info(`Set level to: ${args[0]}`);
       } catch (ex) {
         ChatManager.error('Failed to load level', player);
-        console.error(ex);
       }
     } else {
       ChatManager.error('Must specify 1 argument');
@@ -59,6 +59,7 @@ export const saveAll: CommandEntry = {
       ChatManager.info('All players saved', player);
     } catch (ex) {
       ChatManager.error('Error saving players', player);
+      log.error(ex.message ?? 'Could not load file');
     }
   },
 };
@@ -67,7 +68,19 @@ export const roll: CommandEntry = {
   name: 'roll',
   help: 'rolls dice',
   permissionLevel: 0,
-  async handler(player) {},
+  async handler(player, ...args) {
+    if (args.length > 0) {
+      for (const arg of args) {
+        const die = parseInt(arg);
+        const res = RNGManager.nextInt(1, die + 1);
+        ChatManager.info(`d${die} = ${res}`, player);
+      }
+    } else {
+      const die = 20;
+      const res = RNGManager.nextInt(1, die + 1);
+      ChatManager.info(`d${die} => ${res}`, player);
+    }
+  },
 };
 
 export const pre: CommandEntry = {
@@ -75,26 +88,9 @@ export const pre: CommandEntry = {
   help: 'preformatted message',
   permissionLevel: 0,
   async handler(player) {
-    const world = await AssetManager.loadJSON('assets/worlds/open.json');
-    const content = JSON.stringify(player.serialize(), null, 2);
     ChatManager.sendComponents([
-      'Player',
       {
         content: JSON.stringify(player.serialize(), null, 2),
-        style: {
-          pre: true
-        }
-      },
-      'Hero',
-      {
-        content: JSON.stringify(player.hero?.serialize() ?? {}, null, 2),
-        style: {
-          pre: true
-        }
-      },
-      'World',
-      {
-        content: JSON.stringify(WorldManager.serialize(), null, 2),
         style: {
           pre: true
         }

@@ -10,10 +10,12 @@ import {
   renderWarn,
   renderError,
   renderMessage,
+  TextComponents,
+  TextColor,
 } from 'core/chat';
 import { LogManager } from 'core/log';
 import { PlayerManager, Player } from 'core/player';
-import { WorldManager, Enemy, Unit } from 'core/entity';
+import { WorldManager, Enemy, Unit, Feed, FeedVariant } from 'core/entity';
 import { TimerManager } from 'server/util';
 import { randomColor } from 'core/graphics/color';
 import { FormManager } from 'core/form';
@@ -22,10 +24,14 @@ import { CommandEntry } from 'server/chat';
 import * as commands from 'server/chat/commands';
 import { iterateObject, Iterator } from 'core/iterator';
 import { RNGManager } from 'core/random';
+import { TextFormatter } from 'core/chat/format';
 
 const log = LogManager.forFile(__filename);
 
 const DEFAULT_NAME = 'Unknown';
+
+const MESSAGE_FORMAT = '{style=bold|<}{color=$authorColor,style=bold|$authorName}{style=bold|>} $messageContent';
+const MESSAGE_FORMATTER = new TextFormatter(MESSAGE_FORMAT);
 
 type CommandHandler = (player: Player, ...args: string[]) => void;
 
@@ -92,12 +98,12 @@ export class ChatManager {
   private formatMessage(
     author: Player,
     content: string
-  ): (string | TextComponent)[] {
-    return renderMessage(
-      author.name,
-      content,
-      author.isAdmin() ? 'red' : 'none'
-    );
+  ): TextComponents {
+    return MESSAGE_FORMATTER.format({
+      authorName: author.name,
+      authorColor: author.isAdmin() ? 'red' : 'none',
+      messageContent: content,
+    });
   }
 
   public initialize(): void {
@@ -260,14 +266,19 @@ export class ChatManager {
         }
 
         for (let i = 0; i < count; i++) {
-          const entity = WorldManager.spawnEntity('Feed');
+          const entity = WorldManager.spawnEntity('Feed') as Feed;
           const x =
             RNGManager.next() * WorldManager.boundingBox.width +
             WorldManager.boundingBox.x;
           const y =
             RNGManager.next() * WorldManager.boundingBox.height +
             WorldManager.boundingBox.y;
-          entity.position.setXY(x, y);
+          const angle = RNGManager.nextFloat(0, 2 * Math.PI);
+          const variantNum = RNGManager.next();
+          const variant = variantNum < 0.1 ? FeedVariant.Large : variantNum < 0.4 ? FeedVariant.Medium : FeedVariant.Small;
+          entity.setVariant(variant);
+          entity.setPositionXY(x, y);
+          entity.angle = angle;
         }
 
         this.info(`Spawning ${count} entities`);

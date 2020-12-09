@@ -48,6 +48,7 @@ export class Echo extends Entity {
     this.parent = entity;
     this.velocity.set(this.parent.velocity);
     this.mass = this.parent.mass;
+    this.angle = this.parent.angle;
     this.friction = 0;
     this.timeRemaining = duration;
     this.duration = duration;

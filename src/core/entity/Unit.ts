@@ -118,9 +118,13 @@ export class Unit extends Entity {
     return this.maxLife;
   }
 
-  public setMaxLife(life: number): void {
+  public setMaxLife(life: number, reset?: boolean): void {
     this.maxLife = life;
-    this.setLife(this.life);
+    if (reset) {
+      this.setLife(life);
+    } else {
+      this.setLife(this.life);
+    }
   }
 
   public step(dt: number): void {

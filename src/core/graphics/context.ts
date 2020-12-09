@@ -1,3 +1,4 @@
+import { Vector, VectorLike } from 'core/geometry';
 import { Color } from 'core/graphics/color';
 import { GraphicsPipeline } from 'core/graphics/pipe';
 
@@ -33,6 +34,25 @@ export interface GraphicsContext {
     h: number,
     color: Color,
     fullW?: number
+  ): void;
+  trapezoid(
+    centerX: number,
+    centerY: number,
+    bottomWidth: number,
+    topWidth: number,
+    height: number,
+    color: Color,
+  ): void;
+  polygon(
+    vertices: VectorLike[],
+    color: Color,
+  ): void;
+  regularPolygon(
+    x: number,
+    y: number,
+    vertexCount: number,
+    radius: number,
+    color: Color,
   ): void;
   line(x1: number, y1: number, x2: number, y2: number, color: Color): void;
   translate(x: number, y: number): void;

@@ -174,6 +174,10 @@ export class Iterator<T> implements Generator<T> {
     return iterator(iterateSet(set));
   }
 
+  public static generator<T>(gen: Generator<T>): Iterator<T> {
+    return iterator(gen);
+  }
+
   public next(): IteratorResult<T, any> {
     return this.generator.next();
   }

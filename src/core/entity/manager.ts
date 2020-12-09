@@ -4,7 +4,6 @@ import {
   Bounded,
   Vector,
   Partioner,
-  Cell,
 } from 'core/geometry';
 import { GraphicsContext, CameraManager, Renderable } from 'core/graphics';
 import {
@@ -27,10 +26,10 @@ import {
   RayCastResult,
   DisplayRayEvent,
   HomingProjectile,
+  Feed,
 } from 'core/entity';
 import {
   BigProjectile,
-  Feed,
   HeavyEnemy,
   Template,
   SniperHero,
@@ -101,9 +100,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Bar);
     this.registerEntity(Echo);
     this.registerEntity(HomingProjectile);
+    this.registerEntity(Feed);
 
     // Template entities
-    this.registerTemplateEntity(Feed);
     this.registerTemplateEntity(BigProjectile);
     this.registerTemplateEntity(HeavyEnemy);
     this.registerTemplateEntity(SniperHero);
@@ -203,6 +202,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       .forEach((entity) => {
         GraphicsPipeline.pipe()
           .translate(entity.position.x, entity.position.y)
+          .rotate(entity.angle)
           .run(ctx, entity.renderInternal.bind(entity));
       });
 

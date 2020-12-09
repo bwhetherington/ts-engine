@@ -20,6 +20,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
+  public angle: number = 0;
   public vectorBuffer: Vector = new Vector(0, 0);
   public id: UUID;
   public color: Color = WHITE;
@@ -100,8 +101,6 @@ export class Entity implements Bounded, Serializable, Renderable {
             shuntOutOf(this, candidate.boundingBox);
           }
 
-          collided = true;
-
           this.collide(candidate);
 
           const event = {
@@ -146,6 +145,7 @@ export class Entity implements Bounded, Serializable, Renderable {
       isVisible: this.isVisible,
       doSync: this.doSync,
       isCollidable: this.isCollidable,
+      angle: this.angle,
       boundingBox: this.boundingBox.serialize(),
       position: this.position.serialize(),
       velocity: this.velocity.serialize(),
@@ -179,6 +179,7 @@ export class Entity implements Bounded, Serializable, Renderable {
       collisionLayer,
       boundingBox,
       position,
+      angle,
       velocity,
       friction,
       bounce,
@@ -197,6 +198,9 @@ export class Entity implements Bounded, Serializable, Renderable {
     }
     if (typeof friction === 'number') {
       this.friction = friction;
+    }
+    if (typeof angle === 'number') {
+      this.angle = angle;
     }
     if (typeof bounce === 'number') {
       this.bounce = bounce;
