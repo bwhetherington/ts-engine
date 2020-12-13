@@ -71,12 +71,12 @@ export abstract class AbstractLogger {
   }
 
   private formatTags(tags: string[]): string {
-    return tags.map((x) => '[' + x + ']').join(' ');
+    return tags.map((tag) => `[${tag}]`).join(' ');
   }
 
   public format(level: LogLevel, date: number, message: string): string {
     const dateFormat = DATE_FORMAT.format(new Date(date));
-    const prefix = this.formatTags([...this.tags, level]);
+    const prefix = this.formatTags([dateFormat, ...this.tags, level.toUpperCase()]);
     return prefix + ' ' + message;
   }
 

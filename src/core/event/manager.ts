@@ -3,6 +3,7 @@ import { Event, GameEvent, GameHandler, Handler, EventData } from 'core/event';
 import { UUID, UUIDManager } from 'core/uuid';
 import { LogManager } from 'core/log';
 import { formatData } from 'core/util';
+import { AsyncIterator } from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
@@ -120,6 +121,12 @@ export class EventManager {
         passed -= period;
         action();
       }
+    });
+  }
+
+  public streamEvents<E extends EventData>(type: string, addListener?: (type: string, handler?: Handler<E>) => void): AsyncIterator<Event<E>> {
+    return AsyncIterator.from(($yield) => {
+      (addListener ?? this.addListener)(type, $yield);
     });
   }
 }

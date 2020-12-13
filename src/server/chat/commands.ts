@@ -1,6 +1,6 @@
 import { CommandEntry, ChatManager } from 'server/chat';
 import { hsv } from 'core/graphics/color';
-import { PlayerManager } from 'core/player';
+import { Player, PlayerManager } from 'core/player';
 import { loadWorld } from 'server/util';
 import { LogManager } from 'core/log';
 import { RNGManager } from 'core/random';
@@ -69,16 +69,17 @@ export const roll: CommandEntry = {
   help: 'rolls dice',
   permissionLevel: 0,
   async handler(player, ...args) {
+    function roll(die: number): void {
+      const res = RNGManager.nextInt(1, die + 1);
+      ChatManager.info(`d${die} => ${res}`, player);
+    }
     if (args.length > 0) {
       for (const arg of args) {
         const die = parseInt(arg);
-        const res = RNGManager.nextInt(1, die + 1);
-        ChatManager.info(`d${die} = ${res}`, player);
+        roll(die);
       }
     } else {
-      const die = 20;
-      const res = RNGManager.nextInt(1, die + 1);
-      ChatManager.info(`d${die} => ${res}`, player);
+      roll(20);
     }
   },
 };

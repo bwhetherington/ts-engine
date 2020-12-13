@@ -13,6 +13,7 @@ import { isCollisionLayer, shuntOutOf } from './util';
 import { EventData, Handler, EventManager, Event } from 'core/event';
 import { UUID, UUIDManager } from 'core/uuid';
 import { NetworkManager } from 'core/net';
+import { AsyncIterator } from 'core/iterator';
 
 export class Entity implements Bounded, Serializable, Renderable {
   public static typeName: string = 'Entity';
@@ -270,6 +271,12 @@ export class Entity implements Bounded, Serializable, Renderable {
       this.getHandlers(type)?.delete(id) &&
       EventManager.removeListener(type, id)
     );
+  }
+
+  public streamEvents<E extends EventData>(type: string): AsyncIterator<Event<E>> {
+    return AsyncIterator.from(($yield) => {
+      this.addListener<E>(type, $yield);
+    });
   }
 
   public handleEvent<E extends EventData>(type: string, event: Event<E>): void {

@@ -28,19 +28,14 @@ export class HomingGun extends Gun {
     const [target] = WorldManager.getEntities()
       .filter((entity) => !(source === entity || projectile === entity))
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
-      .map<[Unit | undefined, number]>((entity) => [
-        entity,
-        entity.position.distanceTo(projectile.position),
+      .filter((unit) => unit.isAlive)
+      .map<[Unit | undefined, number]>((unit) => [
+        unit,
+        unit.position.distanceTo(projectile.position),
       ])
       .fold(
-        [<Unit | undefined>undefined, Number.POSITIVE_INFINITY],
-        (min, cur) => {
-          if (cur[1] < min[1]) {
-            return cur;
-          } else {
-            return min;
-          }
-        }
+        [undefined as Unit | undefined, Number.POSITIVE_INFINITY],
+        (min, cur) => cur[1] < min[1] ? cur : min,
       );
     return target;
   }
@@ -51,11 +46,11 @@ export class HomingGun extends Gun {
     base.maxSpeed = this.projectileSpeed;
     base.target = this.selectTarget(base, source);
 
-    base.addListener<KillEvent>('KillEvent', (event) => {
-      if (event.data.targetID === base.target?.id) {
+    base.streamEvents<KillEvent>('KillEvent')
+      .filter(async (event) => event.data.targetID === base.target?.id)
+      .forEach(async () => {
         base.target = this.selectTarget(base, source);
-      }
-    });
+      });
 
     base.duration = 3;
     return base;

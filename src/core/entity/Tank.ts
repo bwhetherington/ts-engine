@@ -49,12 +49,8 @@ export class Tank extends Unit {
     this.fireTimer = Math.max(0, this.fireTimer - dt);
   }
 
-  public damage(amount: number, source?: Unit): void {
-    log.trace('damage ' + amount + ', source ' + source?.toString());
-    if (amount > 0) {
-      const actualAmount = Math.max(1, amount - this.armor);
-      super.damage(actualAmount, source);
-    }
+  public calculateDamageIn(amount: number): number {
+    return Math.max(1, amount - this.armor);
   }
 
   protected getFireParameter(): number {

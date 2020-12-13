@@ -38,7 +38,7 @@ export class Hero extends Tank {
 
     this.type = Hero.typeName;
 
-    this.setWeapon('MachineGun');
+    this.setWeapon('HomingGun');
 
     this.setExperience(0);
     this.setLevelInternal(1);
@@ -96,14 +96,24 @@ export class Hero extends Tank {
         }
       });
     } else {
-      this.addListener<KillEvent>('KillEvent', (event) => {
-        const { sourceID, targetID } = event.data;
-        const target = WorldManager.getEntity(targetID);
-        const source = WorldManager.getEntity(sourceID);
-        if (target instanceof Unit && this === source) {
-          this.addExperience(target.getXPWorth());
-        }
-      });
+      this.streamEvents<KillEvent>('KillEvent')
+        .map(async (event) => {
+          const { targetID, sourceID } = event.data;
+          const target = WorldManager.getEntity(targetID);
+          const source = WorldManager.getEntity(sourceID);
+          return { target, source };
+        })
+        .filterMap(async ({ target, source }) => (target instanceof Unit && this === source) ? target : undefined)
+        .forEach(async (target) => this.addExperience(target.getXPWorth()));
+
+      // this.addListener<KillEvent>('KillEvent', (event) => {
+      //   const { sourceID, targetID } = event.data;
+      //   const target = WorldManager.getEntity(targetID);
+      //   const source = WorldManager.getEntity(sourceID);
+      //   if (target instanceof Unit && this === source) {
+      //     this.addExperience(target.getXPWorth());
+      //   }
+      // });
     }
   }
 
