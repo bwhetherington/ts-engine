@@ -273,7 +273,9 @@ export class Entity implements Bounded, Serializable, Renderable {
     );
   }
 
-  public streamEvents<E extends EventData>(type: string): AsyncIterator<Event<E>> {
+  public streamEvents<E extends EventData>(
+    type: string
+  ): AsyncIterator<Event<E>> {
     return AsyncIterator.from(($yield) => {
       this.addListener<E>(type, $yield);
     });

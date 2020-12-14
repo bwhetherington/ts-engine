@@ -97,15 +97,11 @@ export interface IterableObject<T> {
   [key: string]: T;
 }
 
-function* iterateObjectInternal<T>(obj: IterableObject<T>): Generator<T> {
-  for (const key in obj) {
-    yield obj[key];
-  }
-}
-
 function* iterateKeysInternal<T>(obj: IterableObject<T>): Generator<string> {
   for (const key in obj) {
-    yield key;
+    if (obj.hasOwnProperty(key)) {
+      yield key;
+    }
   }
 }
 
@@ -133,10 +129,6 @@ function* enumerate<T>(gen: Generator<T>): Generator<[T, number]> {
   }
 }
 
-export function iterateObject<T>(obj: IterableObject<T>): Iterator<T> {
-  return iterator(iterateObjectInternal(obj));
-}
-
 export function iterator<T>(gen: Iterable<T>): Iterator<T> {
   return new Iterator(gen);
 }
@@ -160,6 +152,18 @@ export class Iterator<T> implements Generator<T> {
     } else {
       this.generator = generator;
     }
+  }
+
+  public static keys<T>(obj: IterableObject<T>): Iterator<string> {
+    return iterator(iterateKeysInternal(obj));
+  }
+
+  public static values<T>(obj: IterableObject<T>): Iterator<T> {
+    return Iterator.keys(obj).map((key) => obj[key]);
+  }
+
+  public static entries<T>(obj: IterableObject<T>): Iterator<[string, T]> {
+    return Iterator.keys(obj).map((key) => [key, obj[key]]);
   }
 
   public static array<T>(array: T[]): Iterator<T> {

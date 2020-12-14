@@ -1,5 +1,5 @@
-import { EventData, EventManager, Handler } from 'core/event';
-import { iterateKeys } from 'core/iterator';
+import { EventData, EventManager, Handler, Event } from 'core/event';
+import { AsyncIterator, iterateKeys } from 'core/iterator';
 import { Props } from 'client/components/react';
 import React from 'react';
 
@@ -46,6 +46,14 @@ export class Component<P = {}, S = {}> extends React.Component<
     const newHandlers = { ...this.state.handlers, [type]: newList };
     this.updateState({
       handlers: newHandlers,
+    });
+  }
+
+  protected streamEvents<E extends EventData>(
+    type: string
+  ): AsyncIterator<Event<E>> {
+    return AsyncIterator.from(($yield) => {
+      this.addListener<E>(type, $yield);
     });
   }
 

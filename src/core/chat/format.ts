@@ -1,10 +1,20 @@
-import { Iterator } from "core/iterator";
-import { Data } from "core/serialize";
-import { isTextColor, isTextStyle, TextColor, TextComponent, TextComponents, TextStyle } from "core/chat";
+import { Iterator } from 'core/iterator';
+import { Data } from 'core/serialize';
+import {
+  isTextColor,
+  isTextStyle,
+  TextColor,
+  TextComponent,
+  TextComponents,
+  TextStyle,
+} from 'core/chat';
 
-const MESSAGE_FORMAT = '{color=$authorColor,style=bold|hello $authorName}: $messageContent';
+const MESSAGE_FORMAT =
+  '{color=$authorColor,style=bold|hello $authorName}: $messageContent';
 
-type ComponentFormatter = (input: Data) => Generator<TextComponent | string | null>;
+type ComponentFormatter = (
+  input: Data
+) => Generator<TextComponent | string | null>;
 
 type Node = TextNode | VariableNode | FormatNode;
 
@@ -152,7 +162,10 @@ export class FormatParser {
         const [propName, propValueRaw] = propPair.split('=');
 
         const propNode = new FormatParser(propValueRaw).nextNode();
-        if (propNode?.kind === NodeKind.TextNode || propNode?.kind === NodeKind.VariableNode) {
+        if (
+          propNode?.kind === NodeKind.TextNode ||
+          propNode?.kind === NodeKind.VariableNode
+        ) {
           propsParsed[propName] = propNode;
         }
       }
@@ -160,7 +173,9 @@ export class FormatParser {
       // Parse content
       const contentParser = new FormatParser(content);
       const contentParsed = Iterator.generator(contentParser.parseNodes())
-        .filterMap((node) => (node && node.kind !== NodeKind.FormatNode) ? node : undefined)
+        .filterMap((node) =>
+          node && node.kind !== NodeKind.FormatNode ? node : undefined
+        )
         .toArray();
 
       return {
@@ -175,7 +190,10 @@ export class FormatParser {
   }
 }
 
-function evaluate(node: TextNode | VariableNode, input: Data): string | undefined {
+function evaluate(
+  node: TextNode | VariableNode,
+  input: Data
+): string | undefined {
   switch (node.kind) {
     case NodeKind.TextNode:
       return node.text;
@@ -237,16 +255,21 @@ export class TextFormatter {
 
   private createFormatFormatter(node: FormatNode): ComponentFormatter {
     return function* (input: Data) {
-      const color = validateColor((node.color && evaluate(node.color, input)) ?? 'none');
-      const styles = node.styles?.map((style) => validateStyle(evaluate(style, input) ?? 'normal')) ?? [];
+      const color = validateColor(
+        (node.color && evaluate(node.color, input)) ?? 'none'
+      );
+      const styles =
+        node.styles?.map((style) =>
+          validateStyle(evaluate(style, input) ?? 'normal')
+        ) ?? [];
       const content = Iterator.array(node.content)
         .filterMap((node) => evaluate(node, input))
         .toArray()
         .join('');
-      yield { 
+      yield {
         style: {
-          color, 
-          styles, 
+          color,
+          styles,
         },
         content,
       };
@@ -259,4 +282,3 @@ export class TextFormatter {
       .toArray();
   }
 }
-

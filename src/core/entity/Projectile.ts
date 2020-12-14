@@ -1,14 +1,11 @@
-import { Entity, CollisionEvent, Unit, WorldManager } from 'core/entity';
-import { GraphicsContext, Color, rgb, rgba } from 'core/graphics';
+import { Entity, Unit, WorldManager } from 'core/entity';
+import { GraphicsContext, rgba } from 'core/graphics';
 import { LogManager } from 'core/log';
 import { CollisionLayer } from './util';
 import { Data } from 'core/serialize';
 import { NetworkManager } from 'core/net';
-import { Explosion } from './Explosion';
-import { sleep, clamp } from 'core/util';
-import { WHITE } from 'core/graphics/color';
 import { UUID } from 'core/uuid';
-import { iterator, iterateObject } from 'core/iterator';
+import { iterator } from 'core/iterator';
 import { Echo } from './Echo';
 import { EventManager } from 'core/event';
 

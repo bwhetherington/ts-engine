@@ -269,7 +269,7 @@ export class HDCanvas implements GraphicsContext {
     bottomWidth: number,
     topWidth: number,
     height: number,
-    color: Color,
+    color: Color
   ): void {
     const ctx = this.curContext;
     if (ctx) {
@@ -297,8 +297,14 @@ export class HDCanvas implements GraphicsContext {
 
       // Compute bounds
       const width = Math.max(topWidth, bottomWidth);
-      
-      this.bounds?.insertRawTransformed(centerX - width / 2, centerY - height / 2, width, height, this.transform);
+
+      this.bounds?.insertRawTransformed(
+        centerX - width / 2,
+        centerY - height / 2,
+        width,
+        height,
+        this.transform
+      );
     }
   }
 
@@ -307,7 +313,7 @@ export class HDCanvas implements GraphicsContext {
     centerY: number,
     vertexCount: number,
     radius: number,
-    color: Color,
+    color: Color
   ): void {
     const vertices = [];
     for (let i = 0; i < vertexCount; i++) {
@@ -317,13 +323,16 @@ export class HDCanvas implements GraphicsContext {
       vertices.push({ x, y });
     }
     this.polygon(vertices, color);
-    this.bounds?.insertRawTransformed(centerX - radius, centerY - radius, radius * 2, radius * 2, this.transform);
+    this.bounds?.insertRawTransformed(
+      centerX - radius,
+      centerY - radius,
+      radius * 2,
+      radius * 2,
+      this.transform
+    );
   }
 
-  public polygon(
-    vertices: VectorLike[],
-    color: Color,
-  ): void {
+  public polygon(vertices: VectorLike[], color: Color): void {
     const ctx = this.curContext;
     if (ctx) {
       ctx.fillStyle = toCss(color);
@@ -333,7 +342,7 @@ export class HDCanvas implements GraphicsContext {
 
       this.setRound(ctx);
 
-      const {x, y} = vertices[0];
+      const { x, y } = vertices[0];
 
       ctx.beginPath();
       ctx.moveTo(x, y);

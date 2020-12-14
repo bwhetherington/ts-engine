@@ -1,5 +1,11 @@
 import { EventManager, StepEvent } from 'core/event';
-import { Timer, ServerLogger, TimerManager, loadWorld, loadFile } from 'server/util';
+import {
+  Timer,
+  ServerLogger,
+  TimerManager,
+  loadWorld,
+  loadFile,
+} from 'server/util';
 import { LogManager } from 'core/log';
 import { Server, createServer, ServerHTTPClient } from 'server/net';
 import { NetworkManager, SyncEvent } from 'core/net';

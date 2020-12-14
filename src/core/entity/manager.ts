@@ -1,10 +1,4 @@
-import {
-  Rectangle,
-  QuadTree,
-  Bounded,
-  Vector,
-  Partioner,
-} from 'core/geometry';
+import { Rectangle, QuadTree, Bounded, Vector, Partioner } from 'core/geometry';
 import { GraphicsContext, CameraManager, Renderable } from 'core/graphics';
 import {
   Entity,
@@ -37,7 +31,7 @@ import {
 import { LogManager } from 'core/log';
 import { EventManager, StepEvent } from 'core/event';
 import { Serializable, Data } from 'core/serialize';
-import { Iterator, iterateObject, iterator } from 'core/iterator';
+import { Iterator, iterator } from 'core/iterator';
 import { diff } from 'core/util';
 import { SyncEvent } from 'core/net';
 import { WALL_COLOR } from 'core/entity/Geometry';
@@ -261,7 +255,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public getEntities(): Iterator<Entity> {
-    return iterateObject(this.entities);
+    return Iterator.values(this.entities);
   }
 
   private *queryInternal(box: Rectangle): Generator<Entity> {

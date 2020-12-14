@@ -76,13 +76,12 @@ export class Tank extends Unit {
     const { width, height } = this.boundingBox;
 
     // Draw turret
-    GraphicsPipeline.pipe()
-      .run(ctx, (ctx) => {
-        this.renderCannon(ctx);
+    GraphicsPipeline.pipe().run(ctx, (ctx) => {
+      this.renderCannon(ctx);
 
-        // Draw main tank body
-        ctx.ellipse(-width / 2, -height / 2, width, height, color);
-      });
+      // Draw main tank body
+      ctx.ellipse(-width / 2, -height / 2, width, height, color);
+    });
   }
 
   public serialize(): Data {

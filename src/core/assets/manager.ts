@@ -23,12 +23,18 @@ export class AssetManager {
     }
   }
 
-  public async load(path: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {
+  public async load(
+    path: string,
+    encoding: BufferEncoding = 'utf-8'
+  ): Promise<string> {
     const buf = await this.loadBuffer(path);
     return buf.toString(encoding);
   }
 
-  public async loadJSON(path: string, encoding: BufferEncoding = 'utf-8'): Promise<Data> {
+  public async loadJSON(
+    path: string,
+    encoding: BufferEncoding = 'utf-8'
+  ): Promise<Data> {
     const str = await this.load(path, encoding);
     const obj = JSON.parse(str);
     return obj;

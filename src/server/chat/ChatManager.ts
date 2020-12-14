@@ -22,7 +22,7 @@ import { FormManager } from 'core/form';
 import * as process from 'process';
 import { CommandEntry } from 'server/chat';
 import * as commands from 'server/chat/commands';
-import { iterateObject, Iterator } from 'core/iterator';
+import { Iterator } from 'core/iterator';
 import { RNGManager } from 'core/random';
 import { TextFormatter } from 'core/chat/format';
 
@@ -30,7 +30,8 @@ const log = LogManager.forFile(__filename);
 
 const DEFAULT_NAME = 'Unknown';
 
-const MESSAGE_FORMAT = '{style=bold|<}{color=$authorColor,style=bold|$authorName}{style=bold|>} $messageContent';
+const MESSAGE_FORMAT =
+  '{style=bold|<}{color=$authorColor,style=bold|$authorName}{style=bold|>} $messageContent';
 const MESSAGE_FORMATTER = new TextFormatter(MESSAGE_FORMAT);
 
 type CommandHandler = (player: Player, ...args: string[]) => void;
@@ -47,7 +48,7 @@ export class ChatManager {
   private aliases: { [alias: string]: string } = {};
 
   private loadCommands(): void {
-    iterateObject(commands).forEach(this.registerCommandEntry.bind(this));
+    Iterator.values(commands).forEach(this.registerCommandEntry.bind(this));
   }
 
   public registerCommandEntry(command: CommandEntry): void {
@@ -95,10 +96,7 @@ export class ChatManager {
     }
   }
 
-  private formatMessage(
-    author: Player,
-    content: string
-  ): TextComponents {
+  private formatMessage(author: Player, content: string): TextComponents {
     return MESSAGE_FORMATTER.format({
       authorName: author.name,
       authorColor: author.isAdmin() ? 'red' : 'none',
@@ -153,7 +151,7 @@ export class ChatManager {
       'help',
       (player) => {
         // const components = renderInfo('Command Directory');
-        const lines = iterateObject(this.commands)
+        const lines = Iterator.values(this.commands)
           .filter(
             (entry) => entry.permissionLevel <= player.getPermissionLevel()
           )
@@ -275,7 +273,12 @@ export class ChatManager {
             WorldManager.boundingBox.y;
           const angle = RNGManager.nextFloat(0, 2 * Math.PI);
           const variantNum = RNGManager.next();
-          const variant = variantNum < 0.1 ? FeedVariant.Large : variantNum < 0.4 ? FeedVariant.Medium : FeedVariant.Small;
+          const variant =
+            variantNum < 0.1
+              ? FeedVariant.Large
+              : variantNum < 0.4
+              ? FeedVariant.Medium
+              : FeedVariant.Small;
           entity.setVariant(variant);
           entity.setPositionXY(x, y);
           entity.angle = angle;

@@ -89,13 +89,16 @@ export const pre: CommandEntry = {
   help: 'preformatted message',
   permissionLevel: 0,
   async handler(player) {
-    ChatManager.sendComponents([
-      {
-        content: JSON.stringify(player.serialize(), null, 2),
-        style: {
-          pre: true
-        }
-      }
-    ], player);
-  }
-}
+    ChatManager.sendComponents(
+      [
+        {
+          content: JSON.stringify(player.serialize(), null, 2),
+          style: {
+            pre: true,
+          },
+        },
+      ],
+      player
+    );
+  },
+};

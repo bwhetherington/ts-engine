@@ -41,18 +41,15 @@ export interface GraphicsContext {
     bottomWidth: number,
     topWidth: number,
     height: number,
-    color: Color,
+    color: Color
   ): void;
-  polygon(
-    vertices: VectorLike[],
-    color: Color,
-  ): void;
+  polygon(vertices: VectorLike[], color: Color): void;
   regularPolygon(
     x: number,
     y: number,
     vertexCount: number,
     radius: number,
-    color: Color,
+    color: Color
   ): void;
   line(x1: number, y1: number, x2: number, y2: number, color: Color): void;
   translate(x: number, y: number): void;

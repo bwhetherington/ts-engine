@@ -124,7 +124,10 @@ export class EventManager {
     });
   }
 
-  public streamEvents<E extends EventData>(type: string, addListener?: (type: string, handler?: Handler<E>) => void): AsyncIterator<Event<E>> {
+  public streamEvents<E extends EventData>(
+    type: string,
+    addListener?: (type: string, handler?: Handler<E>) => void
+  ): AsyncIterator<Event<E>> {
     return AsyncIterator.from(($yield) => {
       (addListener ?? this.addListener)(type, $yield);
     });

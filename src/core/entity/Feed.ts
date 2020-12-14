@@ -1,8 +1,8 @@
-import { Entity, Unit } from "core/entity";
-import { EventManager } from "core/event";
-import { GraphicsContext, rgb } from "core/graphics";
-import { GraphicsPipeline } from "core/graphics/pipe";
-import { Data } from "core/serialize";
+import { Entity, Unit } from 'core/entity';
+import { EventManager } from 'core/event';
+import { GraphicsContext, rgb } from 'core/graphics';
+import { GraphicsPipeline } from 'core/graphics/pipe';
+import { Data } from 'core/serialize';
 
 export enum FeedVariant {
   Small = 0,
@@ -79,7 +79,13 @@ export class Feed extends Unit {
     GraphicsPipeline.pipe()
       .rotate(EventManager.timeElapsed / 10)
       .run(ctx, (ctx) => {
-        ctx.regularPolygon(0, 0, SIDE_COUNTS[this.variant], width / 2, this.getColor());
+        ctx.regularPolygon(
+          0,
+          0,
+          SIDE_COUNTS[this.variant],
+          width / 2,
+          this.getColor()
+        );
       });
   }
 }

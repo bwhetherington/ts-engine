@@ -1,4 +1,7 @@
-async function* map<T, U>(gen: AsyncGenerator<T>, fn: (x: T) => Promise<U>): AsyncGenerator<U> {
+async function* map<T, U>(
+  gen: AsyncGenerator<T>,
+  fn: (x: T) => Promise<U>
+): AsyncGenerator<U> {
   for await (const x of gen) {
     yield await fn(x);
   }
@@ -13,7 +16,10 @@ async function* flatMap<T, U>(
   }
 }
 
-async function* filter<T>(gen: AsyncGenerator<T>, fn: (x: T) => Promise<boolean>): AsyncGenerator<T> {
+async function* filter<T>(
+  gen: AsyncGenerator<T>,
+  fn: (x: T) => Promise<boolean>
+): AsyncGenerator<T> {
   for await (const x of gen) {
     if (await fn(x)) {
       yield x;
@@ -44,7 +50,10 @@ async function* filterMap<T, U>(
   }
 }
 
-async function* take<T>(gen: AsyncGenerator<T>, num: number): AsyncGenerator<T> {
+async function* take<T>(
+  gen: AsyncGenerator<T>,
+  num: number
+): AsyncGenerator<T> {
   let i = 0;
   for await (const x of gen) {
     if (i < num) {
@@ -56,7 +65,10 @@ async function* take<T>(gen: AsyncGenerator<T>, num: number): AsyncGenerator<T> 
   }
 }
 
-async function* takeWhile<T>(gen: AsyncGenerator<T>, fn: (x: T) => Promise<boolean>): AsyncGenerator<T> {
+async function* takeWhile<T>(
+  gen: AsyncGenerator<T>,
+  fn: (x: T) => Promise<boolean>
+): AsyncGenerator<T> {
   for await (const x of gen) {
     if (await fn(x)) {
       yield x;
@@ -66,7 +78,10 @@ async function* takeWhile<T>(gen: AsyncGenerator<T>, fn: (x: T) => Promise<boole
   }
 }
 
-async function* skip<T>(gen: AsyncGenerator<T>, num: number): AsyncGenerator<T> {
+async function* skip<T>(
+  gen: AsyncGenerator<T>,
+  num: number
+): AsyncGenerator<T> {
   let i = 0;
   for await (const x of gen) {
     if (i >= num) {
@@ -76,24 +91,32 @@ async function* skip<T>(gen: AsyncGenerator<T>, num: number): AsyncGenerator<T> 
   }
 }
 
-async function* skipWhile<T>(gen: AsyncGenerator<T>, fn: (x: T) => Promise<boolean>): AsyncGenerator<T> {
+async function* skipWhile<T>(
+  gen: AsyncGenerator<T>,
+  fn: (x: T) => Promise<boolean>
+): AsyncGenerator<T> {
   let conditionMet = false;
   for await (const x of gen) {
-    if (conditionMet || await fn(x)) {
+    if (conditionMet || (await fn(x))) {
       yield x;
       conditionMet = true;
     }
   }
 }
 
-async function* use<T>(gen: AsyncGenerator<T>, fn: (x: T) => Promise<void>): AsyncGenerator<T> {
+async function* use<T>(
+  gen: AsyncGenerator<T>,
+  fn: (x: T) => Promise<void>
+): AsyncGenerator<T> {
   for await (const x of gen) {
     await fn(x);
     yield x;
   }
 }
 
-async function* enumerate<T>(gen: AsyncGenerator<T>): AsyncGenerator<[T, number]> {
+async function* enumerate<T>(
+  gen: AsyncGenerator<T>
+): AsyncGenerator<[T, number]> {
   let i = 0;
   for await (const element of gen) {
     yield [element, i];
@@ -108,7 +131,9 @@ class IteratorBuilder<T> {
     this.resolver = resolve;
   });
 
-  public static build<T>(body: ($yield: (arg: T) => void) => void): IteratorBuilder<T> {
+  public static build<T>(
+    body: ($yield: (arg: T) => void) => void
+  ): IteratorBuilder<T> {
     const builder = new IteratorBuilder<T>();
     const $yield = (arg: T) => {
       builder.yieldQueue.push(arg);
@@ -145,7 +170,9 @@ export class AsyncIterator<T> {
     return new AsyncIterator(generator);
   }
 
-  public static from<T>(body: ($yield: (arg: T) => void) => void): AsyncIterator<T> {
+  public static from<T>(
+    body: ($yield: (arg: T) => void) => void
+  ): AsyncIterator<T> {
     const builder = IteratorBuilder.build(body);
     return AsyncIterator.generator(builder.toGenerator());
   }
@@ -178,7 +205,10 @@ export class AsyncIterator<T> {
     return AsyncIterator.generator(filterMap(this.generator, fn));
   }
 
-  public async fold<U>(initial: U, fn: (acc: U, x: T) => Promise<U>): Promise<U> {
+  public async fold<U>(
+    initial: U,
+    fn: (acc: U, x: T) => Promise<U>
+  ): Promise<U> {
     let output = initial;
     for await (const x of this.generator) {
       output = await fn(output, x);
@@ -260,7 +290,7 @@ export class AsyncIterator<T> {
    * @param fn A predicate function
    */
   public async any(fn: (x: T) => Promise<boolean>): Promise<boolean> {
-    return !!await this.find(fn);
+    return !!(await this.find(fn));
   }
 
   /**
@@ -268,8 +298,8 @@ export class AsyncIterator<T> {
    * predicate.
    * @param fn A predicate function
    */
-  public async  all(fn: (x: T) => Promise<boolean>): Promise<boolean> {
-    return !await this.any(async (x) => !await fn(x));
+  public async all(fn: (x: T) => Promise<boolean>): Promise<boolean> {
+    return !(await this.any(async (x) => !(await fn(x))));
   }
 
   /**

@@ -35,7 +35,7 @@ export class HomingGun extends Gun {
       ])
       .fold(
         [undefined as Unit | undefined, Number.POSITIVE_INFINITY],
-        (min, cur) => cur[1] < min[1] ? cur : min,
+        (min, cur) => (cur[1] < min[1] ? cur : min)
       );
     return target;
   }
@@ -46,7 +46,8 @@ export class HomingGun extends Gun {
     base.maxSpeed = this.projectileSpeed;
     base.target = this.selectTarget(base, source);
 
-    base.streamEvents<KillEvent>('KillEvent')
+    base
+      .streamEvents<KillEvent>('KillEvent')
       .filter(async (event) => event.data.targetID === base.target?.id)
       .forEach(async () => {
         base.target = this.selectTarget(base, source);

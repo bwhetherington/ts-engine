@@ -4,7 +4,7 @@ import { LogManager } from 'core/log';
 import { SyncEvent, NetworkManager } from 'core/net';
 import { EventManager } from 'core/event';
 import { diff } from 'core/util';
-import { Iterator, iterateObject } from 'core/iterator';
+import { Iterator } from 'core/iterator';
 import { UUID } from 'core/uuid';
 import { isEmpty } from 'core/util/object';
 import { MetricsEvent } from 'core/metrics';
@@ -156,7 +156,7 @@ export class PlayerManager implements Serializable {
   }
 
   public getPlayers(): Iterator<Player> {
-    return iterateObject(this.players);
+    return Iterator.values(this.players);
   }
 
   public lookup(name: string): Player[] {

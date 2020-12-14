@@ -13,11 +13,7 @@ import {
 import { NetworkManager } from 'core/net';
 import { EventManager, StepEvent } from 'core/event';
 import { Key, KeyAction, KeyEvent } from 'core/input';
-import {
-  Column,
-  Panel,
-  StringInput,
-} from 'client/components/react/common';
+import { Column, Panel, StringInput } from 'client/components/react/common';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
@@ -184,34 +180,32 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   public componentDidMount(): void {
-    this.addListener<TextMessageOutEvent>('TextMessageOutEvent', (event) => {
-      const lines = concatLine(
-        this.state.lines,
-        event.data.components,
-        this.props.lineLimit
-      );
-      this.updateState({
-        lines,
-        lastFlash: EventManager.timeElapsed,
-        isFresh: true,
-      });
-      this.scrollToBottom();
-    });
-
-    this.addListener<StepEvent>('StepEvent', () => {
-      if (EventManager.timeElapsed - this.state.lastFlash >= 5) {
+    this.streamEvents<TextMessageOutEvent>('TextMessageOutEvent').forEach(
+      async ({ data: { components } }) => {
+        const lines = concatLine(
+          this.state.lines,
+          components,
+          this.props.lineLimit
+        );
         this.updateState({
-          isFresh: false,
+          lines,
+          lastFlash: EventManager.timeElapsed,
+          isFresh: true,
         });
+        this.scrollToBottom();
       }
-    });
+    );
 
-    this.addListener<KeyEvent>('KeyEvent', (event) => {
-      const { action, key } = event.data;
-      if (action === KeyAction.KeyDown && key === Key.Enter) {
-        this.inputRef?.current?.focus();
-      }
-    });
+    this.streamEvents<StepEvent>('StepEvent')
+      .filter(async () => EventManager.timeElapsed - this.state.lastFlash >= 5)
+      .forEach(async () => this.updateState({ isFresh: false }));
+
+    this.streamEvents<KeyEvent>('KeyEvent')
+      .filter(
+        async ({ data: { action, key } }) =>
+          action === KeyAction.KeyDown && key === Key.Enter
+      )
+      .forEach(async () => this.inputRef?.current?.focus());
   }
 
   private renderLines(): React.ReactElement[] {

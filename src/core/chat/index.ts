@@ -10,7 +10,16 @@ export type TextColor =
   | 'blue'
   | 'purple';
 
-const TEXT_COLORS = ['none', 'red', 'orange', 'yellow', 'green', 'aqua', 'blue', 'purple'];
+const TEXT_COLORS = [
+  'none',
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'aqua',
+  'blue',
+  'purple',
+];
 
 export function isTextColor(str: string): str is TextColor {
   return TEXT_COLORS.includes(str);
