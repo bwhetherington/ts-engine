@@ -10,6 +10,7 @@ import {
   Column,
   Row,
   FlexPadding,
+  PanelHeader,
 } from 'client/components/react/common';
 import { Form, Field, Entry } from 'core/form';
 
@@ -196,20 +197,24 @@ export class FormComponent extends Component<FormProps, FormState> {
     return (
       <Panel>
         <Container>
-          <h1>{this.props.form.label}</h1>
-          {this.props.form.description ? (
-            <p>{this.props.form.description}</p>
-          ) : undefined}
-          <form onSubmit={this.onSubmit}>
-            <Column>{this.renderEntries()}</Column>
-            {this.renderMessages()}
-            <Section>
-              <Row>
-                <FlexPadding />
-                {this.renderSubmitButtons()}
-              </Row>
-            </Section>
-          </form>
+          <Column>
+            <PanelHeader>
+              <h1>{this.props.form.label}</h1>
+            </PanelHeader>
+            {this.props.form.description ? (
+              <p>{this.props.form.description}</p>
+            ) : undefined}
+            <form onSubmit={this.onSubmit}>
+              <Column>{this.renderEntries()}</Column>
+              {this.renderMessages()}
+              <Section>
+                <Row>
+                  <FlexPadding />
+                  {this.renderSubmitButtons()}
+                </Row>
+              </Section>
+            </form>
+          </Column>
         </Container>
       </Panel>
     );

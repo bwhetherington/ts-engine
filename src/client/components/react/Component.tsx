@@ -52,7 +52,7 @@ export class Component<P = {}, S = {}> extends React.Component<
   protected streamEvents<E extends EventData>(
     type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(($yield) => {
+    return AsyncIterator.from(({ $yield }) => {
       this.addListener<E>(type, $yield);
     });
   }

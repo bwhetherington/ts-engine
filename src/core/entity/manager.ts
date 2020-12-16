@@ -51,6 +51,8 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   public previousState: Record<string, Data> = {};
   private toDelete: string[] = [];
   private entityCount: number = 0;
+  private unitCount: number = 0;
+  private entityCounts: Record<string, number> = {};
 
   private graph?: Graph;
   private shouldPopulateGraph: boolean = false;
@@ -203,7 +205,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     // this.graph?.render(ctx);
   }
 
-  private *getEntitiesLayerOrderedInternal(): Generator<Entity> {
+  private *getEntitiesLayerOrderedInternal(): Iterable<Entity> {
     for (const layer of this.collisionLayers) {
       for (const entity of layer) {
         yield entity;
@@ -228,11 +230,27 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     }
   }
 
+  private addEntityCount(entity: Entity): void {
+    if (this.entityCounts.hasOwnProperty(entity.type)) {
+      this.entityCounts[entity.type] += 1;
+    }
+  }
+
+  private removeEntityCount(entity: Entity): void {
+    if (this.entityCounts.hasOwnProperty(entity.type)) {
+      this.entityCounts[entity.type] -= 1;
+    }
+  }
+
   public add(entity: Entity): void {
     this.entities[entity.id] = entity;
     entity.load();
     log.trace('add ' + entity.toString());
     this.entityCount += 1;
+    if (entity instanceof Unit) {
+      this.unitCount += 1;
+    }
+    this.addEntityCount(entity);
 
     if (entity.collisionLayer === CollisionLayer.Geometry) {
       this.shouldPopulateGraph = true;
@@ -251,6 +269,10 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       log.trace('remove ' + actual.toString());
       delete this.entities[actual.id];
       this.entityCount -= 1;
+      if (actual instanceof Unit) {
+        this.unitCount -= 1;
+      }
+      this.removeEntityCount(actual);
     }
   }
 
@@ -258,7 +280,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     return Iterator.values(this.entities);
   }
 
-  private *queryInternal(box: Rectangle): Generator<Entity> {
+  private *queryInternal(box: Rectangle): Iterable<Entity> {
     for (const entity of this.space.query(box)) {
       yield entity;
     }
@@ -277,7 +299,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.toDelete = [];
 
     // Step each entity
-    for (const entity of this.getEntities()) {
+    this.getEntities().forEach((entity) => {
       if (entity.markedForDelete) {
         this.toDelete.push(entity.id);
       }
@@ -312,31 +334,28 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         }
 
         if (didCollide) {
-          const event = {
-            type: 'CollisionEvent',
-            data: <CollisionEvent>{
-              collider: entity,
-            },
-          };
           entity.collide();
-          EventManager.emit(event);
+          EventManager.emit<CollisionEvent>({
+            type: 'CollisionEvent',
+            data: { collider: entity },
+          });
         }
 
         entity.addPositionXY(dx, dy);
       }
-    }
+    });
 
     // Reinsert each entity into the quad tree
     this.space.clear();
     this.collisionLayers = [[], [], [], [], []];
 
-    for (const entity of this.getEntities()) {
+    this.getEntities().forEach((entity) => {
       if (entity.isCollidable) {
         this.space.insert(entity);
       }
       const layerIndex = entity.collisionLayer;
       this.collisionLayers[layerIndex]?.push(entity);
-    }
+    });
 
     this.populateGraph();
 
@@ -457,6 +476,10 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     return this.entityCount;
   }
 
+  public getUnitCount(): number {
+    return this.unitCount;
+  }
+
   public isInBounds(rect: Rectangle): boolean {
     return this.boundingBox.contains(rect);
   }
@@ -488,7 +511,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       // Check if we collide with any entities
       const query = this.querySet(cursor);
 
-      const candidates = iterator(query)
+      const candidates = Iterator.from(query)
         .filter((candidate) => candidate.boundingBox.intersects(cursor))
         .filter(validate);
       for (const candidate of candidates) {

@@ -19,6 +19,9 @@ export interface GraphicsOptions {
 export type GraphicsProc = (ctx: GraphicsContext) => void;
 
 export interface GraphicsContext {
+  getWidth(): number;
+  getHeight(): number;
+
   setOptions(options: Partial<GraphicsOptions>): void;
   pushOptions(options: Partial<GraphicsOptions>): void;
   popOptions(): Partial<GraphicsOptions> | undefined;

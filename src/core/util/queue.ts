@@ -23,7 +23,7 @@ export class Queue<T> {
     return this.size() === 0;
   }
 
-  public *drain(): Generator<T> {
+  public *drain(): Iterable<T> {
     while (!this.isEmpty()) {
       const element = this.dequeue();
       if (element !== undefined) {
@@ -32,7 +32,7 @@ export class Queue<T> {
     }
   }
 
-  private *iteratorInternal(): Generator<T> {
+  private *iteratorInternal(): Iterable<T> {
     let current = this.head;
     while (current !== undefined) {
       yield current.value;

@@ -86,11 +86,10 @@ export class EventManager {
   }
 
   public step(dt: number): void {
-    const event = {
+    this.emit<StepEvent>({
       type: 'StepEvent',
       data: { dt },
-    };
-    this.emit(event);
+    });
     this.pollEvents();
     this.timeElapsed += dt;
     this.stepCount += 1;
@@ -125,11 +124,10 @@ export class EventManager {
   }
 
   public streamEvents<E extends EventData>(
-    type: string,
-    addListener?: (type: string, handler?: Handler<E>) => void
+    type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(($yield) => {
-      (addListener ?? this.addListener)(type, $yield);
+    return AsyncIterator.from(({ $yield }) => {
+      this.addListener(type, $yield);
     });
   }
 }

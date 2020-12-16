@@ -13,7 +13,7 @@ import {
 import { NetworkManager } from 'core/net';
 import { EventManager, StepEvent } from 'core/event';
 import { Key, KeyAction, KeyEvent } from 'core/input';
-import { Column, Panel, StringInput } from 'client/components/react/common';
+import { Column, Panel, PanelContainer, StringInput } from 'client/components/react/common';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
@@ -280,7 +280,7 @@ export class Chat extends Component<ChatProps, ChatState> {
           pointerEvents: 'none',
         };
     return (
-      <Panel style={panelStyle}>
+      <PanelContainer style={panelStyle}>
         <Column>
           <ChatContainer>
             {this.isFocused() ? this.renderLines() : <div />}
@@ -300,7 +300,7 @@ export class Chat extends Component<ChatProps, ChatState> {
             />
           </ChatForm>
         </Column>
-      </Panel>
+      </PanelContainer>
     );
   }
 }

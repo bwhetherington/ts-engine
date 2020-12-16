@@ -31,7 +31,7 @@ export abstract class AbstractRNG implements RNG {
     return this.next() < chance;
   }
 
-  private *iteratorInternal(): Generator<number> {
+  private *iteratorInternal(): Iterable<number> {
     while (true) {
       yield this.next();
     }

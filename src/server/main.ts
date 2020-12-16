@@ -90,28 +90,28 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  // EventManager.runPeriodic(0.5, () => {
-  //   if (WorldManager.getEntityCount() < 60) {
-  //     const num = RNGManager.next();
-  //     const position = WorldManager.getRandomPosition();
-  //     if (num < 0.5) {
-  //       let size;
-  //       if (num < 0.1) {
-  //         size = FeedVariant.Large;
-  //       } else if (num < 0.25) {
-  //         size = FeedVariant.Medium;
-  //       } else {
-  //         size = FeedVariant.Small;
-  //       }
-  //       const entity = WorldManager.spawnEntity('Feed', position) as Feed;
-  //       entity.setVariant(size);
-  //     } else {
-  //       const type = num < 0.6 ? 'HeavyEnemy' : 'Enemy';
-  //       const entity = WorldManager.spawnEntity(type, position);
-  //       entity.setColor(randomColor());
-  //     }
-  //   }
-  // });
+  EventManager.runPeriodic(0.5, () => {
+    if (WorldManager.getEntityCount() < 60) {
+      const num = RNGManager.next();
+      const position = WorldManager.getRandomPosition();
+      if (num < 0.5) {
+        let size;
+        if (num < 0.1) {
+          size = FeedVariant.Large;
+        } else if (num < 0.25) {
+          size = FeedVariant.Medium;
+        } else {
+          size = FeedVariant.Small;
+        }
+        const entity = WorldManager.spawnEntity('Feed', position) as Feed;
+        entity.setVariant(size);
+      } else {
+        const type = num < 0.6 ? 'HeavyEnemy' : 'Enemy';
+        const entity = WorldManager.spawnEntity(type, position);
+        entity.setColor(randomColor());
+      }
+    }
+  });
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);

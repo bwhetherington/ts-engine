@@ -16,7 +16,7 @@ import { GraphicsPipeline } from 'core/graphics/pipe';
 interface Options {
   width: number;
   height: number;
-  isFullScreen: boolean;
+  isFullScreen?: boolean;
 }
 
 function createFontString(font: string, size: number, scale: number): string {
@@ -52,10 +52,14 @@ export class HDCanvas implements GraphicsContext {
   private optionsStack: Partial<GraphicsOptions>[] = [];
   private curContext?: CanvasRenderingContext2D;
 
-  constructor(options: Options = DEFAULT_OPTIONS, isParent: boolean = true) {
+  constructor(
+    element: HTMLCanvasElement,
+    options: Options = DEFAULT_OPTIONS,
+    isParent: boolean = true
+  ) {
     const { width, height, isFullScreen } = options;
 
-    this.canvas = document.createElement('canvas');
+    this.canvas = element;
     if (this.canvas) {
       this.setSize(width, height);
 
@@ -65,16 +69,38 @@ export class HDCanvas implements GraphicsContext {
         ctx.lineCap = 'square';
         ctx.lineJoin = 'round';
       }
+
+      this.pushOptions({
+        lineWidth: 4,
+        doFill: true,
+        doStroke: true,
+      });
     }
 
     if (isParent) {
-      this.hidden = new HDCanvas(options, false);
+      this.hidden = HDCanvas.create(options, false);
       this.hidden.bounds = new Bounds();
     }
   }
 
+  public static create(
+    options: Options = DEFAULT_OPTIONS,
+    isParent: boolean = true
+  ): HDCanvas {
+    const canvas = document.createElement('canvas');
+    return new HDCanvas(canvas, options, isParent);
+  }
+
   public get isHidden(): boolean {
     return !this.hidden;
+  }
+
+  public getWidth(): number {
+    return this.width;
+  }
+
+  public getHeight(): number {
+    return this.height;
   }
 
   private setRound(ctx: CanvasRenderingContext2D): void {

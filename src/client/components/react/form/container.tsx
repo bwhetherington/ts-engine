@@ -14,6 +14,9 @@ const Background = styled.div`
   overflow: hidden;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &.hidden {
     visibility: hidden;
@@ -30,8 +33,6 @@ const Background = styled.div`
 
 const Container = styled.div`
   pointer-events: auto;
-  margin: auto;
-  margin-top: var(--ui-margin);
   width: 400px;
 `;
 

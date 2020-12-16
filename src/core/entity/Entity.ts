@@ -17,7 +17,6 @@ import { AsyncIterator } from 'core/iterator';
 
 export class Entity implements Bounded, Serializable, Renderable {
   public static typeName: string = 'Entity';
-
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
@@ -276,7 +275,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   public streamEvents<E extends EventData>(
     type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(($yield) => {
+    return AsyncIterator.from(({ $yield }) => {
       this.addListener<E>(type, $yield);
     });
   }

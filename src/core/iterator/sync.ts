@@ -1,19 +1,19 @@
-function* map<T, U>(gen: Generator<T>, fn: (x: T) => U): Generator<U> {
+function* map<T, U>(gen: Iterable<T>, fn: (x: T) => U): Iterable<U> {
   for (const x of gen) {
     yield fn(x);
   }
 }
 
 function* flatMap<T, U>(
-  gen: Generator<T>,
-  fn: (x: T) => Generator<U>
-): Generator<U> {
+  gen: Iterable<T>,
+  fn: (x: T) => Iterable<U>
+): Iterable<U> {
   for (const x of gen) {
     yield* fn(x);
   }
 }
 
-function* filter<T>(gen: Generator<T>, fn: (x: T) => boolean): Generator<T> {
+function* filter<T>(gen: Iterable<T>, fn: (x: T) => boolean): Iterable<T> {
   for (const x of gen) {
     if (fn(x)) {
       yield x;
@@ -22,9 +22,9 @@ function* filter<T>(gen: Generator<T>, fn: (x: T) => boolean): Generator<T> {
 }
 
 function* filterType<T, U extends T>(
-  gen: Generator<T>,
+  gen: Iterable<T>,
   typeCheck: (x: T) => x is U
-): Generator<U> {
+): Iterable<U> {
   for (const x of gen) {
     if (typeCheck(x)) {
       yield x;
@@ -33,9 +33,9 @@ function* filterType<T, U extends T>(
 }
 
 function* filterMap<T, U>(
-  gen: Generator<T>,
+  gen: Iterable<T>,
   fn: (x: T) => U | undefined
-): Generator<U> {
+): Iterable<U> {
   for (const x of gen) {
     const y = fn(x);
     if (y !== undefined) {
@@ -44,7 +44,7 @@ function* filterMap<T, U>(
   }
 }
 
-function* take<T>(gen: Generator<T>, num: number): Generator<T> {
+function* take<T>(gen: Iterable<T>, num: number): Iterable<T> {
   let i = 0;
   for (const x of gen) {
     if (i < num) {
@@ -56,7 +56,7 @@ function* take<T>(gen: Generator<T>, num: number): Generator<T> {
   }
 }
 
-function* takeWhile<T>(gen: Generator<T>, fn: (x: T) => boolean): Generator<T> {
+function* takeWhile<T>(gen: Iterable<T>, fn: (x: T) => boolean): Iterable<T> {
   for (const x of gen) {
     if (fn(x)) {
       yield x;
@@ -66,7 +66,7 @@ function* takeWhile<T>(gen: Generator<T>, fn: (x: T) => boolean): Generator<T> {
   }
 }
 
-function* skip<T>(gen: Generator<T>, num: number): Generator<T> {
+function* skip<T>(gen: Iterable<T>, num: number): Iterable<T> {
   let i = 0;
   for (const x of gen) {
     if (i >= num) {
@@ -76,7 +76,7 @@ function* skip<T>(gen: Generator<T>, num: number): Generator<T> {
   }
 }
 
-function* skipWhile<T>(gen: Generator<T>, fn: (x: T) => boolean): Generator<T> {
+function* skipWhile<T>(gen: Iterable<T>, fn: (x: T) => boolean): Iterable<T> {
   let conditionMet = false;
   for (const x of gen) {
     if (conditionMet || fn(x)) {
@@ -86,7 +86,7 @@ function* skipWhile<T>(gen: Generator<T>, fn: (x: T) => boolean): Generator<T> {
   }
 }
 
-function* use<T>(gen: Generator<T>, fn: (x: T) => void): Generator<T> {
+function* use<T>(gen: Iterable<T>, fn: (x: T) => void): Iterable<T> {
   for (const x of gen) {
     fn(x);
     yield x;
@@ -97,7 +97,7 @@ export interface IterableObject<T> {
   [key: string]: T;
 }
 
-function* iterateKeysInternal<T>(obj: IterableObject<T>): Generator<string> {
+function* iterateKeysInternal<T>(obj: IterableObject<T>): Iterable<string> {
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       yield key;
@@ -109,19 +109,19 @@ export function iterateKeys<T>(obj: IterableObject<T>): Iterator<string> {
   return iterator(iterateKeysInternal(obj));
 }
 
-function* iterateArray<T>(array: T[]): Generator<T> {
+function* iterateArray<T>(array: T[]): Iterable<T> {
   for (let i = 0; i < array.length; i++) {
     yield array[i];
   }
 }
 
-function* iterateSet<T>(set: Set<T>): Generator<T> {
+function* iterateSet<T>(set: Set<T>): Iterable<T> {
   for (const x of set) {
     yield x;
   }
 }
 
-function* enumerate<T>(gen: Generator<T>): Generator<[T, number]> {
+function* enumerate<T>(gen: Iterable<T>): Iterable<[T, number]> {
   let i = 0;
   for (const element of gen) {
     yield [element, i];
@@ -133,16 +133,14 @@ export function iterator<T>(gen: Iterable<T>): Iterator<T> {
   return new Iterator(gen);
 }
 
-function* iterateReadonlyArray<T>(array: readonly T[]): Generator<Readonly<T>> {
+function* iterateReadonlyArray<T>(array: readonly T[]): Iterable<Readonly<T>> {
   for (const element of array) {
     yield element;
   }
 }
 
-type Iterable<T> = T[] | Set<T> | Generator<T>;
-
-export class Iterator<T> implements Generator<T> {
-  private generator: Generator<T>;
+export class Iterator<T> implements Iterable<T> {
+  private generator: Iterable<T>;
 
   constructor(generator: Iterable<T>) {
     if (generator instanceof Array) {
@@ -178,24 +176,14 @@ export class Iterator<T> implements Generator<T> {
     return iterator(iterateSet(set));
   }
 
-  public static generator<T>(gen: Generator<T>): Iterator<T> {
+  public static from<T>(gen: Iterable<T>): Iterator<T> {
     return iterator(gen);
   }
 
-  public next(): IteratorResult<T, any> {
-    return this.generator.next();
-  }
-
-  public return(x: any): any {
-    return this.generator.return(x);
-  }
-
-  public throw(x: any): any {
-    return this.generator.throw(x);
-  }
-
-  public [Symbol.iterator](): Generator<T> {
-    return this.generator;
+  public *[Symbol.iterator](): Generator<T> {
+    for (const x of this.generator) {
+      yield x;
+    }
   }
 
   public enumerate(): Iterator<[T, number]> {
@@ -206,7 +194,7 @@ export class Iterator<T> implements Generator<T> {
     return iterator(map(this.generator, fn));
   }
 
-  public flatMap<U>(fn: (x: T) => Generator<U>): Iterator<U> {
+  public flatMap<U>(fn: (x: T) => Iterable<U>): Iterator<U> {
     return iterator(flatMap(this.generator, fn));
   }
 
@@ -328,5 +316,13 @@ export class Iterator<T> implements Generator<T> {
     for (const x of this.generator) {
       return x;
     }
+  }
+
+  public count(): number {
+    let count = 0;
+    this.forEach(() => {
+      count += 1;
+    });
+    return count;
   }
 }

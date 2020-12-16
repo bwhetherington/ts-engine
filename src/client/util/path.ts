@@ -4,7 +4,7 @@ const SEPARATOR = /\/+/;
 
 export function join(...parts: string[]): string {
   return Iterator.array(parts)
-    .flatMap((part) => Iterator.array(part.split(SEPARATOR)))
+    .flatMap((part) => part.split(SEPARATOR))
     .filter((part) => part.length > 0)
     .toArray()
     .join('/');

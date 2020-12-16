@@ -14,7 +14,7 @@ const MESSAGE_FORMAT =
 
 type ComponentFormatter = (
   input: Data
-) => Generator<TextComponent | string | null>;
+) => Iterable<TextComponent | string | null>;
 
 type Node = TextNode | VariableNode | FormatNode;
 
@@ -114,7 +114,7 @@ export class FormatParser {
     }
   }
 
-  public *parseNodes(): Generator<Node> {
+  public *parseNodes(): Iterable<Node> {
     let buf = '';
     while (this.isValid()) {
       const ch = this.nextChar();
@@ -172,7 +172,7 @@ export class FormatParser {
 
       // Parse content
       const contentParser = new FormatParser(content);
-      const contentParsed = Iterator.generator(contentParser.parseNodes())
+      const contentParsed = Iterator.from(contentParser.parseNodes())
         .filterMap((node) =>
           node && node.kind !== NodeKind.FormatNode ? node : undefined
         )
@@ -222,7 +222,7 @@ export class TextFormatter {
   private formatters: ComponentFormatter[] = [];
 
   public constructor(format: string) {
-    this.formatters = Iterator.generator(new FormatParser(format).parseNodes())
+    this.formatters = Iterator.from(new FormatParser(format).parseNodes())
       .map((node) => {
         switch (node.kind) {
           case NodeKind.TextNode:

@@ -75,7 +75,7 @@ export class Cell<T extends Bounded> implements Partioner<T> {
     }
   }
 
-  private *queryInternal(area: Rectangle): Generator<T> {
+  private *queryInternal(area: Rectangle): Iterable<T> {
     const { x, y, farX, farY } = area;
 
     for (let j = this.getRow(y); j <= this.getRow(farY); j += 1) {

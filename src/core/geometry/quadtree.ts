@@ -52,7 +52,7 @@ class QuadNode<T extends Bounded> {
     this.nodes = [];
   }
 
-  private *findIndices(rect: Rectangle): Generator<number> {
+  private *findIndices(rect: Rectangle): Iterable<number> {
     const { x, y, farX, farY } = rect;
     const { centerX, centerY } = this.boundingBox;
 
@@ -146,7 +146,7 @@ class QuadNode<T extends Bounded> {
     this.children = [];
   }
 
-  private *retrieveInternal(rect: Rectangle): Generator<T> {
+  private *retrieveInternal(rect: Rectangle): Iterable<T> {
     if (this.boundingBox.intersects(rect)) {
       if (this.nodes.length === 0) {
         for (const child of this.children) {
@@ -163,7 +163,7 @@ class QuadNode<T extends Bounded> {
     return new Set(this.retrieveInternal(rect));
   }
 
-  private *getAllInternal(): Generator<T> {
+  private *getAllInternal(): Iterable<T> {
     for (const child of this.children) {
       yield child;
     }

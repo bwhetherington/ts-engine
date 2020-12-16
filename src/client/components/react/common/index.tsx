@@ -1,8 +1,9 @@
+import React from 'react';
 import styled from 'styled-components';
 
 export const UI_MARGIN = '5px';
 
-export const Panel = styled.div`
+export const PanelContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.75);
   padding: ${UI_MARGIN};
   border-radius: 4px;
@@ -12,19 +13,50 @@ export const Panel = styled.div`
   color: white;
 `;
 
-export const Column = styled.div`
+interface ColumnProps {
+  margin?: number;
+}
+
+export const Column = styled.div<ColumnProps>`
   display: flex;
   flex-direction: column;
 
   & > :not(:last-child) {
-    margin-bottom: ${UI_MARGIN};
+    margin-bottom: ${(props) => props.margin ?? UI_MARGIN};
   }
 `;
+
+export const PanelHeader = styled.div`
+  text-align: center;
+  padding-bottom: 4px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+`;
+
+export enum PanelDirection {
+  Vertical,
+  Horizontal,
+}
+
+interface PanelProps {
+  direction?: PanelDirection;
+}
+
+export const Panel: React.FunctionComponent<PanelProps> = (props) => {
+  const InnerContainer = props.direction === PanelDirection.Horizontal ? Row : Column;
+  return (
+    <PanelContainer>
+      <InnerContainer>
+        {props.children}
+      </InnerContainer>
+    </PanelContainer>
+  );
+};
 
 export const Row = styled.div`
   display: flex;
   flex-direction: row;
-  /* pointer-events: none; */
 
   & > :not(:last-child) {
     margin-right: ${UI_MARGIN};

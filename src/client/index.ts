@@ -47,7 +47,8 @@ async function main(): Promise<void> {
         level: player.hero?.getLevel() ?? 0,
         ping: Math.round(player.ping * 1000) + 'ms',
       }));
-    const update = {
+
+    EventManager.emit<TableUpdateEvent>({
       type: 'TableUpdateEvent',
       data: {
         id: 'scoreboard',
@@ -55,8 +56,7 @@ async function main(): Promise<void> {
           rows: players,
         },
       },
-    };
-    EventManager.emit<TableUpdateEvent>(update);
+    });
   });
 
   EventManager.addListener<PlayerLeaveEvent>('PlayerLeaveEvent', (event) => {
@@ -71,14 +71,9 @@ async function main(): Promise<void> {
   });
 
   if (game) {
-    const canvas = new HDCanvas();
+    const canvas = HDCanvas.create();
     canvas.attachTo(game);
     canvas.setSize(window.innerWidth, window.innerHeight);
-    canvas.pushOptions({
-      lineWidth: 4,
-      doFill: true,
-      doStroke: true,
-    });
     CameraManager.setTargetXY(0, 0);
 
     InputManager.initialize(game);
