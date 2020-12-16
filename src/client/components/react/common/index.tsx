@@ -44,12 +44,11 @@ interface PanelProps {
 }
 
 export const Panel: React.FunctionComponent<PanelProps> = (props) => {
-  const InnerContainer = props.direction === PanelDirection.Horizontal ? Row : Column;
+  const InnerContainer =
+    props.direction === PanelDirection.Horizontal ? Row : Column;
   return (
     <PanelContainer>
-      <InnerContainer>
-        {props.children}
-      </InnerContainer>
+      <InnerContainer>{props.children}</InnerContainer>
     </PanelContainer>
   );
 };

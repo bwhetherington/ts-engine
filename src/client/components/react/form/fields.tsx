@@ -11,6 +11,7 @@ import {
   Row,
   FlexPadding,
   PanelHeader,
+  UI_MARGIN,
 } from 'client/components/react/common';
 import { Form, Field, Entry } from 'core/form';
 
@@ -119,6 +120,16 @@ function createInitialState(form: Form): Record<string, Entry> {
   }, {} as Record<string, Entry>);
 }
 
+const Padded = styled.div`
+  padding-top: ${UI_MARGIN};
+  padding-bottom: ${UI_MARGIN};
+`;
+
+const Spacer = styled.div`
+  content: '';
+  height: ${UI_MARGIN};
+`;
+
 export class FormComponent extends Component<FormProps, FormState> {
   public constructor(props: FormProps) {
     super(props, {
@@ -202,7 +213,12 @@ export class FormComponent extends Component<FormProps, FormState> {
               <h1>{this.props.form.label}</h1>
             </PanelHeader>
             {this.props.form.description ? (
-              <p>{this.props.form.description}</p>
+              <>
+                <PanelHeader>
+                  <Padded>{this.props.form.description}</Padded>
+                </PanelHeader>
+                <Spacer />
+              </>
             ) : undefined}
             <form onSubmit={this.onSubmit}>
               <Column>{this.renderEntries()}</Column>

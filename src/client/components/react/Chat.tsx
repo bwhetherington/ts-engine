@@ -13,7 +13,12 @@ import {
 import { NetworkManager } from 'core/net';
 import { EventManager, StepEvent } from 'core/event';
 import { Key, KeyAction, KeyEvent } from 'core/input';
-import { Column, Panel, PanelContainer, StringInput } from 'client/components/react/common';
+import {
+  Column,
+  Panel,
+  PanelContainer,
+  StringInput,
+} from 'client/components/react/common';
 
 const COLOR_MAPPING: { [color in TextColor]: Color } = {
   none: rgb(1, 1, 1),
