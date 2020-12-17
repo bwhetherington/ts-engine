@@ -4,6 +4,7 @@ import { UUID, UUIDManager } from 'core/uuid';
 import { LogManager } from 'core/log';
 import { formatData } from 'core/util';
 import { AsyncIterator } from 'core/iterator';
+import { Observer } from './observer';
 
 const log = LogManager.forFile(__filename);
 
@@ -11,7 +12,7 @@ export interface StepEvent {
   dt: number;
 }
 
-export class EventManager {
+export class EventManager extends Observer {
   private handlers: Record<string, Record<string, GameHandler>> = {};
   private events: Queue<GameEvent> = new Queue();
   private listenerCount: number = 0;
@@ -128,6 +129,12 @@ export class EventManager {
   ): AsyncIterator<Event<E>> {
     return AsyncIterator.from(({ $yield }) => {
       this.addListener(type, $yield);
+    });
+  }
+
+  public streamInterval(period: number): AsyncIterator<void> {
+    return AsyncIterator.from(({ $yield }) => {
+      this.runPeriodic(period, () => $yield());
     });
   }
 }

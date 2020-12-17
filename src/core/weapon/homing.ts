@@ -48,8 +48,8 @@ export class HomingGun extends Gun {
 
     base
       .streamEvents<KillEvent>('KillEvent')
-      .filter(async (event) => event.data.targetID === base.target?.id)
-      .forEach(async () => {
+      .filter((event) => event.data.targetID === base.target?.id)
+      .forEach(() => {
         base.target = this.selectTarget(base, source);
       });
 

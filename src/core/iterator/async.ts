@@ -1,6 +1,8 @@
+type MaybePromise<T> = T | Promise<T>;
+
 async function* map<T, U>(
   gen: AsyncIterable<T>,
-  fn: (x: T) => Promise<U>
+  fn: (x: T) => MaybePromise<U>
 ): AsyncIterable<U> {
   for await (const x of gen) {
     yield await fn(x);
@@ -18,7 +20,7 @@ async function* flatMap<T, U>(
 
 async function* filter<T>(
   gen: AsyncIterable<T>,
-  fn: (x: T) => Promise<boolean>
+  fn: (x: T) => MaybePromise<boolean>
 ): AsyncIterable<T> {
   for await (const x of gen) {
     if (await fn(x)) {
@@ -40,7 +42,7 @@ async function* filterType<T, U extends T>(
 
 async function* filterMap<T, U>(
   gen: AsyncIterable<T>,
-  fn: (x: T) => Promise<U | undefined>
+  fn: (x: T) => MaybePromise<U | undefined>
 ): AsyncIterable<U> {
   for await (const x of gen) {
     const y = await fn(x);
@@ -64,7 +66,7 @@ async function* take<T>(gen: AsyncIterable<T>, num: number): AsyncIterable<T> {
 
 async function* takeWhile<T>(
   gen: AsyncIterable<T>,
-  fn: (x: T) => Promise<boolean>
+  fn: (x: T) => MaybePromise<boolean>
 ): AsyncIterable<T> {
   for await (const x of gen) {
     if (await fn(x)) {
@@ -87,7 +89,7 @@ async function* skip<T>(gen: AsyncIterable<T>, num: number): AsyncIterable<T> {
 
 async function* skipWhile<T>(
   gen: AsyncIterable<T>,
-  fn: (x: T) => Promise<boolean>
+  fn: (x: T) => MaybePromise<boolean>
 ): AsyncIterable<T> {
   let conditionMet = false;
   for await (const x of gen) {
@@ -100,7 +102,7 @@ async function* skipWhile<T>(
 
 async function* use<T>(
   gen: AsyncIterable<T>,
-  fn: (x: T) => Promise<void>
+  fn: (x: T) => MaybePromise<void>
 ): AsyncIterable<T> {
   for await (const x of gen) {
     await fn(x);
@@ -127,7 +129,7 @@ function buildIterator<T>(
   body: (fns: IteratorFunctions<T>) => void
 ): AsyncIterable<T> {
   let yieldQueue: T[] = [];
-  let resolver = () => {};
+  let resolver = (_?: void) => {};
   let guard = new Promise((resolve) => (resolver = resolve));
 
   const $yield = (arg: T) => {
@@ -159,7 +161,7 @@ class IteratorBuilder<T> {
   private isDone: boolean = false;
   private yieldQueue: T[] = [];
   private resolver = () => {};
-  private guard: Promise<void> = new Promise((resolve) => {
+  private guard: MaybePromise<void> = new Promise((resolve) => {
     this.resolver = resolve;
   });
 
@@ -225,7 +227,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return AsyncIterator.generator(enumerate(this.generator));
   }
 
-  public map<U>(fn: (x: T) => Promise<U>): AsyncIterator<U> {
+  public map<U>(fn: (x: T) => MaybePromise<U>): AsyncIterator<U> {
     return AsyncIterator.generator(map(this.generator, fn));
   }
 
@@ -233,7 +235,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return AsyncIterator.generator(flatMap(this.generator, fn));
   }
 
-  public filter(fn: (x: T) => Promise<boolean>): AsyncIterator<T> {
+  public filter(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
     return AsyncIterator.generator(filter(this.generator, fn));
   }
 
@@ -241,13 +243,13 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return AsyncIterator.generator(filterType(this.generator, fn));
   }
 
-  public filterMap<U>(fn: (x: T) => Promise<U | undefined>): AsyncIterator<U> {
+  public filterMap<U>(fn: (x: T) => MaybePromise<U | undefined>): AsyncIterator<U> {
     return AsyncIterator.generator(filterMap(this.generator, fn));
   }
 
   public async fold<U>(
     initial: U,
-    fn: (acc: U, x: T) => Promise<U>
+    fn: (acc: U, x: T) => MaybePromise<U>
   ): Promise<U> {
     let output = initial;
     for await (const x of this.generator) {
@@ -271,7 +273,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * not included in the new iterator.
    * @param fn A predicate function
    */
-  public takeWhile(fn: (x: T) => Promise<boolean>): AsyncIterator<T> {
+  public takeWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
     return AsyncIterator.generator(takeWhile(this.generator, fn));
   }
 
@@ -290,7 +292,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * first element which does not satisfy the given predicate.
    * @param fn A predicate function
    */
-  public skipWhile(fn: (x: T) => Promise<boolean>): AsyncIterator<T> {
+  public skipWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
     return AsyncIterator.generator(skipWhile(this.generator, fn));
   }
 
@@ -299,7 +301,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * element before yielding it.
    * @param fn A function
    */
-  public use(fn: (x: T) => Promise<void>): AsyncIterator<T> {
+  public use(fn: (x: T) => MaybePromise<void>): AsyncIterator<T> {
     return AsyncIterator.generator(use(this.generator, fn));
   }
 
@@ -307,7 +309,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * Executes the specified function once on each element of this iterator.
    * @param fn A function
    */
-  public async forEach(fn: (x: T) => Promise<void>): Promise<void> {
+  public async forEach(fn: (x: T) => MaybePromise<void>): Promise<void> {
     for await (const x of this.generator) {
       await fn(x);
     }
@@ -329,7 +331,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * given predicate.
    * @param fn A predicate function
    */
-  public async any(fn: (x: T) => Promise<boolean>): Promise<boolean> {
+  public async any(fn: (x: T) => MaybePromise<boolean>): Promise<boolean> {
     return !!(await this.find(fn));
   }
 
@@ -338,7 +340,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * predicate.
    * @param fn A predicate function
    */
-  public async all(fn: (x: T) => Promise<boolean>): Promise<boolean> {
+  public async all(fn: (x: T) => MaybePromise<boolean>): Promise<boolean> {
     return !(await this.any(async (x) => !(await fn(x))));
   }
 
@@ -346,7 +348,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * Produces the first element of this iterator that satisfies the given predicate.
    * @param fn A predicate function
    */
-  public find(fn: (x: T) => Promise<boolean>): Promise<T | undefined> {
+  public find(fn: (x: T) => MaybePromise<boolean>): Promise<T | undefined> {
     return this.filter(fn).first();
   }
 

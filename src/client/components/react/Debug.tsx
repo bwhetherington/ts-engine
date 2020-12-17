@@ -12,13 +12,11 @@ interface LineProps {
   value: string | number;
 }
 
-function Line(props: LineProps): React.ReactElement {
-  return (
-    <div>
-      <strong>{props.label}:</strong> {props.value}
-    </div>
-  );
-}
+const Line: React.FunctionComponent<LineProps> = ({ label, value }) => (
+  <div>
+    <strong>{label}:</strong> {value.toLocaleString()}
+  </div>
+);
 
 interface DebugState {
   fps: number;
@@ -68,7 +66,7 @@ export class Debug extends Component<{}, DebugState> {
     });
   }
 
-  public render(): React.ReactElement {
+  public render(): JSX.Element {
     return (
       <Panel>
         <PanelHeader>

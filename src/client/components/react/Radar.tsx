@@ -60,13 +60,12 @@ export class Radar extends Component<{}, RadarState> {
   };
 
   public componentDidMount(): void {
-    this.streamEvents<StepEvent>('StepEvent').forEach(async () => {
+    this.streamEvents<StepEvent>('StepEvent').forEach(() => {
       this.updateState({
         unitCount: WorldManager.getUnitCount(),
       });
       this.renderRadar();
     });
-    // this.addListener<StepEvent>('StepEvent', this.renderRadar);
   }
 
   public render(): JSX.Element {

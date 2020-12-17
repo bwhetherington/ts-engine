@@ -10,7 +10,7 @@ import {
 } from 'core/entity';
 import { Data, Serializable } from 'core/serialize';
 import { isCollisionLayer, shuntOutOf } from './util';
-import { EventData, Handler, EventManager, Event } from 'core/event';
+import { EventData, Handler, EventManager, Event, StepEvent } from 'core/event';
 import { UUID, UUIDManager } from 'core/uuid';
 import { NetworkManager } from 'core/net';
 import { AsyncIterator } from 'core/iterator';
@@ -270,6 +270,17 @@ export class Entity implements Bounded, Serializable, Renderable {
       this.getHandlers(type)?.delete(id) &&
       EventManager.removeListener(type, id)
     );
+  }
+
+  public runPeriodic(period: number, action: () => void): UUID {
+    let passed = 0;
+    return this.addListener<StepEvent>('StepEvent', (event) => {
+      passed += event.data.dt;
+      while (passed >= period) {
+        passed -= period;
+        action();
+      }
+    });
   }
 
   public streamEvents<E extends EventData>(

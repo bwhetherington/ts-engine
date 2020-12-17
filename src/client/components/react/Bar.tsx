@@ -51,7 +51,7 @@ const textLabelStyle: React.CSSProperties = {
 };
 
 function formatLabel(value: number, maxValue: number): string {
-  return `${Math.round(value)}/${Math.round(maxValue)}`;
+  return `${Math.round(value).toLocaleString()}/${Math.round(maxValue).toLocaleString()}`;
 }
 
 interface BarLabelProps {
@@ -60,7 +60,7 @@ interface BarLabelProps {
   label?: string;
 }
 
-function BarLabel(props: BarLabelProps): React.ReactElement {
+function BarLabel(props: BarLabelProps): JSX.Element {
   return (
     <span style={labelStyle}>
       {props.label && <span style={textLabelStyle}>{props.label} </span>}
@@ -69,7 +69,7 @@ function BarLabel(props: BarLabelProps): React.ReactElement {
   );
 }
 
-export function Bar(props: BarProps): React.ReactElement {
+export function Bar(props: BarProps): JSX.Element {
   const widthPercent = (props.value / props.maxValue) * 100 + '%';
   const newBarStyle: React.CSSProperties = {
     ...barStyle,

@@ -3,7 +3,7 @@ import { Debug, Chat, EventBar, BarStyle } from 'client/components/react';
 import { FormContainer } from './form';
 import { Radar } from './Radar';
 
-export function App(): React.ReactElement {
+export function App(): JSX.Element {
   return (
     <>
       <div className="top left">

@@ -37,8 +37,8 @@ interface FieldProps {
   onChange(entry: Entry): void;
 }
 
-function FieldComponent(props: FieldProps): React.ReactElement {
-  let valueComponent: React.ReactElement | undefined;
+function FieldComponent(props: FieldProps): JSX.Element {
+  let valueComponent: JSX.Element | undefined;
   if (props.field.type === 'text' && props.entry.type === 'text') {
     valueComponent = (
       <StringInput
@@ -151,7 +151,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     this.updateState(newData);
   }
 
-  private renderEntries(): (React.ReactElement | undefined)[] {
+  private renderEntries(): (JSX.Element | undefined)[] {
     return this.props.form.items.map((field, index) => {
       const entry = this.state.entries[field.name];
       if (entry) {
@@ -170,7 +170,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     });
   }
 
-  private renderMessages(): React.ReactElement | undefined {
+  private renderMessages(): JSX.Element | undefined {
     const res = this.props.form.messages?.map((message, index) => (
       <Message key={index}>{message}</Message>
     ));
@@ -188,7 +188,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     this.props.onSubmit(this.props.form.name, this.state.entries, method);
   }
 
-  private renderSubmitButtons(): (React.ReactElement | undefined)[] {
+  private renderSubmitButtons(): (JSX.Element | undefined)[] {
     return (
       this.props.form.submitMethods?.map((method) => {
         return (
@@ -204,7 +204,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     );
   }
 
-  public render(): React.ReactElement {
+  public render(): JSX.Element {
     return (
       <Panel>
         <Container>

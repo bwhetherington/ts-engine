@@ -84,7 +84,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
     });
   }
 
-  public render(): React.ReactElement {
+  public render(): JSX.Element {
     const form = this.state.forms[0];
     if (form) {
       return (

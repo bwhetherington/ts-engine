@@ -97,16 +97,16 @@ export class Hero extends Tank {
       });
     } else {
       this.streamEvents<KillEvent>('KillEvent')
-        .map(async (event) => {
+        .map((event) => {
           const { targetID, sourceID } = event.data;
           const target = WorldManager.getEntity(targetID);
           const source = WorldManager.getEntity(sourceID);
           return { target, source };
         })
-        .filterMap(async ({ target, source }) =>
+        .filterMap(({ target, source }) =>
           target instanceof Unit && this === source ? target : undefined
         )
-        .forEach(async (target) => this.addExperience(target.getXPWorth()));
+        .forEach((target) => this.addExperience(target.getXPWorth()));
 
       // this.addListener<KillEvent>('KillEvent', (event) => {
       //   const { sourceID, targetID } = event.data;

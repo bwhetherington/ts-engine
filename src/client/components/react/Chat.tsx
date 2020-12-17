@@ -86,7 +86,7 @@ interface TextItemProps {
   component: Readonly<string | null | TextComponent>;
 }
 
-function TextItem({ component }: TextItemProps): React.ReactElement {
+function TextItem({ component }: TextItemProps): JSX.Element {
   if (typeof component === 'string') {
     return <span>{component}</span>;
   } else if (component === null) {
@@ -101,7 +101,7 @@ interface TextLineProps {
   components: Readonly<TextComponents>;
 }
 
-function TextLine({ components }: TextLineProps): React.ReactElement {
+function TextLine({ components }: TextLineProps): JSX.Element {
   const content = components.map((component, index) => (
     <TextItem component={component} key={index} />
   ));
@@ -186,7 +186,7 @@ export class Chat extends Component<ChatProps, ChatState> {
 
   public componentDidMount(): void {
     this.streamEvents<TextMessageOutEvent>('TextMessageOutEvent').forEach(
-      async ({ data: { components } }) => {
+      ({ data: { components } }) => {
         const lines = concatLine(
           this.state.lines,
           components,
@@ -201,19 +201,19 @@ export class Chat extends Component<ChatProps, ChatState> {
       }
     );
 
-    this.streamEvents<StepEvent>('StepEvent')
-      .filter(async () => EventManager.timeElapsed - this.state.lastFlash >= 5)
-      .forEach(async () => this.updateState({ isFresh: false }));
+    this.streamInterval(1)
+      .filter(() => EventManager.timeElapsed - this.state.lastFlash >= 5)
+      .forEach(() => this.updateState({ isFresh: false }));
 
     this.streamEvents<KeyEvent>('KeyEvent')
       .filter(
-        async ({ data: { action, key } }) =>
+        ({ data: { action, key } }) =>
           action === KeyAction.KeyDown && key === Key.Enter
       )
-      .forEach(async () => this.inputRef?.current?.focus());
+      .forEach(() => this.inputRef?.current?.focus());
   }
 
-  private renderLines(): React.ReactElement[] {
+  private renderLines(): JSX.Element[] {
     return this.state.lines.map((line, index) => (
       <TextLine components={line} key={index} />
     ));
@@ -277,7 +277,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     });
   };
 
-  public render(): React.ReactElement {
+  public render(): JSX.Element {
     const panelStyle: React.CSSProperties = this.isFocused()
       ? {}
       : {

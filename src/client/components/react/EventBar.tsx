@@ -34,7 +34,7 @@ export class EventBar extends Component<EventBarProps, EventBarState> {
     });
   }
 
-  public render(): React.ReactElement {
+  public render(): JSX.Element {
     return (
       <Bar
         barStyle={this.props.barStyle}
