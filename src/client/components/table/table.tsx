@@ -1,7 +1,6 @@
 import React from 'react';
 import {Data} from 'core/serialize';
 import {Iterator} from 'core/iterator';
-import {Panel} from 'client/components/react';
 
 export interface ColumnInfo {
   field: string;

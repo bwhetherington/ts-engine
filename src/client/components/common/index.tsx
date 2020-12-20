@@ -117,4 +117,4 @@ export const FlexPadding = styled.div`
   flex-grow: 1;
 `;
 
-export * from 'client/components/react/common/inputs';
+export * from 'client/components/common/inputs';

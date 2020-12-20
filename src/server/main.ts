@@ -110,7 +110,6 @@ async function main(): Promise<void> {
       } else {
         const type =
           num < 0.9 ? (num < 0.7 ? 'Enemy' : 'HomingEnemy') : 'HeavyEnemy';
-        console.log(num, type);
         const entity = WorldManager.spawnEntity(type, position);
         entity.setColor(randomColor());
       }

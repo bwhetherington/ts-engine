@@ -4,10 +4,9 @@ import {
   Chat,
   EventBar,
   BarStyle,
-  EventTable,
   Scoreboard,
-} from 'client/components/react';
-import {FormContainer} from './form';
+  FormContainer,
+} from 'client/components';
 import {Radar} from './Radar';
 
 export const App: React.FunctionComponent<{}> = () => (

@@ -1,6 +1,6 @@
 import {EventData, EventManager, Handler, Event, StepEvent} from 'core/event';
 import {AsyncIterator, iterateKeys} from 'core/iterator';
-import {Props} from 'client/components/react';
+import {Props} from 'client/components';
 import React from 'react';
 import {UUID} from 'core/uuid';
 

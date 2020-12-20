@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Component} from 'client/components/react';
-import {FormComponent} from 'client/components/react/form';
+import {Component, FormComponent} from 'client/components';
 import {Entry, Form, FormShowEvent, FormSubmitEvent} from 'core/form';
 import {NetworkManager} from 'core/net';
 

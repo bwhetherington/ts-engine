@@ -1,12 +1,13 @@
-export * from 'client/components/react/Component';
-export * from 'client/components/react/common';
-export * from 'client/components/react/Bar';
-export * from 'client/components/react/EventBar';
-export * from 'client/components/react/Chat';
-export * from 'client/components/react/Debug';
-export * from 'client/components/react/table';
+export * from 'client/components/Component';
+export * from 'client/components/common';
+export * from 'client/components/Bar';
+export * from 'client/components/EventBar';
+export * from 'client/components/Chat';
+export * from 'client/components/Debug';
+export * from 'client/components/table';
+export * from 'client/components/form';
 
-import {App} from 'client/components/react/App';
+import {App} from 'client/components/App';
 import {LogManager} from 'core/log';
 
 import React from 'react';

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Component, Props} from 'client/components/react';
+import {Component, Props} from 'client/components';
 import {COLOR_MAPPING, toCss} from 'core/graphics';
 import {
   TextColor,
@@ -18,7 +18,7 @@ import {
   Panel,
   PanelContainer,
   StringInput,
-} from 'client/components/react/common';
+} from 'client/components/common';
 
 type Lines = Readonly<TextComponents[]>;
 
