@@ -1,6 +1,6 @@
-import { AbstractLogger, LogLevel } from 'core/log';
-import { LoggerWrapper } from 'core/log';
-import { FileLogger } from 'core/log/file';
+import {AbstractLogger, LogLevel} from 'core/log';
+import {LoggerWrapper} from 'core/log';
+import {FileLogger} from 'core/log/file';
 
 export class LogManager extends LoggerWrapper {
   public initialize(level: LogLevel, logger: AbstractLogger) {

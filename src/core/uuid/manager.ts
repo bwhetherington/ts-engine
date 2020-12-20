@@ -1,7 +1,7 @@
-import { UUID } from 'core/uuid';
-import { NetworkManager } from 'core/net';
-import { LogManager } from 'core/log';
-import { BasicRNG, RNG, RNGManager } from 'core/random';
+import {UUID} from 'core/uuid';
+import {NetworkManager} from 'core/net';
+import {LogManager} from 'core/log';
+import {BasicRNG, RNG, RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 

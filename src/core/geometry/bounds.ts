@@ -1,4 +1,4 @@
-import { Bounded, Rectangle, Vector, Matrix } from 'core/geometry';
+import {Bounded, Rectangle, Vector, Matrix} from 'core/geometry';
 
 function maxAndMin(
   a: number,
@@ -27,18 +27,18 @@ export class Bounds implements Bounded {
     verbose: boolean = false
   ): void {
     // Transform rectangle
-    const { x: x0, y: y0 } = matrix.multiplyPointXY(x, y, this.dst);
-    const { x: x1, y: y1 } = matrix.multiplyPointXY(x + width, y, this.dst);
-    const { x: x2, y: y2 } = matrix.multiplyPointXY(x, y + height, this.dst);
-    const { x: x3, y: y3 } = matrix.multiplyPointXY(
+    const {x: x0, y: y0} = matrix.multiplyPointXY(x, y, this.dst);
+    const {x: x1, y: y1} = matrix.multiplyPointXY(x + width, y, this.dst);
+    const {x: x2, y: y2} = matrix.multiplyPointXY(x, y + height, this.dst);
+    const {x: x3, y: y3} = matrix.multiplyPointXY(
       x + width,
       y + height,
       this.dst
     );
 
     // Compute bounds of transformed rectangle
-    const { x: minX, y: maxX } = maxAndMin(x0, x1, x2, x3, this.dst);
-    const { x: minY, y: maxY } = maxAndMin(y0, y1, y2, y3, this.dst);
+    const {x: minX, y: maxX} = maxAndMin(x0, x1, x2, x3, this.dst);
+    const {x: minY, y: maxY} = maxAndMin(y0, y1, y2, y3, this.dst);
 
     // Insert transformed bounding box
     this.insertRaw(minX, minY, maxX - minX, maxY - minY, verbose);
@@ -62,12 +62,7 @@ export class Bounds implements Bounded {
       let newY = this.boundingBox.y;
       let newWidth = this.boundingBox.width;
       let newHeight = this.boundingBox.height;
-      const {
-        x: nearX1,
-        y: nearY1,
-        farX: farX1,
-        farY: farY1,
-      } = this.boundingBox;
+      const {x: nearX1, y: nearY1, farX: farX1, farY: farY1} = this.boundingBox;
       const nearX2 = x;
       const nearY2 = y;
       const farX2 = x + width;
@@ -94,7 +89,7 @@ export class Bounds implements Bounded {
   }
 
   public insert(box: Rectangle): void {
-    const { x, y, width, height } = box;
+    const {x, y, width, height} = box;
     this.insertRaw(x, y, width, height);
   }
 

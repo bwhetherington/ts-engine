@@ -144,7 +144,7 @@ function buildIterator<T>(
     }
   };
 
-  body({ $yield, $yieldAll });
+  body({$yield, $yieldAll});
 
   return (async function* () {
     while (true) {
@@ -181,7 +181,7 @@ class IteratorBuilder<T> {
         $yield(x);
       }
     };
-    const fns = { $yield, $yieldAll };
+    const fns = {$yield, $yieldAll};
     body(fns);
     return builder;
   }
@@ -196,7 +196,6 @@ class IteratorBuilder<T> {
       // Wait until we get a new item
       await this.guard;
     }
-    console.log('DONE');
   }
 }
 
@@ -243,7 +242,9 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return AsyncIterator.generator(filterType(this.generator, fn));
   }
 
-  public filterMap<U>(fn: (x: T) => MaybePromise<U | undefined>): AsyncIterator<U> {
+  public filterMap<U>(
+    fn: (x: T) => MaybePromise<U | undefined>
+  ): AsyncIterator<U> {
     return AsyncIterator.generator(filterMap(this.generator, fn));
   }
 

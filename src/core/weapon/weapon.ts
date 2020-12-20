@@ -1,10 +1,10 @@
-import { Serializable, Data } from 'core/serialize';
-import { Tank } from 'core/entity';
-import { EventManager, StepEvent, Event } from 'core/event';
-import { UUID } from 'core/uuid';
-import { FireEvent } from 'core/weapon';
-import { NetworkManager } from 'core/net';
-import { RNGManager } from 'core/random';
+import {Serializable, Data} from 'core/serialize';
+import {Tank} from 'core/entity';
+import {EventManager, StepEvent, Event} from 'core/event';
+import {UUID} from 'core/uuid';
+import {FireEvent} from 'core/weapon';
+import {NetworkManager} from 'core/net';
+import {RNGManager} from 'core/random';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';
@@ -19,7 +19,7 @@ export abstract class Weapon implements Serializable {
 
   public constructor() {
     this.id = EventManager.addListener<StepEvent>('StepEvent', (event) => {
-      const { dt } = event.data;
+      const {dt} = event.data;
       this.cooldown = Math.max(this.cooldown - dt, 0);
     });
   }
@@ -45,7 +45,7 @@ export abstract class Weapon implements Serializable {
 
       const event: Event<FireEvent> = {
         type: 'FireEvent',
-        data: { sourceID: source.id },
+        data: {sourceID: source.id},
       };
       EventManager.emit(event);
       if (NetworkManager.isServer()) {
@@ -66,7 +66,7 @@ export abstract class Weapon implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    const { type, rate, cooldown, damage, shots, shotSpread } = data;
+    const {type, rate, cooldown, damage, shots, shotSpread} = data;
 
     if (typeof type === 'string') {
       this.type = type;

@@ -1,5 +1,5 @@
-import { Rectangle, QuadTree, Bounded, Vector, Partioner } from 'core/geometry';
-import { GraphicsContext, CameraManager, Renderable } from 'core/graphics';
+import {Rectangle, QuadTree, Bounded, Vector, Partioner} from 'core/geometry';
+import {GraphicsContext, CameraManager, Renderable} from 'core/graphics';
 import {
   Entity,
   Unit,
@@ -12,6 +12,7 @@ import {
   CollisionEvent,
   Tank,
   Enemy,
+  HomingEnemy,
   CollisionLayer,
   Heavy,
   Bar,
@@ -28,17 +29,17 @@ import {
   Template,
   SniperHero,
 } from 'core/entity/template';
-import { LogManager } from 'core/log';
-import { EventManager, StepEvent } from 'core/event';
-import { Serializable, Data } from 'core/serialize';
-import { Iterator, iterator } from 'core/iterator';
-import { diff } from 'core/util';
-import { SyncEvent } from 'core/net';
-import { WALL_COLOR } from 'core/entity/Geometry';
-import { WHITE, reshade } from 'core/graphics/color';
-import { Graph } from 'core/entity/pathfinding';
-import { GraphicsPipeline } from 'core/graphics/pipe';
-import { RNGManager } from 'core/random';
+import {LogManager} from 'core/log';
+import {EventManager, StepEvent} from 'core/event';
+import {Serializable, Data} from 'core/serialize';
+import {Iterator, iterator} from 'core/iterator';
+import {diff} from 'core/util';
+import {SyncEvent} from 'core/net';
+import {WALL_COLOR} from 'core/entity/Geometry';
+import {WHITE, reshade} from 'core/graphics/color';
+import {Graph} from 'core/entity/pathfinding';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -69,7 +70,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public registerTemplateEntity(template: Template): void {
-    const { type, extends: base } = template;
+    const {type, extends: base} = template;
     const baseConstructor = this.entityConstructors[base];
     const gen = () => {
       const entity = baseConstructor();
@@ -92,6 +93,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Tank);
     this.registerEntity(TimedText);
     this.registerEntity(Enemy);
+    this.registerEntity(HomingEnemy);
     this.registerEntity(Heavy);
     this.registerEntity(Bar);
     this.registerEntity(Echo);
@@ -118,7 +120,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     });
 
     EventManager.addListener<DisplayRayEvent>('DisplayRayEvent', (event) => {
-      const { start, stop, color } = event.data;
+      const {start, stop, color} = event.data;
       const ray = new Ray();
       ray.initialize(start, stop);
       ray.setColor(color);
@@ -337,7 +339,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
           entity.collide();
           EventManager.emit<CollisionEvent>({
             type: 'CollisionEvent',
-            data: { collider: entity },
+            data: {collider: entity},
           });
         }
 
@@ -424,13 +426,13 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public deserialize(data: Data): void {
-    const { entities, deleted, boundingBox } = data;
+    const {entities, deleted, boundingBox} = data;
     for (const id in entities) {
       const entry = entities[id];
       if (Object.keys(entry).length === 0) {
         continue;
       }
-      const { type } = entry;
+      const {type} = entry;
       let entity = this.getEntity(id);
       let createdEntity = false;
       if (!entity && typeof type === 'string') {
@@ -545,7 +547,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public loadLevel(level: Data): void {
-    const { boundingBox, geometry } = level;
+    const {boundingBox, geometry} = level;
     if (boundingBox && geometry) {
       // Erase previous geometry
       this.getEntities()
@@ -560,7 +562,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
       for (const element of geometry) {
         const rect = new Rectangle();
-        const { x, y, width, height } = element;
+        const {x, y, width, height} = element;
         rect.width = width;
         rect.height = height;
         rect.centerX = x;

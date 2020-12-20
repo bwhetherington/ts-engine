@@ -1,15 +1,15 @@
-import { Hero, WorldManager, KillEvent } from 'core/entity';
-import { Serializable, Data } from 'core/serialize';
-import { Socket, NetworkManager } from 'core/net';
-import { PlayerManager, Account } from 'core/player';
-import { UUIDManager, UUID } from 'core/uuid';
-import { EventData, Handler, EventManager } from 'core/event';
-import { capitalize, sleep } from 'core/util';
-import { LogManager } from 'core/log';
-import { BasicAuth } from 'core/net/http';
-import { randomColor } from 'core/graphics/color';
-import { RNGManager } from 'core/random';
-import { PlayerChatManager } from './chat';
+import {Hero, WorldManager, KillEvent} from 'core/entity';
+import {Serializable, Data} from 'core/serialize';
+import {Socket, NetworkManager} from 'core/net';
+import {PlayerManager, Account} from 'core/player';
+import {UUIDManager, UUID} from 'core/uuid';
+import {EventData, Handler, EventManager} from 'core/event';
+import {capitalize, sleep} from 'core/util';
+import {LogManager} from 'core/log';
+import {BasicAuth} from 'core/net/http';
+import {randomColor} from 'core/graphics/color';
+import {RNGManager} from 'core/random';
+import {PlayerChatManager} from './chat';
 
 const log = LogManager.forFile(__filename);
 
@@ -38,7 +38,7 @@ export class Player implements Serializable {
 
     if (NetworkManager.isServer()) {
       this.addListener<KillEvent>('KillEvent', async (event) => {
-        const { targetID } = event.data;
+        const {targetID} = event.data;
         if (targetID && this.hero && targetID === this.hero.id) {
           await EventManager.sleep(3);
 
@@ -99,7 +99,7 @@ export class Player implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    const { name, id, socket, heroID, score, hasJoined } = data;
+    const {name, id, socket, heroID, score, hasJoined} = data;
     if (typeof id === 'string') {
       this.id = id;
     }
@@ -123,12 +123,12 @@ export class Player implements Serializable {
     }
   }
 
-  public setHero(hero: Hero): void {
+  public setHero(hero?: Hero): void {
     if (hero !== this.hero) {
       this.hero?.markForDelete();
       this.hero = hero;
     }
-    if (hero.getPlayer() !== this) {
+    if (hero && hero.getPlayer() !== this) {
       hero.setPlayer(this);
     }
   }
@@ -167,7 +167,7 @@ export class Player implements Serializable {
     // Delete the current hero, if it exists
     this.hero?.markForDelete();
 
-    const { xp, permissionLevel, username, className } = account;
+    const {xp, permissionLevel, username, className} = account;
 
     this.name = capitalize(username);
     const hero = this.spawnHero();

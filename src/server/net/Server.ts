@@ -5,18 +5,18 @@ import {
 } from 'websocket';
 import * as http from 'http';
 
-import { Node, Message, Socket } from 'core/net';
-import { LogManager } from 'core/log';
-import { EventManager, Event, StepEvent } from 'core/event';
-import { TimerManager, now } from 'server/util';
-import { WorldManager } from 'core/entity';
-import { PlayerManager, Player } from 'core/player';
-import { InitialSyncEvent } from 'core/net/util';
+import {Node, Message, Socket} from 'core/net';
+import {LogManager} from 'core/log';
+import {EventManager, Event, StepEvent} from 'core/event';
+import {TimerManager, now} from 'server/util';
+import {WorldManager} from 'core/entity';
+import {PlayerManager, Player} from 'core/player';
+import {InitialSyncEvent} from 'core/net/util';
 import process from 'process';
-import { UUID, UUIDManager } from 'core/uuid';
-import { MetricsManager } from 'server/metrics';
-import { Data, SerializeManager } from 'core/serialize';
-import { ServerHTTPClient } from '.';
+import {UUID, UUIDManager} from 'core/uuid';
+import {MetricsManager} from 'server/metrics';
+import {Data, SerializeManager} from 'core/serialize';
+import {ServerHTTPClient} from '.';
 
 const log = LogManager.forFile(__filename);
 
@@ -68,7 +68,7 @@ export class Server extends Node {
       this.send(
         {
           type: 'PingEvent',
-          data: { id },
+          data: {id},
         },
         player.socket
       );
@@ -94,7 +94,7 @@ export class Server extends Node {
 
   private initializeConnection(connection: Connection, index: Socket) {
     connection.on('message', (data) => {
-      const { type, utf8Data } = data;
+      const {type, utf8Data} = data;
       if (utf8Data && type === 'utf8') {
         const parsed: Data = SerializeManager.deserialize(utf8Data);
         this.onMessage(parsed, index);
@@ -129,7 +129,7 @@ export class Server extends Node {
 
   public initialize(httpServer: http.Server) {
     this.httpServer = httpServer;
-    this.wsServer = new WebsocketServer({ httpServer });
+    this.wsServer = new WebsocketServer({httpServer});
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
@@ -214,7 +214,7 @@ export class Server extends Node {
       const id = message.data.id as string;
       const entry = this.pingResolvers[id];
       if (entry) {
-        const { startTime, resolver } = entry;
+        const {startTime, resolver} = entry;
         const endTime = now();
         resolver(endTime - startTime);
         delete this.pingResolvers[id];

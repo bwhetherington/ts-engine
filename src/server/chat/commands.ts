@@ -1,9 +1,9 @@
-import { CommandEntry, ChatManager } from 'server/chat';
-import { hsv } from 'core/graphics/color';
-import { Player, PlayerManager } from 'core/player';
-import { loadWorld } from 'server/util';
-import { LogManager } from 'core/log';
-import { RNGManager } from 'core/random';
+import {CommandEntry, ChatManager} from 'server/chat';
+import {hsv} from 'core/graphics/color';
+import {Player, PlayerManager} from 'core/player';
+import {loadWorld} from 'server/util';
+import {LogManager} from 'core/log';
+import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 

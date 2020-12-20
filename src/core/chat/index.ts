@@ -1,7 +1,8 @@
-import { Player } from 'core/player';
+import {Player} from 'core/player';
 
 export type TextColor =
   | 'none'
+  | 'grey'
   | 'red'
   | 'orange'
   | 'yellow'
@@ -12,6 +13,7 @@ export type TextColor =
 
 const TEXT_COLORS = [
   'none',
+  'grey',
   'red',
   'orange',
   'yellow',

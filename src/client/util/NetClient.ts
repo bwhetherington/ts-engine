@@ -1,17 +1,17 @@
-import { Node, Message, Socket, DisconnectEvent } from 'core/net';
-import { LogManager } from 'core/log';
+import {Node, Message, Socket, DisconnectEvent} from 'core/net';
+import {LogManager} from 'core/log';
 import {
   uniqueNamesGenerator,
   adjectives,
   colors,
   animals,
 } from 'unique-names-generator';
-import { SetNameEvent } from 'core/chat';
-import { EventManager } from 'core/event';
-import { InitialSyncEvent } from 'core/net/util';
-import { PlayerManager } from 'core/player';
-import { WorldManager } from 'core/entity';
-import { SerializeManager } from 'core/serialize';
+import {SetNameEvent} from 'core/chat';
+import {EventManager} from 'core/event';
+import {InitialSyncEvent} from 'core/net/util';
+import {PlayerManager} from 'core/player';
+import {WorldManager} from 'core/entity';
+import {SerializeManager} from 'core/serialize';
 
 const log = LogManager.forFile(__filename);
 
@@ -44,9 +44,9 @@ export class Client extends Node {
     this.initializeSocket(this.socket);
 
     EventManager.addListener<InitialSyncEvent>('InitialSyncEvent', (event) => {
-      const { socket, sync } = event.data;
+      const {socket, sync} = event.data;
       PlayerManager.setActivePlayer(socket);
-      const { worldData, playerData } = sync;
+      const {worldData, playerData} = sync;
       WorldManager.deserialize(worldData);
       PlayerManager.deserialize(playerData);
     });

@@ -57,7 +57,7 @@ function onNumberValueChange(
   return onValueChange((s) => onChange(parse(s)));
 }
 
-type NumberInputProps = InputProps<number> & { min: number; max: number };
+type NumberInputProps = InputProps<number> & {min: number; max: number};
 
 export const FloatInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   (props, ref) => (

@@ -1,5 +1,5 @@
-import { Worker } from 'core/worker';
-import { Data } from 'core/serialize';
+import {Worker} from 'core/worker';
+import {Data} from 'core/serialize';
 
 export class GameWorker {
   private worker: Worker;
@@ -20,7 +20,7 @@ export class GameWorker {
 
   public call(method: string, value: any): Promise<any> {
     return new Promise((resolve) => {
-      this.worker.postMessage({ method, value });
+      this.worker.postMessage({method, value});
       this.setHandler((event) => resolve(event.data));
     });
   }

@@ -1,6 +1,6 @@
-import { Bounded, Rectangle, Vector } from 'core/geometry';
-import { GraphicsContext, Color, Renderable } from 'core/graphics';
-import { WHITE, isColor } from 'core/graphics/color';
+import {Bounded, Rectangle, Vector} from 'core/geometry';
+import {GraphicsContext, Color, Renderable} from 'core/graphics';
+import {WHITE, isColor} from 'core/graphics/color';
 import {
   CollisionLayer,
   WorldManager,
@@ -8,12 +8,12 @@ import {
   Bar,
   Text,
 } from 'core/entity';
-import { Data, Serializable } from 'core/serialize';
-import { isCollisionLayer, shuntOutOf } from './util';
-import { EventData, Handler, EventManager, Event, StepEvent } from 'core/event';
-import { UUID, UUIDManager } from 'core/uuid';
-import { NetworkManager } from 'core/net';
-import { AsyncIterator } from 'core/iterator';
+import {Data, Serializable} from 'core/serialize';
+import {isCollisionLayer, shuntOutOf} from './util';
+import {EventData, Handler, EventManager, Event, StepEvent} from 'core/event';
+import {UUID, UUIDManager} from 'core/uuid';
+import {NetworkManager} from 'core/net';
+import {AsyncIterator} from 'core/iterator';
 
 export class Entity implements Bounded, Serializable, Renderable {
   public static typeName: string = 'Entity';
@@ -71,7 +71,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   }
 
   public render(ctx: GraphicsContext): void {
-    const { width, height } = this.boundingBox;
+    const {width, height} = this.boundingBox;
     ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
   }
 
@@ -153,8 +153,8 @@ export class Entity implements Bounded, Serializable, Renderable {
   }
 
   private deserializeColor(data: Data): void {
-    const { red, green, blue, alpha } = data;
-    const newColor = { ...this.color };
+    const {red, green, blue, alpha} = data;
+    const newColor = {...this.color};
     if (typeof red === 'number') {
       newColor.red = red;
     }
@@ -286,7 +286,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   public streamEvents<E extends EventData>(
     type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(({ $yield }) => {
+    return AsyncIterator.from(({$yield}) => {
       this.addListener<E>(type, $yield);
     });
   }

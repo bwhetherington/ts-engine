@@ -1,20 +1,14 @@
-import {
-  Form,
-  FormManager,
-  StringEntry,
-  FormEntry,
-  FormResult,
-} from 'core/form';
-import { EventManager } from 'core/event';
-import { ConnectEvent, NetworkManager } from 'core/net';
-import { PlayerManager, Player } from 'core/player';
-import { Data } from 'core/serialize';
-import { LogManager } from 'core/log';
-import { WorldManager, Hero } from 'core/entity';
-import { randomColor } from 'core/graphics/color';
-import { capitalize } from 'core/util';
-import { BasicAuth, isOk } from 'core/net/http';
-import { RNGManager } from 'core/random';
+import {Form, FormManager, StringEntry, FormEntry, FormResult} from 'core/form';
+import {EventManager} from 'core/event';
+import {ConnectEvent, NetworkManager} from 'core/net';
+import {PlayerManager, Player} from 'core/player';
+import {Data} from 'core/serialize';
+import {LogManager} from 'core/log';
+import {WorldManager, Hero} from 'core/entity';
+import {randomColor} from 'core/graphics/color';
+import {capitalize} from 'core/util';
+import {BasicAuth, isOk} from 'core/net/http';
+import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -81,7 +75,7 @@ export function registerJoinForm(): void {
 const LOGIN_SERVER = process.env.GAME_LOGIN_SERVER ?? '';
 
 async function validateSubmit(input: JoinForm): Promise<FormResult> {
-  const { username, password } = input;
+  const {username, password} = input;
   try {
     const res = await NetworkManager.http?.get(LOGIN_SERVER + '/login', {
       username: username.value,
@@ -91,16 +85,16 @@ async function validateSubmit(input: JoinForm): Promise<FormResult> {
       // Check that the user is not already logged in elsewhere
       const isValid = isOk(res.code);
       if (isValid && PlayerManager.findPlayer(capitalize(username.value))) {
-        return { isValid: false, message: 'Account is already logged in.' };
+        return {isValid: false, message: 'Account is already logged in.'};
       } else if (isValid) {
-        return { isValid: true, data: res.data };
+        return {isValid: true, data: res.data};
       } else {
-        return { isValid: false, message: 'Invalid credentials.' };
+        return {isValid: false, message: 'Invalid credentials.'};
       }
     }
-    return { isValid: false, message: 'Invalid credentials.' };
+    return {isValid: false, message: 'Invalid credentials.'};
   } catch (_) {
-    return { isValid: false, message: 'Could not connect to login server.' };
+    return {isValid: false, message: 'Could not connect to login server.'};
   }
 }
 
@@ -109,7 +103,7 @@ async function handleSubmit(
   response: JoinForm,
   data?: Data
 ): Promise<void> {
-  const { username, password } = response;
+  const {username, password} = response;
   const auth: BasicAuth = {
     username: username.value,
     password: password.value,
@@ -141,12 +135,12 @@ async function validateRegister(input: JoinForm): Promise<FormResult> {
     };
     const res = await NetworkManager.http?.post('/register', auth);
     if (res && isOk(res.code)) {
-      return { isValid: true, data: res.data };
+      return {isValid: true, data: res.data};
     } else {
-      return { isValid: false, message: res?.data.message ?? defaultError };
+      return {isValid: false, message: res?.data.message ?? defaultError};
     }
   } catch (_) {
-    return { isValid: false, message: defaultError };
+    return {isValid: false, message: defaultError};
   }
 }
 
@@ -177,10 +171,10 @@ function validateNoAccount(res: JoinForm): FormResult {
   const username = res.username.value;
 
   if (PlayerManager.findPlayer(username)) {
-    return { isValid: false, message: 'A player already has that name.' };
+    return {isValid: false, message: 'A player already has that name.'};
   }
 
-  return { isValid: true };
+  return {isValid: true};
 }
 
 function handleNoAccount(player: Player, res: JoinForm): void {
@@ -226,7 +220,7 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
       case 'noAccount':
         return validateNoAccount(input);
       default:
-        return { isValid: false, message: 'Unknown submission method.' };
+        return {isValid: false, message: 'Unknown submission method.'};
     }
   },
 };

@@ -1,6 +1,6 @@
-import { GraphicsContext } from 'core/graphics';
-import { Rectangle, Partioner, Bounded } from 'core/geometry';
-import { BLACK, WHITE } from 'core/graphics/color';
+import {GraphicsContext} from 'core/graphics';
+import {Rectangle, Partioner, Bounded} from 'core/geometry';
+import {BLACK, WHITE} from 'core/graphics/color';
 
 export class Cell<T extends Bounded> implements Partioner<T> {
   public boundingBox: Rectangle = new Rectangle(1, 1);
@@ -64,7 +64,7 @@ export class Cell<T extends Bounded> implements Partioner<T> {
 
   public insert(element: T): void {
     // Insert element into each cell it occupies
-    const { x, y, farX, farY } = element.boundingBox;
+    const {x, y, farX, farY} = element.boundingBox;
 
     for (let j = this.getRow(y); j <= this.getRow(farY); j += 1) {
       for (let i = this.getCol(x); i <= this.getCol(farX); i++) {
@@ -76,7 +76,7 @@ export class Cell<T extends Bounded> implements Partioner<T> {
   }
 
   private *queryInternal(area: Rectangle): Iterable<T> {
-    const { x, y, farX, farY } = area;
+    const {x, y, farX, farY} = area;
 
     for (let j = this.getRow(y); j <= this.getRow(farY); j += 1) {
       for (let i = this.getCol(x); i <= this.getCol(farX); i++) {

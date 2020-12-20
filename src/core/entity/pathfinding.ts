@@ -1,8 +1,8 @@
-import { WorldManager } from '.';
-import { Rectangle } from 'core/geometry';
-import { CollisionLayer } from './util';
-import { GraphicsContext } from 'core/graphics';
-import { WHITE, BLACK } from 'core/graphics/color';
+import {WorldManager} from '.';
+import {Rectangle} from 'core/geometry';
+import {CollisionLayer} from './util';
+import {GraphicsContext} from 'core/graphics';
+import {WHITE, BLACK} from 'core/graphics/color';
 
 export interface Node {
   x: number;
@@ -28,7 +28,7 @@ export class Graph {
   }
 
   public static sample(spacing: number): Graph {
-    const { x, y, width, height, farX, farY } = WorldManager.boundingBox;
+    const {x, y, width, height, farX, farY} = WorldManager.boundingBox;
     const cols = Math.ceil(width / spacing);
     const rows = Math.ceil(height / spacing);
 
@@ -69,7 +69,7 @@ export class Graph {
 
   public render(ctx: GraphicsContext): void {
     for (const node of this.nodes) {
-      const { x, y } = node;
+      const {x, y} = node;
       const worldX = x;
       const worldY = y;
       ctx.ellipse(worldX, worldY, 5, 5, node.isPathable ? WHITE : BLACK);

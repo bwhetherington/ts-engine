@@ -1,4 +1,4 @@
-import { GameWorker } from './util';
+import {GameWorker} from './util';
 
 function none<T>(): T | undefined {
   return undefined;

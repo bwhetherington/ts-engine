@@ -1,9 +1,14 @@
-import { Projectile, Entity, WorldManager } from 'core/entity';
-import { Data } from 'core/serialize';
+import {Projectile, Entity, WorldManager} from 'core/entity';
+import {DirectionVector} from 'core/geometry';
+import {GraphicsContext} from 'core/graphics';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {NetworkManager} from 'core/net';
+import {Data} from 'core/serialize';
 
 export class HomingProjectile extends Projectile {
   public static typeName: string = 'HomingProjectile';
 
+  public velocity: DirectionVector = new DirectionVector();
   public maxSpeed: number = 1;
   public turnSpeed: number = 1;
   public target?: Entity;
@@ -14,18 +19,21 @@ export class HomingProjectile extends Projectile {
   }
 
   public step(dt: number): void {
-    if (this.target) {
-      this.vectorBuffer.set(this.target.position);
-      this.vectorBuffer.add(this.position, -1);
-      this.vectorBuffer.magnitude = this.turnSpeed;
-      this.velocity.add(this.vectorBuffer);
-    }
+    if (NetworkManager.isServer()) {
+      if (this.target) {
+        this.vectorBuffer.set(this.target.position);
+        this.vectorBuffer.add(this.position, -1);
+        this.vectorBuffer.magnitude = this.turnSpeed;
+        this.velocity.add(this.vectorBuffer);
+      }
 
-    if (this.velocity.magnitudeSquared > this.maxSpeed * this.maxSpeed) {
-      this.velocity.magnitude = this.maxSpeed;
+      if (this.velocity.magnitudeSquared > this.maxSpeed * this.maxSpeed) {
+        this.velocity.magnitude = this.maxSpeed;
+      }
     }
 
     super.step(dt);
+    this.angle = this.velocity.direction;
   }
 
   public serialize(): Data {
@@ -40,7 +48,7 @@ export class HomingProjectile extends Projectile {
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const { maxSpeed, turnSpeed, targetID } = data;
+    const {maxSpeed, turnSpeed, targetID} = data;
 
     if (typeof maxSpeed === 'number') {
       this.maxSpeed = maxSpeed;

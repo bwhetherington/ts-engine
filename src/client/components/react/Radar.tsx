@@ -1,11 +1,11 @@
 import React from 'react';
-import { Component } from 'client/components/react';
-import { StepEvent } from 'core/event';
-import { Column, Panel, PanelHeader } from './common';
-import { HDCanvas } from 'client/util';
-import { CollisionLayer, Entity, Hero, Unit, WorldManager } from 'core/entity';
-import { Color, rgba, WHITE } from 'core/graphics/color';
-import { GraphicsPipeline } from 'core/graphics/pipe';
+import {Component} from 'client/components/react';
+import {StepEvent} from 'core/event';
+import {Column, Panel, PanelHeader} from './common';
+import {HDCanvas} from 'client/util';
+import {CollisionLayer, Entity, Hero, Unit, WorldManager} from 'core/entity';
+import {Color, rgba, WHITE} from 'core/graphics/color';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 import styled from 'styled-components';
 
 const CANVAS_OPTIONS = {
@@ -52,7 +52,7 @@ export class Radar extends Component<{}, RadarState> {
                 : undefined
             )
             .forEach((entity) => {
-              const { x, y, width, height } = entity.boundingBox;
+              const {x, y, width, height} = entity.boundingBox;
               ctx.rect(x, y, width, height, this.computeColor(entity));
             });
         });

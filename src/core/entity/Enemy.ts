@@ -1,9 +1,9 @@
-import { WorldManager, Unit, Tank, KillEvent } from 'core/entity';
-import { clamp } from 'core/util';
-import { MovementDirection } from 'core/input';
-import { NetworkManager } from 'core/net';
-import { LogManager } from 'core/log';
-import { RNGManager } from 'core/random';
+import {WorldManager, Unit, Tank, KillEvent} from 'core/entity';
+import {clamp} from 'core/util';
+import {MovementDirection} from 'core/input';
+import {NetworkManager} from 'core/net';
+import {LogManager} from 'core/log';
+import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -27,7 +27,7 @@ export class Enemy extends Tank {
 
     if (this.label) {
       this.label.text = 'Tank';
-      this.label.tag = 'AI';
+      this.label.tag = ' [AI]';
     }
 
     this.setXPWorth(5);
@@ -79,7 +79,7 @@ export class Enemy extends Tank {
       this.setMovement(MovementDirection.Left, false);
       this.setMovement(MovementDirection.Right, false);
 
-      const { target } = this;
+      const {target} = this;
       if (target && target.isAlive) {
         if (target.position.distanceTo(this.position) > 150) {
           // Calculate movement to reach target

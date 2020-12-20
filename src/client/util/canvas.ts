@@ -8,10 +8,11 @@ import {
   GraphicsOptions,
   CameraManager,
 } from 'core/graphics';
-import { BLACK, WHITE } from 'core/graphics/color';
-import { GraphicsProc } from 'core/graphics/context';
-import { Vector, Bounds, Matrix, VectorLike } from 'core/geometry';
-import { GraphicsPipeline } from 'core/graphics/pipe';
+import {BLACK, COLOR_MAPPING, WHITE} from 'core/graphics/color';
+import {GraphicsProc} from 'core/graphics/context';
+import {Vector, Bounds, Matrix, VectorLike} from 'core/geometry';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {TextColor, TextComponents} from 'core/chat';
 
 interface Options {
   width: number;
@@ -57,7 +58,7 @@ export class HDCanvas implements GraphicsContext {
     options: Options = DEFAULT_OPTIONS,
     isParent: boolean = true
   ) {
-    const { width, height, isFullScreen } = options;
+    const {width, height, isFullScreen} = options;
 
     this.canvas = element;
     if (this.canvas) {
@@ -144,7 +145,7 @@ export class HDCanvas implements GraphicsContext {
   public setSize(w: number, h: number, ratio?: number) {
     this.width = w;
     this.height = h;
-    const { canvas: element } = this;
+    const {canvas: element} = this;
     if (element) {
       ratio = ratio ?? window.devicePixelRatio ?? 1;
       this.ratio = ratio;
@@ -196,12 +197,58 @@ export class HDCanvas implements GraphicsContext {
     this.hidden?.clear(color);
   }
 
+  public textComponents(
+    x: number,
+    y: number,
+    components: TextComponents,
+    style: TextStyle
+  ): void {
+    const ctx = this.curContext;
+    if (ctx) {
+      const scaleValue = this.scaleValue;
+      const {font = 'Roboto Mono', size = 12} = style;
+      ctx.lineWidth = this.options.lineWidth / scaleValue;
+      ctx.textAlign = 'left';
+      ctx.font = createFontString(font, size, scaleValue);
+      this.setRound(ctx);
+
+      // Compute width
+      let totalWidth = 0;
+      for (const component of components) {
+        const text =
+          (typeof component === 'string' ? component : component?.content) ??
+          '';
+        const width = ctx.measureText(text).width;
+        totalWidth += width;
+      }
+
+      let xOffset = -totalWidth / 2;
+      for (const component of components) {
+        const text =
+          (typeof component === 'string' ? component : component?.content) ??
+          '';
+        const colorString: TextColor =
+          (typeof component === 'string' ? 'none' : component?.style?.color) ??
+          'none';
+        const color = COLOR_MAPPING[colorString];
+
+        ctx.fillStyle = toCss(color);
+        ctx.strokeStyle = toCss(reshade(color, 0.35));
+
+        ctx.strokeText(text, x + xOffset, y);
+        ctx.fillText(text, x + xOffset, y);
+
+        const width = ctx.measureText(text).width;
+        xOffset += width;
+      }
+    }
+  }
+
   public text(x: number, y: number, text: string, style: TextStyle) {
     const ctx = this.curContext;
     if (ctx) {
       const scaleValue = this.scaleValue;
-      const { font = 'Roboto Mono', size = 12, color = WHITE } = style;
-      ctx.beginPath();
+      const {font = 'Roboto Mono', size = 12, color = WHITE} = style;
       ctx.lineWidth = this.options.lineWidth / scaleValue;
       ctx.fillStyle = toCss(color);
       ctx.strokeStyle = toCss(reshade(color, 0.35));
@@ -210,7 +257,6 @@ export class HDCanvas implements GraphicsContext {
       this.setRound(ctx);
       ctx.strokeText(text, x, y);
       ctx.fillText(text, x, y);
-      ctx.closePath();
 
       // Add text to bounds
       if (this.bounds) {
@@ -346,7 +392,7 @@ export class HDCanvas implements GraphicsContext {
       const angle = (i / vertexCount) * (2 * Math.PI);
       const x = Math.cos(angle) * radius + centerX;
       const y = Math.sin(angle) * radius + centerY;
-      vertices.push({ x, y });
+      vertices.push({x, y});
     }
     this.polygon(vertices, color);
     this.bounds?.insertRawTransformed(
@@ -368,7 +414,7 @@ export class HDCanvas implements GraphicsContext {
 
       this.setRound(ctx);
 
-      const { x, y } = vertices[0];
+      const {x, y} = vertices[0];
 
       ctx.beginPath();
       ctx.moveTo(x, y);
@@ -503,7 +549,7 @@ export class HDCanvas implements GraphicsContext {
           // proc(this);
           const {
             scaleValue,
-            translation: { x, y },
+            translation: {x, y},
           } = this;
           const dw = (this.hidden.width - this.width) / 2;
           const dh = (this.hidden.height - this.height) / 2;

@@ -1,4 +1,4 @@
-import { LogManager } from 'core/log';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 
@@ -9,7 +9,7 @@ export abstract class Component extends HTMLElement {
 
   constructor(source: string) {
     super();
-    const shadowRoot = this.attachShadow({ mode: 'open' });
+    const shadowRoot = this.attachShadow({mode: 'open'});
     shadowRoot.innerHTML = source;
     this.root = shadowRoot;
   }

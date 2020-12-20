@@ -1,5 +1,5 @@
-import { ChatManager } from 'server/chat/ChatManager';
-import { Player } from 'core/player';
+import {ChatManager} from 'server/chat/ChatManager';
+import {Player} from 'core/player';
 
 export interface CommandEntry {
   name: string;
@@ -10,4 +10,4 @@ export interface CommandEntry {
 }
 
 const CM = new ChatManager();
-export { CM as ChatManager };
+export {CM as ChatManager};

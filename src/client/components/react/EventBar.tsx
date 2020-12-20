@@ -1,7 +1,7 @@
 import React from 'react';
-import { Component } from 'client/components/react/Component';
-import { Bar, BarStyle } from 'client/components/react/Bar';
-import { BarUpdateEvent } from 'core/util';
+import {Component} from 'client/components/react/Component';
+import {Bar, BarStyle} from 'client/components/react/Bar';
+import {BarUpdateEvent} from 'core/util';
 
 interface EventBarProps {
   id: string;
@@ -24,7 +24,7 @@ export class EventBar extends Component<EventBarProps, EventBarState> {
 
   public componentDidMount(): void {
     this.addListener<BarUpdateEvent>('BarUpdateEvent', (event) => {
-      const { id, value, maxValue } = event.data;
+      const {id, value, maxValue} = event.data;
       if (id === this.props.id) {
         this.updateState({
           value,

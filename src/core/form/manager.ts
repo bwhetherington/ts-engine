@@ -1,7 +1,7 @@
-import { LogManager } from 'core/log';
-import { Player, PlayerManager } from 'core/player';
-import { Data } from 'core/serialize';
-import { EventManager } from 'core/event';
+import {LogManager} from 'core/log';
+import {Player, PlayerManager} from 'core/player';
+import {Data} from 'core/serialize';
+import {EventManager} from 'core/event';
 import {
   FormSubmitEvent,
   Form,
@@ -9,8 +9,8 @@ import {
   FormEntry,
   FormRejectEvent,
 } from 'core/form';
-import { NetworkManager } from 'core/net';
-import { sleep } from 'core/util';
+import {NetworkManager} from 'core/net';
+import {sleep} from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -48,7 +48,7 @@ export class FormManager {
       const id = EventManager.addListener<FormSubmitEvent>(
         'FormSubmitEvent',
         (event, id) => {
-          const { socket, data } = event;
+          const {socket, data} = event;
           if (socket === player.socket) {
             resolve(data.data);
             EventManager.removeListener('FormSubmitEvent', id);
@@ -93,7 +93,7 @@ export class FormManager {
 
     EventManager.emit<FormRejectEvent>({
       type: 'FormRejectEvent',
-      data: { player },
+      data: {player},
     });
 
     return false;
@@ -101,19 +101,15 @@ export class FormManager {
 
   public registerForm<T extends Data>(formEntry: FormEntry<T>): void {
     log.trace(`form ${formEntry.name} registered`);
-    const { name, form, checkType, validate, onSubmit, onReject } = formEntry;
+    const {name, form, checkType, validate, onSubmit, onReject} = formEntry;
     this.forms[name] = form;
     EventManager.addListener<FormSubmitEvent>(
       'FormSubmitEvent',
       async (event) => {
-        const { socket, data } = event;
+        const {socket, data} = event;
         const player = PlayerManager.getPlayer(socket);
         if (player) {
-          const {
-            name: responseName,
-            data: response,
-            method = 'submit',
-          } = data;
+          const {name: responseName, data: response, method = 'submit'} = data;
           if (responseName === name) {
             if (checkType(response)) {
               const result = await validate(response, method, player);
@@ -144,7 +140,7 @@ export class FormManager {
     );
     if (onReject) {
       EventManager.addListener<FormRejectEvent>('FormRejectEvent', (event) => {
-        const { player } = event.data;
+        const {player} = event.data;
         onReject(player);
       });
     }

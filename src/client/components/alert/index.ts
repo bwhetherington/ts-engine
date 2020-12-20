@@ -10,9 +10,9 @@ import {
   StringEntry,
   BooleanEntry,
 } from 'core/form';
-import { EventManager } from 'core/event';
-import { removeChildren, ElementFactory, Component } from 'client/components';
-import { LogManager } from 'core/log';
+import {EventManager} from 'core/event';
+import {removeChildren, ElementFactory, Component} from 'client/components';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 
@@ -121,7 +121,7 @@ export class AlertComponent extends Component {
     }
 
     // Render messages
-    const { messages = [] } = data;
+    const {messages = []} = data;
     if (messages.length > 0) {
       // Create element
       const messagesContainer = ElementFactory.div();
@@ -191,7 +191,7 @@ export class AlertComponent extends Component {
         };
         break;
       case 'text':
-        const { minLength, maxLength } = item;
+        const {minLength, maxLength} = item;
         if (minLength !== undefined) {
           input.minLength = minLength;
         }
@@ -208,7 +208,7 @@ export class AlertComponent extends Component {
         break;
       case 'range':
       case 'number':
-        const { min, max, default: value } = item;
+        const {min, max, default: value} = item;
         if (min !== undefined) {
           input.min = '' + min;
         }

@@ -1,10 +1,10 @@
-import { Queue } from 'core/util/queue';
-import { Event, GameEvent, GameHandler, Handler, EventData } from 'core/event';
-import { UUID, UUIDManager } from 'core/uuid';
-import { LogManager } from 'core/log';
-import { formatData } from 'core/util';
-import { AsyncIterator } from 'core/iterator';
-import { Observer } from './observer';
+import {Queue} from 'core/util/queue';
+import {Event, GameEvent, GameHandler, Handler, EventData} from 'core/event';
+import {UUID, UUIDManager} from 'core/uuid';
+import {LogManager} from 'core/log';
+import {formatData} from 'core/util';
+import {AsyncIterator} from 'core/iterator';
+import {Observer} from './observer';
 
 const log = LogManager.forFile(__filename);
 
@@ -67,7 +67,7 @@ export class EventManager extends Observer {
 
   private handleEvent(event: GameEvent): void {
     // Check handlers
-    const { type } = event;
+    const {type} = event;
     log.trace(`handle event: ${formatData(event)}`);
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
@@ -89,7 +89,7 @@ export class EventManager extends Observer {
   public step(dt: number): void {
     this.emit<StepEvent>({
       type: 'StepEvent',
-      data: { dt },
+      data: {dt},
     });
     this.pollEvents();
     this.timeElapsed += dt;
@@ -127,13 +127,13 @@ export class EventManager extends Observer {
   public streamEvents<E extends EventData>(
     type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(({ $yield }) => {
+    return AsyncIterator.from(({$yield}) => {
       this.addListener(type, $yield);
     });
   }
 
   public streamInterval(period: number): AsyncIterator<void> {
-    return AsyncIterator.from(({ $yield }) => {
+    return AsyncIterator.from(({$yield}) => {
       this.runPeriodic(period, () => $yield());
     });
   }

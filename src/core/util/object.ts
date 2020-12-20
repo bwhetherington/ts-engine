@@ -1,4 +1,4 @@
-import { Data } from 'core/serialize';
+import {Data} from 'core/serialize';
 
 export function isEmpty(obj: object): boolean {
   for (const key in obj) {

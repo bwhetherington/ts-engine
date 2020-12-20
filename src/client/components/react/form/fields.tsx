@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Component } from 'client/components/react';
+import {Component} from 'client/components/react';
 import {
   StringInput,
   FloatInput,
@@ -13,7 +13,7 @@ import {
   PanelHeader,
   UI_MARGIN,
 } from 'client/components/react/common';
-import { Form, Field, Entry } from 'core/form';
+import {Form, Field, Entry} from 'core/form';
 
 const FieldContainer = styled.div`
   display: flex;
@@ -44,7 +44,7 @@ function FieldComponent(props: FieldProps): JSX.Element {
       <StringInput
         value={props.entry.value ?? props.field.default}
         isPassword={props.field.isPassword}
-        onChange={(value) => props.onChange({ type: 'text', value })}
+        onChange={(value) => props.onChange({type: 'text', value})}
       />
     );
   } else if (props.field.type === 'number' && props.entry.type === 'number') {
@@ -53,7 +53,7 @@ function FieldComponent(props: FieldProps): JSX.Element {
         min={props.field.min ?? 0}
         max={props.field.max ?? 100}
         value={props.entry.value ?? props.field.default}
-        onChange={(value) => props.onChange({ type: 'number', value })}
+        onChange={(value) => props.onChange({type: 'number', value})}
       />
     );
   } else if (
@@ -63,7 +63,7 @@ function FieldComponent(props: FieldProps): JSX.Element {
     valueComponent = (
       <BooleanInput
         value={props.entry.value ?? props.field.default}
-        onChange={(value) => props.onChange({ type: 'boolean', value })}
+        onChange={(value) => props.onChange({type: 'boolean', value})}
       />
     );
   }
@@ -103,13 +103,13 @@ interface FormState {
 function createDefaultEntry(field: Field): Entry {
   switch (field.type) {
     case 'checkbox':
-      return { type: 'boolean', value: field.default ?? false };
+      return {type: 'boolean', value: field.default ?? false};
     case 'number':
-      return { type: 'number', value: field.default ?? 0 };
+      return {type: 'number', value: field.default ?? 0};
     case 'range':
-      return { type: 'number', value: field.default };
+      return {type: 'number', value: field.default};
     case 'text':
-      return { type: 'text', value: field.default ?? '' };
+      return {type: 'text', value: field.default ?? ''};
   }
 }
 
@@ -145,7 +145,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     const newData = {
       entries: {
         ...this.state.entries,
-        [name]: { type, value } as Entry,
+        [name]: {type, value} as Entry,
       },
     };
     this.updateState(newData);

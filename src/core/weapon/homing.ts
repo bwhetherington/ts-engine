@@ -6,7 +6,8 @@ import {
   Unit,
   WorldManager,
 } from 'core/entity';
-import { Gun } from 'core/weapon';
+import {Rectangle} from 'core/geometry';
+import {Gun} from 'core/weapon';
 
 export class HomingGun extends Gun {
   public static typeName: string = 'HomingGun';
@@ -15,9 +16,9 @@ export class HomingGun extends Gun {
     super();
     this.type = HomingGun.typeName;
     this.projectileType = HomingProjectile.typeName;
-    this.projectileSpeed = 300;
-    this.rate = 0.15;
-    this.projectileSpread = 1;
+    this.projectileSpeed = 350;
+    this.rate = 0.35;
+    this.projectileSpread = 0.5;
     this.projectilePierce = 1;
   }
 
@@ -25,7 +26,16 @@ export class HomingGun extends Gun {
     projectile: HomingProjectile,
     source: Tank
   ): Unit | undefined {
-    const [target] = WorldManager.getEntities()
+    const range = this.projectileSpeed * projectile.duration;
+    const [target] = WorldManager.query(
+      new Rectangle(
+        range * 2,
+        range * 2,
+        source.position.x - range,
+        source.position.y - range
+      )
+    )
+      .filter((entity) => entity.position.distanceTo(source.position) < range)
       .filter((entity) => !(source === entity || projectile === entity))
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
       .filter((unit) => unit.isAlive)
@@ -42,9 +52,10 @@ export class HomingGun extends Gun {
 
   protected createProjectile(source: Tank, angle: number): Projectile {
     const base = super.createProjectile(source, angle) as HomingProjectile;
-    base.turnSpeed = this.projectileSpeed / 5;
+    base.turnSpeed = this.projectileSpeed / 10;
     base.maxSpeed = this.projectileSpeed;
     base.target = this.selectTarget(base, source);
+    base.shape = 'triangle';
 
     base
       .streamEvents<KillEvent>('KillEvent')

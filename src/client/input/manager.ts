@@ -1,5 +1,5 @@
-import { EventManager } from 'core/event';
-import { LogManager } from 'core/log';
+import {EventManager} from 'core/event';
+import {LogManager} from 'core/log';
 import {
   KEY_MAP,
   KeyEvent,
@@ -9,8 +9,8 @@ import {
   MouseEvent,
   Key,
 } from 'core/input';
-import { CameraManager } from 'core/graphics';
-import { NetworkManager } from 'core/net';
+import {CameraManager} from 'core/graphics';
+import {NetworkManager} from 'core/net';
 
 const log = LogManager.forFile(__filename);
 
@@ -36,8 +36,8 @@ export class InputManager {
       event.preventDefault();
     });
     this.element?.addEventListener('mousedown', (event) => {
-      const { clientX, clientY } = event;
-      const { x, y } = CameraManager.toWorldSpace(clientX, clientY);
+      const {clientX, clientY} = event;
+      const {x, y} = CameraManager.toWorldSpace(clientX, clientY);
       const button = BUTTON_MAP[event.button];
       if (button !== undefined) {
         const mouseEvent = {
@@ -56,8 +56,8 @@ export class InputManager {
       }
     });
     this.element?.addEventListener('mouseup', (event) => {
-      const { clientX, clientY } = event;
-      const { x, y } = CameraManager.toWorldSpace(clientX, clientY);
+      const {clientX, clientY} = event;
+      const {x, y} = CameraManager.toWorldSpace(clientX, clientY);
       const button = BUTTON_MAP[event.button];
       if (button !== undefined) {
         const mouseEvent = {
@@ -76,8 +76,8 @@ export class InputManager {
       }
     });
     this.element?.addEventListener('mousemove', (event) => {
-      const { clientX, clientY } = event;
-      const { x, y } = CameraManager.toWorldSpace(clientX, clientY);
+      const {clientX, clientY} = event;
+      const {x, y} = CameraManager.toWorldSpace(clientX, clientY);
       const mouseEvent = {
         type: 'MouseEvent',
         data: <MouseEvent>{

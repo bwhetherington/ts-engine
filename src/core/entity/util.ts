@@ -1,8 +1,8 @@
-import { Entity, Unit } from 'core/entity';
-import { Rectangle, Vector, VectorLike } from 'core/geometry';
-import { LogManager } from 'core/log';
-import { UUID } from 'core/uuid';
-import { Color } from 'core/graphics';
+import {Entity, Unit} from 'core/entity';
+import {Rectangle, Vector, VectorLike} from 'core/geometry';
+import {LogManager} from 'core/log';
+import {UUID} from 'core/uuid';
+import {Color} from 'core/graphics';
 
 const log = LogManager.forFile(__filename);
 
@@ -25,7 +25,7 @@ export interface CollisionEvent {
 
 export function shuntOutOf(entity: Entity, other: Rectangle) {
   const box = entity.boundingBox;
-  const { centerX: x, centerY: y } = box;
+  const {centerX: x, centerY: y} = box;
 
   // Check if contained entirely within the rectangle
   if (other.contains(box)) {

@@ -1,13 +1,13 @@
-import { Player, PlayerLeaveEvent } from 'core/player';
-import { Serializable, Data } from 'core/serialize';
-import { LogManager } from 'core/log';
-import { SyncEvent, NetworkManager } from 'core/net';
-import { EventManager } from 'core/event';
-import { diff } from 'core/util';
-import { Iterator } from 'core/iterator';
-import { UUID } from 'core/uuid';
-import { isEmpty } from 'core/util/object';
-import { MetricsEvent } from 'core/metrics';
+import {Player, PlayerLeaveEvent} from 'core/player';
+import {Serializable, Data} from 'core/serialize';
+import {LogManager} from 'core/log';
+import {SyncEvent, NetworkManager} from 'core/net';
+import {EventManager} from 'core/event';
+import {diff} from 'core/util';
+import {Iterator} from 'core/iterator';
+import {UUID} from 'core/uuid';
+import {isEmpty} from 'core/util/object';
+import {MetricsEvent} from 'core/metrics';
 
 const log = LogManager.forFile(__filename);
 
@@ -27,7 +27,7 @@ export class PlayerManager implements Serializable {
 
     if (NetworkManager.isClient()) {
       EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
-        const { pings } = event.data;
+        const {pings} = event.data;
         for (const id in pings) {
           const player = this.getPlayer(id);
           if (player) {
@@ -60,7 +60,7 @@ export class PlayerManager implements Serializable {
   }
 
   public add(player: Player): void {
-    const { id } = player;
+    const {id} = player;
     this.players[id] = player;
     if (player.socket !== undefined) {
       this.socketMap[player.socket] = player;
@@ -110,7 +110,7 @@ export class PlayerManager implements Serializable {
     for (const index in this.players) {
       players[index] = this.players[index].serialize();
     }
-    const { removed } = this;
+    const {removed} = this;
     this.removed = [];
 
     const obj: Data = {};
@@ -124,7 +124,7 @@ export class PlayerManager implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    const { players, removed } = data;
+    const {players, removed} = data;
     if (players) {
       for (const index in players) {
         let newPlayer = false;

@@ -1,5 +1,5 @@
-import { LogManager } from 'core/log';
-import { Data } from 'core/serialize';
+import {LogManager} from 'core/log';
+import {Data} from 'core/serialize';
 
 const log = LogManager.forFile(__filename);
 

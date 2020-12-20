@@ -1,5 +1,5 @@
-import { Hero } from 'core/entity';
-import { GraphicsContext } from 'core/graphics';
+import {Hero} from 'core/entity';
+import {GraphicsContext} from 'core/graphics';
 
 export class Heavy extends Hero {
   public static typeName = 'Heavy';

@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Component } from 'client/components/react';
-import { FormComponent } from 'client/components/react/form';
-import { Entry, Form, FormShowEvent, FormSubmitEvent } from 'core/form';
-import { NetworkManager } from 'core/net';
+import {Component} from 'client/components/react';
+import {FormComponent} from 'client/components/react/form';
+import {Entry, Form, FormShowEvent, FormSubmitEvent} from 'core/form';
+import {NetworkManager} from 'core/net';
 
 const Background = styled.div`
   position: absolute;

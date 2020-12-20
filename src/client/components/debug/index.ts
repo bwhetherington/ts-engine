@@ -1,10 +1,10 @@
-import { Component } from 'client/components/util';
+import {Component} from 'client/components/util';
 import template from 'client/components/debug/template.html';
-import { SizedQueue } from 'core/util';
-import { EventManager, StepEvent, Event } from 'core/event';
-import { WorldManager } from 'core/entity';
-import { MetricsEvent } from 'core/metrics';
-import { PlayerManager } from 'core/player';
+import {SizedQueue} from 'core/util';
+import {EventManager, StepEvent, Event} from 'core/event';
+import {WorldManager} from 'core/entity';
+import {MetricsEvent} from 'core/metrics';
+import {PlayerManager} from 'core/player';
 
 export class DebugComponent extends Component {
   public static componentName: string = 'debug-component';
@@ -52,7 +52,7 @@ export class DebugComponent extends Component {
     });
 
     EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
-      const { tps, entities, listeners, pings } = event.data;
+      const {tps, entities, listeners, pings} = event.data;
       if (this.serverTpsLabel) {
         const rounded = Math.round(tps);
         this.serverTpsLabel.innerText = '' + rounded;

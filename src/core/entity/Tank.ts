@@ -1,11 +1,11 @@
-import { Unit, Text, WorldManager } from 'core/entity';
-import { GraphicsContext } from 'core/graphics';
-import { Data } from 'core/serialize';
-import { FireEvent, Weapon, WeaponManager } from 'core/weapon';
-import { NetworkManager } from 'core/net';
-import { LogManager } from 'core/log';
-import { Rectangle, Vector } from 'core/geometry';
-import { GraphicsPipeline } from 'core/graphics/pipe';
+import {Unit, Text, WorldManager} from 'core/entity';
+import {GraphicsContext} from 'core/graphics';
+import {Data} from 'core/serialize';
+import {FireEvent, Weapon, WeaponManager} from 'core/weapon';
+import {NetworkManager} from 'core/net';
+import {LogManager} from 'core/log';
+import {Rectangle, Vector} from 'core/geometry';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 
 const log = LogManager.forFile(__filename);
 
@@ -73,7 +73,7 @@ export class Tank extends Unit {
   public render(ctx: GraphicsContext): void {
     const color = this.getColor();
 
-    const { width, height } = this.boundingBox;
+    const {width, height} = this.boundingBox;
 
     // Draw turret
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
@@ -94,12 +94,12 @@ export class Tank extends Unit {
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const { cannonShape, weapon } = data;
+    const {cannonShape, weapon} = data;
     if (cannonShape) {
       this.cannonShape.deserialize(cannonShape);
     }
     if (weapon) {
-      const { type } = weapon;
+      const {type} = weapon;
       if (typeof weapon === 'string') {
         if (this.weapon?.type !== weapon) {
           const newWeapon = WeaponManager.createWeapon(weapon);

@@ -1,5 +1,5 @@
-import { EventManager, Event } from 'core/event';
-import { NetworkManager } from 'core/net';
+import {EventManager, Event} from 'core/event';
+import {NetworkManager} from 'core/net';
 import {
   TextMessageInEvent,
   SetNameEvent,
@@ -13,18 +13,18 @@ import {
   TextComponents,
   TextColor,
 } from 'core/chat';
-import { LogManager } from 'core/log';
-import { PlayerManager, Player } from 'core/player';
-import { WorldManager, Enemy, Unit, Feed, FeedVariant } from 'core/entity';
-import { TimerManager } from 'server/util';
-import { randomColor } from 'core/graphics/color';
-import { FormManager } from 'core/form';
+import {LogManager} from 'core/log';
+import {PlayerManager, Player} from 'core/player';
+import {WorldManager, Enemy, Unit, Feed, FeedVariant} from 'core/entity';
+import {TimerManager} from 'server/util';
+import {randomColor} from 'core/graphics/color';
+import {FormManager} from 'core/form';
 import * as process from 'process';
-import { CommandEntry } from 'server/chat';
+import {CommandEntry} from 'server/chat';
 import * as commands from 'server/chat/commands';
-import { Iterator } from 'core/iterator';
-import { RNGManager } from 'core/random';
-import { TextFormatter } from 'core/chat/format';
+import {Iterator} from 'core/iterator';
+import {RNGManager} from 'core/random';
+import {TextFormatter} from 'core/chat/format';
 
 const log = LogManager.forFile(__filename);
 
@@ -44,8 +44,8 @@ interface Command {
 }
 
 export class ChatManager {
-  private commands: { [command: string]: Command } = {};
-  private aliases: { [alias: string]: string } = {};
+  private commands: {[command: string]: Command} = {};
+  private aliases: {[alias: string]: string} = {};
 
   private loadCommands(): void {
     Iterator.values(commands).forEach(this.registerCommandEntry.bind(this));
@@ -108,7 +108,7 @@ export class ChatManager {
     log.debug('ChatManager initialized');
 
     EventManager.addListener<SetNameEvent>('SetNameEvent', (event) => {
-      const { data, socket } = event;
+      const {data, socket} = event;
 
       if (socket !== undefined) {
         const player = PlayerManager.getPlayer(socket);
@@ -126,10 +126,10 @@ export class ChatManager {
     EventManager.addListener<TextMessageInEvent>(
       'TextMessageInEvent',
       (event) => {
-        const { data, socket } = event;
+        const {data, socket} = event;
         const player = PlayerManager.getPlayer(socket);
         if (player) {
-          const { name, hasJoined } = player;
+          const {name, hasJoined} = player;
           if (hasJoined) {
             const components = this.formatMessage(player, event.data.content);
             this.sendComponents(components);
@@ -140,7 +140,7 @@ export class ChatManager {
     );
 
     EventManager.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
-      const { socket, data } = event;
+      const {socket, data} = event;
       const player = PlayerManager.getPlayer(socket);
       if (player && player.hasJoined) {
         this.handleCommand(player, data.command, data.args);
@@ -293,7 +293,7 @@ export class ChatManager {
     this.registerCommand(
       'heal',
       (player) => {
-        const { hero } = player;
+        const {hero} = player;
         if (hero) {
           const life = hero.getMaxLife();
           hero.setLife(life);

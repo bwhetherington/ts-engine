@@ -1,7 +1,7 @@
-import { Data } from 'core/serialize';
-import { GraphicsContext } from 'core/graphics';
-import { rgb, rgba } from 'core/graphics/color';
-import { CollisionLayer, Entity } from 'core/entity';
+import {Data} from 'core/serialize';
+import {GraphicsContext} from 'core/graphics';
+import {rgb, rgba} from 'core/graphics/color';
+import {CollisionLayer, Entity} from 'core/entity';
 
 export class Bar extends Entity {
   public static typeName: string = 'Bar';
@@ -30,7 +30,7 @@ export class Bar extends Entity {
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const { progress } = data;
+    const {progress} = data;
     if (typeof progress === 'number') {
       this.progress = progress;
     }

@@ -1,4 +1,4 @@
-import { iterator, Iterator } from 'core/iterator';
+import {iterator, Iterator} from 'core/iterator';
 
 export interface RNG {
   seed(seed: number): void;
@@ -51,7 +51,7 @@ export abstract class AbstractRNG implements RNG {
 }
 
 export * from 'core/random/basic';
-import { RNGManager } from 'core/random/manager';
+import {RNGManager} from 'core/random/manager';
 
 const RM = new RNGManager();
-export { RM as RNGManager };
+export {RM as RNGManager};

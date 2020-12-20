@@ -1,10 +1,10 @@
-import { Component, ElementFactory, removeChildren } from 'client/components';
+import {Component, ElementFactory, removeChildren} from 'client/components';
 import template from 'client/components/table/template.html';
-import { EventManager } from 'core/event';
-import { UUID } from 'core/uuid';
-import { Data } from 'core/serialize';
-import { LogManager } from 'core/log';
-import { iterateKeys } from 'core/iterator';
+import {EventManager} from 'core/event';
+import {UUID} from 'core/uuid';
+import {Data} from 'core/serialize';
+import {LogManager} from 'core/log';
+import {iterateKeys} from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
@@ -17,7 +17,7 @@ type TableRow = TableEntry[];
 
 interface TableEntries {
   labels: TableRow;
-  rows: Iterable<Data & { id: UUID }>;
+  rows: Iterable<Data & {id: UUID}>;
 }
 
 interface RowData {
@@ -73,7 +73,7 @@ export class TableComponent extends Component {
           .filterMap((key) => {
             const value = data[key];
             if (value && typeof value === 'string') {
-              return { field: key, value };
+              return {field: key, value};
             }
           })
           .toArray();
@@ -88,7 +88,7 @@ export class TableComponent extends Component {
     EventManager.addListener<TableRemoveRowEvent>(
       'TableRemoveRowEvent',
       (event) => {
-        const { id, row } = event.data;
+        const {id, row} = event.data;
         if (id === this.id) {
           this.removeRow(row);
         }
@@ -96,9 +96,9 @@ export class TableComponent extends Component {
     );
 
     EventManager.addListener<TableUpdateEvent>('TableUpdateEvent', (event) => {
-      const { id, data } = event.data;
+      const {id, data} = event.data;
       if (id === this.id) {
-        const { labels, rows } = data;
+        const {labels, rows} = data;
         if (labels) {
           if (this.fields.length === 0) {
             this.initialize(labels);
@@ -106,7 +106,7 @@ export class TableComponent extends Component {
         }
         if (rows) {
           for (const item of rows) {
-            const { id } = item;
+            const {id} = item;
             let row = this.getRow(id);
             if (row === undefined) {
               row = this.createRow(id, item);
@@ -147,7 +147,7 @@ export class TableComponent extends Component {
     this.fields = [];
 
     const tr = ElementFactory.tr();
-    for (const { field, value } of labels) {
+    for (const {field, value} of labels) {
       this.fields.push(field);
       const td = ElementFactory.td();
       td.innerText = value;
@@ -171,8 +171,8 @@ export class TableComponent extends Component {
       Array.from(this.body.children)
         .sort((a, b) => {
           if (this.data) {
-            const { id: idA } = a;
-            const { id: idB } = b;
+            const {id: idA} = a;
+            const {id: idB} = b;
             const dataA = this.data[idA]?.source;
             const dataB = this.data[idB]?.source;
 
@@ -209,7 +209,7 @@ export class TableComponent extends Component {
       tds[field] = td;
     }
 
-    return { tr, tds, source: row };
+    return {tr, tds, source: row};
   }
 
   private hasRow(row: UUID): boolean {

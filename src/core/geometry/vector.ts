@@ -1,4 +1,4 @@
-import { Data, Serializable } from 'core/serialize';
+import {Data, Serializable} from 'core/serialize';
 
 export interface VectorLike {
   x: number;
@@ -22,7 +22,7 @@ export class Vector implements Serializable, VectorLike {
   }
 
   public set magnitude(amount: number) {
-    const { magnitudeSquared } = this;
+    const {magnitudeSquared} = this;
     if (magnitudeSquared > 0) {
       this.scale(amount / Math.sqrt(magnitudeSquared));
     }
@@ -33,18 +33,17 @@ export class Vector implements Serializable, VectorLike {
   }
 
   public set angle(angle: number) {
-    const { magnitudeSquared } = this;
+    const {magnitudeSquared} = this;
     if (magnitudeSquared > 0) {
       const mag = Math.sqrt(magnitudeSquared);
       const sin = Math.sin(angle);
       const cos = Math.cos(angle);
-      this.x = mag * cos;
-      this.y = mag * sin;
+      this.setXY(mag * cos, mag * sin);
     }
   }
 
   public distanceTo(v: VectorLike): number {
-    const { x, y } = this;
+    const {x, y} = this;
     this.add(v, -1);
     const dist = this.magnitude;
     this.setXY(x, y);
@@ -52,7 +51,7 @@ export class Vector implements Serializable, VectorLike {
   }
 
   public angleTo(v: Vector): number {
-    const { x, y } = v;
+    const {x, y} = v;
     v.add(this, -1);
     const angle = v.angle;
     v.setXY(x, y);
@@ -73,8 +72,7 @@ export class Vector implements Serializable, VectorLike {
   }
 
   public addXY(dx: number, dy: number, scale: number = 1): void {
-    this.x += dx * scale;
-    this.y += dy * scale;
+    this.setXY(this.x + dx * scale, this.y + dy * scale);
   }
 
   public zero(): void {
@@ -89,13 +87,15 @@ export class Vector implements Serializable, VectorLike {
   }
 
   public deserialize(data: Data): void {
-    const { x, y } = data;
+    const {x, y} = data;
+    let {x: newX, y: newY} = this;
     if (typeof x === 'number') {
-      this.x = x;
+      newX = x;
     }
     if (typeof y === 'number') {
-      this.y = y;
+      newY = y;
     }
+    this.setXY(newX, newY);
   }
 
   public scale(amount: number): void {
@@ -105,5 +105,25 @@ export class Vector implements Serializable, VectorLike {
 
   public normalize(): void {
     this.magnitude = 1;
+  }
+}
+
+export class DirectionVector extends Vector {
+  private curAngle: number = 0;
+
+  constructor(x: number = 0, y: number = 0) {
+    super();
+    this.setXY(x, y);
+  }
+
+  public setXY(x: number, y: number): void {
+    super.setXY(x, y);
+    if (!(x === 0 && y === 0)) {
+      this.curAngle = Math.atan2(y, x);
+    }
+  }
+
+  public get direction(): number {
+    return this.curAngle;
   }
 }

@@ -1,12 +1,19 @@
-import { Weapon } from 'core/weapon';
-import { WorldManager, Projectile, Tank } from 'core/entity';
-import { Data } from 'core/serialize';
-import { RNGManager } from 'core/random';
+import {Weapon} from 'core/weapon';
+import {
+  WorldManager,
+  Projectile,
+  Tank,
+  ProjectileShape,
+  isProjectileShape,
+} from 'core/entity';
+import {Data} from 'core/serialize';
+import {RNGManager} from 'core/random';
 
 export class Gun extends Weapon {
   public static typeName: string = 'Gun';
 
   protected projectileType: string = 'Projectile';
+  protected projectileShape: ProjectileShape = 'circle';
   protected projectileSpeed: number = 500;
   protected projectileSpread: number = 0.1;
   protected projectilePierce: number = 1;
@@ -31,7 +38,9 @@ export class Gun extends Weapon {
     projectile.velocity.setXY(1, 0);
     const offset = RNGManager.nextFloat(-0.5, 0.5) * this.projectileSpread;
     projectile.velocity.angle = angle + offset;
+    projectile.angle = projectile.velocity.angle;
     projectile.velocity.magnitude = this.projectileSpeed;
+    projectile.shape = this.projectileShape;
     return projectile;
   }
 
@@ -48,6 +57,7 @@ export class Gun extends Weapon {
       projectileSpeed: this.projectileSpeed,
       projectileSpread: this.projectileSpread,
       projectilePierce: this.projectilePierce,
+      projectileShape: this.projectileShape,
     };
   }
 
@@ -58,6 +68,7 @@ export class Gun extends Weapon {
       projectileSpeed,
       projectileSpread,
       projectilePierce,
+      projectileShape,
     } = data;
 
     if (typeof projectileType === 'string') {
@@ -74,6 +85,10 @@ export class Gun extends Weapon {
 
     if (typeof projectilePierce === 'number') {
       this.projectilePierce = projectilePierce;
+    }
+
+    if (isProjectileShape(projectileShape)) {
+      this.projectileShape = projectileShape;
     }
   }
 }

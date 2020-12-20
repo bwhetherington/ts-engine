@@ -1,4 +1,4 @@
-import { EventManager, StepEvent } from 'core/event';
+import {EventManager, StepEvent} from 'core/event';
 import {
   Timer,
   ServerLogger,
@@ -6,26 +6,26 @@ import {
   loadWorld,
   loadFile,
 } from 'server/util';
-import { LogManager } from 'core/log';
-import { Server, createServer, ServerHTTPClient } from 'server/net';
-import { NetworkManager, SyncEvent } from 'core/net';
-import { ChatManager } from 'server/chat';
-import { WorldManager, Unit, FeedVariant, Feed, KillEvent } from 'core/entity';
-import { PlayerManager } from 'core/player';
-import { FormManager } from 'core/form';
-import { registerJoinForm } from 'core/form';
-import { MetricsManager } from 'server/metrics';
-import { WeaponManager } from 'core/weapon';
+import {LogManager} from 'core/log';
+import {Server, createServer, ServerHTTPClient} from 'server/net';
+import {NetworkManager, SyncEvent} from 'core/net';
+import {ChatManager} from 'server/chat';
+import {WorldManager, Unit, FeedVariant, Feed, KillEvent} from 'core/entity';
+import {PlayerManager} from 'core/player';
+import {FormManager} from 'core/form';
+import {registerJoinForm} from 'core/form';
+import {MetricsManager} from 'server/metrics';
+import {WeaponManager} from 'core/weapon';
 import process from 'process';
 import path from 'path';
-import { registerRenameForm } from 'core/form/rename';
-import { isEmpty } from 'core/util/object';
-import { randomColor } from 'core/graphics/color';
-import { RNGManager } from 'core/random';
-import { BasicAuth } from 'core/net/http';
-import { AssetManager } from 'core/assets';
-import { AsyncIterator, Iterator } from 'core/iterator';
-import { FormatParser, TextFormatter } from 'core/chat/format';
+import {registerRenameForm} from 'core/form/rename';
+import {isEmpty} from 'core/util/object';
+import {randomColor} from 'core/graphics/color';
+import {RNGManager} from 'core/random';
+import {BasicAuth} from 'core/net/http';
+import {AssetManager} from 'core/assets';
+import {AsyncIterator, Iterator} from 'core/iterator';
+import {FormatParser, TextFormatter} from 'core/chat/format';
 
 const log = LogManager.forFile(__filename);
 
@@ -62,7 +62,7 @@ async function main(): Promise<void> {
   WeaponManager.initialize();
 
   if (process.send) {
-    process.send({ type: 'ready' });
+    process.send({type: 'ready'});
   }
 
   function sync() {
@@ -90,9 +90,11 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
+  RNGManager.seed(Date.now());
+
   EventManager.runPeriodic(0.5, () => {
     if (WorldManager.getEntityCount() < 60) {
-      const num = RNGManager.next();
+      const num = RNGManager.nextFloat(0, 1);
       const position = WorldManager.getRandomPosition();
       if (num < 0.5) {
         let size;
@@ -106,7 +108,9 @@ async function main(): Promise<void> {
         const entity = WorldManager.spawnEntity('Feed', position) as Feed;
         entity.setVariant(size);
       } else {
-        const type = num < 0.6 ? 'HeavyEnemy' : 'Enemy';
+        const type =
+          num < 0.9 ? (num < 0.7 ? 'Enemy' : 'HomingEnemy') : 'HeavyEnemy';
+        console.log(num, type);
         const entity = WorldManager.spawnEntity(type, position);
         entity.setColor(randomColor());
       }

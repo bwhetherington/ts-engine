@@ -1,4 +1,4 @@
-import { Socket } from 'core/net';
+import {Socket} from 'core/net';
 
 export type Handler<T extends EventData> = (arg: Event<T>, id: string) => void;
 

@@ -1,6 +1,7 @@
-import { Vector, VectorLike } from 'core/geometry';
-import { Color } from 'core/graphics/color';
-import { GraphicsPipeline } from 'core/graphics/pipe';
+import {TextComponents} from 'core/chat';
+import {Vector, VectorLike} from 'core/geometry';
+import {Color} from 'core/graphics/color';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 
 export interface TextStyle {
   font?: string;
@@ -29,6 +30,12 @@ export interface GraphicsContext {
   begin(): void;
   clear(color?: Color): void;
   text(x: number, y: number, text: string, style: TextStyle): void;
+  textComponents(
+    x: number,
+    y: number,
+    components: TextComponents,
+    style: TextStyle
+  ): void;
   ellipse(x: number, y: number, w: number, h: number, color: Color): void;
   rect(
     x: number,

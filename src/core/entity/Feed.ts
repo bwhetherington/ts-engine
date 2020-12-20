@@ -1,8 +1,8 @@
-import { Entity, Unit } from 'core/entity';
-import { EventManager } from 'core/event';
-import { GraphicsContext, rgb } from 'core/graphics';
-import { GraphicsPipeline } from 'core/graphics/pipe';
-import { Data } from 'core/serialize';
+import {Entity, Unit} from 'core/entity';
+import {EventManager} from 'core/event';
+import {GraphicsContext, rgb} from 'core/graphics';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {Data} from 'core/serialize';
 
 export enum FeedVariant {
   Small = 0,
@@ -25,7 +25,7 @@ export class Feed extends Unit {
     super();
     this.type = Feed.typeName;
     this.setVariant(FeedVariant.Small);
-    this.friction = 20;
+    this.friction = 100;
   }
 
   public setVariant(variant: FeedVariant): void {
@@ -68,14 +68,14 @@ export class Feed extends Unit {
   public deserialize(obj: Data): void {
     super.deserialize(obj);
 
-    const { variant } = obj;
+    const {variant} = obj;
     if (typeof variant === 'number' && FeedVariant.hasOwnProperty(variant)) {
       this.setVariant(variant);
     }
   }
 
   public render(ctx: GraphicsContext): void {
-    const { width } = this.boundingBox;
+    const {width} = this.boundingBox;
     GraphicsPipeline.pipe()
       .rotate(EventManager.timeElapsed / 10)
       .run(ctx, (ctx) => {

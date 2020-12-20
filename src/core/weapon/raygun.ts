@@ -1,4 +1,4 @@
-import { Weapon } from 'core/weapon';
+import {Weapon} from 'core/weapon';
 import {
   WorldManager,
   Ray,
@@ -7,11 +7,11 @@ import {
   Unit,
   DisplayRayEvent,
 } from 'core/entity';
-import { iterator } from 'core/iterator';
-import { EventManager } from 'core/event';
-import { BLACK, Color, reshade } from 'core/graphics/color';
-import { NetworkManager } from 'core/net';
-import { RNGManager } from 'core/random';
+import {iterator} from 'core/iterator';
+import {EventManager} from 'core/event';
+import {BLACK, Color, reshade} from 'core/graphics/color';
+import {NetworkManager} from 'core/net';
+import {RNGManager} from 'core/random';
 
 const COLOR: Color = {
   red: 0.8,
@@ -36,11 +36,11 @@ export class RayGun extends Weapon {
     const start = source.getCannonTip();
     const set: Set<Entity> = new Set();
     set.add(source);
-    const { hit, end } = WorldManager.castRay(
+    const {hit, end} = WorldManager.castRay(
       start,
       angle,
       1000,
-      50,
+      1,
       (entity: Entity) => entity instanceof Unit && entity !== source
     );
     iterator(hit)
@@ -55,8 +55,8 @@ export class RayGun extends Weapon {
     const event = {
       type: 'DisplayRayEvent',
       data: {
-        start: { x: start.x, y: start.y },
-        stop: { x: end.x, y: end.y },
+        start: {x: start.x, y: start.y},
+        stop: {x: end.x, y: end.y},
         color,
       },
     };

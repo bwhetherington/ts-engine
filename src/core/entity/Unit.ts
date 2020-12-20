@@ -7,14 +7,14 @@ import {
   WorldManager,
   Echo,
 } from 'core/entity';
-import { Data } from 'core/serialize';
-import { MovementDirection } from 'core/input';
-import { Vector } from 'core/geometry';
-import { clamp } from 'core/util';
-import { EventManager } from 'core/event';
-import { NetworkManager } from 'core/net';
-import { Color, reshade, GraphicsContext } from 'core/graphics';
-import { CollisionLayer } from './util';
+import {Data} from 'core/serialize';
+import {MovementDirection} from 'core/input';
+import {Vector} from 'core/geometry';
+import {clamp} from 'core/util';
+import {EventManager} from 'core/event';
+import {NetworkManager} from 'core/net';
+import {Color, reshade, GraphicsContext} from 'core/graphics';
+import {CollisionLayer} from './util';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -196,7 +196,7 @@ export class Unit extends Entity {
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const { life, maxLife, movement, xpWorth, speed } = data;
+    const {life, maxLife, movement, xpWorth, speed} = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }

@@ -1,4 +1,4 @@
-import { LogManager } from 'core/log';
+import {LogManager} from 'core/log';
 import {
   ChatComponent,
   BarComponent,

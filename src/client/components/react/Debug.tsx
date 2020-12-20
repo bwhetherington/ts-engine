@@ -1,18 +1,18 @@
 import React from 'react';
-import { Component } from 'client/components/react';
-import { EventManager, StepEvent } from 'core/event';
-import { MetricsManager } from 'client/metrics';
-import { WorldManager } from 'core/entity';
-import { MetricsEvent } from 'core/metrics';
-import { PlayerManager } from 'core/player';
-import { Column, Panel, PanelHeader } from 'client/components/react/common';
+import {Component} from 'client/components/react';
+import {EventManager, StepEvent} from 'core/event';
+import {MetricsManager} from 'client/metrics';
+import {WorldManager} from 'core/entity';
+import {MetricsEvent} from 'core/metrics';
+import {PlayerManager} from 'core/player';
+import {Column, Panel, PanelHeader} from 'client/components/react/common';
 
 interface LineProps {
   label: string;
   value: string | number;
 }
 
-const Line: React.FunctionComponent<LineProps> = ({ label, value }) => (
+const Line: React.FunctionComponent<LineProps> = ({label, value}) => (
   <div>
     <strong>{label}:</strong> {value.toLocaleString()}
   </div>

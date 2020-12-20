@@ -1,7 +1,7 @@
-import { Weapon, Gun, RayGun, HomingGun } from 'core/weapon';
-import { LogManager } from 'core/log';
-import { Template } from 'core/entity/template';
-import { MachineGun, HeavyGun, SniperGun } from 'core/weapon/template';
+import {Weapon, Gun, RayGun, HomingGun} from 'core/weapon';
+import {LogManager} from 'core/log';
+import {Template} from 'core/entity/template';
+import {MachineGun, HeavyGun, SniperGun} from 'core/weapon/template';
 
 const log = LogManager.forFile(__filename);
 
@@ -15,7 +15,7 @@ export class WeaponManager {
   }
 
   public registerTemplateWeapon(template: Template): void {
-    const { type, extends: base } = template;
+    const {type, extends: base} = template;
     const baseConstructor = this.weaponConstructors[base];
     const gen = () => {
       const entity = baseConstructor();

@@ -1,4 +1,4 @@
-import { Vector } from '.';
+import {Vector} from '.';
 
 export class Matrix {
   private a0: number = 0;

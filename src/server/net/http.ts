@@ -1,7 +1,7 @@
-import { LogManager } from 'core/log';
-import { HTTPClient, HTTPResponse, NetworkManager } from 'core/net';
-import { BasicAuth } from 'core/net/http';
-import { Data } from 'core/serialize';
+import {LogManager} from 'core/log';
+import {HTTPClient, HTTPResponse, NetworkManager} from 'core/net';
+import {BasicAuth} from 'core/net/http';
+import {Data} from 'core/serialize';
 import fetch from 'node-fetch';
 
 const log = LogManager.forFile(__filename);
@@ -41,7 +41,7 @@ export class ServerHTTPClient implements HTTPClient {
     log.info(`GET ${uri} ${response.status}`);
     const code = response.status;
     const body = await response.json();
-    return { code, data: body };
+    return {code, data: body};
   }
 
   async post(
@@ -66,6 +66,6 @@ export class ServerHTTPClient implements HTTPClient {
     log.info(`POST ${uri} ${response.status}`);
     const code = response.status;
     const body = await response.json();
-    return { code, data: body };
+    return {code, data: body};
   }
 }

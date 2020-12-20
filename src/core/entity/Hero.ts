@@ -13,14 +13,14 @@ import {
   MouseEvent,
   MouseAction,
 } from 'core/input';
-import { EventData, Event, EventManager } from 'core/event';
-import { Data } from 'core/serialize';
-import { Player, PlayerManager } from 'core/player';
-import { LogManager } from 'core/log';
-import { NetworkManager, SyncEvent } from 'core/net';
-import { CameraManager, rgb, GraphicsContext } from 'core/graphics';
-import { BarUpdateEvent, sleep } from 'core/util';
-import { RNGManager } from 'core/random';
+import {EventData, Event, EventManager} from 'core/event';
+import {Data} from 'core/serialize';
+import {Player, PlayerManager} from 'core/player';
+import {LogManager} from 'core/log';
+import {NetworkManager, SyncEvent} from 'core/net';
+import {CameraManager, rgb, GraphicsContext} from 'core/graphics';
+import {BarUpdateEvent, sleep} from 'core/util';
+import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -45,7 +45,7 @@ export class Hero extends Tank {
 
     this.addListener<MouseEvent>('MouseEvent', (event) => {
       if (this.isEventSubject(event)) {
-        const { action, x, y } = event.data;
+        const {action, x, y} = event.data;
         if (action === MouseAction.Move) {
           // Subtract our position from mouse position
           this.vectorBuffer.setXY(x, y);
@@ -61,7 +61,7 @@ export class Hero extends Tank {
 
     this.addListener<KeyEvent>('KeyEvent', (event) => {
       if (this.isEventSubject(event)) {
-        const { action, key } = event.data;
+        const {action, key} = event.data;
         const state = action === KeyAction.KeyDown;
         const direction = MOVEMENT_DIRECTION_MAP[key];
         if (direction !== undefined) {
@@ -72,7 +72,7 @@ export class Hero extends Tank {
 
     if (NetworkManager.isClient()) {
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
-        const { targetID, sourceID, amount } = event.data;
+        const {targetID, sourceID, amount} = event.data;
         const target = WorldManager.getEntity(targetID);
         const source = WorldManager.getEntity(sourceID);
         if (
@@ -83,8 +83,8 @@ export class Hero extends Tank {
         ) {
           const label = '' + Math.round(amount);
           const text = WorldManager.spawn(TimedText, target.position);
-          const color = this === target ? rgb(1, 0.4, 0.4) : rgb(1, 1, 0.2);
-          text.setColor(color);
+          const color = this === target ? 'red' : 'yellow';
+          text.textColor = color;
           text.isStatic = false;
           text.position.addXY(
             RNGManager.nextFloat(-10, 10),
@@ -98,12 +98,12 @@ export class Hero extends Tank {
     } else {
       this.streamEvents<KillEvent>('KillEvent')
         .map((event) => {
-          const { targetID, sourceID } = event.data;
+          const {targetID, sourceID} = event.data;
           const target = WorldManager.getEntity(targetID);
           const source = WorldManager.getEntity(sourceID);
-          return { target, source };
+          return {target, source};
         })
-        .filterMap(({ target, source }) =>
+        .filterMap(({target, source}) =>
           target instanceof Unit && this === source ? target : undefined
         )
         .forEach((target) => this.addExperience(target.getXPWorth()));
@@ -242,16 +242,13 @@ export class Hero extends Tank {
     const player = this.getPlayer();
     if (player) {
       if (player.isActivePlayer()) {
-        const { x: dx, y: dy } = this.velocity;
-        const { centerX: x, centerY: y } = this.boundingBox;
-        const { angle } = this;
-
+        const {centerX: x, centerY: y} = this.boundingBox;
         CameraManager.setTargetXY(x, y);
       }
 
       if (this.label) {
         this.label.text = player.name;
-        this.label.tag = 'Level ' + this.level;
+        this.label.tag = ` [${this.level}]`;
       }
     }
 
@@ -269,11 +266,11 @@ export class Hero extends Tank {
   }
 
   public deserialize(data: Data): void {
-    const { x: oldX, y: oldY } = this.position;
-    const { angle: oldAngle } = this;
+    const {x: oldX, y: oldY} = this.position;
+    const {angle: oldAngle} = this;
 
     super.deserialize(data);
-    const { playerID, xp } = data;
+    const {playerID, xp} = data;
 
     if (playerID !== undefined) {
       this.setPlayer(playerID);
@@ -311,7 +308,7 @@ export class Hero extends Tank {
   }
 
   public isEventSubject<E extends EventData>(event: Event<E>): boolean {
-    const { socket } = event;
+    const {socket} = event;
     const player = this.getPlayer();
     const isLocal = socket === undefined && player?.isActivePlayer();
     return isLocal || socket === player?.socket;
@@ -334,13 +331,5 @@ export class Hero extends Tank {
       this.cannonShape.width * horizontalScale,
       color
     );
-
-    // ctx.rect(
-    //   0,
-    //   -(this.cannonShape.height * verticalScale) / 2,
-    //   this.cannonShape.width * horizontalScale,
-    //   this.cannonShape.height * verticalScale,
-    //   color
-    // );
   }
 }

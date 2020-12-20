@@ -1,4 +1,4 @@
-import { iterator, Iterator } from 'core/iterator';
+import {iterator, Iterator} from 'core/iterator';
 
 class Node<T> {
   public value: T;
@@ -47,7 +47,7 @@ export class Queue<T> {
   public enqueue(element: T): T | undefined {
     const node = new Node(element);
 
-    const { tail } = this;
+    const {tail} = this;
 
     if (this.length === 0) {
       this.head = node;
@@ -64,7 +64,7 @@ export class Queue<T> {
   }
 
   public dequeue(): T | undefined {
-    const { head } = this;
+    const {head} = this;
     if (head) {
       this.length -= 1;
       const element = head.value;

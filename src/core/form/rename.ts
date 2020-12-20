@@ -1,13 +1,7 @@
-import {
-  Form,
-  FormManager,
-  StringEntry,
-  FormEntry,
-  FormResult,
-} from 'core/form';
-import { PlayerManager, Player } from 'core/player';
-import { Data } from 'core/serialize';
-import { LogManager } from 'core/log';
+import {Form, FormManager, StringEntry, FormEntry, FormResult} from 'core/form';
+import {PlayerManager, Player} from 'core/player';
+import {Data} from 'core/serialize';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 
@@ -48,7 +42,7 @@ export const RenameFormEntry: FormEntry<RenameForm> = {
     _: string,
     player: Player
   ): Promise<FormResult> {
-    const { name } = input;
+    const {name} = input;
     if (name.value.length < 3) {
       return {
         isValid: false,
@@ -73,7 +67,7 @@ export const RenameFormEntry: FormEntry<RenameForm> = {
       };
     }
 
-    return { isValid: true };
+    return {isValid: true};
   },
 };
 

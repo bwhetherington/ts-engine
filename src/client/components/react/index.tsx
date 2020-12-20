@@ -4,9 +4,10 @@ export * from 'client/components/react/Bar';
 export * from 'client/components/react/EventBar';
 export * from 'client/components/react/Chat';
 export * from 'client/components/react/Debug';
+export * from 'client/components/react/table';
 
-import { App } from 'client/components/react/App';
-import { LogManager } from 'core/log';
+import {App} from 'client/components/react/App';
+import {LogManager} from 'core/log';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Component, Props } from 'client/components/react';
-import { Color, rgb, rgba, toCss } from 'core/graphics';
+import {Component, Props} from 'client/components/react';
+import {COLOR_MAPPING, toCss} from 'core/graphics';
 import {
   TextColor,
   TextComponent,
@@ -10,26 +10,15 @@ import {
   TextMessageInEvent,
   TextCommandEvent,
 } from 'core/chat';
-import { NetworkManager } from 'core/net';
-import { EventManager, StepEvent } from 'core/event';
-import { Key, KeyAction, KeyEvent } from 'core/input';
+import {NetworkManager} from 'core/net';
+import {EventManager, StepEvent} from 'core/event';
+import {Key, KeyAction, KeyEvent} from 'core/input';
 import {
   Column,
   Panel,
   PanelContainer,
   StringInput,
 } from 'client/components/react/common';
-
-const COLOR_MAPPING: { [color in TextColor]: Color } = {
-  none: rgb(1, 1, 1),
-  red: rgb(1, 0.4, 0.4),
-  orange: rgb(0.9, 0.6, 0.3),
-  yellow: rgba(1, 1, 1, 0.75),
-  green: rgb(0.3, 0.6, 0.3),
-  aqua: rgb(0.3, 0.8, 1),
-  blue: rgb(0.5, 0.5, 1),
-  purple: rgb(0.9, 0.3, 0.9),
-};
 
 type Lines = Readonly<TextComponents[]>;
 
@@ -86,7 +75,7 @@ interface TextItemProps {
   component: Readonly<string | null | TextComponent>;
 }
 
-function TextItem({ component }: TextItemProps): JSX.Element {
+function TextItem({component}: TextItemProps): JSX.Element {
   if (typeof component === 'string') {
     return <span>{component}</span>;
   } else if (component === null) {
@@ -101,7 +90,7 @@ interface TextLineProps {
   components: Readonly<TextComponents>;
 }
 
-function TextLine({ components }: TextLineProps): JSX.Element {
+function TextLine({components}: TextLineProps): JSX.Element {
   const content = components.map((component, index) => (
     <TextItem component={component} key={index} />
   ));
@@ -176,17 +165,17 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   private isFocused(): boolean {
-    const { isFocused, isFresh } = this.state;
+    const {isFocused, isFresh} = this.state;
     return isFocused || isFresh;
   }
 
   private scrollToBottom(): void {
-    this.endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    this.endRef.current?.scrollIntoView({behavior: 'smooth'});
   }
 
   public componentDidMount(): void {
     this.streamEvents<TextMessageOutEvent>('TextMessageOutEvent').forEach(
-      ({ data: { components } }) => {
+      ({data: {components}}) => {
         const lines = concatLine(
           this.state.lines,
           components,
@@ -203,11 +192,11 @@ export class Chat extends Component<ChatProps, ChatState> {
 
     this.streamInterval(1)
       .filter(() => EventManager.timeElapsed - this.state.lastFlash >= 5)
-      .forEach(() => this.updateState({ isFresh: false }));
+      .forEach(() => this.updateState({isFresh: false}));
 
     this.streamEvents<KeyEvent>('KeyEvent')
       .filter(
-        ({ data: { action, key } }) =>
+        ({data: {action, key}}) =>
           action === KeyAction.KeyDown && key === Key.Enter
       )
       .forEach(() => this.inputRef?.current?.focus());

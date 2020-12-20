@@ -1,9 +1,9 @@
-import { Rectangle, Bounded } from 'core/geometry';
-import { GraphicsContext } from 'core/graphics';
-import { WHITE, BLACK } from 'core/graphics/color';
-import { Partioner } from './partioner';
-import { Iterator } from 'core/iterator';
-import { GraphicsPipeline } from 'core/graphics/pipe';
+import {Rectangle, Bounded} from 'core/geometry';
+import {GraphicsContext} from 'core/graphics';
+import {WHITE, BLACK} from 'core/graphics/color';
+import {Partioner} from './partioner';
+import {Iterator} from 'core/iterator';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 
 const NODE_POSITION = {
   TOP_LEFT: 0,
@@ -37,7 +37,7 @@ class QuadNode<T extends Bounded> {
   }
 
   public render(ctx: GraphicsContext): void {
-    const { x, y, width, height } = this.boundingBox;
+    const {x, y, width, height} = this.boundingBox;
     ctx.rect(x, y, width, height, BLACK);
     for (const childNode of this.nodes) {
       childNode.render(ctx);
@@ -53,8 +53,8 @@ class QuadNode<T extends Bounded> {
   }
 
   private *findIndices(rect: Rectangle): Iterable<number> {
-    const { x, y, farX, farY } = rect;
-    const { centerX, centerY } = this.boundingBox;
+    const {x, y, farX, farY} = rect;
+    const {centerX, centerY} = this.boundingBox;
 
     if (x < centerX && y < centerY) {
       yield NODE_POSITION.TOP_LEFT;
@@ -88,7 +88,7 @@ class QuadNode<T extends Bounded> {
   }
 
   private subdivide(): void {
-    const { depth, boundingBox, maxDepth, maxChildren } = this;
+    const {depth, boundingBox, maxDepth, maxChildren} = this;
     const nextDepth = depth + 1;
 
     this.nodes[NODE_POSITION.TOP_LEFT] = new QuadNode(
@@ -197,7 +197,7 @@ export class QuadTree<T extends Bounded> implements Partioner<T> {
 
   public render(ctx: GraphicsContext): void {
     GraphicsPipeline.pipe()
-      .options({ lineWidth: 2, doFill: false, doStroke: true })
+      .options({lineWidth: 2, doFill: false, doStroke: true})
       .run(ctx, (ctx) => this.root.render(ctx));
   }
 

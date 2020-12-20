@@ -1,4 +1,4 @@
-import { WorkerMethods } from 'core/worker';
+import {WorkerMethods} from 'core/worker';
 
 const methods: WorkerMethods = {
   square(x: number): number {

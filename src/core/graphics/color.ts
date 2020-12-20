@@ -1,4 +1,5 @@
-import { RNGManager } from 'core/random';
+import {TextColor} from 'core/chat';
+import {RNGManager} from 'core/random';
 
 export interface Color {
   red: number;
@@ -6,6 +7,18 @@ export interface Color {
   blue: number;
   alpha?: number;
 }
+
+export const COLOR_MAPPING: Record<TextColor, Color> = {
+  none: rgb(1, 1, 1),
+  grey: rgb(0.875, 0.875, 0.875),
+  red: rgb(1, 0.4, 0.4),
+  orange: rgb(0.9, 0.6, 0.3),
+  yellow: rgb(0.9, 0.9, 0.3),
+  green: rgb(0.3, 0.6, 0.3),
+  aqua: rgb(0.3, 0.8, 1),
+  blue: rgb(0.5, 0.5, 1),
+  purple: rgb(0.9, 0.3, 0.9),
+};
 
 export function randomColor(
   saturation: number = 0.65,
@@ -79,7 +92,7 @@ export function hsv(hue: number, saturation: number, value: number): Color {
 }
 
 export function rgb(red: number, green: number, blue: number): Color {
-  return { red, green, blue, alpha: 1 };
+  return {red, green, blue, alpha: 1};
 }
 
 export function rgba(
@@ -88,12 +101,12 @@ export function rgba(
   blue: number,
   alpha: number
 ): Color {
-  return { red, green, blue, alpha };
+  return {red, green, blue, alpha};
 }
 
 export function isColor(input: any): input is Color {
   if (input) {
-    const { red, green, blue, alpha } = input;
+    const {red, green, blue, alpha} = input;
     return (
       typeof red === 'number' &&
       typeof green === 'number' &&
@@ -110,7 +123,7 @@ function toColorInt(color: number): number {
 }
 
 export function toCss(color: Color): string {
-  const { red, green, blue, alpha = 100 } = color;
+  const {red, green, blue, alpha = 100} = color;
   const redInt = toColorInt(red);
   const greenInt = toColorInt(green);
   const blueInt = toColorInt(blue);
@@ -124,7 +137,7 @@ function clamp(x: number): number {
 }
 
 export function reshade(color: Color, amount: number = 0.2): Color {
-  const { red, green, blue, alpha } = color;
+  const {red, green, blue, alpha} = color;
   return {
     red: clamp(red - amount),
     green: clamp(green - amount),
@@ -134,7 +147,7 @@ export function reshade(color: Color, amount: number = 0.2): Color {
 }
 
 export function invert(color: Color): Color {
-  const { red, green, blue, alpha } = color;
+  const {red, green, blue, alpha} = color;
   return {
     red: 1 - red,
     green: 1 - green,
@@ -143,5 +156,5 @@ export function invert(color: Color): Color {
   };
 }
 
-export const BLACK: Color = { red: 0, green: 0, blue: 0 };
-export const WHITE: Color = { red: 1, green: 1, blue: 1 };
+export const BLACK: Color = {red: 0, green: 0, blue: 0};
+export const WHITE: Color = {red: 1, green: 1, blue: 1};

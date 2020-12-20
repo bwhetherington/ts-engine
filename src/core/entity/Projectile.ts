@@ -1,17 +1,25 @@
-import { Entity, Unit, WorldManager } from 'core/entity';
-import { GraphicsContext, rgba } from 'core/graphics';
-import { LogManager } from 'core/log';
-import { CollisionLayer } from './util';
-import { Data } from 'core/serialize';
-import { NetworkManager } from 'core/net';
-import { UUID } from 'core/uuid';
-import { iterator } from 'core/iterator';
-import { Echo } from './Echo';
-import { EventManager } from 'core/event';
+import {Entity, Unit, WorldManager} from 'core/entity';
+import {GraphicsContext, rgba} from 'core/graphics';
+import {LogManager} from 'core/log';
+import {CollisionLayer} from './util';
+import {Data} from 'core/serialize';
+import {NetworkManager} from 'core/net';
+import {UUID} from 'core/uuid';
+import {iterator} from 'core/iterator';
+import {Echo} from './Echo';
+import {EventManager} from 'core/event';
 
 const log = LogManager.forFile(__filename);
 
 const DURATION = 1.5;
+
+export type ProjectileShape = 'circle' | 'triangle';
+
+const PROJECTILE_SHAPES = ['circle', 'triangle'];
+
+export function isProjectileShape(x: any): x is ProjectileShape {
+  return typeof x === 'string' && PROJECTILE_SHAPES.includes(x);
+}
 
 export class Projectile extends Entity {
   public static typeName: string = 'Projectile';
@@ -21,7 +29,7 @@ export class Projectile extends Entity {
   private hasExploded: boolean = false;
   public parent?: Unit;
   public duration: number = DURATION;
-  private hasBegun: boolean = false;
+  public shape: ProjectileShape = 'circle';
 
   private hitEntities: Set<UUID> = new Set();
 
@@ -118,8 +126,21 @@ export class Projectile extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    const { width, height } = this.boundingBox;
-    ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
+    const {width, height} = this.boundingBox;
+    switch (this.shape) {
+      case 'circle':
+        ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
+        break;
+      case 'triangle':
+        ctx.polygon(
+          [
+            {y: -width * 0.5, x: -width * 0.5},
+            {y: width * 0.5, x: -width * 0.5},
+            {y: 0, x: width * 0.75},
+          ],
+          this.getColor()
+        );
+    }
   }
 
   public serialize(): Data {
@@ -130,13 +151,14 @@ export class Projectile extends Entity {
       hitEntities: iterator(this.hitEntities).toArray(),
       pierce: this.pierce,
       duration: this.duration,
+      shape: this.shape,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const { damage, parentID, hitEntities, pierce, duration } = data;
+    const {damage, parentID, hitEntities, pierce, duration, shape} = data;
 
     if (typeof duration === 'number') {
       this.duration = duration;
@@ -160,6 +182,10 @@ export class Projectile extends Entity {
     if (hitEntities instanceof Array) {
       this.hitEntities.clear();
       hitEntities.forEach((entity) => this.hitEntities.add(entity));
+    }
+
+    if (isProjectileShape(shape)) {
+      this.shape = shape;
     }
   }
 

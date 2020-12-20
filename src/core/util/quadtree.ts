@@ -1,6 +1,6 @@
-import { Rectangle } from 'core/geometry';
-import { GraphicsContext, Renderable } from 'core/graphics';
-import { WHITE } from 'core/graphics/color';
+import {Rectangle} from 'core/geometry';
+import {GraphicsContext, Renderable} from 'core/graphics';
+import {WHITE} from 'core/graphics/color';
 
 const NODE_POSITION = {
   TOP_LEFT: 0,
@@ -38,7 +38,7 @@ class QuadNode<T extends Bounded> implements Bounded, Renderable {
   }
 
   public render(ctx: GraphicsContext): void {
-    const { x, y, width, height } = this.boundingBox;
+    const {x, y, width, height} = this.boundingBox;
     ctx.rect(x, y, width, height, WHITE);
     for (const childNode of this.nodes) {
       childNode.render(ctx);
@@ -54,8 +54,8 @@ class QuadNode<T extends Bounded> implements Bounded, Renderable {
   }
 
   private *findIndices(rect: Rectangle): Iterable<number> {
-    const { x, y, farX, farY } = rect;
-    const { centerX, centerY } = this.boundingBox;
+    const {x, y, farX, farY} = rect;
+    const {centerX, centerY} = this.boundingBox;
 
     if (x < centerX && y < centerY) {
       yield NODE_POSITION.TOP_LEFT;
@@ -91,7 +91,7 @@ class QuadNode<T extends Bounded> implements Bounded, Renderable {
   }
 
   private subdivide(): void {
-    const { depth, boundingBox, maxDepth, maxChildren } = this;
+    const {depth, boundingBox, maxDepth, maxChildren} = this;
     const nextDepth = depth + 1;
 
     this.nodes[NODE_POSITION.TOP_LEFT] = new QuadNode(

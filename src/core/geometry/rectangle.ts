@@ -1,5 +1,5 @@
-import { Data, Serializable } from 'core/serialize';
-import { VectorLike } from 'core/geometry';
+import {Data, Serializable} from 'core/serialize';
+import {VectorLike} from 'core/geometry';
 
 export interface RectangleLike {
   x: number;
@@ -75,7 +75,7 @@ export class Rectangle implements Serializable, RectangleLike {
   }
 
   private intersectsPartial(other: Rectangle): boolean {
-    const { x, y, farX, farY } = other;
+    const {x, y, farX, farY} = other;
     return (
       this.containsPointXY(x, y) ||
       this.containsPointXY(farX, y) ||
@@ -89,7 +89,7 @@ export class Rectangle implements Serializable, RectangleLike {
   }
 
   public contains(other: Rectangle): boolean {
-    const { x, y, farX, farY } = other;
+    const {x, y, farX, farY} = other;
     return (
       this.containsPointXY(x, y) &&
       this.containsPointXY(farX, y) &&
@@ -108,7 +108,7 @@ export class Rectangle implements Serializable, RectangleLike {
   }
 
   public deserialize(data: Data): void {
-    const { x, y, width, height } = data;
+    const {x, y, width, height} = data;
     if (typeof x === 'number') {
       this.x = x;
     }

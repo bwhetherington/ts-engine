@@ -1,4 +1,4 @@
-import { LogManager } from 'core/log';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 

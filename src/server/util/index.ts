@@ -1,8 +1,8 @@
 import path from 'path';
-import { readFile } from 'fs/promises';
-import { now, Timer } from 'server/util/Timer';
-import { ServerLogger } from 'server/util/ServerLogger';
-import { TimerManager } from 'server/util/TimerManager';
+import {readFile} from 'fs/promises';
+import {now, Timer} from 'server/util/Timer';
+import {ServerLogger} from 'server/util/ServerLogger';
+import {TimerManager} from 'server/util/TimerManager';
 export * from 'server/util/world';
 
 function transformPath(url: string): string {
@@ -15,4 +15,4 @@ export async function loadFile(url: string): Promise<Buffer> {
 }
 
 const TM = new TimerManager();
-export { TM as TimerManager, now, Timer, ServerLogger };
+export {TM as TimerManager, now, Timer, ServerLogger};

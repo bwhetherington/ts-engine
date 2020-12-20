@@ -1,4 +1,4 @@
-import { Tank, Hero } from 'core/entity';
+import {Tank, Hero} from 'core/entity';
 
 export abstract class Controller {
   protected hero?: Hero;

@@ -1,4 +1,4 @@
-import { LoggerWrapper } from 'core/log';
+import {LoggerWrapper} from 'core/log';
 import path from 'path';
 
 function findRelativePath(fileName: string): string {

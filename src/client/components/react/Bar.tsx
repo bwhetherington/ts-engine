@@ -51,7 +51,9 @@ const textLabelStyle: React.CSSProperties = {
 };
 
 function formatLabel(value: number, maxValue: number): string {
-  return `${Math.round(value).toLocaleString()}/${Math.round(maxValue).toLocaleString()}`;
+  return `${Math.round(value).toLocaleString()}/${Math.round(
+    maxValue
+  ).toLocaleString()}`;
 }
 
 interface BarLabelProps {

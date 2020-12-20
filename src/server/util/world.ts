@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { WorldManager } from 'core/entity';
-import { AssetManager } from 'core/assets';
+import {WorldManager} from 'core/entity';
+import {AssetManager} from 'core/assets';
 
 export async function loadWorldFile(file: string): Promise<void> {
   const obj = await AssetManager.loadJSON(file);

@@ -1,5 +1,5 @@
-import { GraphicsContext, GraphicsOptions } from '.';
-import { GraphicsProc } from './context';
+import {GraphicsContext, GraphicsOptions} from '.';
+import {GraphicsProc} from './context';
 
 export class GraphicsPipeline {
   protected parent?: GraphicsPipeline;
@@ -29,7 +29,7 @@ export class GraphicsPipeline {
   public alpha(alpha: number, isFancy: boolean = false): GraphicsPipeline {
     let parent: GraphicsPipeline = this;
     if (isFancy) {
-      parent = this.options({ useFancyAlpha: isFancy });
+      parent = this.options({useFancyAlpha: isFancy});
     }
     return new AlphaPipeline(alpha, parent);
   }

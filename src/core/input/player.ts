@@ -6,9 +6,9 @@ import {
   KeyEvent,
   MOVEMENT_DIRECTION_MAP,
 } from 'core/input';
-import { Hero } from 'core/entity';
-import { UUID } from 'core/uuid';
-import { NetworkManager } from 'core/net';
+import {Hero} from 'core/entity';
+import {UUID} from 'core/uuid';
+import {NetworkManager} from 'core/net';
 
 export class PlayerController extends Controller {
   private mouseDown: boolean = false;
@@ -22,7 +22,7 @@ export class PlayerController extends Controller {
       'MouseEvent',
       (event) => {
         if (hero.isEventSubject(event)) {
-          const { action, x, y } = event.data;
+          const {action, x, y} = event.data;
           if (action === MouseAction.Move) {
             // Subtract our position from mouse position
             hero.vectorBuffer.setXY(x, y);
@@ -39,7 +39,7 @@ export class PlayerController extends Controller {
 
     this.keyListenerID = hero.addListener<KeyEvent>('KeyEvent', (event) => {
       if (hero.isEventSubject(event)) {
-        const { action, key } = event.data;
+        const {action, key} = event.data;
         const state = action === KeyAction.KeyDown;
         const direction = MOVEMENT_DIRECTION_MAP[key];
         if (direction !== undefined) {

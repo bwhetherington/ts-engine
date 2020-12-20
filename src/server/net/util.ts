@@ -2,10 +2,10 @@ import * as http from 'http';
 import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as path from 'path';
-import { promisify } from 'util';
-import { LogManager } from 'core/log';
-import { Socket } from 'core/net';
-import { EventData } from 'core/event';
+import {promisify} from 'util';
+import {LogManager} from 'core/log';
+import {Socket} from 'core/net';
+import {EventData} from 'core/event';
 
 const log = LogManager.forFile(__filename);
 
@@ -32,7 +32,7 @@ interface Options {
 }
 
 export async function createServer(options: Options): Promise<http.Server> {
-  const { dirs, index, encoding = 'utf8' } = options;
+  const {dirs, index, encoding = 'utf8'} = options;
 
   return http.createServer(async (req, res) => {
     try {
@@ -40,7 +40,7 @@ export async function createServer(options: Options): Promise<http.Server> {
         if (req.url === '/') {
           const file = await readFile(index, encoding);
           log.trace(`read file: '${index}'`);
-          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.writeHead(200, {'Content-Type': 'text/html'});
           res.write(file);
           res.end();
         } else {
@@ -52,7 +52,7 @@ export async function createServer(options: Options): Promise<http.Server> {
                 mime.lookup(path.extname(filePath)) || 'text/plain';
               const file = await readFile(filePath, encoding);
               log.trace(`read file: '${filePath}' (${mimeType})`);
-              res.writeHead(200, { 'Content-Type': mimeType });
+              res.writeHead(200, {'Content-Type': mimeType});
               res.write(file);
               res.end();
               return;

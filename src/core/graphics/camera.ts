@@ -1,6 +1,6 @@
-import { Rectangle, Vector, Bounded } from 'core/geometry';
-import { Entity } from 'core/entity';
-import { LogManager } from 'core/log';
+import {Rectangle, Vector, Bounded} from 'core/geometry';
+import {Entity} from 'core/entity';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 
@@ -20,7 +20,7 @@ export class CameraManager implements Bounded {
   }
 
   public setSize(width: number, height: number): void {
-    const { centerX, centerY } = this.boundingBox;
+    const {centerX, centerY} = this.boundingBox;
 
     this.scale = height / TARGET_HEIGHT;
 
@@ -40,7 +40,7 @@ export class CameraManager implements Bounded {
 
   public update() {
     if (this.targetEntity) {
-      const { centerX, centerY } = this.targetEntity.boundingBox;
+      const {centerX, centerY} = this.targetEntity.boundingBox;
       this.setTargetXY(centerX, centerY);
     }
   }

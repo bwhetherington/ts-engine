@@ -1,8 +1,8 @@
-import { FormManager } from 'core/form/manager';
-import { Data } from 'core/serialize';
-import { Player } from 'core/player';
-import { registerJoinForm } from 'core/form/join';
-import { Socket } from 'dgram';
+import {FormManager} from 'core/form/manager';
+import {Data} from 'core/serialize';
+import {Player} from 'core/player';
+import {registerJoinForm} from 'core/form/join';
+import {Socket} from 'dgram';
 
 export interface Form {
   name: string;
@@ -119,4 +119,4 @@ export interface FormEntry<T> {
   validate(input: T, method: string, player?: Player): Promise<FormResult>;
 }
 
-export { FM as FormManager, registerJoinForm };
+export {FM as FormManager, registerJoinForm};
