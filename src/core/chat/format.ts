@@ -238,7 +238,9 @@ export class TextFormatter {
 
   private createTextFormatter(node: TextNode): ComponentFormatter {
     return function* () {
-      yield node.text;
+      if (node.text.length > 0) {
+        yield node.text;
+      }
     };
   }
 
@@ -247,8 +249,6 @@ export class TextFormatter {
       const val = input[node.name];
       if (typeof val === 'string') {
         yield val;
-      } else {
-        yield '';
       }
     };
   }

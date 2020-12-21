@@ -31,6 +31,8 @@ export class Projectile extends Entity {
   public duration: number = DURATION;
   public shape: ProjectileShape = 'circle';
 
+  private timeCreated: number;
+
   private hitEntities: Set<UUID> = new Set();
 
   public onHit?: (target?: Unit) => void;
@@ -44,14 +46,12 @@ export class Projectile extends Entity {
     this.setColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.boundingBox.width = 20;
     this.boundingBox.height = 20;
-    if (NetworkManager.isServer()) {
-      this.prepareRemove();
-    }
+    this.timeCreated = EventManager.timeElapsed;
   }
 
-  private async prepareRemove(): Promise<void> {
-    await EventManager.sleep(this.duration);
-    if (!this.markedForDelete) {
+  public step(dt: number): void {
+    super.step(dt);
+    if (NetworkManager.isServer() && (EventManager.timeElapsed - this.timeCreated) > this.duration) {
       this.remove();
     }
   }

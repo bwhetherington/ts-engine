@@ -15,6 +15,7 @@ import {EventManager} from 'core/event';
 import {NetworkManager} from 'core/net';
 import {Color, reshade, GraphicsContext} from 'core/graphics';
 import {CollisionLayer} from './util';
+import { TextColor } from 'core/chat';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -22,6 +23,7 @@ const FLASH_DURATION = 0.1;
 export class Unit extends Entity {
   public static typeName: string = 'Unit';
 
+  private name: string = '';
   private maxLife: number = 10;
   private life: number = 10;
   protected lifeRegen: number = 0;
@@ -118,6 +120,17 @@ export class Unit extends Entity {
     return this.maxLife;
   }
 
+  public setName(name: string): void {
+    this.name = name;
+    if (this.label) {
+      this.label.text = name;
+    }
+  }
+
+  public getName(): string {
+    return this.name;
+  }
+
   public setMaxLife(life: number, reset?: boolean): void {
     this.maxLife = life;
     if (reset) {
@@ -125,6 +138,10 @@ export class Unit extends Entity {
     } else {
       this.setLife(this.life);
     }
+  }
+
+  protected getNameColor(): TextColor {
+    return 'none';
   }
 
   public step(dt: number): void {
@@ -165,14 +182,18 @@ export class Unit extends Entity {
     super.step(dt);
 
     if (NetworkManager.isClient()) {
-      this.label?.position?.set(this.position);
-      this.label?.position?.addXY(0, -(this.boundingBox.height + 10));
-      this.label?.velocity?.set(this.velocity);
+      if (this.label) {
+        this.label.position.set(this.position);
+        this.label.position.addXY(0, -(this.boundingBox.height + 10));
+        this.label.velocity.set(this.velocity);
+        this.label.textColor = this.getNameColor();
+        this.label.text = this.getName();
+      }
 
-      this.hpBar?.position?.set(this.position);
-      this.hpBar?.velocity?.set(this.velocity);
-      this.hpBar?.position?.addXY(0, this.boundingBox.height + 12);
       if (this.hpBar) {
+        this.hpBar.position.set(this.position);
+        this.hpBar.velocity.set(this.velocity);
+        this.hpBar.position.addXY(0, this.boundingBox.height + 12);
         this.hpBar.progress = this.getLife() / this.getMaxLife();
       }
     }
@@ -191,12 +212,13 @@ export class Unit extends Entity {
       maxLife: this.maxLife,
       speed: this.speed,
       xpWorth: this.xpWorth,
+      name: this.name,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const {life, maxLife, movement, xpWorth, speed} = data;
+    const {life, maxLife, movement, xpWorth, speed, name} = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }
@@ -208,6 +230,9 @@ export class Unit extends Entity {
     }
     if (typeof xpWorth === 'number') {
       this.xpWorth = xpWorth;
+    }
+    if (typeof name === 'string') {
+      this.setName(name);
     }
     if (movement) {
       if (MovementDirection.Up in movement) {

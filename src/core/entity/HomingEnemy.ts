@@ -8,6 +8,7 @@ export class HomingEnemy extends Enemy {
     super();
     this.type = HomingEnemy.typeName;
     this.setWeapon('HomingGun');
+    this.setName('Seeker');
   }
 
   protected renderCannon(ctx: GraphicsContext): void {

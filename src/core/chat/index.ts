@@ -1,4 +1,5 @@
 import {Player} from 'core/player';
+import { TextFormatter } from './format';
 
 export type TextColor =
   | 'none'
@@ -100,13 +101,13 @@ export function renderInfo(message: string): TextComponents {
     {
       content: '[',
       style: {
-        color: 'yellow',
+        color: 'grey',
       },
     },
     {
       content: 'Info:',
       style: {
-        color: 'yellow',
+        color: 'grey',
         styles: ['bold'],
       },
     },
@@ -114,13 +115,13 @@ export function renderInfo(message: string): TextComponents {
     {
       content: message,
       style: {
-        color: 'yellow',
+        color: 'grey',
       },
     },
     {
       content: ']',
       style: {
-        color: 'yellow',
+        color: 'grey',
       },
     },
   ];

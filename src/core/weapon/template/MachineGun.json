@@ -4,8 +4,8 @@
   "projectileType": "Projectile",
   "projectileSpread": 0.2,
   "projectileSpeed": 650,
-  "projectilePierce": 3,
+  "projectilePierce": 1,
   "damage": 3,
   "rate": 0.15,
-  "projectileShape": "triangle"
+  "projectileShape": "circle"
 }

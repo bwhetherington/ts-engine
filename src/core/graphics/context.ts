@@ -12,6 +12,7 @@ export interface TextStyle {
 export interface GraphicsOptions {
   lineWidth: number;
   doStroke: boolean;
+  uniformColor: boolean;
   doFill: boolean;
   ignoreScale?: boolean;
   useFancyAlpha?: boolean;

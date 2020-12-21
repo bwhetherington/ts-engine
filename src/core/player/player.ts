@@ -10,6 +10,7 @@ import {BasicAuth} from 'core/net/http';
 import {randomColor} from 'core/graphics/color';
 import {RNGManager} from 'core/random';
 import {PlayerChatManager} from './chat';
+import { TextColor } from 'core/chat';
 
 const log = LogManager.forFile(__filename);
 
@@ -234,5 +235,9 @@ export class Player implements Serializable {
     } else {
       return false;
     }
+  }
+
+  public getNameColor(): TextColor {
+    return this.isAdmin() ? 'blue' : 'none';
   }
 }

@@ -1,3 +1,4 @@
+import { clamp } from 'core/util';
 import React from 'react';
 
 export enum BarStyle {
@@ -72,7 +73,7 @@ function BarLabel(props: BarLabelProps): JSX.Element {
 }
 
 export function Bar(props: BarProps): JSX.Element {
-  const widthPercent = (props.value / props.maxValue) * 100 + '%';
+  const widthPercent = clamp(props.value / props.maxValue, 0, 1) * 100 + '%';
   const newBarStyle: React.CSSProperties = {
     ...barStyle,
     ...barStyles[props.barStyle],

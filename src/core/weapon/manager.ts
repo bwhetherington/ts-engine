@@ -1,4 +1,4 @@
-import {Weapon, Gun, RayGun, HomingGun} from 'core/weapon';
+import {Weapon, Gun, RayGun, HomingGun, BurstGun} from 'core/weapon';
 import {LogManager} from 'core/log';
 import {Template} from 'core/entity/template';
 import {MachineGun, HeavyGun, SniperGun} from 'core/weapon/template';
@@ -30,6 +30,7 @@ export class WeaponManager {
     this.registerWeapon(Gun);
     this.registerWeapon(RayGun);
     this.registerWeapon(HomingGun);
+    this.registerWeapon(BurstGun);
 
     // Register template weapons
     this.registerTemplateWeapon(MachineGun);

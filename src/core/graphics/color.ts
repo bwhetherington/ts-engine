@@ -10,7 +10,7 @@ export interface Color {
 
 export const COLOR_MAPPING: Record<TextColor, Color> = {
   none: rgb(1, 1, 1),
-  grey: rgb(0.875, 0.875, 0.875),
+  grey: rgba(1, 1, 1, 0.75),
   red: rgb(1, 0.4, 0.4),
   orange: rgb(0.9, 0.6, 0.3),
   yellow: rgb(0.9, 0.9, 0.3),

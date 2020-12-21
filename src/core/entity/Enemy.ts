@@ -15,6 +15,7 @@ export class Enemy extends Tank {
   public constructor() {
     super();
     this.type = Enemy.typeName;
+    this.setName('Tank');
 
     this.setWeapon('Gun');
     this.selectTarget();
@@ -26,7 +27,6 @@ export class Enemy extends Tank {
     });
 
     if (this.label) {
-      this.label.text = 'Tank';
       this.label.tag = ' [AI]';
     }
 

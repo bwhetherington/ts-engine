@@ -2,6 +2,7 @@ import {Form, FormManager, StringEntry, FormEntry, FormResult} from 'core/form';
 import {PlayerManager, Player} from 'core/player';
 import {Data} from 'core/serialize';
 import {LogManager} from 'core/log';
+import { capitalize } from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -42,14 +43,15 @@ export const RenameFormEntry: FormEntry<RenameForm> = {
     _: string,
     player: Player
   ): Promise<FormResult> {
-    const {name} = input;
-    if (name.value.length < 3) {
+    const {name: {value}} = input;
+    const name = capitalize(value);
+    if (name.length < 3) {
       return {
         isValid: false,
         message: 'Name must contain at least 3 characters.',
       };
     }
-    if (name.value.length > 15) {
+    if (name.length > 15) {
       return {
         isValid: false,
         message: 'Name must contain no more than 15 characters.',
@@ -59,11 +61,11 @@ export const RenameFormEntry: FormEntry<RenameForm> = {
     // Check if player already has this name
     const nameExists = PlayerManager.getPlayers()
       .filter((other) => player !== other)
-      .any((player) => player.name === name.value);
+      .any((player) => player.name === name);
     if (nameExists) {
       return {
         isValid: false,
-        message: `The name '${name.value}' is already in use.`,
+        message: `The name '${name}' is already in use.`,
       };
     }
 

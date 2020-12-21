@@ -92,8 +92,9 @@ async function main(): Promise<void> {
 
   RNGManager.seed(Date.now());
 
-  EventManager.runPeriodic(0.5, () => {
-    if (WorldManager.getEntityCount() < 60) {
+  EventManager.streamInterval(0.5)
+    .filter(() => WorldManager.getEntityCount() < 60)
+    .forEach(() => {
       const num = RNGManager.nextFloat(0, 1);
       const position = WorldManager.getRandomPosition();
       if (num < 0.5) {
@@ -113,8 +114,7 @@ async function main(): Promise<void> {
         const entity = WorldManager.spawnEntity(type, position);
         entity.setColor(randomColor());
       }
-    }
-  });
+    });
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);

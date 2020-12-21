@@ -47,6 +47,7 @@ export class HDCanvas implements GraphicsContext {
 
   private options: GraphicsOptions = {
     lineWidth: 4,
+    uniformColor: false,
     doStroke: true,
     doFill: true,
   };
@@ -126,6 +127,7 @@ export class HDCanvas implements GraphicsContext {
     }
     this.options.ignoreScale = !!options.ignoreScale;
     this.options.useFancyAlpha = !!options.useFancyAlpha;
+    this.options.uniformColor = !!options.uniformColor;
     // this.hidden?.setOptions(options);
   }
 
@@ -183,6 +185,19 @@ export class HDCanvas implements GraphicsContext {
     this.hidden?.begin();
   }
 
+  private getFillColor(color: Color): string {
+    return toCss(color);
+  }
+
+  private getStrokeColor(color: Color, amount: number = 0.2): string {
+    return this.options.uniformColor ? toCss(color) : toCss(reshade(color, amount));
+  }
+
+  private setStyles(ctx: CanvasRenderingContext2D, color: Color, amount: number = 0.2): void {
+    ctx.fillStyle = this.getFillColor(color);
+    ctx.strokeStyle = this.getStrokeColor(color, amount);
+  }
+
   public clear(color?: Color) {
     const ctx = this.curContext;
     if (ctx) {
@@ -232,8 +247,7 @@ export class HDCanvas implements GraphicsContext {
           'none';
         const color = COLOR_MAPPING[colorString];
 
-        ctx.fillStyle = toCss(color);
-        ctx.strokeStyle = toCss(reshade(color, 0.35));
+        this.setStyles(ctx, color, 0.35);
 
         ctx.strokeText(text, x + xOffset, y);
         ctx.fillText(text, x + xOffset, y);
@@ -250,8 +264,7 @@ export class HDCanvas implements GraphicsContext {
       const scaleValue = this.scaleValue;
       const {font = 'Roboto Mono', size = 12, color = WHITE} = style;
       ctx.lineWidth = this.options.lineWidth / scaleValue;
-      ctx.fillStyle = toCss(color);
-      ctx.strokeStyle = toCss(reshade(color, 0.35));
+      this.setStyles(ctx, color);
       ctx.textAlign = 'center';
       ctx.font = createFontString(font, size, scaleValue);
       this.setRound(ctx);
@@ -276,19 +289,18 @@ export class HDCanvas implements GraphicsContext {
   public ellipse(x: number, y: number, w: number, h: number, color: Color) {
     const ctx = this.curContext;
     if (ctx) {
-      ctx.beginPath();
-      ctx.fillStyle = toCss(color);
-      ctx.strokeStyle = toCss(reshade(color));
+      this.setStyles(ctx, color);
       ctx.lineWidth = this.options.lineWidth;
       this.setRound(ctx);
+      ctx.beginPath();
       ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, 2 * Math.PI);
+      ctx.closePath();
       if (this.options.doFill) {
         ctx.fill();
       }
       if (this.options.doStroke) {
         ctx.stroke();
       }
-      ctx.closePath();
       this.bounds?.insertRawTransformed(x, y, w, h, this.transform);
     }
   }
@@ -303,9 +315,7 @@ export class HDCanvas implements GraphicsContext {
   ) {
     const ctx = this.curContext;
     if (ctx) {
-      ctx.beginPath();
-      ctx.fillStyle = toCss(color);
-      ctx.strokeStyle = toCss(reshade(color));
+      this.setStyles(ctx, color);
 
       ctx.lineWidth = this.options.lineWidth;
 
@@ -322,7 +332,7 @@ export class HDCanvas implements GraphicsContext {
         w /= this.scaleValue;
         h /= this.scaleValue;
       }
-
+      ctx.beginPath();
       ctx.rect(x, y, w, h);
       if (this.options.doFill) {
         ctx.fill();
@@ -407,8 +417,7 @@ export class HDCanvas implements GraphicsContext {
   public polygon(vertices: VectorLike[], color: Color): void {
     const ctx = this.curContext;
     if (ctx) {
-      ctx.fillStyle = toCss(color);
-      ctx.strokeStyle = toCss(reshade(color));
+      this.setStyles(ctx, color);
 
       ctx.lineWidth = this.options.lineWidth;
 
@@ -546,7 +555,7 @@ export class HDCanvas implements GraphicsContext {
           this.hidden.height = this.height * this.ratio;
           this.hidden.begin();
           ctx.globalAlpha = alpha;
-          // proc(this);
+
           const {
             scaleValue,
             translation: {x, y},

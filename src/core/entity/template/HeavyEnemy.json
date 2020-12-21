@@ -15,5 +15,6 @@
     "height": 20
   },
   "weapon": "HeavyGun",
-  "xpWorth": 10
+  "xpWorth": 10,
+  "name": "Heavy"
 }

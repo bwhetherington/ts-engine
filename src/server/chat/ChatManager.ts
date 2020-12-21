@@ -99,7 +99,7 @@ export class ChatManager {
   private formatMessage(author: Player, content: string): TextComponents {
     return MESSAGE_FORMATTER.format({
       authorName: author.name,
-      authorColor: author.isAdmin() ? 'red' : 'none',
+      authorColor: author.getNameColor(),
       messageContent: content,
     });
   }

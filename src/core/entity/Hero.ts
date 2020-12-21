@@ -19,8 +19,9 @@ import {Player, PlayerManager} from 'core/player';
 import {LogManager} from 'core/log';
 import {NetworkManager, SyncEvent} from 'core/net';
 import {CameraManager, rgb, GraphicsContext} from 'core/graphics';
-import {BarUpdateEvent, sleep} from 'core/util';
+import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
+import { TextColor } from 'core/chat';
 
 const log = LogManager.forFile(__filename);
 
@@ -38,7 +39,7 @@ export class Hero extends Tank {
 
     this.type = Hero.typeName;
 
-    this.setWeapon('MachineGun');
+    this.setWeapon('BurstGun');
 
     this.setExperience(0);
     this.setLevelInternal(1);
@@ -107,16 +108,11 @@ export class Hero extends Tank {
           target instanceof Unit && this === source ? target : undefined
         )
         .forEach((target) => this.addExperience(target.getXPWorth()));
-
-      // this.addListener<KillEvent>('KillEvent', (event) => {
-      //   const { sourceID, targetID } = event.data;
-      //   const target = WorldManager.getEntity(targetID);
-      //   const source = WorldManager.getEntity(sourceID);
-      //   if (target instanceof Unit && this === source) {
-      //     this.addExperience(target.getXPWorth());
-      //   }
-      // });
     }
+  }
+
+  protected getNameColor(): TextColor {
+    return this.getPlayer()?.getNameColor() ?? super.getNameColor();
   }
 
   public getXPWorth(): number {
@@ -124,7 +120,7 @@ export class Hero extends Tank {
   }
 
   protected damageBonusForLevel(level: number): number {
-    return 1 + level / 10;
+    return 1 + level / 20;
   }
 
   protected experienceForLevel(level: number): number {
@@ -135,7 +131,7 @@ export class Hero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return 50 + level * 10;
+    return 50 + (level - 1) * 5;
   }
 
   protected regenForLevel(level: number): number {
@@ -143,7 +139,7 @@ export class Hero extends Tank {
   }
 
   protected armorForLevel(level: number): number {
-    return Math.floor(level / 4);
+    return Math.floor(level / 6);
   }
 
   public getExperience(): number {
@@ -188,6 +184,7 @@ export class Hero extends Tank {
   }
 
   private setLevelInternal(level: number): void {
+    level = clamp(level, 1, 40);
     if (level !== this.level) {
       this.level = level;
       this.setMaxLife(this.lifeForLevel(level));
@@ -236,6 +233,10 @@ export class Hero extends Tank {
     }
   }
 
+  public getName(): string {
+    return this.getPlayer()?.name ?? super.getName();
+  }
+
   public step(dt: number): void {
     super.step(dt);
 
@@ -247,7 +248,6 @@ export class Hero extends Tank {
       }
 
       if (this.label) {
-        this.label.text = player.name;
         this.label.tag = ` [${this.level}]`;
       }
     }
