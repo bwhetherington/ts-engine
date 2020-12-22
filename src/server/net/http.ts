@@ -33,6 +33,7 @@ export class ServerHTTPClient implements HTTPClient {
     if (auth) {
       addBasicAuth(auth, headers);
     }
+    log.info(`GET ${formatURI(uri)} ...`);
     const response = await fetch(formatURI(uri), {
       method: 'GET',
       headers,
