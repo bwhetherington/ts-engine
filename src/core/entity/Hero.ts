@@ -153,11 +153,11 @@ export class Hero extends Tank {
   public setExperience(amount: number): void {
     this.xp = amount;
 
-    while (this.xp >= this.experienceForLevel(this.level)) {
+    while (this.xp >= this.experienceForLevel(this.level) && this.level < 40) {
       this.setLevelInternal(this.level + 1);
     }
 
-    while (this.xp < this.experienceForLevel(this.level - 1)) {
+    while (this.xp < this.experienceForLevel(this.level - 1) && this.level > 1) {
       this.setLevelInternal(this.level - 1);
     }
 
