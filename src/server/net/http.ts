@@ -38,7 +38,7 @@ export class ServerHTTPClient implements HTTPClient {
       headers,
     });
 
-    log.info(`GET ${uri} ${response.status}`);
+    log.info(`GET ${formatURI(uri)} ${response.status}`);
     const code = response.status;
     const body = await response.json();
     return {code, data: body};
