@@ -1,5 +1,5 @@
 import {Player} from 'core/player';
-import { TextFormatter } from './format';
+import {TextFormatter} from './format';
 
 export type TextColor =
   | 'none'

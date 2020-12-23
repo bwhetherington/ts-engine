@@ -15,7 +15,7 @@ import {EventManager} from 'core/event';
 import {NetworkManager} from 'core/net';
 import {Color, reshade, GraphicsContext} from 'core/graphics';
 import {CollisionLayer} from './util';
-import { TextColor } from 'core/chat';
+import {TextColor} from 'core/chat';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;

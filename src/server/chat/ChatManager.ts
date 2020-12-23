@@ -85,7 +85,11 @@ export class ChatManager {
       const handler = this.commands[command];
 
       // Log call
-      log.info(`command ${player.name}(${player.getPermissionLevel()}): ${command}(${handler.permissionLevel}): [${args}]`);
+      log.info(
+        `command ${player.name}(${player.getPermissionLevel()}): ${command}(${
+          handler.permissionLevel
+        }): [${args}]`
+      );
 
       if ((player.getPermissionLevel() ?? 0) >= handler.permissionLevel) {
         handler.handler.apply(null, [player, ...args]);

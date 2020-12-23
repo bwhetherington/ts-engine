@@ -51,7 +51,10 @@ export class Projectile extends Entity {
 
   public step(dt: number): void {
     super.step(dt);
-    if (NetworkManager.isServer() && (EventManager.timeElapsed - this.timeCreated) > this.duration) {
+    if (
+      NetworkManager.isServer() &&
+      EventManager.timeElapsed - this.timeCreated > this.duration
+    ) {
       this.remove();
     }
   }

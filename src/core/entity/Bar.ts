@@ -2,8 +2,8 @@ import {Data} from 'core/serialize';
 import {GraphicsContext} from 'core/graphics';
 import {rgb, rgba} from 'core/graphics/color';
 import {CollisionLayer, Entity} from 'core/entity';
-import { GraphicsPipeline } from 'core/graphics/pipe';
-import { clamp } from 'core/util';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {clamp} from 'core/util';
 
 export class Bar extends Entity {
   public static typeName: string = 'Bar';
@@ -56,7 +56,7 @@ export class Bar extends Entity {
             this.boundingBox.width,
             this.boundingBox.height,
             rgba(0.25, 0.25, 0.25, 0.8)
-          )
+          );
         });
       GraphicsPipeline.pipe()
         .options({
@@ -71,47 +71,8 @@ export class Bar extends Entity {
             this.boundingBox.height,
             rgba(0.3, 0.9, 0.3, 0.8),
             this.boundingBox.width
-          )
+          );
         });
-
-      // ctx
-      //   .withOptions(
-      //     {
-      //       lineWidth,
-      //       doStroke: true,
-      //       doFill: true,
-      //       ignoreScale: true,
-      //       uniformColor: true,
-      //     },
-      //     (ctx) => {
-      //       ctx.rect(
-      //         -this.boundingBox.width / 2,
-      //         -this.boundingBox.height / 2,
-      //         this.boundingBox.width,
-      //         this.boundingBox.height,
-      //         rgba(0.35, 0.35, 0.35, 0.75)
-      //       );
-      //     }
-      //   )
-      //   .withOptions(
-      //     {
-      //       lineWidth,
-      //       doStroke: true,
-      //       doFill: true,
-      //       ignoreScale: true,
-      //     },
-      //     (ctx) => {
-      //       const padding = 0;
-      //       ctx.rect(
-      //         -this.boundingBox.width / 2 + padding,
-      //         -this.boundingBox.height / 2 + padding,
-      //         (this.boundingBox.width - 2 * padding) * this.progress,
-      //         this.boundingBox.height - 2 * padding,
-      //         rgb(0.4, 1, 0.4),
-      //         this.boundingBox.width
-      //       );
-      //     }
-      //   );
     }
   }
 }

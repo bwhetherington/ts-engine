@@ -2,7 +2,7 @@ import {Form, FormManager, StringEntry, FormEntry, FormResult} from 'core/form';
 import {PlayerManager, Player} from 'core/player';
 import {Data} from 'core/serialize';
 import {LogManager} from 'core/log';
-import { capitalize } from 'core/util';
+import {capitalize} from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -43,7 +43,9 @@ export const RenameFormEntry: FormEntry<RenameForm> = {
     _: string,
     player: Player
   ): Promise<FormResult> {
-    const {name: {value}} = input;
+    const {
+      name: {value},
+    } = input;
     const name = capitalize(value);
     if (name.length < 3) {
       return {

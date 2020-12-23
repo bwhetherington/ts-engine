@@ -190,10 +190,16 @@ export class HDCanvas implements GraphicsContext {
   }
 
   private getStrokeColor(color: Color, amount: number = 0.2): string {
-    return this.options.uniformColor ? toCss(color) : toCss(reshade(color, amount));
+    return this.options.uniformColor
+      ? toCss(color)
+      : toCss(reshade(color, amount));
   }
 
-  private setStyles(ctx: CanvasRenderingContext2D, color: Color, amount: number = 0.2): void {
+  private setStyles(
+    ctx: CanvasRenderingContext2D,
+    color: Color,
+    amount: number = 0.2
+  ): void {
     ctx.fillStyle = this.getFillColor(color);
     ctx.strokeStyle = this.getStrokeColor(color, amount);
   }

@@ -21,7 +21,7 @@ import {NetworkManager, SyncEvent} from 'core/net';
 import {CameraManager, rgb, GraphicsContext} from 'core/graphics';
 import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
-import { TextColor } from 'core/chat';
+import {TextColor} from 'core/chat';
 
 const log = LogManager.forFile(__filename);
 
@@ -157,7 +157,10 @@ export class Hero extends Tank {
       this.setLevelInternal(this.level + 1);
     }
 
-    while (this.xp < this.experienceForLevel(this.level - 1) && this.level > 1) {
+    while (
+      this.xp < this.experienceForLevel(this.level - 1) &&
+      this.level > 1
+    ) {
       this.setLevelInternal(this.level - 1);
     }
 

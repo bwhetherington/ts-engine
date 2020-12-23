@@ -10,7 +10,14 @@ import {LogManager} from 'core/log';
 import {Server, createServer, ServerHTTPClient} from 'server/net';
 import {NetworkManager, SyncEvent} from 'core/net';
 import {ChatManager} from 'server/chat';
-import {WorldManager, Unit, FeedVariant, Feed, KillEvent, Entity} from 'core/entity';
+import {
+  WorldManager,
+  Unit,
+  FeedVariant,
+  Feed,
+  KillEvent,
+  Entity,
+} from 'core/entity';
 import {PlayerManager} from 'core/player';
 import {FormManager} from 'core/form';
 import {registerJoinForm} from 'core/form';

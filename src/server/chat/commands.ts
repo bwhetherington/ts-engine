@@ -4,8 +4,8 @@ import {Player, PlayerManager} from 'core/player';
 import {loadWorld} from 'server/util';
 import {LogManager} from 'core/log';
 import {RNGManager} from 'core/random';
-import { NetworkManager } from 'core/net';
-import { isOk } from 'core/net/http';
+import {NetworkManager} from 'core/net';
+import {isOk} from 'core/net/http';
 
 const log = LogManager.forFile(__filename);
 
@@ -125,7 +125,11 @@ export const promote: CommandEntry = {
       };
       const auth = player.getAuth();
       if (auth) {
-        const saveRes = await NetworkManager.http?.post('/update', newData, auth);
+        const saveRes = await NetworkManager.http?.post(
+          '/update',
+          newData,
+          auth
+        );
         if (!(saveRes && isOk(saveRes.code))) {
           ChatManager.error('Could not promote user', player);
         }
@@ -135,5 +139,5 @@ export const promote: CommandEntry = {
     } else {
       ChatManager.warn(`User '${username}' not found`, player);
     }
-  }
+  },
 };

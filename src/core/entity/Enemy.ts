@@ -30,7 +30,8 @@ export class Enemy extends Tank {
       this.label.tag = ' [AI]';
     }
 
-    this.setXPWorth(5);
+    this.setMaxLife(40);
+    this.setXPWorth(10);
   }
 
   public damage(amount: number, source?: Unit): void {

@@ -1,6 +1,6 @@
-import { Tank } from "core/entity";
-import { EventManager } from "core/event";
-import { Gun } from "core/weapon";
+import {Tank} from 'core/entity';
+import {EventManager} from 'core/event';
+import {Gun} from 'core/weapon';
 
 export class BurstGun extends Gun {
   public static typeName: string = 'BurstGun';
