@@ -205,7 +205,7 @@ export class Player implements Serializable {
 
   private createAccountUpdate(): Partial<Account> {
     return {
-      username: this.auth?.username,
+      username: this.auth?.username?.toLowerCase() ?? '',
       xp: this.hero?.getExperience(),
       className: this.hero?.type,
     };
