@@ -3,14 +3,15 @@ import {Serializable, Data} from 'core/serialize';
 import {Socket, NetworkManager} from 'core/net';
 import {PlayerManager, Account} from 'core/player';
 import {UUIDManager, UUID} from 'core/uuid';
-import {EventData, Handler, EventManager} from 'core/event';
-import {capitalize, sleep} from 'core/util';
+import {EventData, Handler, EventManager, Event} from 'core/event';
+import {capitalize} from 'core/util';
 import {LogManager} from 'core/log';
 import {BasicAuth} from 'core/net/http';
 import {randomColor} from 'core/graphics/color';
 import {RNGManager} from 'core/random';
 import {PlayerChatManager} from './chat';
 import { TextColor } from 'core/chat';
+import { AsyncIterator } from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
@@ -89,6 +90,14 @@ export class Player implements Serializable {
     this.getListeners(type).add(id);
   }
 
+  public streamEvents<E extends EventData>(
+    type: string
+  ): AsyncIterator<Event<E>> {
+    return AsyncIterator.from(({$yield}) => {
+      this.addListener<E>(type, $yield);
+    });
+  }
+
   public serialize(): Data {
     return {
       name: this.name,
@@ -153,6 +162,10 @@ export class Player implements Serializable {
     this.auth = auth;
   }
 
+  public getAuth(): BasicAuth | undefined {
+    return this.auth;
+  }
+
   private spawnHero(): Hero {
     const hero = WorldManager.spawn(Hero);
     const x = RNGManager.nextFloat(-560, 560);
@@ -186,7 +199,7 @@ export class Player implements Serializable {
     if (this.auth) {
       const account = this.createAccountUpdate();
       await this.write(account);
-      log.trace('player ' + this.name + ' saved');
+      log.info('player ' + this.name + ' saved');
     }
   }
 
@@ -199,8 +212,8 @@ export class Player implements Serializable {
   }
 
   private async write(account: Partial<Account>): Promise<void> {
-    if (NetworkManager.isServer() && NetworkManager.http && this.auth) {
-      await NetworkManager.http.post('/update', account, this.auth);
+    if (NetworkManager.isServer()) {
+      await NetworkManager.http?.post('/update', account);
     }
   }
 

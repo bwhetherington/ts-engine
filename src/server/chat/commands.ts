@@ -4,6 +4,8 @@ import {Player, PlayerManager} from 'core/player';
 import {loadWorld} from 'server/util';
 import {LogManager} from 'core/log';
 import {RNGManager} from 'core/random';
+import { NetworkManager } from 'core/net';
+import { isOk } from 'core/net/http';
 
 const log = LogManager.forFile(__filename);
 
@@ -101,4 +103,37 @@ export const pre: CommandEntry = {
       player
     );
   },
+};
+
+export const promote: CommandEntry = {
+  name: 'promote',
+  help: 'promote the specified account',
+  permissionLevel: 2,
+  async handler(player, username) {
+    if (!username) {
+      ChatManager.error('No username specified', player);
+      return;
+    }
+
+    // Load account
+    const res = await NetworkManager.http?.get('/user/' + username);
+    if (res && isOk(res.code)) {
+      const prevLevel = res.data.permissionLevel ?? 0;
+      const newData = {
+        username,
+        permissionLevel: Math.max(prevLevel, 1),
+      };
+      const auth = player.getAuth();
+      if (auth) {
+        const saveRes = await NetworkManager.http?.post('/update', newData, auth);
+        if (!(saveRes && isOk(saveRes.code))) {
+          ChatManager.error('Could not promote user', player);
+        }
+      } else {
+        ChatManager.error('Must be authenticated', player);
+      }
+    } else {
+      ChatManager.warn(`User '${username}' not found`, player);
+    }
+  }
 };

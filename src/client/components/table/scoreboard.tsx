@@ -16,6 +16,11 @@ const SCOREBOARD_COLUMNS = [
     width: '50px',
   },
   {
+    label: 'Score',
+    field: 'xp',
+    width: '50px',
+  },
+  {
     label: 'Ping',
     field: 'ping',
     width: '50px',
@@ -31,6 +36,7 @@ export class Scoreboard extends Component<{}, {}> {
           id: player.id,
           name: player.name,
           level: player.hero?.getLevel() ?? 0,
+          xp: player.hero?.getExperience() ?? 0,
           ping: Math.round(player.ping * 1000) + 'ms',
         }))
         .take(10)
