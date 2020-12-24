@@ -172,11 +172,15 @@ input[type='checkbox']:checked::after {
   z-index: 1px;
 }
 
+table {
+  border-spacing: var(--ui-margin);
+}
+
 td {
   text-align: center;
 }
 
-thead td {
+thead th {
   font-weight: bold;
 }
 

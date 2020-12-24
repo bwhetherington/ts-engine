@@ -170,7 +170,7 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   private scrollToBottom(): void {
-    this.endRef.current?.scrollIntoView({behavior: 'smooth'});
+    this.endRef.current?.scrollIntoView({behavior: 'auto'});
   }
 
   public componentDidMount(): void {
@@ -254,10 +254,11 @@ export class Chat extends Component<ChatProps, ChatState> {
     }
   }
 
-  private onFocus = () => {
-    this.updateState({
+  private onFocus = async () => {
+    await this.updateState({
       isFocused: true,
     });
+    this.scrollToBottom();
   };
 
   private onBlur = () => {

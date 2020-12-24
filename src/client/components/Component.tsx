@@ -30,10 +30,12 @@ export class Component<P = {}, S = {}> extends React.Component<
     };
   }
 
-  protected updateState(newState: Partial<S | ComponentState>): void {
-    this.setState({
-      ...this.state,
-      ...newState,
+  protected updateState(newState: Partial<S | ComponentState>): Promise<void> {
+    return new Promise((resolve) => {
+      this.setState({
+        ...this.state,
+        ...newState,
+      }, resolve);
     });
   }
 
