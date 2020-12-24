@@ -25,6 +25,7 @@ import * as commands from 'server/chat/commands';
 import {Iterator} from 'core/iterator';
 import {RNGManager} from 'core/random';
 import {TextFormatter} from 'core/chat/format';
+import { Vector } from 'core/geometry';
 
 const log = LogManager.forFile(__filename);
 
@@ -236,20 +237,14 @@ export class ChatManager {
         }
 
         for (let i = 0; i < count; i++) {
-          const isHeavy = RNGManager.nextBoolean(0.2);
-          const type = isHeavy ? 'HeavyEnemy' : 'Enemy';
-          const entity = WorldManager.spawnEntity(type) as Enemy;
-
-          const color = randomColor();
-          entity.setColor(color);
-
-          const x =
-            RNGManager.next() * WorldManager.boundingBox.width +
-            WorldManager.boundingBox.x;
-          const y =
-            RNGManager.next() * WorldManager.boundingBox.height +
-            WorldManager.boundingBox.y;
-          entity.position.setXY(x, y);
+          const x = RNGManager.nextFloat(WorldManager.boundingBox.x, WorldManager.boundingBox.farX);
+          const y = RNGManager.nextFloat(WorldManager.boundingBox.y, WorldManager.boundingBox.farY);
+          const position = new Vector(x, y);
+          const num = RNGManager.next();
+          const type =
+            num < 0.8 ? (num < 0.6 ? 'Enemy' : 'HomingEnemy') : 'HeavyEnemy';
+          const entity = WorldManager.spawnEntity(type, position);
+          entity.setColor(randomColor());
         }
 
         this.info(`Spawning ${count} entities`);
