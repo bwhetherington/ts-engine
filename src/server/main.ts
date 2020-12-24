@@ -100,6 +100,7 @@ async function main(): Promise<void> {
   RNGManager.seed(Date.now());
 
   EventManager.streamInterval(0.5)
+    .filter(() => false)
     .filter(() => WorldManager.getEntityCount() < 60)
     .forEach(() => {
       const num = RNGManager.nextFloat(0, 1);

@@ -12,7 +12,7 @@ export class BurstGun extends Gun {
     this.projectileSpread = 0.35;
     this.shotSpread = 0.1;
     this.shots = 2;
-    this.damage = 1;
+    this.damage = 1.5;
   }
 
   public async fire(source: Tank, angle: number): Promise<void> {
