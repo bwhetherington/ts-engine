@@ -1,0 +1,10 @@
+{
+  "type": "MachineGunHero",
+  "extends": "Hero",
+  "weapon": "MachineGun",
+  "cannonShape": {
+    "length": 30,
+    "height": 10,
+    "farHeight": 17.5
+  }
+}

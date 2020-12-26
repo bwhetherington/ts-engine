@@ -319,8 +319,7 @@ export class Unit extends Entity {
 
   public setColor(color: Color): void {
     super.setColor(color);
-    const flashColor = reshade(this.color, -0.4);
-    this.flashColor = flashColor;
+    this.flashColor = reshade(this.color, -0.4);
   }
 
   public collide(other?: Entity): void {

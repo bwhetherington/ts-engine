@@ -1,3 +1,6 @@
+import { UUID, UUIDManager } from "core/uuid";
+import { Iterator } from "./sync";
+
 type MaybePromise<T> = T | Promise<T>;
 
 async function* map<T, U>(
@@ -157,50 +160,9 @@ function buildIterator<T>(
   })();
 }
 
-class IteratorBuilder<T> {
-  private isDone: boolean = false;
-  private yieldQueue: T[] = [];
-  private resolver = () => {};
-  private guard: MaybePromise<void> = new Promise((resolve) => {
-    this.resolver = resolve;
-  });
-
-  public static build<T>(
-    body: (fns: IteratorFunctions<T>) => void
-  ): IteratorBuilder<T> {
-    const builder = new IteratorBuilder<T>();
-    const $yield = (arg: T) => {
-      builder.yieldQueue.push(arg);
-      builder.resolver();
-      builder.guard = new Promise((resolve) => {
-        builder.resolver = resolve;
-      });
-    };
-    const $yieldAll = (iterable: Iterable<T>) => {
-      for (const x of iterable) {
-        $yield(x);
-      }
-    };
-    const fns = {$yield, $yieldAll};
-    body(fns);
-    return builder;
-  }
-
-  public async *toGenerator(): AsyncIterable<T> {
-    while (!this.isDone) {
-      for (const val of this.yieldQueue) {
-        yield val;
-      }
-      this.yieldQueue = [];
-
-      // Wait until we get a new item
-      await this.guard;
-    }
-  }
-}
-
 export class AsyncIterator<T> implements AsyncIterable<T> {
   private generator: AsyncIterable<T>;
+  private subscribers: Record<UUID, IteratorFunctions<T>> = {};
 
   constructor(generator: AsyncIterable<T>) {
     this.generator = generator;
@@ -218,34 +180,38 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
 
   public async *[Symbol.asyncIterator](): AsyncGenerator<T> {
     for await (const x of this.generator) {
+      // Notify subscribers
+      Iterator.values(this.subscribers)
+        .forEach(({$yield}) => $yield(x));
+
       yield x;
     }
   }
 
   public enumerate(): AsyncIterator<[T, number]> {
-    return AsyncIterator.generator(enumerate(this.generator));
+    return AsyncIterator.generator(enumerate(this));
   }
 
   public map<U>(fn: (x: T) => MaybePromise<U>): AsyncIterator<U> {
-    return AsyncIterator.generator(map(this.generator, fn));
+    return AsyncIterator.generator(map(this, fn));
   }
 
   public flatMap<U>(fn: (x: T) => AsyncIterable<U>): AsyncIterator<U> {
-    return AsyncIterator.generator(flatMap(this.generator, fn));
+    return AsyncIterator.generator(flatMap(this, fn));
   }
 
   public filter(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
-    return AsyncIterator.generator(filter(this.generator, fn));
+    return AsyncIterator.generator(filter(this, fn));
   }
 
   public filterType<U extends T>(fn: (x: T) => x is U): AsyncIterator<U> {
-    return AsyncIterator.generator(filterType(this.generator, fn));
+    return AsyncIterator.generator(filterType(this, fn));
   }
 
   public filterMap<U>(
     fn: (x: T) => MaybePromise<U | undefined>
   ): AsyncIterator<U> {
-    return AsyncIterator.generator(filterMap(this.generator, fn));
+    return AsyncIterator.generator(filterMap(this, fn));
   }
 
   public async fold<U>(
@@ -253,7 +219,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     fn: (acc: U, x: T) => MaybePromise<U>
   ): Promise<U> {
     let output = initial;
-    for await (const x of this.generator) {
+    for await (const x of this) {
       output = await fn(output, x);
     }
     return output;
@@ -265,7 +231,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param amount The number of elements to take
    */
   public take(amount: number): AsyncIterator<T> {
-    return AsyncIterator.generator(take(this.generator, amount));
+    return AsyncIterator.generator(take(this, amount));
   }
 
   /**
@@ -275,7 +241,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param fn A predicate function
    */
   public takeWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
-    return AsyncIterator.generator(takeWhile(this.generator, fn));
+    return AsyncIterator.generator(takeWhile(this, fn));
   }
 
   /**
@@ -284,7 +250,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param amount The number of elements to skip
    */
   public skip(amount: number): AsyncIterator<T> {
-    return AsyncIterator.generator(skip(this.generator, amount));
+    return AsyncIterator.generator(skip(this, amount));
   }
 
   /**
@@ -294,7 +260,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param fn A predicate function
    */
   public skipWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
-    return AsyncIterator.generator(skipWhile(this.generator, fn));
+    return AsyncIterator.generator(skipWhile(this, fn));
   }
 
   /**
@@ -303,7 +269,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param fn A function
    */
   public use(fn: (x: T) => MaybePromise<void>): AsyncIterator<T> {
-    return AsyncIterator.generator(use(this.generator, fn));
+    return AsyncIterator.generator(use(this, fn));
   }
 
   /**
@@ -311,7 +277,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param fn A function
    */
   public async forEach(fn: (x: T) => MaybePromise<void>): Promise<void> {
-    for await (const x of this.generator) {
+    for await (const x of this) {
       await fn(x);
     }
   }
@@ -321,7 +287,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    */
   public async toArray(): Promise<T[]> {
     const arr = [];
-    for await (const x of this.generator) {
+    for await (const x of this) {
       arr.push(x);
     }
     return arr;
@@ -354,7 +320,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   }
 
   public async first(): Promise<T | undefined> {
-    for await (const x of this.generator) {
+    for await (const x of this) {
       return x;
     }
   }
@@ -365,5 +331,36 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
       count += 1;
     });
     return count;
+  }
+
+  public removeSubscriber(id: UUID): void {
+    delete this.subscribers[id];
+  }
+
+  public subscribe(): IteratorSubscriber<T> {
+    const id = UUIDManager.generate();
+    return new IteratorSubscriber(this, id, AsyncIterator.from((fns) => {
+      this.subscribers[id] = fns;
+    }));
+  }
+
+  public async drain(): Promise<void> {
+    return await this.forEach(() => {});
+  }
+}
+
+export class IteratorSubscriber<T> extends AsyncIterator<T> {
+  private id: UUID;
+  private parent: AsyncIterator<T>;
+
+  public constructor(parent: AsyncIterator<T>, id: UUID, iterator: AsyncIterable<T>) {
+    super(iterator);
+    this.parent = parent;
+    this.id = id;
+  }
+
+  public unsubscribe(): void {
+    this.parent.removeSubscriber(this.id);
+    UUIDManager.free(this.id);
   }
 }

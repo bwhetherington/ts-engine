@@ -5,14 +5,11 @@ import {
   CollisionLayer,
   WorldManager,
   CollisionEvent,
-  Bar,
-  Text,
 } from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
 import {isCollisionLayer, shuntOutOf} from './util';
 import {EventData, Handler, EventManager, Event, StepEvent} from 'core/event';
 import {UUID, UUIDManager} from 'core/uuid';
-import {NetworkManager} from 'core/net';
 import {AsyncIterator} from 'core/iterator';
 
 export class Entity implements Bounded, Serializable, Renderable {
@@ -152,7 +149,7 @@ export class Entity implements Bounded, Serializable, Renderable {
     };
   }
 
-  private deserializeColor(data: Data): void {
+  protected deserializeColor(data: Data): void {
     const {red, green, blue, alpha} = data;
     const newColor = {...this.color};
     if (typeof red === 'number') {
@@ -314,6 +311,12 @@ export class Entity implements Bounded, Serializable, Renderable {
   }
 
   public collide(other?: Entity): void {}
+
+  public streamCollisions(): AsyncIterator<CollisionEvent> {
+    return this.streamEvents<CollisionEvent>('CollisionEvent')
+      .map(({data}) => data)
+      .filter(({collider}) => collider.id === this.id);
+  }
 
   public load(): void {}
 }

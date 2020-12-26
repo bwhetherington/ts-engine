@@ -1,10 +1,10 @@
 import {Unit, Text, WorldManager} from 'core/entity';
-import {GraphicsContext} from 'core/graphics';
+import {GraphicsContext, hsv} from 'core/graphics';
 import {Data} from 'core/serialize';
 import {FireEvent, Weapon, WeaponManager} from 'core/weapon';
 import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
-import {Rectangle, Vector} from 'core/geometry';
+import {CannonShape, Rectangle, Vector} from 'core/geometry';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 
 const log = LogManager.forFile(__filename);
@@ -16,7 +16,7 @@ export class Tank extends Unit {
 
   public armor: number = 0;
 
-  protected cannonShape: Rectangle = new Rectangle(25, 15);
+  protected cannonShape: CannonShape = new CannonShape(25, 15);
 
   private fireTimer: number = 0;
   private weapon?: Weapon;
@@ -61,13 +61,27 @@ export class Tank extends Unit {
     const color = this.getColor();
     const horizontalScale = this.getFireParameter();
     const verticalScale = horizontalScale / 2 + 0.5;
-    ctx.rect(
-      0,
-      -(this.cannonShape.height * verticalScale) / 2,
-      this.cannonShape.width * horizontalScale,
-      this.cannonShape.height * verticalScale,
-      color
-    );
+
+    if (this.cannonShape.farHeight !== undefined) {
+      // Trapezoid cannon
+      ctx.trapezoid(
+        this.cannonShape.length / 2,
+        0,
+        this.cannonShape.height * verticalScale,
+        this.cannonShape.farHeight * verticalScale,
+        this.cannonShape.length * horizontalScale,
+        color
+      );
+    } else {
+      // Rectangle cannon
+      ctx.rect(
+        0,
+        -(this.cannonShape.height * verticalScale) / 2,
+        this.cannonShape.length * horizontalScale,
+        this.cannonShape.height * verticalScale,
+        color
+      );
+    }
   }
 
   public render(ctx: GraphicsContext): void {
@@ -130,7 +144,7 @@ export class Tank extends Unit {
     this.vectorBuffer.set(this.position);
     const dx = Math.cos(this.angle);
     const dy = Math.sin(this.angle);
-    this.vectorBuffer.addXY(dx, dy, this.cannonShape.width);
+    this.vectorBuffer.addXY(dx, dy, this.cannonShape.length);
     return this.vectorBuffer;
   }
 

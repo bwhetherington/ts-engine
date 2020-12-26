@@ -18,7 +18,7 @@ import {Data} from 'core/serialize';
 import {Player, PlayerManager} from 'core/player';
 import {LogManager} from 'core/log';
 import {NetworkManager, SyncEvent} from 'core/net';
-import {CameraManager, rgb, GraphicsContext} from 'core/graphics';
+import {CameraManager, rgb, GraphicsContext, hsv} from 'core/graphics';
 import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
@@ -39,7 +39,7 @@ export class Hero extends Tank {
 
     this.type = Hero.typeName;
 
-    this.setWeapon('BurstGun');
+    this.setWeapon('Gun');
 
     this.setExperience(0);
     this.setLevelInternal(1);
@@ -319,20 +319,5 @@ export class Hero extends Tank {
 
   protected calculateDamageOut(amount: number): number {
     return amount * this.damageBonusForLevel(this.getLevel());
-  }
-
-  protected renderCannon(ctx: GraphicsContext): void {
-    const color = this.getColor();
-    const horizontalScale = this.getFireParameter();
-    const verticalScale = horizontalScale / 2 + 0.5;
-
-    ctx.trapezoid(
-      this.cannonShape.width / 2,
-      0,
-      this.cannonShape.height * 0.6 * verticalScale,
-      this.cannonShape.height * 1.2 * verticalScale,
-      this.cannonShape.width * horizontalScale,
-      color
-    );
   }
 }

@@ -3,7 +3,8 @@
   "extends": "Hero",
   "weapon": "RayGun",
   "cannonShape": {
-    "width": 35,
-    "height": 15
+    "length": 30,
+    "height": 17.5,
+    "farHeight": 12.5
   }
 }

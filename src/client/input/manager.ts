@@ -129,4 +129,20 @@ export class InputManager {
     });
     log.debug('InputManager initialized');
   }
+
+  public reset(): void {
+    for (let key = 0; key < this.keyStates.length; key++) {
+      if (this.keyStates[key]) {
+        console.log('release', key);
+        EventManager.emit<KeyEvent>({
+          type: 'KeyEvent',
+          data: {
+            action: KeyAction.KeyUp,
+            key
+          }
+        });
+      }
+      this.keyStates[key] = false;
+    }
+  }
 }

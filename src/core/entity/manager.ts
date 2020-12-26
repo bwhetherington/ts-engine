@@ -12,9 +12,7 @@ import {
   CollisionEvent,
   Tank,
   Enemy,
-  HomingEnemy,
   CollisionLayer,
-  Heavy,
   Bar,
   Echo,
   Ray,
@@ -28,6 +26,8 @@ import {
   HeavyEnemy,
   Template,
   SniperHero,
+  MachineGunHero,
+  HomingEnemy,
 } from 'core/entity/template';
 import {LogManager} from 'core/log';
 import {EventManager, StepEvent} from 'core/event';
@@ -93,8 +93,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Tank);
     this.registerEntity(TimedText);
     this.registerEntity(Enemy);
-    this.registerEntity(HomingEnemy);
-    this.registerEntity(Heavy);
     this.registerEntity(Bar);
     this.registerEntity(Echo);
     this.registerEntity(HomingProjectile);
@@ -103,7 +101,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     // Template entities
     this.registerTemplateEntity(BigProjectile);
     this.registerTemplateEntity(HeavyEnemy);
+    this.registerTemplateEntity(HomingEnemy);
     this.registerTemplateEntity(SniperHero);
+    this.registerTemplateEntity(MachineGunHero);
   }
 
   public initialize(): void {

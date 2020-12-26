@@ -1,5 +1,5 @@
 {
-  "type": "HeavyEnemy",
+  "type": "HomingEnemy",
   "extends": "Enemy",
   "mass": 5,
   "maxLife": 100,
@@ -7,14 +7,15 @@
   "armor": 1,
   "speed": 200,
   "boundingBox": {
-    "width": 40,
-    "height": 40
+    "width": 30,
+    "height": 30
   },
   "cannonShape": {
-    "length": 35,
-    "height": 20
+    "length": 25,
+    "height": 17.5,
+    "farHeight": 12.5
   },
-  "weapon": "HeavyGun",
+  "weapon": "HomingGun",
   "xpWorth": 25,
-  "name": "Heavy"
+  "name": "Seeker"
 }

@@ -46,6 +46,10 @@ async function main(): Promise<void> {
     window.addEventListener('resize', () => {
       canvas.setSize(window.innerWidth, window.innerHeight);
     });
+    window.addEventListener('blur', () => {
+      console.log('blur');
+      InputManager.reset();
+    });
 
     const timer = new Timer((dt) => {
       EventManager.step(dt);
@@ -54,6 +58,9 @@ async function main(): Promise<void> {
     });
 
     timer.start();
+
+    const stream = EventManager.streamInterval(1);
+    stream.drain();
   }
 }
 
