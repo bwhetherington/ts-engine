@@ -14,6 +14,8 @@ import {AsyncIterator} from 'core/iterator';
 
 export class Entity implements Bounded, Serializable, Renderable {
   public static typeName: string = 'Entity';
+  public static isTypeInitialized: boolean = false;
+
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
@@ -37,6 +39,12 @@ export class Entity implements Bounded, Serializable, Renderable {
   constructor() {
     this.id = UUIDManager.generate();
     this.type = Entity.typeName;
+  }
+
+  public static initializeType(): void {
+    if (!Entity.isTypeInitialized) {
+      Entity.isTypeInitialized = true;
+    }
   }
 
   public applyForce(force: Vector, scalar: number = 1): void {

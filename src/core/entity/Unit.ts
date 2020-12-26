@@ -22,6 +22,7 @@ const FLASH_DURATION = 0.1;
 
 export class Unit extends Entity {
   public static typeName: string = 'Unit';
+  public static isTypeInitialized: boolean = false;
 
   private name: string = '';
   private maxLife: number = 10;
@@ -33,7 +34,7 @@ export class Unit extends Entity {
   protected label?: Text;
   protected hpBar?: Bar;
 
-  private flashTimer: number = 0;
+  private lastFlash: number = 0;
   private flashColor?: Color;
   private isAliveInternal: boolean = true;
   private movement = {
@@ -51,6 +52,20 @@ export class Unit extends Entity {
 
     if (NetworkManager.isClient()) {
       this.hpBar = WorldManager.spawn(Bar, this.position);
+    }
+  }
+
+  public static initializeType(): void {
+    Entity.initializeType();
+    if (!Unit.isTypeInitialized) {
+      console.log('Initialize Unit');
+      Unit.isTypeInitialized = true;
+      if (NetworkManager.isClient()) {
+        EventManager.streamEvents<DamageEvent>('DamageEvent')
+          .filterMap((event) => WorldManager.getEntity(event.data.targetID))
+          .filterMap((entity) => entity instanceof Unit ? entity : undefined)
+          .forEach((unit) => unit.flash());
+      }
     }
   }
 
@@ -197,8 +212,6 @@ export class Unit extends Entity {
         this.hpBar.progress = this.getLife() / this.getMaxLife();
       }
     }
-
-    this.flashTimer = Math.max(0, this.flashTimer - dt);
   }
 
   public setMovement(direction: MovementDirection, state: boolean): void {
@@ -213,6 +226,7 @@ export class Unit extends Entity {
       speed: this.speed,
       xpWorth: this.xpWorth,
       name: this.name,
+      color: this.getBaseColor(),
     };
   }
 
@@ -302,7 +316,7 @@ export class Unit extends Entity {
   }
 
   public flash(): void {
-    this.flashTimer = FLASH_DURATION;
+    this.lastFlash = EventManager.timeElapsed;
   }
 
   public getBaseColor(): Color {
@@ -311,7 +325,7 @@ export class Unit extends Entity {
 
   public getColor(): Color {
     const color =
-      this.flashTimer > 0 && this.isAlive
+      (EventManager.timeElapsed - this.lastFlash) < FLASH_DURATION && this.isAlive
         ? this.flashColor ?? this.color
         : this.color;
     return color;

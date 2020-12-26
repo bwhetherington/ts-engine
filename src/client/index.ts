@@ -1,7 +1,7 @@
 import {NetworkManager} from 'core/net';
 import {EventManager, StepEvent, Event} from 'core/event';
 import {LogManager} from 'core/log';
-import {WorldManager} from 'core/entity';
+import {DamageEvent, Unit, WorldManager} from 'core/entity';
 import {Timer, HDCanvas, Client, ClientLogger, loadFile} from 'client/util';
 import {CameraManager} from 'core/graphics';
 import {InputManager} from 'client/input';

@@ -175,7 +175,12 @@ function validateNoAccount(res: JoinForm): FormResult {
     return {isValid: false, message: 'A player already has that name.'};
   }
 
-  return {isValid: true};
+  const {length} = username;
+  if (3 <= length && length <= 15) {
+    return {isValid: true};
+  } else {
+    return {isValid: false, message: 'Username must be between 3 and 5 characters.'};
+  }
 }
 
 function handleNoAccount(player: Player, res: JoinForm): void {

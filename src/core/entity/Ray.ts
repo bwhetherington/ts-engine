@@ -1,11 +1,12 @@
-import {Entity, CollisionLayer, WorldManager, Echo} from 'core/entity';
+import {Entity, CollisionLayer, WorldManager, Echo, Unit, DisplayRayEvent} from 'core/entity';
 import {GraphicsContext} from 'core/graphics';
 import {Vector, VectorLike} from 'core/geometry';
 import {sleep, clamp, smoothStep} from 'core/util';
 import {LogManager} from 'core/log';
-import {WHITE} from 'core/graphics/color';
+import {reshade, WHITE} from 'core/graphics/color';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {EventManager} from 'core/event';
+import { NetworkManager } from 'core/net';
 
 const log = LogManager.forFile(__filename);
 
@@ -14,6 +15,7 @@ const BASE_THICKNESS = 8;
 
 export class Ray extends Entity {
   public static typeName: string = 'Ray';
+  public static isTypeInitialized: boolean = false;
 
   private start: Vector = new Vector();
   private stop: Vector = new Vector();
@@ -26,6 +28,32 @@ export class Ray extends Entity {
     this.doSync = false;
     this.isCollidable = false;
     this.isVisible = true;
+  }
+
+  public static initializeType(): void {
+    Entity.initializeType();
+    if (!Ray.isTypeInitialized) {
+      Ray.isTypeInitialized = true;
+      if (NetworkManager.isClient()) {
+        EventManager.streamEvents<DisplayRayEvent>('DisplayRayEvent')
+          .map((event) => event.data)
+          .forEach(({start, stop, sourceID}) => {
+            let color;
+            const source = WorldManager.getEntity(sourceID);
+            if (source instanceof Unit) {
+              color = reshade(source.getBaseColor());
+            } else {
+              color = WHITE;
+            }
+            color.alpha = (color.alpha ?? 1) * (2/3);
+
+            const ray = new Ray();
+            ray.initialize(start, stop);
+            ray.setColor(color);
+            WorldManager.add(ray);
+          });
+      }
+    }
   }
 
   private getProgress(): number {

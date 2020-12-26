@@ -118,24 +118,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     EventManager.addListener<StepEvent>('StepEvent', (event) => {
       this.step(event.data.dt);
     });
-
-    EventManager.addListener<DisplayRayEvent>('DisplayRayEvent', (event) => {
-      const {start, stop, sourceID} = event.data;
-
-      let color;
-      const source = this.getEntity(sourceID);
-      if (source instanceof Unit) {
-        color = reshade(source.getBaseColor());
-      } else {
-        color = WHITE;
-      }
-      color.alpha = (color.alpha ?? 1) * (2/3);
-
-      const ray = new Ray();
-      ray.initialize(start, stop);
-      ray.setColor(color);
-      this.add(ray);
-    });
   }
 
   public render(ctx: GraphicsContext): void {
@@ -383,6 +365,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       this.entityConstructors[name] = () => new Type();
       log.trace(`entity ${name} registered`);
     }
+    Type.initializeType();
   }
 
   public spawn<T extends Entity>(
