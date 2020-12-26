@@ -133,7 +133,6 @@ export class InputManager {
   public reset(): void {
     for (let key = 0; key < this.keyStates.length; key++) {
       if (this.keyStates[key]) {
-        console.log('release', key);
         EventManager.emit<KeyEvent>({
           type: 'KeyEvent',
           data: {

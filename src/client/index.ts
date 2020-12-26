@@ -47,7 +47,6 @@ async function main(): Promise<void> {
       canvas.setSize(window.innerWidth, window.innerHeight);
     });
     window.addEventListener('blur', () => {
-      console.log('blur');
       InputManager.reset();
     });
 
