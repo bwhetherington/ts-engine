@@ -208,13 +208,13 @@ export class Chat extends Component<ChatProps, ChatState> {
     ));
   }
 
-  private onChangeInput = (value: string) => {
-    this.updateState({
+  private async onChangeInput(value: string): Promise<void> {
+    await this.updateState({
       message: value,
     });
   };
 
-  private onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  private onSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     this.sendMessage();
   };
@@ -254,15 +254,15 @@ export class Chat extends Component<ChatProps, ChatState> {
     }
   }
 
-  private onFocus = async () => {
+  private async onFocus(): Promise<void> {
     await this.updateState({
       isFocused: true,
     });
     this.scrollToBottom();
   };
 
-  private onBlur = () => {
-    this.updateState({
+  private async onBlur(): Promise<void> {
+    await this.updateState({
       isFocused: false,
     });
   };
@@ -283,15 +283,15 @@ export class Chat extends Component<ChatProps, ChatState> {
           </ChatContainer>
           <ChatForm
             spellCheck={false}
-            onFocus={this.onFocus}
-            onBlur={this.onBlur}
-            onSubmit={this.onSubmit}
+            onFocus={this.onFocus.bind(this)}
+            onBlur={this.onBlur.bind(this)}
+            onSubmit={this.onSubmit.bind(this)}
           >
             <StringInput
               ref={this.inputRef}
               placeholder="Enter message..."
               value={this.state.message}
-              onChange={this.onChangeInput}
+              onChange={this.onChangeInput.bind(this)}
             />
           </ChatForm>
         </Column>

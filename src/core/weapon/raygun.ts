@@ -49,19 +49,16 @@ export class RayGun extends Weapon {
       )
       .forEach((unit: Unit) => unit.damage(this.rollDamage(), source));
 
-    const color = reshade(source.getBaseColor());
-    color.alpha = (color.alpha ?? 1) * (2 / 3);
-
     const event = {
       type: 'DisplayRayEvent',
       data: {
         start: {x: start.x, y: start.y},
         stop: {x: end.x, y: end.y},
-        color,
+        sourceID: source.id,
       },
     };
     if (NetworkManager.isServer()) {
-      NetworkManager.send(event);
+      NetworkManager.sendEvent<DisplayRayEvent>(event);
     } else {
       EventManager.emit<DisplayRayEvent>(event);
     }

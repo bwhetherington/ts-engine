@@ -1,3 +1,4 @@
+import { Rectangle, RectangleLike, Vector } from 'core/geometry';
 import {iterator, Iterator} from 'core/iterator';
 
 export interface RNG {
@@ -21,6 +22,12 @@ export abstract class AbstractRNG implements RNG {
 
   public nextFloat(min: number = 0, max: number = 1): number {
     return this.next() * (max - min) + min;
+  }
+
+  public nextVector(bounds: Rectangle): Vector {
+    const x = this.nextFloat(bounds.x, bounds.farX);
+    const y = this.nextFloat(bounds.y, bounds.farY);
+    return new Vector(x, y);
   }
 
   public nextInt(min: number, max: number): number {

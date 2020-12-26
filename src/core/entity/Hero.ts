@@ -268,6 +268,14 @@ export class Hero extends Tank {
     };
   }
 
+  protected deserializeColor(): void {
+    if (this.player?.isActivePlayer()) {
+      this.setColor(hsv(220, 0.65, 0.9));
+    } else {
+      this.setColor(hsv(0, 0.65, 0.9));
+    }
+  }
+
   public deserialize(data: Data): void {
     const {x: oldX, y: oldY} = this.position;
     const {angle: oldAngle} = this;
@@ -281,6 +289,7 @@ export class Hero extends Tank {
       if (player && player.hero !== this) {
         player.setHero(this);
       }
+      this.deserializeColor();
     }
 
     if (typeof xp === 'number') {

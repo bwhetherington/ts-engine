@@ -80,7 +80,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.entityConstructors[type] = gen;
   }
 
-  private registerEntities(): void {
+  private registerAllEntities(): void {
     // Class entities
     this.registerEntity(Entity);
     this.registerEntity(Unit);
@@ -109,7 +109,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   public initialize(): void {
     log.debug('WorldManager initialized');
 
-    this.registerEntities();
+    this.registerAllEntities();
 
     EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
       this.deserialize(event.data.worldData);
@@ -120,7 +120,17 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     });
 
     EventManager.addListener<DisplayRayEvent>('DisplayRayEvent', (event) => {
-      const {start, stop, color} = event.data;
+      const {start, stop, sourceID} = event.data;
+
+      let color;
+      const source = this.getEntity(sourceID);
+      if (source instanceof Unit) {
+        color = reshade(source.getBaseColor());
+      } else {
+        color = WHITE;
+      }
+      color.alpha = (color.alpha ?? 1) * (2/3);
+
       const ray = new Ray();
       ray.initialize(start, stop);
       ray.setColor(color);
@@ -220,9 +230,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public getRandomPosition(): Vector {
-    const x = RNGManager.next() * this.boundingBox.width + this.boundingBox.x;
-    const y = RNGManager.next() * this.boundingBox.height + this.boundingBox.y;
-    return new Vector(x, y);
+    return RNGManager.nextVector(this.boundingBox);
   }
 
   private populateGraph(): void {

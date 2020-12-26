@@ -106,6 +106,10 @@ export class Tank extends Unit {
     };
   }
 
+  protected deserializeColor(): void {
+    this.setColor(hsv(0, 0.65, 0.9));
+  }
+
   public deserialize(data: Data): void {
     super.deserialize(data);
     const {cannonShape, weapon} = data;
