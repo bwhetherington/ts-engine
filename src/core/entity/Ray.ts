@@ -45,7 +45,6 @@ export class Ray extends Entity {
             } else {
               color = WHITE;
             }
-            color.alpha = (color.alpha ?? 1) * (2/3);
 
             const ray = new Ray();
             ray.initialize(start, stop);
@@ -106,7 +105,7 @@ export class Ray extends Entity {
   public render(ctx: GraphicsContext): void {
     const t = this.getParameter();
     GraphicsPipeline.pipe()
-      .alpha(t)
+      .alpha(t * 2 / 3)
       .options({lineWidth: BASE_THICKNESS * t})
       .translate(-this.position.x, -this.position.y)
       .run(ctx, (ctx) => {

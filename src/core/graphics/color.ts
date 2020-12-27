@@ -19,13 +19,13 @@ export interface ColorHSV {
 export const COLOR_MAPPING: Record<TextColor, Color> = {
   none: rgb(1, 1, 1),
   grey: rgba(1, 1, 1, 0.75),
-  red: rgb(1, 0.4, 0.4),
-  orange: rgb(0.9, 0.6, 0.3),
-  yellow: rgb(0.9, 0.9, 0.3),
-  green: rgb(0.3, 0.6, 0.3),
-  aqua: rgb(0.3, 0.8, 1),
-  blue: rgb(0.5, 0.5, 1),
-  purple: rgb(0.9, 0.3, 0.9),
+  red: hsv(0, 0.65, 1),
+  orange: hsv(30, 0.65, 1),
+  yellow: hsv(60, 0.65, 1),
+  green: rgb(120, 0.65, 1),
+  aqua: hsv(170, 0.65, 1),
+  blue: hsv(220, 0.65, 1),
+  purple: hsv(300, 0.65, 1),
 };
 
 export function randomColor(
