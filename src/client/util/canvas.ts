@@ -8,7 +8,7 @@ import {
   GraphicsOptions,
   CameraManager,
 } from 'core/graphics';
-import {BLACK, COLOR_MAPPING, WHITE} from 'core/graphics/color';
+import {BLACK, COLOR_MAPPING, fromRGB, WHITE} from 'core/graphics/color';
 import {GraphicsProc} from 'core/graphics/context';
 import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
 import {GraphicsPipeline} from 'core/graphics/pipe';
@@ -189,7 +189,7 @@ export class HDCanvas implements GraphicsContext {
     return toCss(color);
   }
 
-  private getStrokeColor(color: Color, amount: number = 0.2): string {
+  private getStrokeColor(color: Color, amount: number = -0.5): string {
     return this.options.uniformColor
       ? toCss(color)
       : toCss(reshade(color, amount));
@@ -198,7 +198,7 @@ export class HDCanvas implements GraphicsContext {
   private setStyles(
     ctx: CanvasRenderingContext2D,
     color: Color,
-    amount: number = 0.2
+    amount: number = -0.2
   ): void {
     ctx.fillStyle = this.getFillColor(color);
     ctx.strokeStyle = this.getStrokeColor(color, amount);
@@ -253,7 +253,7 @@ export class HDCanvas implements GraphicsContext {
           'none';
         const color = COLOR_MAPPING[colorString];
 
-        this.setStyles(ctx, color, 0.35);
+        this.setStyles(ctx, color, -0.35);
 
         ctx.strokeText(text, x + xOffset, y);
         ctx.fillText(text, x + xOffset, y);
@@ -270,7 +270,7 @@ export class HDCanvas implements GraphicsContext {
       const scaleValue = this.scaleValue;
       const {font = 'Roboto Mono', size = 12, color = WHITE} = style;
       ctx.lineWidth = this.options.lineWidth / scaleValue;
-      this.setStyles(ctx, color);
+      this.setStyles(ctx, color, 0.35);
       ctx.textAlign = 'center';
       ctx.font = createFontString(font, size, scaleValue);
       this.setRound(ctx);

@@ -48,7 +48,7 @@ export class Ray extends Entity {
             let color;
             const source = WorldManager.getEntity(sourceID);
             if (source instanceof Unit) {
-              color = reshade(source.getBaseColor());
+              color = reshade(source.getBaseColor(), -0.35);
             } else {
               color = WHITE;
             }

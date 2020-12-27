@@ -9,7 +9,7 @@ import {
 } from 'core/entity';
 import {iterator} from 'core/iterator';
 import {EventManager} from 'core/event';
-import {BLACK, Color, reshade} from 'core/graphics/color';
+import {Color} from 'core/graphics/color';
 import {NetworkManager} from 'core/net';
 import {RNGManager} from 'core/random';
 

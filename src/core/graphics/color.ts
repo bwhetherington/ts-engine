@@ -217,14 +217,16 @@ class ColorShade implements Key {
 
 const COLOR_RESHADE_MAP: HashMap<ColorShade, Color> = new HashMap();
 
-export function reshade(color: Color, amount: number = 0.2): Color {
+export function reshade(color: Color, amount: number = -0.2): Color {
   const shade = new ColorShade(color, amount);
   const existing = COLOR_RESHADE_MAP.get(shade);
   if (existing) {
     return existing;
   } else {
     const {hue, saturation, value, alpha} = fromRGB(color);
-    const reshaded = hsva(hue, saturation, clamp(value - amount), alpha ?? 1);
+    const newValue = value + amount;
+    const excess = Math.max(0, newValue - 1);
+    const reshaded = hsva(hue, clamp(saturation - excess), clamp(newValue), alpha ?? 1);
     COLOR_RESHADE_MAP.insert(shade, reshaded);
     return reshaded;
   }

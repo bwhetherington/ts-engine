@@ -124,7 +124,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
   public render(ctx: GraphicsContext): void {
     ctx.clear(WALL_COLOR);
-    const GRID_COLOR = reshade(WALL_COLOR, -0.05);
+    const GRID_COLOR = reshade(WALL_COLOR, 0.05);
     ctx.begin();
     ctx.resetTransform();
 
