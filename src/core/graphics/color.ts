@@ -1,10 +1,18 @@
 import {TextColor} from 'core/chat';
 import {RNGManager} from 'core/random';
+import { HashMap, Key } from 'core/util/map';
 
 export interface Color {
   red: number;
   green: number;
   blue: number;
+  alpha?: number;
+}
+
+export interface ColorHSV {
+  hue: number;
+  saturation: number;
+  value: number;
   alpha?: number;
 }
 
@@ -31,6 +39,51 @@ export function randomColor(
 const RED_LIGHTNESS = 0.2126;
 const GREEN_LIGHTNESS = 0.7152;
 const BLUE_LIGHTNESS = 0.0722;
+
+export function fromRGB(color: Color): ColorHSV {
+  const {red, green, blue, alpha} = color;
+
+  const cMax = Math.max(red, green, blue);
+  const cMin = Math.min(red, green, blue);
+
+  const delta = cMax - cMin;
+  let hue;
+  switch (cMax) {
+    case red:
+      hue = (60 * ((green - blue) / delta) + 360) % 360;
+      break;
+    case green:
+      hue = (60 * ((blue - red) / delta) + 120) % 360;
+      break;
+    case blue:
+      hue = (60 * ((red - green) / delta) + 240) % 360;
+      break;
+    default:
+      hue = 0;
+      break;
+  }
+
+  let saturation;
+  if (cMax === 0) {
+    saturation = 0;
+  } else {
+    saturation = delta / cMax;
+  }
+
+  const value = cMax;
+
+  return {
+    hue,
+    saturation,
+    value,
+    alpha
+  }
+}
+
+export function fromHSV(color: ColorHSV): Color {
+  const {hue, saturation, value, alpha} = color;
+  return hsva(hue, saturation, value, alpha ?? 1);
+}
 
 export function hsva(
   hue: number,
@@ -136,14 +189,42 @@ function clamp(x: number): number {
   return Math.min(Math.max(x, 0), 1);
 }
 
+class ColorShade implements Key {
+  public constructor(
+    public color: Color,
+    public shade: number,
+  ) {}
+
+    public hash(): number {
+      const {red, green, blue, alpha = 1} = this.color;
+      const r = Math.floor(red * 255);
+      const g = Math.floor(green * 255);
+      const b = Math.floor(blue * 255);
+      const a = Math.floor(alpha * 255);
+      const s = Math.floor(this.shade * 255);
+      return r + g * 127 + b * 337 + a * 743 + s * 1237;
+    }
+
+    public equals(other: any): boolean {
+      const {color = {}, shade} = other;
+      const {red, green, blue, alpha = 1} = color;
+      return this.color.red === red && this.color.green === green && this.color.blue === blue && (this.color.alpha === undefined || this.color.alpha === alpha) && this.shade === shade;
+    }
+}
+
+const COLOR_RESHADE_MAP: HashMap<ColorShade, Color> = new HashMap();
+
 export function reshade(color: Color, amount: number = 0.2): Color {
-  const {red, green, blue, alpha} = color;
-  return {
-    red: clamp(red - amount),
-    green: clamp(green - amount),
-    blue: clamp(blue - amount),
-    alpha,
-  };
+  const shade = new ColorShade(color, amount);
+  const existing = COLOR_RESHADE_MAP.get(shade);
+  if (existing) {
+    return existing;
+  } else {
+    const {hue, saturation, value, alpha} = fromRGB(color);
+    const reshaded = hsva(hue, saturation, clamp(value - amount), alpha ?? 1);
+    COLOR_RESHADE_MAP.insert(shade, reshaded);
+    return reshaded;
+  }
 }
 
 export function invert(color: Color): Color {

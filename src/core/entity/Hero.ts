@@ -279,8 +279,6 @@ export class Hero extends Tank {
   public deserialize(data: Data): void {
     const {x: oldX, y: oldY} = this.position;
     const {angle: oldAngle} = this;
-
-    super.deserialize(data);
     const {playerID, xp} = data;
 
     if (playerID !== undefined) {
@@ -295,6 +293,8 @@ export class Hero extends Tank {
     if (typeof xp === 'number') {
       this.setExperience(xp);
     }
+    
+    super.deserialize(data);
 
     if (this.getPlayer()?.isActivePlayer() && this.isInitialized) {
       // Use our angle

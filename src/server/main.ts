@@ -27,7 +27,7 @@ import process from 'process';
 import path from 'path';
 import {registerRenameForm} from 'core/form/rename';
 import {isEmpty} from 'core/util/object';
-import {randomColor} from 'core/graphics/color';
+import {fromHSV, fromRGB, randomColor} from 'core/graphics/color';
 import {RNGManager} from 'core/random';
 import {BasicAuth} from 'core/net/http';
 import {AssetManager} from 'core/assets';
@@ -126,6 +126,14 @@ async function main(): Promise<void> {
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);
+
+  const c = {
+    red: 1,
+    green: 0.52,
+    blue: 0.75,
+    alpha: 1,
+  };
+  console.log(c, fromHSV(fromRGB(c)));
 }
 
 main().catch((ex) => {
