@@ -1,4 +1,4 @@
-import {Bounded, Rectangle, Vector, Matrix} from 'core/geometry';
+import {Bounded, Rectangle, Vector, Matrix3} from 'core/geometry';
 
 function maxAndMin(
   a: number,
@@ -23,7 +23,7 @@ export class Bounds implements Bounded {
     y: number,
     width: number,
     height: number,
-    matrix: Matrix,
+    matrix: Matrix3,
     verbose: boolean = false
   ): void {
     // Transform rectangle

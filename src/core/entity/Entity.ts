@@ -1,11 +1,7 @@
 import {Bounded, Rectangle, Vector} from 'core/geometry';
 import {GraphicsContext, Color, Renderable} from 'core/graphics';
 import {WHITE, isColor} from 'core/graphics/color';
-import {
-  CollisionLayer,
-  WorldManager,
-  CollisionEvent,
-} from 'core/entity';
+import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
 import {isCollisionLayer, shuntOutOf} from './util';
 import {EventData, Handler, EventManager, Event, StepEvent} from 'core/event';

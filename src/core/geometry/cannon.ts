@@ -1,10 +1,10 @@
-import { Data, Serializable } from "core/serialize";
+import {Data, Serializable} from 'core/serialize';
 
 export class CannonShape implements Serializable {
   public constructor(
     public length: number,
     public height: number,
-    public farHeight?: number,
+    public farHeight?: number
   ) {}
 
   public serialize(): Data {

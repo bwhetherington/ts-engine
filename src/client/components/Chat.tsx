@@ -212,12 +212,12 @@ export class Chat extends Component<ChatProps, ChatState> {
     await this.updateState({
       message: value,
     });
-  };
+  }
 
   private onSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     this.sendMessage();
-  };
+  }
 
   private clearInput(): void {
     this.updateState({
@@ -259,13 +259,13 @@ export class Chat extends Component<ChatProps, ChatState> {
       isFocused: true,
     });
     this.scrollToBottom();
-  };
+  }
 
   private async onBlur(): Promise<void> {
     await this.updateState({
       isFocused: false,
     });
-  };
+  }
 
   public render(): JSX.Element {
     const panelStyle: React.CSSProperties = this.isFocused()

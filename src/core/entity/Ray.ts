@@ -1,4 +1,11 @@
-import {Entity, CollisionLayer, WorldManager, Echo, Unit, DisplayRayEvent} from 'core/entity';
+import {
+  Entity,
+  CollisionLayer,
+  WorldManager,
+  Echo,
+  Unit,
+  DisplayRayEvent,
+} from 'core/entity';
 import {GraphicsContext} from 'core/graphics';
 import {Vector, VectorLike} from 'core/geometry';
 import {sleep, clamp, smoothStep} from 'core/util';
@@ -6,7 +13,7 @@ import {LogManager} from 'core/log';
 import {reshade, WHITE} from 'core/graphics/color';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {EventManager} from 'core/event';
-import { NetworkManager } from 'core/net';
+import {NetworkManager} from 'core/net';
 
 const log = LogManager.forFile(__filename);
 
@@ -105,7 +112,7 @@ export class Ray extends Entity {
   public render(ctx: GraphicsContext): void {
     const t = this.getParameter();
     GraphicsPipeline.pipe()
-      .alpha(t * 2 / 3)
+      .alpha((t * 2) / 3)
       .options({lineWidth: BASE_THICKNESS * t})
       .translate(-this.position.x, -this.position.y)
       .run(ctx, (ctx) => {

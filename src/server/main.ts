@@ -126,14 +126,6 @@ async function main(): Promise<void> {
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);
-
-  const c = {
-    red: 1,
-    green: 0.52,
-    blue: 0.75,
-    alpha: 1,
-  };
-  console.log(c, fromHSV(fromRGB(c)));
 }
 
 main().catch((ex) => {

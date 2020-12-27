@@ -179,7 +179,10 @@ function validateNoAccount(res: JoinForm): FormResult {
   if (3 <= length && length <= 15) {
     return {isValid: true};
   } else {
-    return {isValid: false, message: 'Username must be between 3 and 5 characters.'};
+    return {
+      isValid: false,
+      message: 'Username must be between 3 and 5 characters.',
+    };
   }
 }
 

@@ -58,12 +58,11 @@ export class Unit extends Entity {
   public static initializeType(): void {
     Entity.initializeType();
     if (!Unit.isTypeInitialized) {
-      console.log('Initialize Unit');
       Unit.isTypeInitialized = true;
       if (NetworkManager.isClient()) {
         EventManager.streamEvents<DamageEvent>('DamageEvent')
           .filterMap((event) => WorldManager.getEntity(event.data.targetID))
-          .filterMap((entity) => entity instanceof Unit ? entity : undefined)
+          .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
           .forEach((unit) => unit.flash());
       }
     }
@@ -325,7 +324,7 @@ export class Unit extends Entity {
 
   public getColor(): Color {
     const color =
-      (EventManager.timeElapsed - this.lastFlash) < FLASH_DURATION && this.isAlive
+      EventManager.timeElapsed - this.lastFlash < FLASH_DURATION && this.isAlive
         ? this.flashColor ?? this.color
         : this.color;
     return color;

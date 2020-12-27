@@ -22,6 +22,7 @@ import {CameraManager, rgb, GraphicsContext, hsv} from 'core/graphics';
 import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
+import {Matrix2} from 'core/geometry';
 
 const log = LogManager.forFile(__filename);
 
@@ -33,6 +34,8 @@ export class Hero extends Tank {
 
   private xp: number = 0;
   private level: number = 0;
+
+  private maxHPTransform: Matrix2 = new Matrix2().identity();
 
   public constructor() {
     super();
@@ -131,7 +134,7 @@ export class Hero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return 50 + (level - 1) * 5;
+    return this.maxHPTransform.multiplyPoint(50 + (level - 1) * 5);
   }
 
   protected regenForLevel(level: number): number {
@@ -265,6 +268,7 @@ export class Hero extends Tank {
       ...super.serialize(),
       playerID: this.player?.id,
       xp: this.xp,
+      maxHPTransform: this.maxHPTransform.serialize(),
     };
   }
 
@@ -279,7 +283,7 @@ export class Hero extends Tank {
   public deserialize(data: Data): void {
     const {x: oldX, y: oldY} = this.position;
     const {angle: oldAngle} = this;
-    const {playerID, xp} = data;
+    const {playerID, xp, maxHPTransform} = data;
 
     if (playerID !== undefined) {
       this.setPlayer(playerID);
@@ -290,10 +294,14 @@ export class Hero extends Tank {
       this.deserializeColor();
     }
 
+    if (maxHPTransform) {
+      this.maxHPTransform.deserialize(maxHPTransform);
+    }
+
     if (typeof xp === 'number') {
       this.setExperience(xp);
     }
-    
+
     super.deserialize(data);
 
     if (this.getPlayer()?.isActivePlayer() && this.isInitialized) {

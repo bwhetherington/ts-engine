@@ -1,4 +1,4 @@
-import { Rectangle, RectangleLike, Vector } from 'core/geometry';
+import {Rectangle, RectangleLike, Vector} from 'core/geometry';
 import {iterator, Iterator} from 'core/iterator';
 
 export interface RNG {

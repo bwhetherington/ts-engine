@@ -137,8 +137,8 @@ export class InputManager {
           type: 'KeyEvent',
           data: {
             action: KeyAction.KeyUp,
-            key
-          }
+            key,
+          },
         });
       }
       this.keyStates[key] = false;

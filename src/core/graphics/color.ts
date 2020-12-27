@@ -1,6 +1,6 @@
 import {TextColor} from 'core/chat';
 import {RNGManager} from 'core/random';
-import { HashMap, Key } from 'core/util/map';
+import {HashMap, Key} from 'core/util/map';
 
 export interface Color {
   red: number;
@@ -76,8 +76,8 @@ export function fromRGB(color: Color): ColorHSV {
     hue,
     saturation,
     value,
-    alpha
-  }
+    alpha,
+  };
 }
 
 export function fromHSV(color: ColorHSV): Color {
@@ -190,26 +190,29 @@ function clamp(x: number): number {
 }
 
 class ColorShade implements Key {
-  public constructor(
-    public color: Color,
-    public shade: number,
-  ) {}
+  public constructor(public color: Color, public shade: number) {}
 
-    public hash(): number {
-      const {red, green, blue, alpha = 1} = this.color;
-      const r = Math.floor(red * 255);
-      const g = Math.floor(green * 255);
-      const b = Math.floor(blue * 255);
-      const a = Math.floor(alpha * 255);
-      const s = Math.floor(this.shade * 255);
-      return r + g * 127 + b * 337 + a * 743 + s * 1237;
-    }
+  public hash(): number {
+    const {red, green, blue, alpha = 1} = this.color;
+    const r = Math.floor(red * 255);
+    const g = Math.floor(green * 255);
+    const b = Math.floor(blue * 255);
+    const a = Math.floor(alpha * 255);
+    const s = Math.floor(this.shade * 255);
+    return r + g * 127 + b * 337 + a * 743 + s * 1237;
+  }
 
-    public equals(other: any): boolean {
-      const {color = {}, shade} = other;
-      const {red, green, blue, alpha = 1} = color;
-      return this.color.red === red && this.color.green === green && this.color.blue === blue && (this.color.alpha === undefined || this.color.alpha === alpha) && this.shade === shade;
-    }
+  public equals(other: any): boolean {
+    const {color = {}, shade} = other;
+    const {red, green, blue, alpha = 1} = color;
+    return (
+      this.color.red === red &&
+      this.color.green === green &&
+      this.color.blue === blue &&
+      (this.color.alpha === undefined || this.color.alpha === alpha) &&
+      this.shade === shade
+    );
+  }
 }
 
 const COLOR_RESHADE_MAP: HashMap<ColorShade, Color> = new HashMap();

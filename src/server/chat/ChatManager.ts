@@ -25,7 +25,7 @@ import * as commands from 'server/chat/commands';
 import {Iterator} from 'core/iterator';
 import {RNGManager} from 'core/random';
 import {TextFormatter} from 'core/chat/format';
-import { Vector } from 'core/geometry';
+import {Vector} from 'core/geometry';
 
 const log = LogManager.forFile(__filename);
 
@@ -237,8 +237,14 @@ export class ChatManager {
         }
 
         for (let i = 0; i < count; i++) {
-          const x = RNGManager.nextFloat(WorldManager.boundingBox.x, WorldManager.boundingBox.farX);
-          const y = RNGManager.nextFloat(WorldManager.boundingBox.y, WorldManager.boundingBox.farY);
+          const x = RNGManager.nextFloat(
+            WorldManager.boundingBox.x,
+            WorldManager.boundingBox.farX
+          );
+          const y = RNGManager.nextFloat(
+            WorldManager.boundingBox.y,
+            WorldManager.boundingBox.farY
+          );
           const position = new Vector(x, y);
           const num = RNGManager.next();
           const type =

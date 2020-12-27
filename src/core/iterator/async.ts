@@ -1,5 +1,5 @@
-import { UUID, UUIDManager } from "core/uuid";
-import { Iterator } from "./sync";
+import {UUID, UUIDManager} from 'core/uuid';
+import {Iterator} from './sync';
 
 type MaybePromise<T> = T | Promise<T>;
 
@@ -181,8 +181,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   public async *[Symbol.asyncIterator](): AsyncGenerator<T> {
     for await (const x of this.generator) {
       // Notify subscribers
-      Iterator.values(this.subscribers)
-        .forEach(({$yield}) => $yield(x));
+      Iterator.values(this.subscribers).forEach(({$yield}) => $yield(x));
 
       yield x;
     }
@@ -339,9 +338,13 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
 
   public subscribe(): IteratorSubscriber<T> {
     const id = UUIDManager.generate();
-    return new IteratorSubscriber(this, id, AsyncIterator.from((fns) => {
-      this.subscribers[id] = fns;
-    }));
+    return new IteratorSubscriber(
+      this,
+      id,
+      AsyncIterator.from((fns) => {
+        this.subscribers[id] = fns;
+      })
+    );
   }
 
   public async drain(): Promise<void> {
@@ -353,7 +356,11 @@ export class IteratorSubscriber<T> extends AsyncIterator<T> {
   private id: UUID;
   private parent: AsyncIterator<T>;
 
-  public constructor(parent: AsyncIterator<T>, id: UUID, iterator: AsyncIterable<T>) {
+  public constructor(
+    parent: AsyncIterator<T>,
+    id: UUID,
+    iterator: AsyncIterable<T>
+  ) {
     super(iterator);
     this.parent = parent;
     this.id = id;

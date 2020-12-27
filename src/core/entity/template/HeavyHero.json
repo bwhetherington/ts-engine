@@ -1,0 +1,16 @@
+{
+  "type": "HeavyHero",
+  "extends": "Hero",
+  "mass": 5,
+  "speed": 200,
+  "boundingBox": {
+    "width": 40,
+    "height": 40
+  },
+  "cannonShape": {
+    "length": 35,
+    "height": 20
+  },
+  "maxHPTransform": {"cells": [2, 0, 0, 1]},
+  "weapon": "HeavyGun"
+}

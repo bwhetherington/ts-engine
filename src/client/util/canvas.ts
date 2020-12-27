@@ -10,7 +10,7 @@ import {
 } from 'core/graphics';
 import {BLACK, COLOR_MAPPING, WHITE} from 'core/graphics/color';
 import {GraphicsProc} from 'core/graphics/context';
-import {Vector, Bounds, Matrix, VectorLike} from 'core/geometry';
+import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {TextColor, TextComponents} from 'core/chat';
 
@@ -41,9 +41,9 @@ export class HDCanvas implements GraphicsContext {
   private translation: Vector = new Vector();
   public bounds?: Bounds;
 
-  public transform: Matrix = new Matrix().identity();
-  private src: Matrix = new Matrix();
-  private dst: Matrix = new Matrix();
+  public transform: Matrix3 = new Matrix3().identity();
+  private src: Matrix3 = new Matrix3();
+  private dst: Matrix3 = new Matrix3();
 
   private options: GraphicsOptions = {
     lineWidth: 4,

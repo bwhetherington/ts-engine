@@ -1,4 +1,4 @@
-import { Iterator } from "core/iterator";
+import {Iterator} from 'core/iterator';
 
 export interface Key {
   hash(): number;

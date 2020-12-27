@@ -27,6 +27,7 @@ import {
   Template,
   SniperHero,
   MachineGunHero,
+  HeavyHero,
   HomingEnemy,
 } from 'core/entity/template';
 import {LogManager} from 'core/log';
@@ -104,6 +105,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerTemplateEntity(HomingEnemy);
     this.registerTemplateEntity(SniperHero);
     this.registerTemplateEntity(MachineGunHero);
+    this.registerTemplateEntity(HeavyHero);
   }
 
   public initialize(): void {
