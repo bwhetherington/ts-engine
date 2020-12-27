@@ -44,7 +44,7 @@ async function main(): Promise<void> {
     InputManager.initialize(game);
 
     window.addEventListener('resize', () => {
-      canvas.setSize(window.innerWidth, window.innerHeight);
+      canvas.setSize(game.clientWidth, game.clientHeight);
     });
     window.addEventListener('blur', () => {
       InputManager.reset();
