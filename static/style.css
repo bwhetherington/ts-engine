@@ -174,7 +174,7 @@ input[type='checkbox']:checked::after {
 }
 
 table {
-  border-spacing: var(--ui-margin);
+  border-spacing: var(--ui-margin) 0px;
 }
 
 td {
@@ -229,7 +229,7 @@ input[type='range']::-moz-slider-thumb:hover {
 }
 
 /* width */
-.ui-pane > ::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 8px;
 }
 
@@ -238,7 +238,7 @@ input[type='range']::-moz-slider-thumb:hover {
 } */
 
 /* Handle */
-.ui-pane > ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 8px;
 }

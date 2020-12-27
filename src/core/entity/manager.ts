@@ -154,19 +154,33 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       },
       (ctx) => {
         const stepSize = 20;
+        const bounds = CameraManager.boundingBox;
+
+        // Compute
+        const xOffset = (this.boundingBox.x - bounds.x) % stepSize;
+        const yOffset = (this.boundingBox.y - bounds.y) % stepSize;
+
+        const minX = Math.max(this.boundingBox.x, bounds.x);
+        const maxX = Math.min(this.boundingBox.farX, bounds.farX);
+        const minY = Math.max(this.boundingBox.y, bounds.y);
+        const maxY = Math.min(this.boundingBox.farY, bounds.farY);
+
+        const xStart = Math.max(this.boundingBox.x, bounds.x + xOffset);
+        const yStart = Math.max(this.boundingBox.y, bounds.y + yOffset)
+
         for (
-          let x = this.boundingBox.x + stepSize;
-          x < this.boundingBox.farX;
+          let x = xStart;
+          x < maxX;
           x += stepSize
         ) {
-          ctx.line(x, this.boundingBox.y, x, this.boundingBox.farY, GRID_COLOR);
+          ctx.line(x, minY, x, maxY, GRID_COLOR);
         }
         for (
-          let y = this.boundingBox.y + stepSize;
-          y < this.boundingBox.farY;
+          let y = yStart;
+          y < maxY;
           y += stepSize
         ) {
-          ctx.line(this.boundingBox.x, y, this.boundingBox.farX, y, GRID_COLOR);
+          ctx.line(minX, y, maxX, y, GRID_COLOR);
         }
       }
     );
