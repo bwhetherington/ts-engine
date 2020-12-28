@@ -94,7 +94,7 @@ export abstract class Weapon implements Serializable {
   }
 
   protected rollDamage(): number {
-    const roll = RNGManager.nextFloat(-this.damage / 3, this.damage / 3);
+    const roll = RNGManager.nextFloat(-this.damage / 5, this.damage / 5);
     return Math.max(1, this.damage + roll);
   }
 }

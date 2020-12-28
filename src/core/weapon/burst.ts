@@ -9,10 +9,8 @@ export class BurstGun extends Gun {
     super();
     this.type = BurstGun.typeName;
     this.rate = 0.6;
-    this.projectileSpread = 0.35;
-    this.shotSpread = 0.1;
-    this.shots = 2;
-    this.damage = 1.5;
+    this.projectileSpread = 0.05;
+    this.damage = 3;
   }
 
   public async fire(source: Tank, angle: number): Promise<void> {
@@ -22,7 +20,7 @@ export class BurstGun extends Gun {
       projectile.boundingBox.height = 15;
       projectile.duration = 0.5;
       source.applyForce(projectile.velocity, -projectile.mass);
-      await EventManager.sleep(0.03);
+      await EventManager.sleep(0.06);
     }
   }
 }

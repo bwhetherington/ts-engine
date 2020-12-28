@@ -228,6 +228,15 @@ export function reshade(color: Color, amount: number = -0.2): Color {
     const excess = Math.max(0, newValue - 1);
     const reshaded = hsva(hue, clamp(saturation - excess), clamp(newValue), alpha ?? 1);
     COLOR_RESHADE_MAP.insert(shade, reshaded);
+
+    // const {red, green, blue, alpha} = color;
+    // const reshaded = {
+    //   red: clamp(red + amount),
+    //   green: clamp(green + amount),
+    //   blue: clamp(blue + amount),
+    //   alpha
+    // };
+    // COLOR_RESHADE_MAP.insert(shade, reshaded);
     return reshaded;
   }
 }

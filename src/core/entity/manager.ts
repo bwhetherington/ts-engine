@@ -29,6 +29,8 @@ import {
   MachineGunHero,
   HeavyHero,
   HomingEnemy,
+  HomingHero,
+  BurstHero,
 } from 'core/entity/template';
 import {LogManager} from 'core/log';
 import {EventManager, StepEvent} from 'core/event';
@@ -106,6 +108,10 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerTemplateEntity(SniperHero);
     this.registerTemplateEntity(MachineGunHero);
     this.registerTemplateEntity(HeavyHero);
+    this.registerTemplateEntity(HomingHero);
+    this.registerTemplateEntity(BurstHero);
+
+    console.log(this.entityConstructors);
   }
 
   public initialize(): void {
@@ -184,8 +190,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         }
       }
     );
-
-    // this.space.render(ctx);
 
     GraphicsPipeline.pipe()
       .options({

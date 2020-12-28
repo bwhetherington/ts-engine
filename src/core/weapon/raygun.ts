@@ -27,7 +27,7 @@ export class RayGun extends Weapon {
     super();
     this.type = RayGun.typeName;
     this.rate = 0.25;
-    this.damage = 15;
+    this.damage = 5;
   }
 
   public fire(source: Tank, angle: number): void {

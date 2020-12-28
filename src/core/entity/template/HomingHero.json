@@ -1,0 +1,10 @@
+{
+  "type": "HomingHero",
+  "extends": "Hero",
+  "weapon": "HomingGun",
+  "cannonShape": {
+    "length": 25,
+    "height": 17.5,
+    "farHeight": 12.5
+  }
+}

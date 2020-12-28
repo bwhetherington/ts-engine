@@ -4,7 +4,9 @@ import HomingEnemy from 'core/entity/template/HomingEnemy.json';
 import SniperHero from 'core/entity/template/SniperHero.json';
 import MachineGunHero from 'core/entity/template/MachineGunHero.json';
 import HeavyHero from 'core/entity/template/HeavyHero.json';
+import HomingHero from 'core/entity/template/HomingHero.json';
+import BurstHero from 'core/entity/template/BurstHero.json';
 import {Data} from 'core/serialize';
 
-export {BigProjectile, HeavyEnemy, HomingEnemy, SniperHero, MachineGunHero, HeavyHero};
+export {BigProjectile, HeavyEnemy, HomingEnemy, SniperHero, MachineGunHero, HeavyHero, HomingHero, BurstHero};
 export type Template = {type: string} & Data;
