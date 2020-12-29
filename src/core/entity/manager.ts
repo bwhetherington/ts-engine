@@ -21,17 +21,7 @@ import {
   HomingProjectile,
   Feed,
 } from 'core/entity';
-import {
-  BigProjectile,
-  HeavyEnemy,
-  Template,
-  SniperHero,
-  MachineGunHero,
-  HeavyHero,
-  HomingEnemy,
-  HomingHero,
-  BurstHero,
-} from 'core/entity/template';
+import * as templateEntities from 'core/entity/template';
 import {LogManager} from 'core/log';
 import {EventManager, StepEvent} from 'core/event';
 import {Serializable, Data} from 'core/serialize';
@@ -72,7 +62,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.space.resize(bounds);
   }
 
-  public registerTemplateEntity(template: Template): void {
+  public registerTemplateEntity(template: templateEntities.Template): void {
     const {type, extends: base} = template;
     const baseConstructor = this.entityConstructors[base];
     const gen = () => {
@@ -108,14 +98,8 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Feed);
 
     // Template entities
-    this.registerTemplateEntity(BigProjectile);
-    this.registerTemplateEntity(HeavyEnemy);
-    this.registerTemplateEntity(HomingEnemy);
-    this.registerTemplateEntity(SniperHero);
-    this.registerTemplateEntity(MachineGunHero);
-    this.registerTemplateEntity(HeavyHero);
-    this.registerTemplateEntity(HomingHero);
-    this.registerTemplateEntity(BurstHero);
+    Iterator.values(templateEntities)
+      .forEach(this.registerTemplateEntity.bind(this));
   }
 
   public initialize(): void {

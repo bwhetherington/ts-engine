@@ -464,6 +464,7 @@ export class HDCanvas implements GraphicsContext {
 
   public rotate(angle: number) {
     this.src.rotate(angle);
+    
     this.transform.multiply(this.src, this.dst);
     this.transform.set(this.dst);
 

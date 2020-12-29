@@ -1,0 +1,10 @@
+{
+  "type": "MultiGunHero",
+  "extends": "Hero",
+  "weapon": "MultiGun",
+  "cannonShape": {
+    "length": 25,
+    "height": 10,
+    "farHeight": 20
+  }
+}

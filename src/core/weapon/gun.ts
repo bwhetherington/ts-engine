@@ -17,6 +17,7 @@ export class BaseGun extends Weapon {
   protected projectileSpeed: number = 500;
   protected projectileSpread: number = 0.1;
   protected projectilePierce: number = 1;
+  protected projectileDuration: number = 1;
 
   public constructor() {
     super();
@@ -41,6 +42,7 @@ export class BaseGun extends Weapon {
     projectile.angle = projectile.velocity.angle;
     projectile.velocity.magnitude = this.projectileSpeed;
     projectile.shape = this.projectileShape;
+    projectile.duration = this.projectileDuration;
     return projectile;
   }
 
@@ -58,6 +60,7 @@ export class BaseGun extends Weapon {
       projectileSpread: this.projectileSpread,
       projectilePierce: this.projectilePierce,
       projectileShape: this.projectileShape,
+      projectileDuration: this.projectileDuration,
     };
   }
 
@@ -69,6 +72,7 @@ export class BaseGun extends Weapon {
       projectileSpread,
       projectilePierce,
       projectileShape,
+      projectileDuration,
     } = data;
 
     if (typeof projectileType === 'string') {
@@ -85,6 +89,10 @@ export class BaseGun extends Weapon {
 
     if (typeof projectilePierce === 'number') {
       this.projectilePierce = projectilePierce;
+    }
+
+    if (typeof projectileDuration === 'number') {
+      this.projectileDuration = projectileDuration;
     }
 
     if (isProjectileShape(projectileShape)) {

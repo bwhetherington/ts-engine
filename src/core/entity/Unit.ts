@@ -305,13 +305,16 @@ export class Unit extends Entity {
       this.markForDelete();
     }
 
-    EventManager.emit<KillEvent>({
-      type: 'KillEvent',
-      data: {
-        targetID: this.id,
-        sourceID: source?.id,
-      },
-    });
+    if (this.isAlive) {
+      EventManager.emit<KillEvent>({
+        type: 'KillEvent',
+        data: {
+          targetID: this.id,
+          sourceID: source?.id,
+        },
+      });
+      this.isAliveInternal = false;
+    }
   }
 
   public flash(): void {

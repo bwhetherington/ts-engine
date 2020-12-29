@@ -11,7 +11,7 @@ export abstract class Weapon implements Serializable {
 
   public type: string = Weapon.typeName;
   public rate: number = 1;
-  public shots: number = 1;
+  public shotCount: number = 1;
   public shotSpread: number = 0.3;
   public damage: number = 0;
   private cooldown: number = 0;
@@ -37,8 +37,8 @@ export abstract class Weapon implements Serializable {
       this.cooldown += this.rate;
 
       // Spread shots out
-      const baseAngleOffset = ((this.shots - 1) * this.shotSpread) / 2;
-      for (let i = 0; i < this.shots; i++) {
+      const baseAngleOffset = ((this.shotCount - 1) * this.shotSpread) / 2;
+      for (let i = 0; i < this.shotCount; i++) {
         const angleOffset = i * this.shotSpread - baseAngleOffset;
         this.fire(source, angle + angleOffset);
       }
@@ -60,13 +60,13 @@ export abstract class Weapon implements Serializable {
       rate: this.rate,
       cooldown: this.cooldown,
       damage: this.damage,
-      shots: this.shots,
+      shotCount: this.shotCount,
       shotSpread: this.shotSpread,
     };
   }
 
   public deserialize(data: Data): void {
-    const {type, rate, cooldown, damage, shots, shotSpread} = data;
+    const {type, rate, cooldown, damage, shotCount, shotSpread} = data;
 
     if (typeof type === 'string') {
       this.type = type;
@@ -84,8 +84,8 @@ export abstract class Weapon implements Serializable {
       this.damage = damage;
     }
 
-    if (typeof shots === 'number') {
-      this.shots = shots;
+    if (typeof shotCount === 'number') {
+      this.shotCount = shotCount;
     }
 
     if (typeof shotSpread === 'number') {

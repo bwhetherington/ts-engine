@@ -1,7 +1,8 @@
 import {Weapon, BaseGun, BaseRayGun, BaseHomingGun, BaseBurstGun} from 'core/weapon';
 import {LogManager} from 'core/log';
 import {Template} from 'core/entity/template';
-import {Gun, MachineGun, HeavyGun, BurstGun, SniperGun, HomingGun, RayGun} from 'core/weapon/template';
+import * as templateGuns from 'core/weapon/template';
+import { Iterator } from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
@@ -33,13 +34,8 @@ export class WeaponManager {
     this.registerWeapon(BaseBurstGun);
 
     // Register template weapons
-    this.registerTemplateWeapon(Gun);
-    this.registerTemplateWeapon(MachineGun);
-    this.registerTemplateWeapon(HeavyGun);
-    this.registerTemplateWeapon(SniperGun);
-    this.registerTemplateWeapon(HomingGun);
-    this.registerTemplateWeapon(BurstGun);
-    this.registerTemplateWeapon(RayGun);
+    Iterator.values(templateGuns)
+      .forEach(this.registerTemplateWeapon.bind(this));
   }
 
   public initialize(): void {
