@@ -1,7 +1,7 @@
 {
   "type": "RayGun",
   "extends": "BaseRayGun",
-  "raySpread": 0.1,
+  "raySpread": 0.025,
   "rayDistance": 1000,
   "rayPierce": 1,
   "damage": 5,
