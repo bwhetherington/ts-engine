@@ -73,7 +73,7 @@ export const roll: CommandEntry = {
   async handler(player, ...args) {
     function roll(die: number): void {
       const res = RNGManager.nextInt(1, die + 1);
-      ChatManager.info(`d${die} => ${res}`, player);
+      ChatManager.info(`${player.name} rolls d${die} => ${res}`);
     }
     if (args.length > 0) {
       for (const arg of args) {

@@ -332,7 +332,7 @@ export class Unit extends Entity {
 
   public setColor(color: Color): void {
     super.setColor(color);
-    this.flashColor = reshade(this.color, 0.4);
+    this.flashColor = reshade(this.color, 0.5);
   }
 
   public collide(other?: Entity): void {
