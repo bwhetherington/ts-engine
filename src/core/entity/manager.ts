@@ -80,7 +80,13 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       entity.deserialize(template, false);
       return entity;
     };
-    this.entityConstructors[type] = gen;
+
+    if (this.entityConstructors.hasOwnProperty(type)) {
+      log.error(`type ${type} is already registered`);
+    } else {
+      this.entityConstructors[type] = gen;
+      log.debug(`entity template ${type} registered`);
+    }
   }
 
   private registerAllEntities(): void {
@@ -110,8 +116,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerTemplateEntity(HeavyHero);
     this.registerTemplateEntity(HomingHero);
     this.registerTemplateEntity(BurstHero);
-
-    console.log(this.entityConstructors);
   }
 
   public initialize(): void {
@@ -379,11 +383,11 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
   public registerEntity(Type: (new () => Entity) & typeof Entity) {
     const name = Type.typeName;
-    if (name in this.entityConstructors) {
+    if (this.entityConstructors.hasOwnProperty(name)) {
       log.error(`type ${name} is already registered`);
     } else {
       this.entityConstructors[name] = () => new Type();
-      log.trace(`entity ${name} registered`);
+      log.debug(`entity ${name} registered`);
     }
     Type.initializeType();
   }

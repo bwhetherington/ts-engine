@@ -177,7 +177,6 @@ export class Projectile extends Entity {
 
     if (typeof parentID === 'string') {
       const parent = WorldManager.getEntity(parentID);
-      console.log(parent);
       if (parent instanceof Unit) {
         this.parent = parent;
         this.setColor(parent.getBaseColor());

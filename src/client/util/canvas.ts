@@ -435,7 +435,8 @@ export class HDCanvas implements GraphicsContext {
       ctx.moveTo(x, y);
       for (let i = 1; i < vertices.length + 1; i++) {
         const vertex = vertices[i % vertices.length];
-        ctx.lineTo(vertex.x, vertex.y);
+        ctx.lineTo(vertex.x, vertex.y); 
+        this.bounds?.insertPointTransformed(x, y, this.transform);
       }
       ctx.closePath();
 

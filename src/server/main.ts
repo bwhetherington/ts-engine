@@ -58,7 +58,7 @@ async function main(): Promise<void> {
 
   WorldManager.initialize();
 
-  await loadWorld('open');
+  await loadWorld('arena');
 
   PlayerManager.initialize();
   FormManager.initialize();

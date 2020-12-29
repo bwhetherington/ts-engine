@@ -23,12 +23,23 @@ export class AssetManager {
     }
   }
 
+  public async loadAllBuffers(paths: string[]): Promise<Buffer[]> {
+    return Promise.all(paths.map((path) => this.loadBuffer(path)));
+  }
+
   public async load(
     path: string,
     encoding: BufferEncoding = 'utf-8'
   ): Promise<string> {
     const buf = await this.loadBuffer(path);
     return buf.toString(encoding);
+  }
+
+  public async loadAll(
+    paths: string[],
+    encoding: BufferEncoding = 'utf-8'
+  ): Promise<string[]> {
+    return Promise.all(paths.map((path) => this.load(path, encoding)));
   }
 
   public async loadJSON(
@@ -38,5 +49,12 @@ export class AssetManager {
     const str = await this.load(path, encoding);
     const obj = JSON.parse(str);
     return obj;
+  }
+
+  public async loadAllJSON(
+    paths: string[],
+    encoding: BufferEncoding = 'utf-8'
+  ): Promise<Data[]> {
+    return Promise.all(paths.map((path) => this.loadJSON(path, encoding)));
   }
 }
