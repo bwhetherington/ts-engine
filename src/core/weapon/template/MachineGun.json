@@ -1,6 +1,6 @@
 {
   "type": "MachineGun",
-  "extends": "Gun",
+  "extends": "BaseGun",
   "projectileType": "Projectile",
   "projectileSpread": 0.2,
   "projectileSpeed": 650,

@@ -1,0 +1,12 @@
+{
+  "type": "BurstGun",
+  "extends": "BaseBurstGun",
+  "projectileType": "Projectile",
+  "projectileSpread": 0.1,
+  "projectileSpeed": 500,
+  "projectilePierce": 1,
+  "burstCount": 3,
+  "burstInterval": 0.06,
+  "damage": 2,
+  "rate": 0.35
+}

@@ -1,6 +1,6 @@
 {
   "type": "HeavyGun",
-  "extends": "Gun",
+  "extends": "BaseGun",
   "projectileType": "BigProjectile",
   "projectilePierce": 5,
   "projectileSpread": 0.1,

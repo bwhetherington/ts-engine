@@ -1,6 +1,6 @@
 {
   "type": "SniperGun",
-  "extends": "Gun",
+  "extends": "BaseGun",
   "projectileType": "Projectile",
   "projectilePierce": 3,
   "projectileSpread": 0.05,

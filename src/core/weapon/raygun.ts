@@ -7,11 +7,12 @@ import {
   Unit,
   DisplayRayEvent,
 } from 'core/entity';
-import {iterator} from 'core/iterator';
+import {Iterator, iterator} from 'core/iterator';
 import {EventManager} from 'core/event';
 import {Color} from 'core/graphics/color';
 import {NetworkManager} from 'core/net';
 import {RNGManager} from 'core/random';
+import { Data } from 'core/serialize';
 
 const COLOR: Color = {
   red: 0.8,
@@ -20,18 +21,45 @@ const COLOR: Color = {
   alpha: 0.75,
 };
 
-export class RayGun extends Weapon {
-  public static typeName: string = 'RayGun';
+export class BaseRayGun extends Weapon {
+  public static typeName: string = 'BaseRayGun';
+
+  private raySpread: number = 0.05;
+  private rayPierce: number = 1;
+  private rayDistance: number = 1000;
 
   public constructor() {
     super();
-    this.type = RayGun.typeName;
+    this.type = BaseRayGun.typeName;
     this.rate = 0.25;
     this.damage = 5;
   }
 
+  public serialize(): Data {
+    return {
+      ...super.serialize(),
+      raySpread: this.raySpread,
+      rayPierce: this.rayPierce,
+      rayDistance: this.rayDistance,
+    };
+  }
+
+  public deserialize(data: Data): void {
+    super.deserialize(data);
+    const {raySpread, rayPierce, rayDistance} = data;
+    if (typeof raySpread === 'number') {
+      this.raySpread = raySpread;
+    }
+    if (typeof rayPierce === 'number') {
+      this.rayPierce = rayPierce;
+    }
+    if (typeof rayDistance === 'number') {
+      this.rayDistance = rayDistance;
+    }
+  }
+
   public fire(source: Tank, angle: number): void {
-    angle += RNGManager.nextFloat(-0.5, 0.5) * 0.05;
+    angle += RNGManager.nextFloat(-0.5, 0.5) * this.raySpread;
 
     const start = source.getCannonTip();
     const set: Set<Entity> = new Set();
@@ -39,11 +67,11 @@ export class RayGun extends Weapon {
     const {hit, end} = WorldManager.castRay(
       start,
       angle,
-      1000,
-      1,
+      this.rayDistance,
+      this.rayPierce,
       (entity: Entity) => entity instanceof Unit && entity !== source
     );
-    iterator(hit)
+    Iterator.from(hit)
       .filterMap((entity: Entity) =>
         entity instanceof Unit ? entity : undefined
       )

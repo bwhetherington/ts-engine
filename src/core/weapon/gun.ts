@@ -9,8 +9,8 @@ import {
 import {Data} from 'core/serialize';
 import {RNGManager} from 'core/random';
 
-export class Gun extends Weapon {
-  public static typeName: string = 'Gun';
+export class BaseGun extends Weapon {
+  public static typeName: string = 'BaseGun';
 
   protected projectileType: string = 'Projectile';
   protected projectileShape: ProjectileShape = 'circle';
@@ -20,7 +20,7 @@ export class Gun extends Weapon {
 
   public constructor() {
     super();
-    this.type = Gun.typeName;
+    this.type = BaseGun.typeName;
     this.rate = 0.35;
     this.damage = 5;
   }

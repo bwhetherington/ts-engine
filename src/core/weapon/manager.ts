@@ -1,7 +1,7 @@
-import {Weapon, Gun, RayGun, HomingGun, BurstGun} from 'core/weapon';
+import {Weapon, BaseGun, BaseRayGun, BaseHomingGun, BaseBurstGun} from 'core/weapon';
 import {LogManager} from 'core/log';
 import {Template} from 'core/entity/template';
-import {MachineGun, HeavyGun, SniperGun} from 'core/weapon/template';
+import {Gun, MachineGun, HeavyGun, BurstGun, SniperGun, HomingGun, RayGun} from 'core/weapon/template';
 
 const log = LogManager.forFile(__filename);
 
@@ -11,7 +11,7 @@ export class WeaponManager {
   public registerWeapon(Type: (new () => Weapon) & typeof Weapon): void {
     const name = Type.typeName;
     this.weaponConstructors[name] = () => new Type();
-    log.trace(`weapon ${name} registered`);
+    log.debug(`weapon ${name} registered`);
   }
 
   public registerTemplateWeapon(template: Template): void {
@@ -23,22 +23,23 @@ export class WeaponManager {
       return entity;
     };
     this.weaponConstructors[type] = gen;
-    log.trace(`template weapon ${type} registered`);
+    log.debug(`weapon template ${type} registered`);
   }
 
   private registerWeapons(): void {
-    this.registerWeapon(Gun);
-    this.registerWeapon(RayGun);
-    this.registerWeapon(HomingGun);
-    this.registerWeapon(BurstGun);
+    this.registerWeapon(BaseGun);
+    this.registerWeapon(BaseRayGun);
+    this.registerWeapon(BaseHomingGun);
+    this.registerWeapon(BaseBurstGun);
 
     // Register template weapons
+    this.registerTemplateWeapon(Gun);
     this.registerTemplateWeapon(MachineGun);
     this.registerTemplateWeapon(HeavyGun);
     this.registerTemplateWeapon(SniperGun);
-
-    // this.registerWeapon(Bomb);
-    // this.registerWeapon(MachineGun);
+    this.registerTemplateWeapon(HomingGun);
+    this.registerTemplateWeapon(BurstGun);
+    this.registerTemplateWeapon(RayGun);
   }
 
   public initialize(): void {

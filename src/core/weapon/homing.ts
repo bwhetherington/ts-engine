@@ -7,14 +7,14 @@ import {
   WorldManager,
 } from 'core/entity';
 import {Rectangle} from 'core/geometry';
-import {Gun} from 'core/weapon';
+import {BaseGun} from 'core/weapon';
 
-export class HomingGun extends Gun {
-  public static typeName: string = 'HomingGun';
+export class BaseHomingGun extends BaseGun {
+  public static typeName: string = 'BaseHomingGun';
 
   public constructor() {
     super();
-    this.type = HomingGun.typeName;
+    this.type = BaseHomingGun.typeName;
     this.projectileType = HomingProjectile.typeName;
     this.projectileSpeed = 350;
     this.rate = 0.35;
@@ -27,14 +27,15 @@ export class HomingGun extends Gun {
     source: Tank
   ): Unit | undefined {
     const range = this.projectileSpeed * projectile.duration;
-    const [target] = WorldManager.query(
-      new Rectangle(
-        range * 2,
-        range * 2,
-        source.position.x - range,
-        source.position.y - range
+    const [target] = WorldManager
+      .query(
+        new Rectangle(
+          range * 2,
+          range * 2,
+          source.position.x - range,
+          source.position.y - range
+        )
       )
-    )
       .filter((entity) => entity.position.distanceTo(source.position) < range)
       .filter((entity) => !(source === entity || projectile === entity))
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
