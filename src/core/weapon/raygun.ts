@@ -12,7 +12,7 @@ import {EventManager} from 'core/event';
 import {Color} from 'core/graphics/color';
 import {NetworkManager} from 'core/net';
 import {RNGManager} from 'core/random';
-import { Data } from 'core/serialize';
+import {Data} from 'core/serialize';
 
 const COLOR: Color = {
   red: 0.8,

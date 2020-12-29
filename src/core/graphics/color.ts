@@ -226,7 +226,12 @@ export function reshade(color: Color, amount: number = -0.2): Color {
     const {hue, saturation, value, alpha} = fromRGB(color);
     const newValue = value + amount;
     const excess = Math.max(0, newValue - 1);
-    const reshaded = hsva(hue, clamp(saturation - excess), clamp(newValue), alpha ?? 1);
+    const reshaded = hsva(
+      hue,
+      clamp(saturation - excess),
+      clamp(newValue),
+      alpha ?? 1
+    );
     COLOR_RESHADE_MAP.insert(shade, reshaded);
 
     // const {red, green, blue, alpha} = color;

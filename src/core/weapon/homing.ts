@@ -27,15 +27,14 @@ export class BaseHomingGun extends BaseGun {
     source: Tank
   ): Unit | undefined {
     const range = this.projectileSpeed * projectile.duration;
-    const [target] = WorldManager
-      .query(
-        new Rectangle(
-          range * 2,
-          range * 2,
-          source.position.x - range,
-          source.position.y - range
-        )
+    const [target] = WorldManager.query(
+      new Rectangle(
+        range * 2,
+        range * 2,
+        source.position.x - range,
+        source.position.y - range
       )
+    )
       .filter((entity) => entity.position.distanceTo(source.position) < range)
       .filter((entity) => !(source === entity || projectile === entity))
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))

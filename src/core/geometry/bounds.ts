@@ -18,11 +18,7 @@ export class Bounds implements Bounded {
   private isEmptyInternal: boolean = true;
   private dst: Vector = new Vector();
 
-  public insertPointTransformed(
-    x: number,
-    y: number,
-    matrix: Matrix3
-  ): void {
+  public insertPointTransformed(x: number, y: number, matrix: Matrix3): void {
     const {x: x0, y: y0} = matrix.multiplyPointXY(x, y);
     this.insertRaw(x0, y0, 0, 0);
   }

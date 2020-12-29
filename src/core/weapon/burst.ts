@@ -1,6 +1,6 @@
 import {Tank} from 'core/entity';
 import {EventManager} from 'core/event';
-import { Data } from 'core/serialize';
+import {Data} from 'core/serialize';
 import {BaseGun} from 'core/weapon';
 
 export class BaseBurstGun extends BaseGun {

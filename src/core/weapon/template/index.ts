@@ -7,4 +7,13 @@ import HomingGun from 'core/weapon/template/HomingGun.json';
 import RayGun from 'core/weapon/template/RayGun.json';
 import MultiGun from 'core/weapon/template/MultiGun.json';
 
-export {Gun, HeavyGun, MachineGun, BurstGun, SniperGun, HomingGun, RayGun, MultiGun};
+export {
+  Gun,
+  HeavyGun,
+  MachineGun,
+  BurstGun,
+  SniperGun,
+  HomingGun,
+  RayGun,
+  MultiGun,
+};

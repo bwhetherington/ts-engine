@@ -98,8 +98,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Feed);
 
     // Template entities
-    Iterator.values(templateEntities)
-      .forEach(this.registerTemplateEntity.bind(this));
+    Iterator.values(templateEntities).forEach(
+      this.registerTemplateEntity.bind(this)
+    );
   }
 
   public initialize(): void {
@@ -160,20 +161,12 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         const maxY = Math.min(this.boundingBox.farY, bounds.farY);
 
         const xStart = Math.max(this.boundingBox.x, bounds.x + xOffset);
-        const yStart = Math.max(this.boundingBox.y, bounds.y + yOffset)
+        const yStart = Math.max(this.boundingBox.y, bounds.y + yOffset);
 
-        for (
-          let x = xStart;
-          x < maxX;
-          x += stepSize
-        ) {
+        for (let x = xStart; x < maxX; x += stepSize) {
           ctx.line(x, minY, x, maxY, GRID_COLOR);
         }
-        for (
-          let y = yStart;
-          y < maxY;
-          y += stepSize
-        ) {
+        for (let y = yStart; y < maxY; y += stepSize) {
           ctx.line(minX, y, maxX, y, GRID_COLOR);
         }
       }

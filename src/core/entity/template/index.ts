@@ -9,5 +9,15 @@ import BurstHero from 'core/entity/template/BurstHero.json';
 import MultiGunHero from 'core/entity/template/MultiGunHero.json';
 import {Data} from 'core/serialize';
 
-export {BigProjectile, HeavyEnemy, HomingEnemy, SniperHero, MachineGunHero, HeavyHero, HomingHero, BurstHero, MultiGunHero};
+export {
+  BigProjectile,
+  HeavyEnemy,
+  HomingEnemy,
+  SniperHero,
+  MachineGunHero,
+  HeavyHero,
+  HomingHero,
+  BurstHero,
+  MultiGunHero,
+};
 export type Template = {type: string} & Data;
