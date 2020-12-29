@@ -1,7 +1,7 @@
 {
   "type": "HomingGun",
   "extends": "BaseHomingGun",
-  "projectileType": "Projectile",
+  "projectileType": "HomingProjectile",
   "projectileSpread": 0.1,
   "projectileSpeed": 350,
   "projectilePierce": 1,
