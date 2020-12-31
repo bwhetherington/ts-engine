@@ -1,8 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Component, FormComponent} from 'client/components';
-import {Entry, Form, FormShowEvent, FormSubmitEvent} from 'core/form';
+import {Entry, Form, FormRejectEvent, FormShowEvent, FormSubmitEvent, FormValidatedEvent} from 'core/form';
 import {NetworkManager} from 'core/net';
+import { UUID } from 'core/uuid';
+import { EventManager } from 'core/event';
+import { Iterator } from 'core/iterator';
 
 const Background = styled.div`
   position: absolute;
@@ -35,8 +38,13 @@ const Container = styled.div`
   width: 400px;
 `;
 
+interface ClientForm {
+  form: Form;
+  id: UUID;
+}
+
 interface FormContainerState {
-  forms: Form[];
+  forms: ClientForm[];
 }
 
 export class FormContainer extends Component<{}, FormContainerState> {
@@ -46,9 +54,22 @@ export class FormContainer extends Component<{}, FormContainerState> {
     });
   }
 
-  private showForm(form: Form): void {
+  private showForm(form: ClientForm): void {
+    let didModify = false;
+    let newState = Iterator.from(this.state.forms)
+      .map((oldForm) => {
+        if (oldForm.id === form.id) {
+          didModify = true;
+          return form;
+        } else {
+          return oldForm;
+        }
+      })
+      .toArray();
+    const finalState = didModify ? newState : [...this.state.forms, form];
+
     this.updateState({
-      forms: [...this.state.forms, form],
+      forms: finalState,
     });
   }
 
@@ -64,6 +85,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
         data: {
           name,
           data,
+          id: form.id,
           method,
         },
       });
@@ -71,15 +93,25 @@ export class FormContainer extends Component<{}, FormContainerState> {
         // Return focus to main screen
         document.getElementById('game')?.focus();
       }
-      this.updateState({
-        forms: rest,
+
+      const cleanup = (id: UUID) => {
+        EventManager.removeListener('FormValidatedEvent', id);
+          this.updateState({
+            forms: rest,
+          });
+      };
+
+      this.addListener<FormValidatedEvent>('FormValidatedEvent', (event, handler) => {
+        if (event.data.id === form.id) {
+          cleanup(handler);
+        }
       });
     }
   };
 
   public componentDidMount(): void {
     this.addListener<FormShowEvent>('FormShowEvent', (event) => {
-      this.showForm(event.data.form);
+      this.showForm(event.data);
     });
   }
 
@@ -89,7 +121,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
       return (
         <Background className="visible">
           <Container>
-            <FormComponent form={form} onSubmit={this.submitTopForm} />
+            <FormComponent form={form.form} onSubmit={this.submitTopForm} />
           </Container>
         </Background>
       );

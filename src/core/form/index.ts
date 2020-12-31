@@ -3,6 +3,7 @@ import {Data} from 'core/serialize';
 import {Player} from 'core/player';
 import {registerJoinForm} from 'core/form/join';
 import {Socket} from 'dgram';
+import { UUID } from 'core/uuid';
 
 export interface Form {
   name: string;
@@ -52,7 +53,9 @@ export type Field = StringField | NumberField | BooleanField | RangeField;
 
 export type FieldType = Field['type'];
 
-export interface FormValidatedEvent {}
+export interface FormValidatedEvent {
+  id: UUID;
+}
 
 export interface StringEntry {
   type: 'text';
@@ -87,14 +90,17 @@ export interface FormSubmitEvent {
   name: string;
   data: Record<string, Entry>;
   method?: string;
+  id: UUID;
 }
 
 export interface FormRejectEvent {
   player: Player;
+  id: UUID;
 }
 
 export interface FormShowEvent {
   form: Form;
+  id: UUID;
 }
 
 const FM = new FormManager();

@@ -181,10 +181,13 @@ export class FormComponent extends Component<FormProps, FormState> {
 
   private onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    this.submit();
+
+    // const {submitMethods} = this.props.form;
+    // const method = submitMethods ? (submitMethods[0]?.name ?? 'submit') : 'submit';
+    // this.submit(method);
   };
 
-  private submit(method: string = 'submit'): void {
+  private submit(method: string): void {
     this.props.onSubmit(this.props.form.name, this.state.entries, method);
   }
 

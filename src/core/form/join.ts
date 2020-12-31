@@ -221,6 +221,7 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
     return isJoinForm(x);
   },
   async validate(input: JoinForm, method: string): Promise<FormResult> {
+    console.log('validate', method);
     switch (method) {
       case 'login':
         return await validateSubmit(input);

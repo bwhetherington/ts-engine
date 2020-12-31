@@ -11,6 +11,7 @@ import {
 } from 'core/form';
 import {NetworkManager} from 'core/net';
 import {sleep} from 'core/util';
+import {UUID, UUIDManager} from 'core/uuid';
 
 const log = LogManager.forFile(__filename);
 
@@ -32,6 +33,7 @@ export class FormManager {
   private sendFormInternal(
     player: Player,
     form: Form,
+    id: UUID,
     timeout: number
   ): Promise<Data> {
     // Send form to player
@@ -39,6 +41,7 @@ export class FormManager {
       type: 'FormShowEvent',
       data: <FormShowEvent>{
         form,
+        id,
       },
     };
     player.send(event);
@@ -70,17 +73,19 @@ export class FormManager {
   public async sendForm(
     player: Player,
     formName: string,
+    id: UUID | null = null,
     messages: string[] = [],
     timeout: number = 60
   ): Promise<boolean> {
     const form = this.forms[formName];
+    id = id ?? UUIDManager.generate();
     if (form) {
       try {
         const formWithMessages = {
           ...form,
           messages,
         };
-        await this.sendFormInternal(player, formWithMessages, timeout);
+        await this.sendFormInternal(player, formWithMessages, id, timeout);
         return true;
       } catch (ex) {
         if (ex instanceof Error) {
@@ -93,8 +98,9 @@ export class FormManager {
 
     EventManager.emit<FormRejectEvent>({
       type: 'FormRejectEvent',
-      data: {player},
+      data: {player, id},
     });
+    console.log('reject', id);
 
     return false;
   }
@@ -109,7 +115,7 @@ export class FormManager {
         const {socket, data} = event;
         const player = PlayerManager.getPlayer(socket);
         if (player) {
-          const {name: responseName, data: response, method = 'submit'} = data;
+          const {name: responseName, data: response, method = 'submit', id} = data;
           if (responseName === name) {
             if (checkType(response)) {
               const result = await validate(response, method, player);
@@ -122,15 +128,15 @@ export class FormManager {
                 onSubmit(player, response, method, data);
                 player.send({
                   type: 'FormValidatedEvent',
-                  data: {},
+                  data: {id},
                 });
               } else {
                 // Send the form back to the user
-                this.sendForm(player, formEntry.name, [message]);
+                this.sendForm(player, formEntry.name, id, [message]);
               }
             } else {
               // Send the form back to the user
-              this.sendForm(player, formEntry.name, [
+              this.sendForm(player, formEntry.name, id, [
                 'Response did not include all required fields.',
               ]);
             }
