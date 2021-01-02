@@ -25,6 +25,7 @@ const StyledInput = styled.input`
 interface InputProps<T> {
   value: T;
   onChange(x: T): void;
+  isDisabled?: boolean;
 }
 
 function onValueChange(
@@ -42,6 +43,7 @@ export const StringInput = React.forwardRef<HTMLInputElement, StringInputProps>(
   (props, ref) => (
     <StyledInput
       ref={ref}
+      disabled={props.isDisabled ?? false}
       placeholder={props.placeholder}
       type={props.isPassword ? 'password' : 'text'}
       value={props.value}
@@ -63,6 +65,7 @@ export const FloatInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   (props, ref) => (
     <StyledInput
       ref={ref}
+      disabled={props.isDisabled ?? false}
       type="number"
       min={props.min}
       max={props.max}
@@ -76,6 +79,7 @@ export const IntInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   (props, ref) => (
     <StyledInput
       ref={ref}
+      disabled={props.isDisabled ?? false}
       type="number"
       min={props.min}
       max={props.max}
@@ -161,12 +165,15 @@ StyledCheckbox.defaultProps = {
   type: 'checkbox',
 };
 
+type BooleanInputProps = InputProps<boolean>;
+
 export const BooleanInput = React.forwardRef<
   HTMLInputElement,
-  InputProps<boolean>
+  BooleanInputProps
 >((props, ref) => (
   <StyledCheckbox
     ref={ref}
+    disabled={props.isDisabled ?? false}
     onChange={onCheckboxValueChange(props.onChange)}
     checked={props.value}
   />

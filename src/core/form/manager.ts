@@ -48,22 +48,25 @@ export class FormManager {
 
     const promise = new Promise<Data>(async (resolve, reject) => {
       let hasResolved = false;
-      const id = EventManager.addListener<FormSubmitEvent>(
+      const listenerID = EventManager.addListener<FormSubmitEvent>(
         'FormSubmitEvent',
-        (event, id) => {
+        (event, listenerID) => {
           const {socket, data} = event;
           if (socket === player.socket) {
             resolve(data.data);
-            EventManager.removeListener('FormSubmitEvent', id);
+            EventManager.removeListener('FormSubmitEvent', listenerID);
             hasResolved = true;
           }
         }
       );
       await EventManager.sleep(timeout);
       if (!hasResolved) {
-        EventManager.removeListener('FormSubmitEvent', id);
+        EventManager.removeListener('FormSubmitEvent', listenerID);
         log.warn(`form [${id}] timed out`);
         reject(new Error('Timeout'));
+
+        // Free ID on timeout
+        UUIDManager.free(id);
       }
     });
 
@@ -100,8 +103,6 @@ export class FormManager {
       type: 'FormRejectEvent',
       data: {player, id},
     });
-    console.log('reject', id);
-
     return false;
   }
 
@@ -130,6 +131,9 @@ export class FormManager {
                   type: 'FormValidatedEvent',
                   data: {id},
                 });
+
+                // Free ID on successful submission
+                UUIDManager.free(id);
               } else {
                 // Send the form back to the user
                 this.sendForm(player, formEntry.name, id, [message]);

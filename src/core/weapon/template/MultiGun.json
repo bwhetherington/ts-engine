@@ -7,7 +7,7 @@
   "projectilePierce": 1,
   "projectileDuration": 0.75,
   "shotCount": 5,
-  "shotSpread": 0.15,
+  "shotSpread": 60,
   "damage": 2,
   "rate": 0.5
 }

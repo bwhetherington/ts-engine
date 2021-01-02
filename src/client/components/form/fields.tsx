@@ -35,6 +35,7 @@ interface FieldProps {
   field: Field;
   entry: Entry;
   onChange(entry: Entry): void;
+  isDisabled?: boolean;
 }
 
 function FieldComponent(props: FieldProps): JSX.Element {
@@ -42,6 +43,7 @@ function FieldComponent(props: FieldProps): JSX.Element {
   if (props.field.type === 'text' && props.entry.type === 'text') {
     valueComponent = (
       <StringInput
+        isDisabled={props.isDisabled}
         value={props.entry.value ?? props.field.default}
         isPassword={props.field.isPassword}
         onChange={(value) => props.onChange({type: 'text', value})}
@@ -50,6 +52,7 @@ function FieldComponent(props: FieldProps): JSX.Element {
   } else if (props.field.type === 'number' && props.entry.type === 'number') {
     valueComponent = (
       <FloatInput
+        isDisabled={props.isDisabled}
         min={props.field.min ?? 0}
         max={props.field.max ?? 100}
         value={props.entry.value ?? props.field.default}
@@ -62,6 +65,7 @@ function FieldComponent(props: FieldProps): JSX.Element {
   ) {
     valueComponent = (
       <BooleanInput
+        isDisabled={props.isDisabled}
         value={props.entry.value ?? props.field.default}
         onChange={(value) => props.onChange({type: 'boolean', value})}
       />
@@ -98,6 +102,7 @@ interface FormProps {
 
 interface FormState {
   entries: Record<string, Entry>;
+  isSubmited: boolean;
 }
 
 function createDefaultEntry(field: Field): Entry {
@@ -134,6 +139,7 @@ export class FormComponent extends Component<FormProps, FormState> {
   public constructor(props: FormProps) {
     super(props, {
       entries: createInitialState(props.form),
+      isSubmited: false,
     });
   }
 
@@ -157,6 +163,7 @@ export class FormComponent extends Component<FormProps, FormState> {
       if (entry) {
         return (
           <FieldComponent
+            isDisabled={this.state.isSubmited}
             key={index}
             field={field}
             entry={entry}
@@ -181,14 +188,14 @@ export class FormComponent extends Component<FormProps, FormState> {
 
   private onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
-    // const {submitMethods} = this.props.form;
-    // const method = submitMethods ? (submitMethods[0]?.name ?? 'submit') : 'submit';
-    // this.submit(method);
   };
 
-  private submit(method: string): void {
+  private async submit(method: string): Promise<void> {
     this.props.onSubmit(this.props.form.name, this.state.entries, method);
+    await this.updateState({
+      isSubmited: true,
+    });
+    console.log(this.state);
   }
 
   private renderSubmitButtons(): (JSX.Element | undefined)[] {
