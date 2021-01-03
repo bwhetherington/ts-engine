@@ -1,6 +1,6 @@
 {
   "type": "MachineGunHero",
-  "extends": "Hero",
+  "extends": "BaseHero",
   "weapon": "MachineGun",
   "cannonShape": {
     "length": 30,

@@ -1,6 +1,6 @@
 {
   "type": "HomingHero",
-  "extends": "Hero",
+  "extends": "BaseHero",
   "weapon": "HomingGun",
   "cannonShape": {
     "length": 25,

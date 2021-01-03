@@ -5,7 +5,7 @@ import {SyncEvent, NetworkManager} from 'core/net';
 import {EventManager} from 'core/event';
 import {diff} from 'core/util';
 import {Iterator} from 'core/iterator';
-import {UUID} from 'core/uuid';
+import {UUID, UUIDManager} from 'core/uuid';
 import {isEmpty} from 'core/util/object';
 import {MetricsEvent} from 'core/metrics';
 
@@ -29,7 +29,7 @@ export class PlayerManager implements Serializable {
       EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
         const {pings} = event.data;
         for (const index in pings) {
-          const id = parseFloat(index);
+          const id = UUIDManager.from(index);
           const player = this.getPlayer(id);
           if (player) {
             const ping = pings[id];
@@ -134,7 +134,7 @@ export class PlayerManager implements Serializable {
     const {players, removed} = data;
     if (players) {
       for (const index in players) {
-        const id = parseFloat(index);
+        const id = UUIDManager.from(index);
         let newPlayer = false;
         let player = this.players[id];
         if (!player) {

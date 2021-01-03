@@ -11,8 +11,8 @@
     "height": 40
   },
   "cannonShape": {
-    "length": 35,
-    "height": 20
+    "length": 30,
+    "height": 25
   },
   "weapon": "HeavyGun",
   "xpWorth": 25,

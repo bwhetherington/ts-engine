@@ -1,4 +1,4 @@
-import {Hero, WorldManager, KillEvent} from 'core/entity';
+import {BaseHero, WorldManager, KillEvent} from 'core/entity';
 import {Serializable, Data} from 'core/serialize';
 import {Socket, NetworkManager} from 'core/net';
 import {PlayerManager, Account} from 'core/player';
@@ -18,7 +18,7 @@ const log = LogManager.forFile(__filename);
 export class Player implements Serializable {
   public name: string = 'Anonymous';
   public id: UUID;
-  public hero?: Hero;
+  public hero?: BaseHero;
   public socket: Socket = -1;
   public hasJoined: boolean = false;
   public ping: number = 0;
@@ -46,7 +46,7 @@ export class Player implements Serializable {
 
           // Check that we haven't already respawned
           if (targetID === this.hero.id) {
-            const hero = WorldManager.spawn(Hero);
+            const hero = WorldManager.spawnEntity('Hero') as BaseHero;
 
             const x = RNGManager.nextFloat(-560, 560);
             const y = RNGManager.nextFloat(-560, 560);
@@ -121,7 +121,7 @@ export class Player implements Serializable {
     }
     if (typeof heroID == 'number') {
       const entity = WorldManager.getEntity(heroID);
-      if (entity instanceof Hero) {
+      if (entity instanceof BaseHero) {
         this.setHero(entity);
       }
     }
@@ -133,7 +133,7 @@ export class Player implements Serializable {
     }
   }
 
-  public setHero(hero?: Hero): void {
+  public setHero(hero?: BaseHero): void {
     if (hero !== this.hero) {
       this.hero?.markForDelete();
       this.hero = hero;
@@ -166,8 +166,8 @@ export class Player implements Serializable {
     return this.auth;
   }
 
-  private spawnHero(): Hero {
-    const hero = WorldManager.spawn(Hero);
+  private spawnHero(): BaseHero {
+    const hero = WorldManager.spawnEntity('Hero') as BaseHero;
     const x = RNGManager.nextFloat(-560, 560);
     const y = RNGManager.nextFloat(-560, 560);
     hero.setPositionXY(x, y);
@@ -233,7 +233,7 @@ export class Player implements Serializable {
 
   public setClass(type: string): boolean {
     const newHero = WorldManager.createEntity(type);
-    if (newHero instanceof Hero) {
+    if (newHero instanceof BaseHero) {
       if (this.hero) {
         newHero.setPosition(this.hero.position);
         newHero.setColor(this.hero.getColor());
@@ -252,5 +252,9 @@ export class Player implements Serializable {
 
   public getNameColor(): TextColor {
     return this.isAdmin() ? 'blue' : 'none';
+  }
+
+  public toString(): string {
+    return `${this.name}(${this.id})`;
   }
 }

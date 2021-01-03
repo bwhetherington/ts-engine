@@ -1,3 +1,4 @@
+import { DataBuffer, DataSerializable } from 'core/buf';
 import {Data, Serializable} from 'core/serialize';
 
 export interface VectorLike {
@@ -5,7 +6,7 @@ export interface VectorLike {
   y: number;
 }
 
-export class Vector implements Serializable, VectorLike {
+export class Vector implements DataSerializable, Serializable, VectorLike {
   public x: number = 0;
   public y: number = 0;
 
@@ -96,6 +97,22 @@ export class Vector implements Serializable, VectorLike {
       newY = y;
     }
     this.setXY(newX, newY);
+  }
+
+  public dataSize(): number {
+    return 16;
+  }
+
+  public dataSerialize(buf: DataBuffer): DataBuffer {
+    buf.writeDouble(this.x);
+    buf.writeDouble(this.y);
+    return buf;
+  }
+
+  public dataDeserialize(buf: DataBuffer): void {
+    const x = buf.readDouble();
+    const y = buf.readDouble();
+    this.setXY(x, y);
   }
 
   public scale(amount: number): void {

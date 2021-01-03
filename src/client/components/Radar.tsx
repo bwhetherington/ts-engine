@@ -3,7 +3,7 @@ import {Component} from 'client/components';
 import {StepEvent} from 'core/event';
 import {Column, Panel, PanelHeader} from './common';
 import {HDCanvas} from 'client/util';
-import {CollisionLayer, Entity, Hero, Unit, WorldManager} from 'core/entity';
+import {CollisionLayer, Entity, BaseHero, WorldManager} from 'core/entity';
 import {Color, rgba, WHITE} from 'core/graphics/color';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 
@@ -24,7 +24,7 @@ export class Radar extends Component<{}, RadarState> {
   private computeColor(entity: Entity): Color {
     const isOpaque =
       entity.collisionLayer === CollisionLayer.Geometry ||
-      (entity instanceof Hero && entity.getPlayer()?.isActivePlayer());
+      (entity instanceof BaseHero && entity.getPlayer()?.isActivePlayer());
     return isOpaque ? WHITE : TRANSPARENT;
   }
 

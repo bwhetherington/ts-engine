@@ -72,7 +72,7 @@ export class EventManager {
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
       for (const id in handlers) {
-        handlers[id](event, parseFloat(id));
+        handlers[id](event, UUIDManager.from(id));
       }
     }
   }

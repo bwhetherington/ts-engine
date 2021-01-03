@@ -3,7 +3,7 @@ import {GraphicsContext, CameraManager, Renderable} from 'core/graphics';
 import {
   Entity,
   Unit,
-  Hero,
+  BaseHero,
   Geometry,
   Text,
   TimedText,
@@ -85,7 +85,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     // Class entities
     this.registerEntity(Entity);
     this.registerEntity(Unit);
-    this.registerEntity(Hero);
+    this.registerEntity(BaseHero);
     this.registerEntity(Geometry);
     this.registerEntity(Explosion);
     this.registerEntity(Ray);
@@ -437,7 +437,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         continue;
       }
       const {type} = entry;
-      const idNum = parseFloat(id);
+      const idNum = UUIDManager.from(id);
       let entity = this.getEntity(idNum);
       let createdEntity = false;
       if (!entity && typeof type === 'string') {

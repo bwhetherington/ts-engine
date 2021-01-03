@@ -1,6 +1,6 @@
 {
   "type": "BurstHero",
-  "extends": "Hero",
+  "extends": "BaseHero",
   "weapon": "BurstGun",
   "cannonShape": {
     "length": 30,

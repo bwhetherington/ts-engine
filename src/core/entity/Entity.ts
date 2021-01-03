@@ -10,6 +10,7 @@ import {AsyncIterator} from 'core/iterator';
 
 export class Entity implements Bounded, Serializable, Renderable {
   public static typeName: string = 'Entity';
+  public static typeNum: number = 0;
   public static isTypeInitialized: boolean = false;
 
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
@@ -311,7 +312,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   }
 
   public toString(): string {
-    return this.type + '[' + this.id + ']';
+    return `${this.type}(${this.id})`;
   }
 
   public collide(other?: Entity): void {}

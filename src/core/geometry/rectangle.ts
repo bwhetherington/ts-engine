@@ -1,5 +1,6 @@
 import {Data, Serializable} from 'core/serialize';
 import {VectorLike} from 'core/geometry';
+import { DataBuffer, DataSerializable } from 'core/buf';
 
 export interface RectangleLike {
   x: number;
@@ -8,7 +9,7 @@ export interface RectangleLike {
   height: number;
 }
 
-export class Rectangle implements Serializable, RectangleLike {
+export class Rectangle implements DataSerializable, Serializable, RectangleLike {
   constructor(
     public width: number = 0,
     public height: number = 0,
@@ -121,5 +122,28 @@ export class Rectangle implements Serializable, RectangleLike {
     if (typeof height === 'number') {
       this.height = height;
     }
+  }
+
+  public dataSize(): number {
+    return 32;
+  }
+
+  public dataSerialize(buf: DataBuffer): DataBuffer {
+    buf.writeDouble(this.x);
+    buf.writeDouble(this.y);
+    buf.writeDouble(this.width);
+    buf.writeDouble(this.height);
+    return buf;
+  }
+
+  public dataDeserialize(buf: DataBuffer): void {
+    const x = buf.readDouble();
+    const y = buf.readDouble();
+    const w = buf.readDouble();
+    const h = buf.readDouble();
+    this.x = x;
+    this.y = y;
+    this.width = w;
+    this.height = h;
   }
 }

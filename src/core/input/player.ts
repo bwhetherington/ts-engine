@@ -6,7 +6,7 @@ import {
   KeyEvent,
   MOVEMENT_DIRECTION_MAP,
 } from 'core/input';
-import {Hero} from 'core/entity';
+import {BaseHero} from 'core/entity';
 import {UUID} from 'core/uuid';
 import {NetworkManager} from 'core/net';
 
@@ -15,7 +15,7 @@ export class PlayerController extends Controller {
   private keyListenerID?: UUID;
   private mouseListenerID?: UUID;
 
-  public attach(hero: Hero): void {
+  public attach(hero: BaseHero): void {
     super.attach(hero);
 
     this.mouseListenerID = hero.addListener<MouseEvent>(

@@ -1,6 +1,6 @@
 {
   "type": "MultiGunHero",
-  "extends": "Hero",
+  "extends": "BaseHero",
   "weapon": "MultiGun",
   "cannonShape": {
     "length": 25,

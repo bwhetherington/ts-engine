@@ -1,9 +1,9 @@
-import {Tank, Hero} from 'core/entity';
+import {Tank, BaseHero} from 'core/entity';
 
 export abstract class Controller {
-  protected hero?: Hero;
+  protected hero?: BaseHero;
 
-  public attach(tank: Hero): void {
+  public attach(tank: BaseHero): void {
     this.hero = tank;
   }
 

@@ -1,4 +1,5 @@
 import { Rectangle, Vector } from "core/geometry";
+import { clamp } from "core/util";
 
 export class DataBuffer {
   private buffer: Buffer;
@@ -109,12 +110,24 @@ export class DataBuffer {
     return sub.toString('utf-8');
   }
 
-  public writeString(s: string): void {
-    this.writeUInt32(0);
-    const len = this.buffer.write(s, this.offset, 'utf-8');
-    this.offset -= 4;
-    this.writeUInt32(len);
-    this.offset += len;
+  public writeString(s: string, length?: number): void {
+    if (length === undefined) {
+      this.writeUInt32(0);
+      const len = this.buffer.write(s, this.offset, 'utf-8');
+      this.offset -= 4;
+      this.writeUInt32(len);
+      this.offset += len;
+    } else {
+      const buf = Buffer.alloc(length);
+      buf.write(s, 'utf-8');
+      this.writeUInt32(length);
+      console.log('len', length, this.buffer.write(buf.toString('utf-8'), this.offset, 'utf-8'));
+      this.offset += length;
+
+      // const strBuf = Buffer.from(s);
+      // const strBufSub = strBuf.subarray(0, clamp(length, 0, strBuf.length));
+      // this.buffer.write(strBufSub);
+    }
   }
 
   public toRaw(): Buffer {

@@ -4,11 +4,8 @@ import {ConnectEvent, NetworkManager} from 'core/net';
 import {PlayerManager, Player} from 'core/player';
 import {Data} from 'core/serialize';
 import {LogManager} from 'core/log';
-import {WorldManager, Hero} from 'core/entity';
-import {randomColor} from 'core/graphics/color';
 import {capitalize} from 'core/util';
 import {BasicAuth, isOk} from 'core/net/http';
-import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 

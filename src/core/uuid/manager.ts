@@ -5,16 +5,15 @@ import {BasicRNG, RNG, RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
+const UUID_SIZE = 1000000;
+
 export class UUIDManager {
   private generated: Set<UUID> = new Set();
 
   private generateInternal(): UUID {
-    const num = RNGManager.next();
-    // const a2 = ('000' + a.toString(36)).slice(-3);
-    // const b2 = ('000' + b.toString(36)).slice(-3);
-    const flag = NetworkManager.isClient() ? 1 : 0;
+    const num = RNGManager.nextInt(0, UUID_SIZE);
+    const flag = NetworkManager.isClient() ? UUID_SIZE : 0;
     return num + flag;
-    // return flag + a2 + b2;
   }
 
   public generate(): UUID {
@@ -29,5 +28,9 @@ export class UUIDManager {
 
   public free(uuid: UUID) {
     this.generated.delete(uuid);
+  }
+
+  public from(str: string): UUID {
+    return parseInt(str);
   }
 }

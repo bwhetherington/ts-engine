@@ -1,4 +1,5 @@
 [
+  "templates/entities/Hero.json",
   "templates/entities/BigProjectile.json",
   "templates/entities/HeavyEnemy.json",
   "templates/entities/HomingEnemy.json",

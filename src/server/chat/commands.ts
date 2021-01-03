@@ -141,3 +141,21 @@ export const promote: CommandEntry = {
     }
   },
 };
+
+export const showUser: CommandEntry = {
+  name: 'showuser',
+  help: 'Shows the specified user\'s ID',
+  permissionLevel: 0,
+  async handler(player, target) {
+    if (!target) {
+      return;
+    }
+
+    const targetPlayer = PlayerManager.findPlayer(target);
+    if (!targetPlayer) {
+      return;
+    }
+    
+    ChatManager.info(`${targetPlayer.toString()} ${targetPlayer.hero?.toString()}`, player);
+  }
+}

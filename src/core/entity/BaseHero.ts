@@ -27,8 +27,8 @@ import { UUID } from 'core/uuid';
 
 const log = LogManager.forFile(__filename);
 
-export class Hero extends Tank {
-  public static typeName: string = 'Hero';
+export class BaseHero extends Tank {
+  public static typeName: string = 'BaseHero';
 
   private player?: Player;
   private mouseDown: boolean = false;
@@ -41,7 +41,7 @@ export class Hero extends Tank {
   public constructor() {
     super();
 
-    this.type = Hero.typeName;
+    this.type = BaseHero.typeName;
 
     this.setWeapon('Gun');
 

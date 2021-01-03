@@ -1,6 +1,6 @@
 {
   "type": "SniperHero",
-  "extends": "Hero",
+  "extends": "BaseHero",
   "weapon": "RayGun",
   "cannonShape": {
     "length": 30,

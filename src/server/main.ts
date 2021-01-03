@@ -130,9 +130,11 @@ async function main(): Promise<void> {
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);
 
-  const buf = DataBuffer.writer(1024);
+
+
+  const buf = DataBuffer.writer(38);
   buf.writeVector(new Vector(3, 5.5));
-  buf.writeString('Hello');
+  buf.writeString('Hello', 10);
   buf.writeDouble(3.3);
 
   const raw = buf.toRaw();
