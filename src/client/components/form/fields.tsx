@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Component} from 'client/components';
+import {Component, Props} from 'client/components';
 import {
   StringInput,
   FloatInput,
@@ -102,7 +102,7 @@ interface FormProps {
 
 interface FormState {
   entries: Record<string, Entry>;
-  isSubmited: boolean;
+  isSubmitted: boolean;
 }
 
 function createDefaultEntry(field: Field): Entry {
@@ -139,7 +139,7 @@ export class FormComponent extends Component<FormProps, FormState> {
   public constructor(props: FormProps) {
     super(props, {
       entries: createInitialState(props.form),
-      isSubmited: false,
+      isSubmitted: false,
     });
   }
 
@@ -157,13 +157,21 @@ export class FormComponent extends Component<FormProps, FormState> {
     this.updateState(newData);
   }
 
+  public componentDidUpdate(nextProps: Props<FormProps>): void {
+    if (nextProps.form.messages?.length !== this.props.form.messages?.length) {
+      this.updateState({
+        isSubmitted: false,
+      });
+    }
+  }
+
   private renderEntries(): (JSX.Element | undefined)[] {
     return this.props.form.items.map((field, index) => {
       const entry = this.state.entries[field.name];
       if (entry) {
         return (
           <FieldComponent
-            isDisabled={this.state.isSubmited}
+            isDisabled={this.state.isSubmitted}
             key={index}
             field={field}
             entry={entry}
@@ -193,7 +201,7 @@ export class FormComponent extends Component<FormProps, FormState> {
   private async submit(method: string): Promise<void> {
     this.props.onSubmit(this.props.form.name, this.state.entries, method);
     await this.updateState({
-      isSubmited: true,
+      isSubmitted: true,
     });
     console.log(this.state);
   }
