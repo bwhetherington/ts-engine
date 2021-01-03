@@ -1,8 +1,6 @@
-import {Rectangle, Bounded} from 'core/geometry';
+import {Rectangle, Bounded, Partioner} from 'core/geometry';
 import {GraphicsContext} from 'core/graphics';
-import {WHITE, BLACK} from 'core/graphics/color';
-import {Partioner} from './partioner';
-import {Iterator} from 'core/iterator';
+import {BLACK} from 'core/graphics/color';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 
 const NODE_POSITION = {
