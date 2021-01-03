@@ -38,7 +38,7 @@ export abstract class Weapon implements Serializable {
 
       // Spread shots out
       const deltaAngle = this.shotSpread / this.shotCount;
-      const baseAngleOffset = this.shotSpread / 2;
+      const baseAngleOffset = (deltaAngle * (this.shotCount - 1)) / 2;
       for (let i = 0; i < this.shotCount; i++) {
         const angleOffset = i * deltaAngle - baseAngleOffset;
         this.fire(source, angle + angleOffset);
@@ -90,7 +90,7 @@ export abstract class Weapon implements Serializable {
     }
 
     if (typeof shotSpread === 'number') {
-      this.shotSpread = (shotSpread) * Math.PI / 180;
+      this.shotSpread = (shotSpread * Math.PI) / 180;
     }
   }
 

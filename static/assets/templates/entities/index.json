@@ -1,0 +1,11 @@
+[
+  "templates/entities/BigProjectile.json",
+  "templates/entities/HeavyEnemy.json",
+  "templates/entities/HomingEnemy.json",
+  "templates/entities/SniperHero.json",
+  "templates/entities/MachineGunHero.json",
+  "templates/entities/MultiGunHero.json",
+  "templates/entities/HomingHero.json",
+  "templates/entities/HeavyHero.json",
+  "templates/entities/BurstHero.json"
+]

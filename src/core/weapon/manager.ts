@@ -7,8 +7,8 @@ import {
 } from 'core/weapon';
 import {LogManager} from 'core/log';
 import {Template} from 'core/entity/template';
-import * as templateGuns from 'core/weapon/template';
 import {Iterator} from 'core/iterator';
+import { AssetManager } from 'core/assets';
 
 const log = LogManager.forFile(__filename);
 
@@ -33,20 +33,25 @@ export class WeaponManager {
     log.debug(`weapon template ${type} registered`);
   }
 
-  private registerWeapons(): void {
+  private async registerWeapons(): Promise<void> {
     this.registerWeapon(BaseGun);
     this.registerWeapon(BaseRayGun);
     this.registerWeapon(BaseHomingGun);
     this.registerWeapon(BaseBurstGun);
 
-    // Register template weapons
-    Iterator.values(templateGuns).forEach(
-      this.registerTemplateWeapon.bind(this)
-    );
+    const weaponList = await AssetManager.loadJSON('templates/weapons/index.json') as string[];
+    const weaponFiles = await AssetManager.loadAllJSON(weaponList);
+
+    Iterator.from(weaponFiles)
+      .filter((template) => typeof template.type === 'string')
+      .map((template) => template as Template)
+      .forEach((template) => {
+        this.registerTemplateWeapon(template);
+      });
   }
 
-  public initialize(): void {
-    this.registerWeapons();
+  public async initialize(): Promise<void> {
+    await this.registerWeapons();
     log.debug('WeaponManager initialized');
   }
 
@@ -54,6 +59,8 @@ export class WeaponManager {
     const Type = this.weaponConstructors[type];
     if (Type) {
       return Type();
+    } else {
+      log.error('could not construct ' + type);
     }
   }
 }

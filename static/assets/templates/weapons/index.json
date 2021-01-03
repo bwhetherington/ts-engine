@@ -1,0 +1,9 @@
+[
+  "templates/weapons/Gun.json",
+  "templates/weapons/MachineGun.json",
+  "templates/weapons/RayGun.json",
+  "templates/weapons/HeavyGun.json",
+  "templates/weapons/BurstGun.json",
+  "templates/weapons/MultiGun.json",
+  "templates/weapons/HomingGun.json"
+]

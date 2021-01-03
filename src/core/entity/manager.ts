@@ -33,6 +33,7 @@ import {WHITE, reshade} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
+import { AssetManager } from 'core/assets';
 
 const log = LogManager.forFile(__filename);
 
@@ -79,7 +80,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     }
   }
 
-  private registerAllEntities(): void {
+  private async registerAllEntities(): Promise<void> {
     // Class entities
     this.registerEntity(Entity);
     this.registerEntity(Unit);
@@ -98,15 +99,25 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Feed);
 
     // Template entities
-    Iterator.values(templateEntities).forEach(
-      this.registerTemplateEntity.bind(this)
-    );
+    // Iterator.values(templateEntities).forEach(
+    //   this.registerTemplateEntity.bind(this)
+    // );
+
+    const entityList = await AssetManager.loadJSON('templates/entities/index.json') as string[];
+    const entityFiles = await AssetManager.loadAllJSON(entityList);
+
+    Iterator.from(entityFiles)
+      .filter((template) => typeof template.type === 'string')
+      .map((template) => template as templateEntities.Template)
+      .forEach((template) => {
+        this.registerTemplateEntity(template);
+      });
   }
 
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     log.debug('WorldManager initialized');
 
-    this.registerAllEntities();
+    await this.registerAllEntities();
 
     EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
       this.deserialize(event.data.worldData);

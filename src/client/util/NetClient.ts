@@ -2,7 +2,6 @@ import {Node, Message, Socket, DisconnectEvent} from 'core/net';
 import {LogManager} from 'core/log';
 import {
   uniqueNamesGenerator,
-  adjectives,
   colors,
   animals,
 } from 'unique-names-generator';
@@ -44,6 +43,7 @@ export class Client extends Node {
     this.initializeSocket(this.socket);
 
     EventManager.addListener<InitialSyncEvent>('InitialSyncEvent', (event) => {
+      log.debug('initial sync event');
       const {socket, sync} = event.data;
       PlayerManager.setActivePlayer(socket);
       const {worldData, playerData} = sync;

@@ -11,7 +11,7 @@ import {EventManager, Event, StepEvent} from 'core/event';
 import {TimerManager, now} from 'server/util';
 import {WorldManager} from 'core/entity';
 import {PlayerManager, Player} from 'core/player';
-import {InitialSyncEvent} from 'core/net/util';
+import {InitialSyncEvent, PlayerInitializedEvent} from 'core/net/util';
 import process from 'process';
 import {UUID, UUIDManager} from 'core/uuid';
 import {MetricsManager} from 'server/metrics';
@@ -134,6 +134,11 @@ export class Server extends Node {
       this.accept(req);
     });
     this.wsServer.on('close', (connection) => {});
+
+    EventManager.streamEvents<PlayerInitializedEvent>('PlayerInitializedEvent')
+      .filterMap(({socket}) => socket !== undefined ? socket : undefined)
+      .use((socket) => console.log(`initialize ${socket}`))
+      .forEach((socket) => this.initialSync(socket));
   }
 
   private sendRaw(data: string, socket: Socket) {
@@ -173,9 +178,14 @@ export class Server extends Node {
     player.socket = socket;
     PlayerManager.add(player);
 
-    const event = {
+    // Try to wake the server clock
+    TimerManager.wake();
+  }
+
+  public initialSync(socket: Socket): void {
+    const event: Event<InitialSyncEvent> = {
       type: 'InitialSyncEvent',
-      data: <InitialSyncEvent>{
+      data: {
         socket,
         sync: {
           worldData: WorldManager.serialize(),
@@ -183,11 +193,7 @@ export class Server extends Node {
         },
       },
     };
-
     this.send(event, socket);
-
-    // Try to wake the server clock
-    TimerManager.wake();
   }
 
   public onDisconnect(socket: Socket): void {

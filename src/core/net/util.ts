@@ -111,6 +111,8 @@ export interface InitialSyncEvent {
   sync: SyncEvent;
 }
 
+export interface PlayerInitializedEvent {}
+
 export interface PingEvent {
   id: UUID;
 }

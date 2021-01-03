@@ -1,4 +1,4 @@
-import {NetworkManager} from 'core/net';
+import {NetworkManager, PlayerInitializedEvent} from 'core/net';
 import {EventManager, StepEvent, Event} from 'core/event';
 import {LogManager} from 'core/log';
 import {DamageEvent, Unit, WorldManager} from 'core/entity';
@@ -26,12 +26,13 @@ async function main(): Promise<void> {
   const client = new Client();
 
   NetworkManager.initialize(client);
-  WorldManager.initialize();
+  await WeaponManager.initialize();
+  await WorldManager.initialize();
   PlayerManager.initialize();
   CameraManager.initialize();
   FormManager.initialize();
-  WeaponManager.initialize();
   MetricsManager.initialize();
+  NetworkManager.sendEvent<PlayerInitializedEvent>({type: 'PlayerInitializedEvent', data: {}});
 
   log.debug('all managers initialized');
 
@@ -44,7 +45,7 @@ async function main(): Promise<void> {
     InputManager.initialize(game);
 
     window.addEventListener('resize', () => {
-      canvas.setSize(game.clientWidth, game.clientHeight);
+      canvas.setSize(window.innerWidth, window.innerHeight);
     });
     window.addEventListener('blur', () => {
       InputManager.reset();
@@ -57,9 +58,6 @@ async function main(): Promise<void> {
     });
 
     timer.start();
-
-    const stream = EventManager.streamInterval(1);
-    stream.drain();
   }
 }
 

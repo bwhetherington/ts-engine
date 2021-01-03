@@ -1,11 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Component, FormComponent} from 'client/components';
-import {Entry, Form, FormRejectEvent, FormShowEvent, FormSubmitEvent, FormValidatedEvent} from 'core/form';
+import {
+  Entry,
+  Form,
+  FormRejectEvent,
+  FormShowEvent,
+  FormSubmitEvent,
+  FormValidatedEvent,
+} from 'core/form';
 import {NetworkManager} from 'core/net';
-import { UUID } from 'core/uuid';
-import { EventManager } from 'core/event';
-import { Iterator } from 'core/iterator';
+import {UUID} from 'core/uuid';
+import {EventManager} from 'core/event';
+import {Iterator} from 'core/iterator';
 
 const Background = styled.div`
   position: absolute;
@@ -96,16 +103,19 @@ export class FormContainer extends Component<{}, FormContainerState> {
 
       const cleanup = (id: UUID) => {
         EventManager.removeListener('FormValidatedEvent', id);
-          this.updateState({
-            forms: rest,
-          });
+        this.updateState({
+          forms: rest,
+        });
       };
 
-      this.addListener<FormValidatedEvent>('FormValidatedEvent', (event, handler) => {
-        if (event.data.id === form.id) {
-          cleanup(handler);
+      this.addListener<FormValidatedEvent>(
+        'FormValidatedEvent',
+        (event, handler) => {
+          if (event.data.id === form.id) {
+            cleanup(handler);
+          }
         }
-      });
+      );
     }
   };
 

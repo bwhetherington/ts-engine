@@ -33,6 +33,7 @@ import {BasicAuth} from 'core/net/http';
 import {AssetManager} from 'core/assets';
 import {AsyncIterator, Iterator} from 'core/iterator';
 import {FormatParser, TextFormatter} from 'core/chat/format';
+import { GameAction, gameStateMachine } from 'core/fsm/game';
 
 const log = LogManager.forFile(__filename);
 
@@ -56,7 +57,8 @@ async function main(): Promise<void> {
   ChatManager.initialize();
   server.start(parseInt(process.env.PORT ?? '0') || 8080);
 
-  WorldManager.initialize();
+  await WeaponManager.initialize();
+  await WorldManager.initialize();
 
   await loadWorld('arena');
 
@@ -66,7 +68,6 @@ async function main(): Promise<void> {
   registerRenameForm();
 
   MetricsManager.initialize();
-  WeaponManager.initialize();
 
   if (process.send) {
     process.send({type: 'ready'});
