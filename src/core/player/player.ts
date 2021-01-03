@@ -17,7 +17,7 @@ const log = LogManager.forFile(__filename);
 
 export class Player implements Serializable {
   public name: string = 'Anonymous';
-  public id: string;
+  public id: UUID;
   public hero?: Hero;
   public socket: Socket = -1;
   public hasJoined: boolean = false;
@@ -110,7 +110,7 @@ export class Player implements Serializable {
 
   public deserialize(data: Data): void {
     const {name, id, socket, heroID, score, hasJoined} = data;
-    if (typeof id === 'string') {
+    if (typeof id === 'number') {
       this.id = id;
     }
     if (typeof name === 'string') {
@@ -119,7 +119,7 @@ export class Player implements Serializable {
     if (typeof socket === 'number') {
       this.socket = socket;
     }
-    if (typeof heroID == 'string') {
+    if (typeof heroID == 'number') {
       const entity = WorldManager.getEntity(heroID);
       if (entity instanceof Hero) {
         this.setHero(entity);

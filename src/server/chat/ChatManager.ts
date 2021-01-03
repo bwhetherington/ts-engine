@@ -120,7 +120,7 @@ export class ChatManager {
       const {data, socket} = event;
 
       if (socket !== undefined) {
-        const player = PlayerManager.getPlayer(socket);
+        const player = PlayerManager.getSocket(socket);
         if (player) {
           player.name = data.name;
           log.debug(`player ${socket} set name to ${data.name}`);
@@ -136,7 +136,7 @@ export class ChatManager {
       'TextMessageInEvent',
       (event) => {
         const {data, socket} = event;
-        const player = PlayerManager.getPlayer(socket);
+        const player = PlayerManager.getSocket(socket);
         if (player) {
           const {name, hasJoined} = player;
           if (hasJoined) {
@@ -150,7 +150,7 @@ export class ChatManager {
 
     EventManager.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
       const {socket, data} = event;
-      const player = PlayerManager.getPlayer(socket);
+      const player = PlayerManager.getSocket(socket);
       if (player && player.hasJoined) {
         this.handleCommand(player, data.command, data.args);
       }

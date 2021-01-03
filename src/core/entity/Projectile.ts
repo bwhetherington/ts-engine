@@ -175,7 +175,7 @@ export class Projectile extends Entity {
       this.pierce = pierce;
     }
 
-    if (typeof parentID === 'string') {
+    if (typeof parentID === 'number') {
       const parent = WorldManager.getEntity(parentID);
       if (parent instanceof Unit) {
         this.parent = parent;

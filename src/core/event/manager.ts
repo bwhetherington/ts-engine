@@ -12,8 +12,8 @@ export interface StepEvent {
   dt: number;
 }
 
-export class EventManager extends Observer {
-  private handlers: Record<string, Record<string, GameHandler>> = {};
+export class EventManager {
+  private handlers: Record<string, Record<UUID, GameHandler>> = {};
   private events: Queue<GameEvent> = new Queue();
   private listenerCount: number = 0;
   public timeElapsed: number = 0;
@@ -32,7 +32,7 @@ export class EventManager extends Observer {
     return handlers;
   }
 
-  public getHandler(type: string, id: string): GameHandler | undefined {
+  public getHandler(type: string, id: UUID): GameHandler | undefined {
     const handlers = this.handlers[type];
     if (handlers) {
       return handlers[id];
@@ -42,7 +42,7 @@ export class EventManager extends Observer {
   public addListener<E extends EventData>(
     type: string,
     handler: Handler<E>
-  ): string {
+  ): UUID {
     const handlers = this.getHandlers(type);
     const id = UUIDManager.generate();
     handlers[id] = handler;
@@ -51,7 +51,7 @@ export class EventManager extends Observer {
     return id;
   }
 
-  public removeListener(type: string, id: string): boolean {
+  public removeListener(type: string, id: UUID): boolean {
     const handlers = this.getHandlers(type);
     if (id in handlers) {
       this.listenerCount -= 1;
@@ -72,7 +72,7 @@ export class EventManager extends Observer {
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
       for (const id in handlers) {
-        handlers[id](event, id);
+        handlers[id](event, parseFloat(id));
       }
     }
   }

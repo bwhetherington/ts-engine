@@ -203,7 +203,6 @@ export class FormComponent extends Component<FormProps, FormState> {
     await this.updateState({
       isSubmitted: true,
     });
-    console.log(this.state);
   }
 
   private renderSubmitButtons(): (JSX.Element | undefined)[] {

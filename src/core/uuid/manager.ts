@@ -9,12 +9,12 @@ export class UUIDManager {
   private generated: Set<UUID> = new Set();
 
   private generateInternal(): UUID {
-    const a = RNGManager.nextInt(0, 46656) | 0;
-    const b = RNGManager.nextInt(0, 46656) | 0;
-    const a2 = ('000' + a.toString(36)).slice(-3);
-    const b2 = ('000' + b.toString(36)).slice(-3);
-    const flag = NetworkManager.isClient() ? '1' : '0';
-    return flag + a2 + b2;
+    const num = RNGManager.next();
+    // const a2 = ('000' + a.toString(36)).slice(-3);
+    // const b2 = ('000' + b.toString(36)).slice(-3);
+    const flag = NetworkManager.isClient() ? 1 : 0;
+    return num + flag;
+    // return flag + a2 + b2;
   }
 
   public generate(): UUID {

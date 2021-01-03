@@ -45,7 +45,7 @@ export class Component<P = {}, S = {}> extends React.Component<
   protected addListener<E extends EventData>(
     type: string,
     handler: Handler<E>
-  ): string {
+  ): UUID {
     const id = EventManager.addListener(type, handler);
     const oldList = this.state.handlers[type] ?? [];
     const newList = [id, ...oldList];
@@ -67,7 +67,8 @@ export class Component<P = {}, S = {}> extends React.Component<
   public componentWillUnmount(): void {
     // Unregister all listeners
     iterateKeys(this.state.handlers).forEach((type) => {
-      for (const id of this.state.handlers[type]) {
+      for (const index of this.state.handlers[type]) {
+        const id = parseFloat(index);
         EventManager.removeListener(type, id);
       }
     });

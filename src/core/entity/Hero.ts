@@ -23,6 +23,7 @@ import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
 import {Matrix2} from 'core/geometry';
+import { UUID } from 'core/uuid';
 
 const log = LogManager.forFile(__filename);
 
@@ -199,8 +200,8 @@ export class Hero extends Tank {
     }
   }
 
-  public setPlayer(player: string | Player): void {
-    if (typeof player === 'string') {
+  public setPlayer(player: UUID | Player): void {
+    if (typeof player === 'number') {
       this.player = PlayerManager.getPlayer(player);
     } else {
       this.player = player;

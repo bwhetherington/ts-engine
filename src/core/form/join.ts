@@ -64,7 +64,7 @@ export const JOIN_FORM: Form = {
 
 export function registerJoinForm(): void {
   EventManager.addListener<ConnectEvent>('ConnectEvent', async (event) => {
-    const player = PlayerManager.getPlayer(event.data.socket);
+    const player = PlayerManager.getSocket(event.data.socket);
     if (player) {
       FormManager.sendForm(player, 'JoinForm');
     }
@@ -221,7 +221,6 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
     return isJoinForm(x);
   },
   async validate(input: JoinForm, method: string): Promise<FormResult> {
-    console.log('validate', method);
     switch (method) {
       case 'login':
         return await validateSubmit(input);

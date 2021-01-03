@@ -137,7 +137,6 @@ export class Server extends Node {
 
     EventManager.streamEvents<PlayerInitializedEvent>('PlayerInitializedEvent')
       .filterMap(({socket}) => socket !== undefined ? socket : undefined)
-      .use((socket) => console.log(`initialize ${socket}`))
       .forEach((socket) => this.initialSync(socket));
   }
 
@@ -199,7 +198,7 @@ export class Server extends Node {
   public onDisconnect(socket: Socket): void {
     super.onDisconnect(socket);
 
-    const player = PlayerManager.getPlayer(socket);
+    const player = PlayerManager.getSocket(socket);
     if (player) {
       PlayerManager.remove(player);
       MetricsManager.removePlayer(player);
@@ -216,8 +215,8 @@ export class Server extends Node {
   }
 
   public onMessage(message: Message, socket: Socket): void {
-    if (message.type === 'PingEvent' && typeof message.data?.id === 'string') {
-      const id = message.data.id as string;
+    if (message.type === 'PingEvent' && typeof message.data?.id === 'number') {
+      const id = message.data.id as number;
       const entry = this.pingResolvers[id];
       if (entry) {
         const {startTime, resolver} = entry;

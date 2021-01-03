@@ -29,7 +29,7 @@ export class Entity implements Bounded, Serializable, Renderable {
   public isVisible: boolean = true;
   public isCollidable: boolean = true;
   public doSync: boolean = true;
-  private handlers: Record<string, Set<string>> = {};
+  private handlers: Record<string, Set<UUID>> = {};
   public isInitialized: boolean = false;
 
   constructor() {
@@ -188,7 +188,7 @@ export class Entity implements Bounded, Serializable, Renderable {
       isCollidable,
       doSync,
     } = data;
-    if (typeof id === 'string') {
+    if (typeof id === 'number') {
       this.id = id;
     }
     if (typeof type === 'string') {
@@ -248,7 +248,7 @@ export class Entity implements Bounded, Serializable, Renderable {
     this.markedForDelete = true;
   }
 
-  private getHandlers(type: string): Set<string> {
+  private getHandlers(type: string): Set<UUID> {
     let handlers = this.handlers[type];
     if (handlers === undefined) {
       handlers = new Set();

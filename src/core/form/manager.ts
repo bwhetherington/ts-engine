@@ -114,7 +114,7 @@ export class FormManager {
       'FormSubmitEvent',
       async (event) => {
         const {socket, data} = event;
-        const player = PlayerManager.getPlayer(socket);
+        const player = PlayerManager.getSocket(socket);
         if (player) {
           const {
             name: responseName,

@@ -58,7 +58,7 @@ export class HomingProjectile extends Projectile {
       this.turnSpeed = turnSpeed;
     }
 
-    if (typeof targetID === 'string') {
+    if (typeof targetID === 'number') {
       this.target = WorldManager.getEntity(targetID);
     }
   }

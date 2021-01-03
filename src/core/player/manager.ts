@@ -28,7 +28,8 @@ export class PlayerManager implements Serializable {
     if (NetworkManager.isClient()) {
       EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
         const {pings} = event.data;
-        for (const id in pings) {
+        for (const index in pings) {
+          const id = parseFloat(index);
           const player = this.getPlayer(id);
           if (player) {
             const ping = pings[id];
@@ -69,7 +70,7 @@ export class PlayerManager implements Serializable {
 
   public remove(player: Player | UUID): void {
     let id;
-    if (typeof player === 'string') {
+    if (typeof player === 'number') {
       id = player;
     } else {
       id = player.id;
@@ -95,10 +96,16 @@ export class PlayerManager implements Serializable {
     }
   }
 
-  public getPlayer(index?: string | number): Player | undefined {
-    if (typeof index === 'string') {
+  public getPlayer(index?: number): Player | undefined {
+    if (index !== undefined) {
       return this.players[index];
-    } else if (typeof index === 'number') {
+    } else {
+      return undefined;
+    }
+  }
+
+  public getSocket(index?: number): Player | undefined {
+    if (index !== undefined) {
       return this.socketMap[index];
     } else {
       return undefined;
@@ -127,11 +134,12 @@ export class PlayerManager implements Serializable {
     const {players, removed} = data;
     if (players) {
       for (const index in players) {
+        const id = parseFloat(index);
         let newPlayer = false;
-        let player = this.players[index];
+        let player = this.players[id];
         if (!player) {
           player = new Player();
-          player.id = index;
+          player.id = id;
           newPlayer = true;
         }
         player.deserialize(players[index]);

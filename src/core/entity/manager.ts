@@ -34,17 +34,18 @@ import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
 import { AssetManager } from 'core/assets';
+import { UUID, UUIDManager } from 'core/uuid';
 
 const log = LogManager.forFile(__filename);
 
 export class WorldManager implements Bounded, Serializable, Renderable {
   public space: Partioner<Entity>;
-  private entities: Record<string, Entity> = {};
+  private entities: Record<UUID, Entity> = {};
   public boundingBox: Rectangle;
   private collisionLayers: Entity[][] = [[], []];
   private entityConstructors: Record<string, () => Entity> = {};
-  public previousState: Record<string, Data> = {};
-  private toDelete: string[] = [];
+  public previousState: Record<UUID, Data> = {};
+  private toDelete: UUID[] = [];
   private entityCount: number = 0;
   private unitCount: number = 0;
   private entityCounts: Record<string, number> = {};
@@ -261,9 +262,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     }
   }
 
-  public remove(entity: Entity | string): void {
+  public remove(entity: Entity | UUID): void {
     let actual: Entity | undefined = undefined;
-    if (typeof entity === 'string') {
+    if (typeof entity === 'number') {
       actual = this.getEntity(entity);
     } else {
       actual = entity;
@@ -436,12 +437,16 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         continue;
       }
       const {type} = entry;
-      let entity = this.getEntity(id);
+      const idNum = parseFloat(id);
+      let entity = this.getEntity(idNum);
       let createdEntity = false;
       if (!entity && typeof type === 'string') {
         entity = this.createEntity(type);
         if (entity) {
-          entity.id = id;
+          if (entity.id !== idNum) {
+            UUIDManager.free(entity.id);
+            entity.id = idNum;
+          }
           createdEntity = true;
           this.add(entity);
         }
@@ -473,7 +478,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     return diffObj;
   }
 
-  public getEntity(id?: string): Entity | undefined {
+  public getEntity(id?: UUID): Entity | undefined {
     return id ? this.entities[id] : undefined;
   }
 

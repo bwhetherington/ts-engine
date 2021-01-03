@@ -1,6 +1,7 @@
 import {Socket} from 'core/net';
+import { UUID } from 'core/uuid';
 
-export type Handler<T extends EventData> = (arg: Event<T>, id: string) => void;
+export type Handler<T extends EventData> = (arg: Event<T>, id: UUID) => void;
 
 export type GameHandler = Handler<any>;
 

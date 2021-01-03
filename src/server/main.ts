@@ -34,6 +34,8 @@ import {AssetManager} from 'core/assets';
 import {AsyncIterator, Iterator} from 'core/iterator';
 import {FormatParser, TextFormatter} from 'core/chat/format';
 import { GameAction, gameStateMachine } from 'core/fsm/game';
+import { DataBuffer } from 'core/buf/buffer';
+import { Vector } from 'core/geometry';
 
 const log = LogManager.forFile(__filename);
 
@@ -127,6 +129,17 @@ async function main(): Promise<void> {
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);
+
+  const buf = DataBuffer.writer(1024);
+  buf.writeVector(new Vector(3, 5.5));
+  buf.writeString('Hello');
+  buf.writeDouble(3.3);
+
+  const raw = buf.toRaw();
+  const read = DataBuffer.reader(raw);
+  console.log('vector', read.readVector());
+  console.log('string', read.readString());
+  console.log('double', read.readDouble());
 }
 
 main().catch((ex) => {
