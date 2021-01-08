@@ -2,7 +2,7 @@ import {EventData, EventManager, Handler, Event, StepEvent} from 'core/event';
 import {AsyncIterator, iterateKeys} from 'core/iterator';
 import {Props} from 'client/components';
 import React from 'react';
-import {UUID} from 'core/uuid';
+import {UUID, UUIDManager} from 'core/uuid';
 
 type Handlers = Readonly<Record<string, Readonly<string[]>>>;
 
@@ -68,7 +68,7 @@ export class Component<P = {}, S = {}> extends React.Component<
     // Unregister all listeners
     iterateKeys(this.state.handlers).forEach((type) => {
       for (const index of this.state.handlers[type]) {
-        const id = parseFloat(index);
+        const id = UUIDManager.from(index);
         EventManager.removeListener(type, id);
       }
     });

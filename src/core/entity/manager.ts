@@ -35,6 +35,7 @@ import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
 import { AssetManager } from 'core/assets';
 import { UUID, UUIDManager } from 'core/uuid';
+import { DataBuffer } from 'core/buf';
 
 const log = LogManager.forFile(__filename);
 
@@ -580,5 +581,18 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         this.add(entity);
       }
     }
+  }
+
+  public dataSerializeAll(): DataBuffer {
+    // Compute size
+    const size = this.getEntities()
+      .filter((entity) => entity.doSync)
+      .map((entity) => entity.dataSize())
+      .fold(0, (sum, size) => sum + size);
+    const buf = DataBuffer.writer(size);
+    this.getEntities()
+      .filter((entity) => entity.doSync)
+      .forEach((entity) => entity.dataSerialize(buf));
+    return buf;
   }
 }

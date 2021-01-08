@@ -125,22 +125,21 @@ export class Rectangle implements DataSerializable, Serializable, RectangleLike 
   }
 
   public dataSize(): number {
-    return 32;
+    return 16;
   }
 
-  public dataSerialize(buf: DataBuffer): DataBuffer {
-    buf.writeDouble(this.x);
-    buf.writeDouble(this.y);
-    buf.writeDouble(this.width);
-    buf.writeDouble(this.height);
-    return buf;
+  public dataSerialize(buf: DataBuffer): void {
+    buf.writeFloat(this.x);
+    buf.writeFloat(this.y);
+    buf.writeFloat(this.width);
+    buf.writeFloat(this.height);
   }
 
   public dataDeserialize(buf: DataBuffer): void {
-    const x = buf.readDouble();
-    const y = buf.readDouble();
-    const w = buf.readDouble();
-    const h = buf.readDouble();
+    const x = buf.readFloat();
+    const y = buf.readFloat();
+    const w = buf.readFloat();
+    const h = buf.readFloat();
     this.x = x;
     this.y = y;
     this.width = w;

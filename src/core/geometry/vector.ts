@@ -100,18 +100,17 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
   }
 
   public dataSize(): number {
-    return 16;
+    return 8;
   }
 
-  public dataSerialize(buf: DataBuffer): DataBuffer {
-    buf.writeDouble(this.x);
-    buf.writeDouble(this.y);
-    return buf;
+  public dataSerialize(buf: DataBuffer): void {
+    buf.writeFloat(this.x);
+    buf.writeFloat(this.y);
   }
 
   public dataDeserialize(buf: DataBuffer): void {
-    const x = buf.readDouble();
-    const y = buf.readDouble();
+    const x = buf.readFloat();
+    const y = buf.readFloat();
     this.setXY(x, y);
   }
 

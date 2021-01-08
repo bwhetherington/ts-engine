@@ -1,5 +1,8 @@
 import { Rectangle, Vector } from "core/geometry";
+import { Color } from "core/graphics";
+import { Iterator } from "core/iterator";
 import { clamp } from "core/util";
+import { DataSerializable } from "./serialize";
 
 export class DataBuffer {
   private buffer: Buffer;
@@ -106,6 +109,7 @@ export class DataBuffer {
   public readString(): string {
     const len = this.readUInt32();
     const sub = this.buffer.subarray(this.offset, this.offset + len);
+    console.log(len);
     this.offset += len;
     return sub.toString('utf-8');
   }
@@ -115,22 +119,58 @@ export class DataBuffer {
       this.writeUInt32(0);
       const len = this.buffer.write(s, this.offset, 'utf-8');
       this.offset -= 4;
+      console.log('len', len);
       this.writeUInt32(len);
       this.offset += len;
     } else {
+      console.log('len', length);
+      this.writeUInt32(length);
       const buf = Buffer.alloc(length);
       buf.write(s, 'utf-8');
-      this.writeUInt32(length);
-      console.log('len', length, this.buffer.write(buf.toString('utf-8'), this.offset, 'utf-8'));
+      this.buffer.write(buf.toString('utf-8'), this.offset, 'utf-8');
       this.offset += length;
-
-      // const strBuf = Buffer.from(s);
-      // const strBufSub = strBuf.subarray(0, clamp(length, 0, strBuf.length));
-      // this.buffer.write(strBufSub);
     }
   }
 
   public toRaw(): Buffer {
     return this.buffer;
+  }
+
+  public readUInt8(): number {
+    const value = this.buffer.readUInt8();
+    this.offset += 1;
+    return value;
+  }
+
+  public writeUInt8(value: number): void {
+    this.buffer.writeUInt8(value);
+    this.offset += 1;
+  }
+
+  public readColor(): Color {
+    const red = this.readUInt8() / 255;
+    const green = this.readUInt8() / 255;
+    const blue = this.readUInt8() / 255;
+    const alpha = this.readUInt8() / 255;
+    return {red, green, blue, alpha};
+  }
+
+  public writeColor(color: Color): void {
+    const {red, green, blue, alpha = 1} = color;
+    const ri = Math.floor(red * 255);
+    const gi = Math.floor(green * 255);
+    const bi = Math.floor(blue * 255);
+    const ai = Math.floor(alpha * 255);
+    this.writeUInt8(ri);
+    this.writeUInt8(gi);
+    this.writeUInt8(bi);
+    this.writeUInt8(ai);
+  }
+
+  public writeList(list: DataSerializable[]): void {
+    // Compute length
+    this.writeUInt32(list.length);
+    Iterator.from(list)
+      .forEach((x) => x.dataSerialize(this));
   }
 }
