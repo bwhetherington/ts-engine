@@ -2,16 +2,14 @@ import {
   Color,
   toCss,
   reshade,
-  invert,
   TextStyle,
   GraphicsContext,
   GraphicsOptions,
   CameraManager,
 } from 'core/graphics';
-import {BLACK, COLOR_MAPPING, fromRGB, WHITE} from 'core/graphics/color';
+import {COLOR_MAPPING, WHITE} from 'core/graphics/color';
 import {GraphicsProc} from 'core/graphics/context';
 import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
-import {GraphicsPipeline} from 'core/graphics/pipe';
 import {TextColor, TextComponents} from 'core/chat';
 
 interface Options {

@@ -139,6 +139,12 @@ function* iterateReadonlyArray<T>(array: readonly T[]): Iterable<Readonly<T>> {
   }
 }
 
+function* range(low: number, high: number): Iterable<number> {
+  for (let i = low; i < high; i++) {
+    yield i;
+  }
+}
+
 export class Iterator<T> implements Iterable<T> {
   private generator: Iterable<T>;
 
@@ -178,6 +184,10 @@ export class Iterator<T> implements Iterable<T> {
 
   public static from<T>(gen: Iterable<T>): Iterator<T> {
     return iterator(gen);
+  }
+
+  public static range(low: number, high: number): Iterator<number> {
+    return Iterator.from(range(low, high));
   }
 
   public *[Symbol.iterator](): Generator<T> {

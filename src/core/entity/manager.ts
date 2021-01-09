@@ -356,6 +356,8 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.collisionLayers = [[], [], [], [], []];
 
     this.getEntities().forEach((entity) => {
+      entity.afterStep();
+
       if (entity.isCollidable) {
         this.space.insert(entity);
       }

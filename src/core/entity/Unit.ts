@@ -194,7 +194,9 @@ export class Unit extends Entity {
     }
 
     super.step(dt);
+  }
 
+  public afterStep(): void {
     if (NetworkManager.isClient()) {
       if (this.label) {
         this.label.position.set(this.position);
@@ -206,8 +208,8 @@ export class Unit extends Entity {
 
       if (this.hpBar) {
         this.hpBar.position.set(this.position);
-        this.hpBar.velocity.set(this.velocity);
         this.hpBar.position.addXY(0, this.boundingBox.height + 12);
+        this.hpBar.velocity.set(this.velocity);
         this.hpBar.progress = this.getLife() / this.getMaxLife();
       }
     }

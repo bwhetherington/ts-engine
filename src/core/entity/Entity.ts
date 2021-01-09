@@ -363,5 +363,7 @@ export class Entity implements Bounded, DataSerializable, Serializable, Renderab
       .filter(({collider}) => collider.id === this.id);
   }
 
+  public afterStep(): void {}
+
   public load(): void {}
 }

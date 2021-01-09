@@ -127,20 +127,6 @@ async function main(): Promise<void> {
       }
     });
 
-  const entity = new Entity();
-  entity.type = 'Foo';
-  entity.setColor({red: 0.35, green: 0.25, blue: 0.7});
-
-  const buf = DataBuffer.writer(entity.dataSize());
-  entity.dataSerialize(buf);
-
-  const reader = DataBuffer.reader(buf.toRaw());
-  const dst = new Entity();
-  dst.dataDeserialize(reader);
-
-  console.log(entity.serialize());
-  console.log(dst.serialize());
-
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);
 }

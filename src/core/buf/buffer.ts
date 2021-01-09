@@ -1,4 +1,4 @@
-import { Rectangle, Vector } from "core/geometry";
+import { Rectangle, RectangleLike, Vector, VectorLike } from "core/geometry";
 import { Color } from "core/graphics";
 import { Iterator } from "core/iterator";
 import { clamp } from "core/util";
@@ -86,7 +86,7 @@ export class DataBuffer {
     return new Vector(x, y);
   }
 
-  public writeVector({x, y}: Vector): void {
+  public writeVector({x, y}: VectorLike): void {
     this.writeDouble(x);
     this.writeDouble(y);
   }
@@ -99,7 +99,7 @@ export class DataBuffer {
     return new Rectangle(x, y, w, h);
   }
 
-  public writeRectangle({x, y, width, height}: Rectangle): void {
+  public writeRectangle({x, y, width, height}: RectangleLike): void {
     this.writeDouble(x);
     this.writeDouble(y);
     this.writeDouble(width);
@@ -109,7 +109,6 @@ export class DataBuffer {
   public readString(): string {
     const len = this.readUInt32();
     const sub = this.buffer.subarray(this.offset, this.offset + len);
-    console.log(len);
     this.offset += len;
     return sub.toString('utf-8');
   }
@@ -119,11 +118,9 @@ export class DataBuffer {
       this.writeUInt32(0);
       const len = this.buffer.write(s, this.offset, 'utf-8');
       this.offset -= 4;
-      console.log('len', len);
       this.writeUInt32(len);
       this.offset += len;
     } else {
-      console.log('len', length);
       this.writeUInt32(length);
       const buf = Buffer.alloc(length);
       buf.write(s, 'utf-8');
