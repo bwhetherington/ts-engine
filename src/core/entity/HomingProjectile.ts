@@ -16,6 +16,7 @@ export class HomingProjectile extends Projectile {
   public constructor() {
     super();
     this.type = HomingProjectile.typeName;
+    this.friction = 0;
   }
 
   public step(dt: number): void {

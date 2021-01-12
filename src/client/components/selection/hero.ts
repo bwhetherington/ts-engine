@@ -1,6 +1,6 @@
-import { BaseHero } from "core/entity";
+import { BaseHero, Entity, WorldManager } from "core/entity";
 import React from 'react';
-import {Component} from 'client/components';
+import {Component, Props} from 'client/components';
 import { HDCanvas } from "client/util";
 import { GraphicsPipeline } from "core/graphics/pipe";
 
@@ -9,24 +9,35 @@ interface HeroPanelProps {
 }
 
 interface HeroPanelState {
-  hero?: BaseHero;
+  entity?: Entity;
 }
 
 export class HeroPanel extends Component<HeroPanelProps, HeroPanelState> {
   private canvasRef = React.createRef<HTMLCanvasElement>();
 
+  public constructor(props: Props<HeroPanelProps>) {
+    super(props, {
+      entity: undefined,
+    });
+  }
+
   private renderCanvas(): void {
     const canvas = this.canvasRef.current;
-    const {hero} = this.state;
-    if (canvas && hero) {
+    const {entity} = this.state;
+    if (canvas && entity) {
       const ctx = new HDCanvas(canvas, {width: 100, height: 100});
       ctx.begin();
       GraphicsPipeline.pipe()
         .run(ctx, (ctx) => {
-          hero.render(ctx);
+          entity.render(ctx);
         });
     }
   }
-}
 
+  public componentDidMount(): void {
+    // Create hero
+
+    const hero = WorldManager.spawnEntity(this.props.type);
+  }
+}
 
