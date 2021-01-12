@@ -1,8 +1,8 @@
-import { BaseHero, Entity, WorldManager } from "core/entity";
+import {BaseHero, Entity, WorldManager} from 'core/entity';
 import React from 'react';
 import {Component, Props} from 'client/components';
-import { HDCanvas } from "client/util";
-import { GraphicsPipeline } from "core/graphics/pipe";
+import {HDCanvas} from 'client/util';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 
 interface HeroPanelProps {
   type: string;
@@ -27,10 +27,9 @@ export class HeroPanel extends Component<HeroPanelProps, HeroPanelState> {
     if (canvas && entity) {
       const ctx = new HDCanvas(canvas, {width: 100, height: 100});
       ctx.begin();
-      GraphicsPipeline.pipe()
-        .run(ctx, (ctx) => {
-          entity.render(ctx);
-        });
+      GraphicsPipeline.pipe().run(ctx, (ctx) => {
+        entity.render(ctx);
+      });
     }
   }
 
@@ -40,4 +39,3 @@ export class HeroPanel extends Component<HeroPanelProps, HeroPanelState> {
     const hero = WorldManager.spawnEntity(this.props.type);
   }
 }
-

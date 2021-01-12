@@ -1,8 +1,8 @@
-import { Rectangle, RectangleLike, Vector, VectorLike } from "core/geometry";
-import { Color } from "core/graphics";
-import { Iterator } from "core/iterator";
-import { clamp } from "core/util";
-import { DataSerializable } from "./serialize";
+import {Rectangle, RectangleLike, Vector, VectorLike} from 'core/geometry';
+import {Color} from 'core/graphics';
+import {Iterator} from 'core/iterator';
+import {clamp} from 'core/util';
+import {DataSerializable} from './serialize';
 
 export class DataBuffer {
   private buffer: Buffer;
@@ -167,7 +167,6 @@ export class DataBuffer {
   public writeList(list: DataSerializable[]): void {
     // Compute length
     this.writeUInt32(list.length);
-    Iterator.from(list)
-      .forEach((x) => x.dataSerialize(this));
+    Iterator.from(list).forEach((x) => x.dataSerialize(this));
   }
 }

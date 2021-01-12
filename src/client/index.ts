@@ -32,7 +32,10 @@ async function main(): Promise<void> {
   CameraManager.initialize();
   FormManager.initialize();
   MetricsManager.initialize();
-  NetworkManager.sendEvent<PlayerInitializedEvent>({type: 'PlayerInitializedEvent', data: {}});
+  NetworkManager.sendEvent<PlayerInitializedEvent>({
+    type: 'PlayerInitializedEvent',
+    data: {},
+  });
 
   log.debug('all managers initialized');
 

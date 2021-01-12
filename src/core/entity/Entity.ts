@@ -9,7 +9,8 @@ import {UUID, UUIDManager} from 'core/uuid';
 import {AsyncIterator} from 'core/iterator';
 import {DataBuffer, DataSerializable} from 'core/buf';
 
-export class Entity implements Bounded, DataSerializable, Serializable, Renderable {
+export class Entity
+  implements Bounded, DataSerializable, Serializable, Renderable {
   public static typeName: string = 'Entity';
   public static typeNum: number = 0;
   public static isTypeInitialized: boolean = false;
@@ -161,20 +162,20 @@ export class Entity implements Bounded, DataSerializable, Serializable, Renderab
   }
 
   public dataSerialize(buf: DataBuffer): void {
-    buf.writeString(this.type, 20);         // 24 - 24
-    buf.writeUInt32(this.id);               // 4  - 28
-    this.position.dataSerialize(buf);       // 8  - 36
-    this.velocity.dataSerialize(buf);       // 8  - 44
-    this.boundingBox.dataSerialize(buf);    // 16 - 60
-    buf.writeFloat(this.mass);              // 4  - 64
-    buf.writeFloat(this.friction);          // 4  - 68
-    buf.writeFloat(this.bounce);            // 4  - 72
-    buf.writeFloat(this.angle);             // 4  - 76
-    buf.writeBoolean(this.isCollidable);    // 1  - 77
-    buf.writeBoolean(this.doSync);          // 1  - 78
-    buf.writeBoolean(this.isVisible);       // 1  - 79
-    buf.writeUInt8(this.collisionLayer);    // 1  - 80
-    buf.writeColor(this.getColor());        // 4  - 84
+    buf.writeString(this.type, 20); // 24 - 24
+    buf.writeUInt32(this.id); // 4  - 28
+    this.position.dataSerialize(buf); // 8  - 36
+    this.velocity.dataSerialize(buf); // 8  - 44
+    this.boundingBox.dataSerialize(buf); // 16 - 60
+    buf.writeFloat(this.mass); // 4  - 64
+    buf.writeFloat(this.friction); // 4  - 68
+    buf.writeFloat(this.bounce); // 4  - 72
+    buf.writeFloat(this.angle); // 4  - 76
+    buf.writeBoolean(this.isCollidable); // 1  - 77
+    buf.writeBoolean(this.doSync); // 1  - 78
+    buf.writeBoolean(this.isVisible); // 1  - 79
+    buf.writeUInt8(this.collisionLayer); // 1  - 80
+    buf.writeColor(this.getColor()); // 4  - 84
   }
 
   public dataDeserialize(buf: DataBuffer): void {

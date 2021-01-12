@@ -33,9 +33,9 @@ import {WHITE, reshade} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
-import { AssetManager } from 'core/assets';
-import { UUID, UUIDManager } from 'core/uuid';
-import { DataBuffer } from 'core/buf';
+import {AssetManager} from 'core/assets';
+import {UUID, UUIDManager} from 'core/uuid';
+import {DataBuffer} from 'core/buf';
 
 const log = LogManager.forFile(__filename);
 
@@ -105,7 +105,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     //   this.registerTemplateEntity.bind(this)
     // );
 
-    const entityList = await AssetManager.loadJSON('templates/entities/index.json') as string[];
+    const entityList = (await AssetManager.loadJSON(
+      'templates/entities/index.json'
+    )) as string[];
     const entityFiles = await AssetManager.loadAllJSON(entityList);
 
     Iterator.from(entityFiles)

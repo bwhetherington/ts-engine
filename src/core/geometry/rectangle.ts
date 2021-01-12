@@ -1,6 +1,6 @@
 import {Data, Serializable} from 'core/serialize';
 import {VectorLike} from 'core/geometry';
-import { DataBuffer, DataSerializable } from 'core/buf';
+import {DataBuffer, DataSerializable} from 'core/buf';
 
 export interface RectangleLike {
   x: number;
@@ -9,7 +9,8 @@ export interface RectangleLike {
   height: number;
 }
 
-export class Rectangle implements DataSerializable, Serializable, RectangleLike {
+export class Rectangle
+  implements DataSerializable, Serializable, RectangleLike {
   constructor(
     public width: number = 0,
     public height: number = 0,

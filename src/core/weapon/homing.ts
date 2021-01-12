@@ -63,7 +63,7 @@ export class BaseHomingGun extends BaseGun {
       .forEach(() => {
         base.target = this.selectTarget(base, source);
       });
-      
+
     return base;
   }
 }

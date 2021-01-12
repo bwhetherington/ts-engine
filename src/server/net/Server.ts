@@ -136,7 +136,7 @@ export class Server extends Node {
     this.wsServer.on('close', (connection) => {});
 
     EventManager.streamEvents<PlayerInitializedEvent>('PlayerInitializedEvent')
-      .filterMap(({socket}) => socket !== undefined ? socket : undefined)
+      .filterMap(({socket}) => (socket !== undefined ? socket : undefined))
       .forEach((socket) => this.initialSync(socket));
   }
 

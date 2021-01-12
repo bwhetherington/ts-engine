@@ -8,7 +8,7 @@ import {
 import {LogManager} from 'core/log';
 import {Template} from 'core/entity/template';
 import {Iterator} from 'core/iterator';
-import { AssetManager } from 'core/assets';
+import {AssetManager} from 'core/assets';
 
 const log = LogManager.forFile(__filename);
 
@@ -39,7 +39,9 @@ export class WeaponManager {
     this.registerWeapon(BaseHomingGun);
     this.registerWeapon(BaseBurstGun);
 
-    const weaponList = await AssetManager.loadJSON('templates/weapons/index.json') as string[];
+    const weaponList = (await AssetManager.loadJSON(
+      'templates/weapons/index.json'
+    )) as string[];
     const weaponFiles = await AssetManager.loadAllJSON(weaponList);
 
     Iterator.from(weaponFiles)

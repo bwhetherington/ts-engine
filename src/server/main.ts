@@ -10,14 +10,7 @@ import {LogManager} from 'core/log';
 import {Server, createServer, ServerHTTPClient} from 'server/net';
 import {NetworkManager, SyncEvent} from 'core/net';
 import {ChatManager} from 'server/chat';
-import {
-  WorldManager,
-  Unit,
-  FeedVariant,
-  Feed,
-  KillEvent,
-  Entity,
-} from 'core/entity';
+import {WorldManager, FeedVariant, Feed} from 'core/entity';
 import {PlayerManager} from 'core/player';
 import {FormManager} from 'core/form';
 import {registerJoinForm} from 'core/form';
@@ -27,15 +20,10 @@ import process from 'process';
 import path from 'path';
 import {registerRenameForm} from 'core/form/rename';
 import {isEmpty} from 'core/util/object';
-import {fromHSV, fromRGB, randomColor} from 'core/graphics/color';
+import {randomColor} from 'core/graphics/color';
 import {RNGManager} from 'core/random';
 import {BasicAuth} from 'core/net/http';
 import {AssetManager} from 'core/assets';
-import {AsyncIterator, Iterator} from 'core/iterator';
-import {FormatParser, TextFormatter} from 'core/chat/format';
-import { GameAction, gameStateMachine } from 'core/fsm/game';
-import { DataBuffer } from 'core/buf/buffer';
-import { Vector } from 'core/geometry';
 
 const log = LogManager.forFile(__filename);
 

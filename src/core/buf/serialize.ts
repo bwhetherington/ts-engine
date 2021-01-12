@@ -1,4 +1,4 @@
-import { DataBuffer } from "./buffer";
+import {DataBuffer} from './buffer';
 
 export interface DataSerializable {
   dataSize(): number;

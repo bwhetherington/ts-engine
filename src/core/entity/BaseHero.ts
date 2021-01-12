@@ -23,7 +23,7 @@ import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
 import {Matrix2} from 'core/geometry';
-import { UUID } from 'core/uuid';
+import {UUID} from 'core/uuid';
 
 const log = LogManager.forFile(__filename);
 
