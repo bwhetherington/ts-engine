@@ -1,23 +1,23 @@
 import {NetworkManager, PlayerInitializedEvent} from 'core/net';
-import {EventManager, StepEvent, Event} from 'core/event';
+import {EventManager} from 'core/event';
 import {LogManager} from 'core/log';
-import {DamageEvent, Unit, WorldManager} from 'core/entity';
-import {Timer, HDCanvas, Client, ClientLogger, loadFile} from 'client/util';
+import {WorldManager} from 'core/entity';
+import {Timer, HDCanvas, Client, ClientLogger, loadFile, loadDirectory} from 'client/util';
 import {CameraManager} from 'core/graphics';
 import {InputManager} from 'client/input';
-import {PlayerManager, Player, PlayerLeaveEvent} from 'core/player';
+import {PlayerManager} from 'core/player';
 import {FormManager} from 'core/form';
 import {WeaponManager} from 'core/weapon';
 import {loadReactUI} from 'client/components';
 import {MetricsManager} from 'client/metrics';
 import {AssetManager} from 'core/assets';
-import {join} from 'client/util';
 
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
-  LogManager.initialize('info', new ClientLogger());
-  AssetManager.initialize((url) => loadFile(join('assets', url)));
+  LogManager.initialize('debug', new ClientLogger());
+  AssetManager.initialize(loadFile, loadDirectory);
+
 
   loadReactUI();
 

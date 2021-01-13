@@ -5,11 +5,29 @@ const log = LogManager.forFile(__filename);
 
 type AssetLoader = (path: string) => Promise<Buffer>;
 
+type DirectoryLoader = (path: string) => Promise<string[]>;
+
 export class AssetManager {
   private loader?: AssetLoader;
+  private directoryLoader?: DirectoryLoader;
 
-  public initialize(loader: AssetLoader): void {
+  public initialize(
+    loader: AssetLoader,
+    directoryLoader: DirectoryLoader,
+  ): void {
     this.loader = loader;
+    this.directoryLoader = directoryLoader;
+  }
+
+  public async loadDirectory(path: string): Promise<string[]> {
+    if (this.directoryLoader) {
+      const data = await this.directoryLoader(path);
+      log.debug('load directory: ' + path);
+      return data;
+    } else {
+      log.error('directory loader not specified');
+      throw new Error('directory loader not specified');
+    } 
   }
 
   public async loadBuffer(path: string): Promise<Buffer> {

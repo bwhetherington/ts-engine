@@ -5,6 +5,7 @@ import {
   TimerManager,
   loadWorld,
   loadFile,
+  loadDirectory,
 } from 'server/util';
 import {LogManager} from 'core/log';
 import {Server, createServer, ServerHTTPClient} from 'server/net';
@@ -17,7 +18,6 @@ import {registerJoinForm} from 'core/form';
 import {MetricsManager} from 'server/metrics';
 import {WeaponManager} from 'core/weapon';
 import process from 'process';
-import path from 'path';
 import {registerRenameForm} from 'core/form/rename';
 import {isEmpty} from 'core/util/object';
 import {randomColor} from 'core/graphics/color';
@@ -29,7 +29,7 @@ const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
   LogManager.initialize('debug', new ServerLogger());
-  AssetManager.initialize((url) => loadFile(path.join('assets', url)));
+  AssetManager.initialize(loadFile, loadDirectory);
 
   const httpServer = await createServer({
     dirs: ['./static/', './build/client/'],

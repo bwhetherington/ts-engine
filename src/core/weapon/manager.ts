@@ -39,9 +39,7 @@ export class WeaponManager {
     this.registerWeapon(BaseHomingGun);
     this.registerWeapon(BaseBurstGun);
 
-    const weaponList = (await AssetManager.loadJSON(
-      'templates/weapons/index.json'
-    )) as string[];
+    const weaponList = await AssetManager.loadDirectory('templates/weapons');
     const weaponFiles = await AssetManager.loadAllJSON(weaponList);
 
     Iterator.from(weaponFiles)

@@ -105,9 +105,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     //   this.registerTemplateEntity.bind(this)
     // );
 
-    const entityList = (await AssetManager.loadJSON(
-      'templates/entities/index.json'
-    )) as string[];
+    const entityList = await AssetManager.loadDirectory('templates/entities');
     const entityFiles = await AssetManager.loadAllJSON(entityList);
 
     Iterator.from(entityFiles)
