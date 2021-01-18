@@ -89,7 +89,7 @@ export class Trail extends Entity {
     if (this.parent) {
       const color = {
         ...this.parent.getColor(),
-        alpha: 0.15
+        alpha: 0.25
       };
       GraphicsPipeline.pipe()
       .options({
