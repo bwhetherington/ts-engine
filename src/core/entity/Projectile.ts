@@ -1,4 +1,4 @@
-import {Entity, Unit, WorldManager} from 'core/entity';
+import {Entity, Trail, Unit, WorldManager} from 'core/entity';
 import {BLACK, GraphicsContext, rgba, WHITE} from 'core/graphics';
 import {LogManager} from 'core/log';
 import {CollisionLayer} from './util';
@@ -44,11 +44,16 @@ export class Projectile extends Entity {
     this.collisionLayer = CollisionLayer.Projectile;
     this.friction = 350;
     this.bounce = 0;
-    this.mass = 0.03;
+    this.mass = 0.1;
     this.setColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.boundingBox.width = 20;
     this.boundingBox.height = 20;
     this.timeCreated = EventManager.timeElapsed;
+
+    if (NetworkManager.isClient()) {
+      const trail = WorldManager.spawn(Trail);
+      trail.initialize(this);
+    }
   }
 
   public step(dt: number): void {

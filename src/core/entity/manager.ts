@@ -36,6 +36,7 @@ import {RNGManager} from 'core/random';
 import {AssetManager} from 'core/assets';
 import {UUID, UUIDManager} from 'core/uuid';
 import {DataBuffer} from 'core/buf';
+import { Trail } from './Trail';
 
 const log = LogManager.forFile(__filename);
 
@@ -50,6 +51,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   private entityCount: number = 0;
   private unitCount: number = 0;
   private entityCounts: Record<string, number> = {};
+  public friction: number = 1;
 
   private graph?: Graph;
   private shouldPopulateGraph: boolean = false;
@@ -99,6 +101,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Echo);
     this.registerEntity(HomingProjectile);
     this.registerEntity(Feed);
+    this.registerEntity(Trail);
 
     // Template entities
     // Iterator.values(templateEntities).forEach(
@@ -352,7 +355,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
     // Reinsert each entity into the quad tree
     this.space.clear();
-    this.collisionLayers = [[], [], [], [], []];
+    this.collisionLayers = [[], [], [], [], [], []];
 
     this.getEntities().forEach((entity) => {
       entity.afterStep();
@@ -419,6 +422,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       entities: {},
       deleted: this.toDelete,
       boundingBox: this.boundingBox.serialize(),
+      friction: this.friction,
     };
     for (const key in this.entities) {
       const entity = this.entities[key];
@@ -432,7 +436,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public deserialize(data: Data): void {
-    const {entities, deleted, boundingBox} = data;
+    const {entities, deleted, boundingBox, friction} = data;
     for (const id in entities) {
       const entry = entities[id];
       if (Object.keys(entry).length === 0) {
@@ -469,6 +473,10 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
     if (boundingBox) {
       this.boundingBox.deserialize(boundingBox);
+    }
+
+    if (typeof friction === 'number') {
+      this.friction = friction;
     }
   }
 
@@ -557,7 +565,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public loadLevel(level: Data): void {
-    const {boundingBox, geometry} = level;
+    const {boundingBox, geometry, friction = 1} = level;
     if (boundingBox && geometry) {
       // Erase previous geometry
       this.getEntities()
@@ -567,6 +575,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       this.boundingBox.deserialize(boundingBox);
       this.boundingBox.centerX = 0;
       this.boundingBox.centerY = 0;
+      this.friction = friction;
 
       this.resize(this.boundingBox);
 

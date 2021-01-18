@@ -63,6 +63,13 @@ export class Queue<T> {
     return undefined;
   }
 
+  public peek(): T | undefined {
+    const {head} = this;
+    if (head) {
+      return head.value;
+    }
+  }
+
   public dequeue(): T | undefined {
     const {head} = this;
     if (head) {

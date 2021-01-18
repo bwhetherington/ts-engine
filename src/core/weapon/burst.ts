@@ -39,8 +39,6 @@ export class BaseBurstGun extends BaseGun {
   public async fire(source: Tank, angle: number): Promise<void> {
     for (let i = 0; i < this.burstCount; i++) {
       const projectile = this.createProjectile(source, angle);
-      projectile.boundingBox.width = 15;
-      projectile.boundingBox.height = 15;
       source.applyForce(projectile.velocity, -projectile.mass);
       await EventManager.sleep(this.burstInterval);
     }

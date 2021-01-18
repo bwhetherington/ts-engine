@@ -87,6 +87,16 @@ export class Entity
     this.boundingBox.centerY = this.position.y;
   }
 
+  protected getTotalFriction(): number {
+    switch (this.collisionLayer) {
+      case CollisionLayer.Effect:
+      case CollisionLayer.HUD:
+        return this.friction;
+      default:
+        return this.friction * WorldManager.friction;
+    }
+  }
+
   private updatePosition(dt: number): void {
     this.addPosition(this.velocity, dt);
     if (this.isCollidable) {
@@ -122,7 +132,7 @@ export class Entity
     }
 
     // Apply friction
-    const normal = this.friction;
+    const normal = this.getTotalFriction();
     if (normal > 0) {
       const oldAngle = this.velocity.angle;
       this.vectorBuffer.set(this.velocity);

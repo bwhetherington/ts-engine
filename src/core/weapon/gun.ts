@@ -5,6 +5,7 @@ import {
   Tank,
   ProjectileShape,
   isProjectileShape,
+  Trail,
 } from 'core/entity';
 import {Data} from 'core/serialize';
 import {RNGManager} from 'core/random';

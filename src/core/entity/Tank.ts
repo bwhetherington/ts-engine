@@ -11,12 +11,26 @@ const log = LogManager.forFile(__filename);
 
 const FIRE_DURATION = 0.25;
 
+export type ShapeType = CircleType | PolygonType;
+
+export interface CircleType {
+  tag: 'circle',
+}
+
+export interface PolygonType {
+  tag: 'polygon',
+  sides: number,
+}
+
 export class Tank extends Unit {
   public static typeName: string = 'Tank';
 
   public armor: number = 0;
 
   protected cannonShape: CannonShape = new CannonShape(25, 15);
+  protected bodyShape: ShapeType = {
+    tag: 'circle',
+  };
 
   private fireTimer: number = 0;
   private weapon?: Weapon;
@@ -57,6 +71,16 @@ export class Tank extends Unit {
     return (this.fireTimer / FIRE_DURATION) * 0.2 + 1;
   }
 
+  protected renderBody(ctx: GraphicsContext): void {
+    const {width} = this.boundingBox;
+    const radius = width / 2;
+    if (this.bodyShape.tag === 'circle') {
+      ctx.ellipse(-radius, -radius, radius * 2, radius * 2, this.getColor());
+    } else if (this.bodyShape.tag === 'polygon') {
+      ctx.regularPolygon(0, 0, this.bodyShape.sides, radius, this.getColor());
+    }
+  }
+
   protected renderCannon(ctx: GraphicsContext): void {
     const color = this.getColor();
     const horizontalScale = this.getFireParameter();
@@ -85,16 +109,9 @@ export class Tank extends Unit {
   }
 
   public render(ctx: GraphicsContext): void {
-    const color = this.getColor();
-
-    const {width, height} = this.boundingBox;
-
-    // Draw turret
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       this.renderCannon(ctx);
-
-      // Draw main tank bodyconst {width, height} = this.boundingBox;
-      ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
+      this.renderBody(ctx);
     });
   }
 
@@ -108,9 +125,13 @@ export class Tank extends Unit {
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const {cannonShape, weapon} = data;
+    const {cannonShape, bodyShape, weapon} = data;
     if (cannonShape) {
       this.cannonShape.deserialize(cannonShape);
+    }
+    if (bodyShape) {
+      // TODO Add type checking
+      this.bodyShape = bodyShape;
     }
     if (weapon) {
       const {type} = weapon;

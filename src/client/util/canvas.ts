@@ -447,6 +447,38 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
+  
+  public path(points: Iterable<VectorLike>, color: Color): void {
+    const ctx = this.curContext;
+    if (ctx) {
+      this.setStyles(ctx, color);
+      ctx.lineWidth = this.options.lineWidth;
+      this.setRound(ctx);
+      ctx.beginPath();
+      ctx.lineCap = 'round';
+
+      let hasStarted = false;
+      let lastX = 0;
+      let lastY = 0;
+      for (const {x, y} of points) {
+        if (hasStarted) {
+          const cpx = (x + lastX) / 2;
+          const cpy = (y + lastY) / 2;
+          ctx.quadraticCurveTo(cpx, cpy, x, y);
+          ctx.lineTo(x, y);
+        } else {
+          ctx.moveTo(x, y);
+          hasStarted = true;
+        }
+
+        lastX = x;
+        lastY = y;
+      }
+
+      ctx.stroke();
+    }
+  }
+
   public translate(x: number, y: number) {
     this.src.translate(x, y);
     this.transform.multiply(this.src, this.dst);

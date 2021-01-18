@@ -6,6 +6,8 @@ import {
   Text,
   WorldManager,
   Echo,
+  CollisionLayer,
+  Trail,
 } from 'core/entity';
 import {Data} from 'core/serialize';
 import {MovementDirection} from 'core/input';
@@ -13,8 +15,7 @@ import {Vector} from 'core/geometry';
 import {clamp} from 'core/util';
 import {EventManager} from 'core/event';
 import {NetworkManager} from 'core/net';
-import {Color, reshade, GraphicsContext} from 'core/graphics';
-import {CollisionLayer} from './util';
+import {Color, reshade} from 'core/graphics';
 import {TextColor} from 'core/chat';
 
 const ACCELERATION = 2000;
@@ -33,6 +34,7 @@ export class Unit extends Entity {
 
   protected label?: Text;
   protected hpBar?: Bar;
+  protected trail?: Trail;
 
   private lastFlash: number = 0;
   private flashColor?: Color;

@@ -1,10 +1,6 @@
-import {Entity} from './Entity';
-import {EventManager} from 'core/event';
-import {TextUpdateEvent, TextRemoveEvent} from 'core/text';
 import {Data} from 'core/serialize';
 import {GraphicsContext} from 'core/graphics';
-import {WHITE, BLACK, rgb} from 'core/graphics/color';
-import {CollisionLayer} from './util';
+import {CollisionLayer, Entity} from 'core/entity';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {TextFormatter} from 'core/chat/format';
 import {isTextColor, TextColor} from 'core/chat';

@@ -68,6 +68,7 @@ export interface GraphicsContext {
     color: Color
   ): void;
   line(x1: number, y1: number, x2: number, y2: number, color: Color): void;
+  path(points: Iterable<VectorLike>, color: Color): void;
   translate(x: number, y: number): void;
   rotate(angle: number): void;
   scale(scale: number): void;

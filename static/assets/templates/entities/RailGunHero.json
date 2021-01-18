@@ -1,0 +1,10 @@
+{
+  "type": "RailGunHero",
+  "extends": "BaseHero",
+  "weapon": "RailGun",
+  "cannonShape": {
+    "length": 30,
+    "height": 17.5,
+    "farHeight": 12.5
+  }
+}

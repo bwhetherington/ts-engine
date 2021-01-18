@@ -13,6 +13,7 @@ export * from 'core/entity/TimedText';
 export * from 'core/entity/Bar';
 export * from 'core/entity/Echo';
 export * from 'core/entity/Feed';
+export * from 'core/entity/Trail';
 
 import {WorldManager} from 'core/entity/manager';
 import {Rectangle} from 'core/geometry';

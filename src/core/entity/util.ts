@@ -7,6 +7,7 @@ import {Color} from 'core/graphics';
 const log = LogManager.forFile(__filename);
 
 export enum CollisionLayer {
+  BaseEffect,
   Geometry,
   Unit,
   Projectile,
