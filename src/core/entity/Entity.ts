@@ -98,7 +98,6 @@ export class Entity
   }
 
   private updatePosition(dt: number): void {
-    this.addPosition(this.velocity, dt);
     if (this.isCollidable) {
       // Query for entities that may collide with this entity
       let collided = false;
@@ -144,10 +143,17 @@ export class Entity
         this.velocity.setXY(0, 0);
       }
     }
+    if (this.isAlive()) {
+      this.addPosition(this.velocity, dt);
+    }
   }
 
   public step(dt: number): void {
     this.updatePosition(dt);
+  }
+
+  public isAlive(): boolean {
+    return !this.markedForDelete;
   }
 
   public serialize(): Data {

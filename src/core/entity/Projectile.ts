@@ -112,6 +112,10 @@ export class Projectile extends Entity {
     }
   }
 
+  public isAlive(): boolean {
+    return super.isAlive() && !this.hasExploded;
+  }
+
   public hit(unit?: Unit): boolean {
     if (unit) {
       if (

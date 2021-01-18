@@ -35,7 +35,7 @@ export class HomingProjectile extends Projectile {
           (entity) => entity.position.distanceTo(this.position) < SEARCH_RADIUS
         )
         .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
-        .filter((unit) => unit.isAlive)
+        .filter((unit) => unit.isAlive())
         .filter((unit) => !this.hitEntities.has(unit.id))
         .map<[Unit | undefined, number]>((unit) => [
           unit,

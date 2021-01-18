@@ -80,8 +80,8 @@ export class Unit extends Entity {
     this.isAliveInternal = false;
   }
 
-  public get isAlive(): boolean {
-    return this.isAliveInternal;
+  public isAlive(): boolean {
+    return this.isAliveInternal && super.isAlive();
   }
 
   public getLife(): number {
@@ -309,7 +309,7 @@ export class Unit extends Entity {
       this.markForDelete();
     }
 
-    if (this.isAlive) {
+    if (this.isAlive()) {
       EventManager.emit<KillEvent>({
         type: 'KillEvent',
         data: {
@@ -331,7 +331,7 @@ export class Unit extends Entity {
 
   public getColor(): Color {
     const color =
-      EventManager.timeElapsed - this.lastFlash < FLASH_DURATION && this.isAlive
+      EventManager.timeElapsed - this.lastFlash < FLASH_DURATION && this.isAlive()
         ? this.flashColor ?? this.color
         : this.color;
     return color;

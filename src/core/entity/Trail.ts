@@ -43,7 +43,7 @@ export class Trail extends Entity {
 
   public step(dt: number): void {
     super.step(dt);
-    if (this.parent && !this.parent.markedForDelete) {
+    if (this.parent?.isAlive()) {
       this.snapshots.enqueue({
         time: EventManager.timeElapsed,
         position: this.parent.position.serialize() as VectorLike,
