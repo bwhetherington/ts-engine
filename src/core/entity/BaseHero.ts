@@ -98,7 +98,6 @@ export class BaseHero extends Tank {
           text.text = label;
           text.velocity.setXY(0, -60);
           text.velocity.angle += RNGManager.nextFloat(-0.3, 0.3);
-          // text.velocity.angle = Math.PI * 3 / 2;
           text.friction = 50;
           text.textSize = 20;
         }
