@@ -86,18 +86,21 @@ export class BaseHero extends Tank {
           this.getPlayer()?.isActivePlayer() &&
           (this === target || this === source)
         ) {
-          const label = '' + Math.round(amount);
+          const label = Math.round(amount).toLocaleString();
           const text = WorldManager.spawn(TimedText, target.position);
           const color = this === target ? 'red' : 'yellow';
           text.textColor = color;
           text.isStatic = false;
           text.position.addXY(
-            RNGManager.nextFloat(-10, 10),
-            RNGManager.nextFloat(-10, 10)
+            RNGManager.nextFloat(-25, 25),
+            RNGManager.nextFloat(-25, 25)
           );
           text.text = label;
-          text.velocity.setXY(RNGManager.nextFloat(25, 50), 0);
-          text.velocity.angle = RNGManager.nextFloat(0, 2 * Math.PI);
+          text.velocity.setXY(0, -60);
+          text.velocity.angle += RNGManager.nextFloat(-0.3, 0.3);
+          // text.velocity.angle = Math.PI * 3 / 2;
+          text.friction = 50;
+          text.textSize = 20;
         }
       });
     } else {
@@ -273,14 +276,6 @@ export class BaseHero extends Tank {
     };
   }
 
-  protected deserializeColor(): void {
-    if (this.player?.isActivePlayer()) {
-      this.setColor(hsv(220, 0.65, 0.9));
-    } else {
-      this.setColor(hsv(0, 0.65, 0.9));
-    }
-  }
-
   public deserialize(data: Data): void {
     const {x: oldX, y: oldY} = this.position;
     const {angle: oldAngle} = this;
@@ -292,7 +287,6 @@ export class BaseHero extends Tank {
       if (player && player.hero !== this) {
         player.setHero(this);
       }
-      this.deserializeColor();
     }
 
     if (maxHPTransform) {

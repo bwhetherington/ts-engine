@@ -18,6 +18,11 @@ export interface GraphicsOptions {
   useFancyAlpha?: boolean;
 }
 
+export interface ShadowStyle {
+  size: number;
+  color: Color;
+}
+
 export type GraphicsProc = (ctx: GraphicsContext) => void;
 
 export interface GraphicsContext {
@@ -73,4 +78,5 @@ export interface GraphicsContext {
     options: Partial<GraphicsOptions>,
     proc: (ctx: GraphicsContext) => void
   ): GraphicsContext;
+  withShadow(shadow: ShadowStyle, proc: GraphicsProc): GraphicsContext;
 }

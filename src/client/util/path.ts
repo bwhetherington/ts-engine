@@ -10,10 +10,13 @@ export function join(...parts: string[]): string {
     .join('/');
 }
 
-export function stripPrefix(path: string, ...prefixParts: string[]): string | undefined {
+export function stripPrefix(
+  path: string,
+  ...prefixParts: string[]
+): string | undefined {
   const prefix = join(...prefixParts) + '/';
   const index = path.indexOf(prefix);
-  
+
   if (index < 0) {
     return undefined;
   }

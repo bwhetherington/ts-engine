@@ -1,5 +1,5 @@
 import {GraphicsContext, GraphicsOptions} from '.';
-import {GraphicsProc} from './context';
+import {GraphicsProc, ShadowStyle} from './context';
 
 export class GraphicsPipeline {
   protected parent?: GraphicsPipeline;
@@ -48,6 +48,10 @@ export class GraphicsPipeline {
 
   public rotate(angle: number): GraphicsPipeline {
     return new RotatePipeline(angle, this);
+  }
+
+  public shadow(style: ShadowStyle): GraphicsPipeline {
+    return new ShadowPipeline(style, this);
   }
 
   public chain(pipeline: GraphicsPipeline): GraphicsPipeline {
@@ -134,5 +138,18 @@ class RotatePipeline extends GraphicsPipeline {
     ctx.rotate(this.angle);
     proc(ctx);
     ctx.rotate(-this.angle);
+  }
+}
+
+class ShadowPipeline extends GraphicsPipeline {
+  private style: ShadowStyle;
+
+  public constructor(style: ShadowStyle, parent?: GraphicsPipeline) {
+    super(parent);
+    this.style = style;
+  }
+
+  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+    ctx.withShadow(this.style, proc);
   }
 }

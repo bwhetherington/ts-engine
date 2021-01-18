@@ -8,6 +8,7 @@ import {EventData, Handler, EventManager, Event, StepEvent} from 'core/event';
 import {UUID, UUIDManager} from 'core/uuid';
 import {AsyncIterator} from 'core/iterator';
 import {DataBuffer, DataSerializable} from 'core/buf';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 
 export class Entity
   implements Bounded, DataSerializable, Serializable, Renderable {
@@ -76,7 +77,9 @@ export class Entity
 
   public render(ctx: GraphicsContext): void {
     const {width, height} = this.boundingBox;
-    ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
+    GraphicsPipeline.pipe().run(ctx, (ctx) => {
+      ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
+    });
   }
 
   private updateBoundingBox(): void {

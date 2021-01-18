@@ -3,7 +3,7 @@ import {Client} from 'client/util/NetClient';
 import {HDCanvas} from 'client/util/canvas';
 import {ClientLogger} from 'client/util/ClientLogger';
 import {join, stripPrefix} from 'client/util/path';
-import { Iterator } from 'core/iterator';
+import {Iterator} from 'core/iterator';
 
 export async function loadFile(path: string): Promise<Buffer> {
   const res = await fetch(join('assets', path));

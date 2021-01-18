@@ -4,7 +4,7 @@
   "projectileType": "HomingProjectile",
   "projectileSpread": 0.1,
   "projectileSpeed": 350,
-  "projectilePierce": 1,
+  "pierce": 1,
   "projectileDuration": 1.5,
   "damage": 5,
   "rate": 0.35

@@ -13,7 +13,7 @@ export class AssetManager {
 
   public initialize(
     loader: AssetLoader,
-    directoryLoader: DirectoryLoader,
+    directoryLoader: DirectoryLoader
   ): void {
     this.loader = loader;
     this.directoryLoader = directoryLoader;
@@ -27,7 +27,7 @@ export class AssetManager {
     } else {
       log.error('directory loader not specified');
       throw new Error('directory loader not specified');
-    } 
+    }
   }
 
   public async loadBuffer(path: string): Promise<Buffer> {

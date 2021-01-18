@@ -39,7 +39,10 @@ async function handleFile(fp: string, res: http.ServerResponse): Promise<void> {
   res.end();
 }
 
-async function handleDirectory(fp: string, res: http.ServerResponse): Promise<void> {
+async function handleDirectory(
+  fp: string,
+  res: http.ServerResponse
+): Promise<void> {
   const files = await readdir(fp);
   const filePaths = files.map((file) => path.join(fp, file));
   res.writeHead(200, {'Content-Type': 'application/json'});

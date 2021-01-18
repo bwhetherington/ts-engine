@@ -1,5 +1,5 @@
 import {Entity, Unit, WorldManager} from 'core/entity';
-import {GraphicsContext, rgba} from 'core/graphics';
+import {BLACK, GraphicsContext, rgba, WHITE} from 'core/graphics';
 import {LogManager} from 'core/log';
 import {CollisionLayer} from './util';
 import {Data} from 'core/serialize';
@@ -8,6 +8,7 @@ import {UUID} from 'core/uuid';
 import {iterator} from 'core/iterator';
 import {Echo} from './Echo';
 import {EventManager} from 'core/event';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 
 const log = LogManager.forFile(__filename);
 
@@ -33,7 +34,7 @@ export class Projectile extends Entity {
 
   private timeCreated: number;
 
-  private hitEntities: Set<UUID> = new Set();
+  protected hitEntities: Set<UUID> = new Set();
 
   public onHit?: (target?: Unit) => void;
 
@@ -131,20 +132,22 @@ export class Projectile extends Entity {
 
   public render(ctx: GraphicsContext): void {
     const {width, height} = this.boundingBox;
-    switch (this.shape) {
-      case 'circle':
-        ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
-        break;
-      case 'triangle':
-        ctx.polygon(
-          [
-            {y: -width * 0.5, x: -width * 0.5},
-            {y: width * 0.5, x: -width * 0.5},
-            {y: 0, x: width * 0.75},
-          ],
-          this.getColor()
-        );
-    }
+    GraphicsPipeline.pipe().run(ctx, (ctx) => {
+      switch (this.shape) {
+        case 'circle':
+          ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
+          break;
+        case 'triangle':
+          ctx.polygon(
+            [
+              {y: -width * 0.5, x: -width * 0.5},
+              {y: width * 0.5, x: -width * 0.5},
+              {y: 0, x: width * 0.75},
+            ],
+            this.getColor()
+          );
+      }
+    });
   }
 
   public serialize(): Data {

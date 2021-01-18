@@ -217,7 +217,15 @@ export class FormComponent extends Component<FormProps, FormState> {
             {method.label}
           </Button>
         );
-      }) ?? [<Button key="submit">Submit</Button>]
+      }) ?? [
+        <Button
+          type="submit"
+          onClick={() => this.submit('submit')}
+          key="submit"
+        >
+          Submit
+        </Button>,
+      ]
     );
   }
 

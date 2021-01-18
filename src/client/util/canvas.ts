@@ -8,7 +8,7 @@ import {
   CameraManager,
 } from 'core/graphics';
 import {COLOR_MAPPING, WHITE} from 'core/graphics/color';
-import {GraphicsProc} from 'core/graphics/context';
+import {GraphicsProc, ShadowStyle} from 'core/graphics/context';
 import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
 import {TextColor, TextComponents} from 'core/chat';
 
@@ -601,6 +601,22 @@ export class HDCanvas implements GraphicsContext {
       }
     } else {
       proc(this);
+    }
+    return this;
+  }
+
+  public withShadow(
+    {color, size}: ShadowStyle,
+    proc: GraphicsProc
+  ): GraphicsContext {
+    const ctx = this.curContext;
+    if (ctx) {
+      const {shadowColor, shadowBlur} = ctx;
+      ctx.shadowColor = toCss(color);
+      ctx.shadowBlur = size;
+      proc(this);
+      ctx.shadowColor = shadowColor;
+      ctx.shadowBlur = shadowBlur;
     }
     return this;
   }

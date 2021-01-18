@@ -17,6 +17,7 @@ export class Text extends Entity {
 
   public text: string = '';
   public textColor: TextColor = 'none';
+  public textSize: number = 24;
   public tag?: string;
   public isStatic: boolean = true;
 
@@ -42,6 +43,7 @@ export class Text extends Entity {
       ...super.serialize(),
       text: this.text,
       textColor: this.textColor,
+      textSize: this.textSize,
       label: this.tag,
     };
   }
@@ -49,7 +51,7 @@ export class Text extends Entity {
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const {text, tag, textColor} = data;
+    const {text, tag, textColor, textSize} = data;
     if (typeof text === 'string') {
       this.text = text;
     }
@@ -58,6 +60,9 @@ export class Text extends Entity {
     }
     if (isTextColor(textColor)) {
       this.textColor = textColor as TextColor;
+    }
+    if (typeof textSize === 'number') {
+      this.textSize = textSize;
     }
   }
 
@@ -71,7 +76,7 @@ export class Text extends Entity {
       .options({lineWidth: 6})
       .run(ctx, (ctx) => {
         ctx.textComponents(0, 0, components, {
-          size: 24,
+          size: this.textSize,
         });
       });
   }

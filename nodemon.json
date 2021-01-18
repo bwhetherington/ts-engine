@@ -1,11 +1,10 @@
 {
   "watch": [
     "src/**/*.ts",
-    "src/**/*.json"
+    "src/**/*.json",
+    "static/assets/templates/**/*.json"
   ],
-  "ignore": [
-    "src/client/*"
-  ],
+  "ignore": ["src/client/*"],
   "exec": "npm run server",
   "ext": "ts",
   "signal": "SIGTERM"

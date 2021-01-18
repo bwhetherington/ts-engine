@@ -154,13 +154,13 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     );
     ctx.popOptions();
 
-    ctx.withOptions(
-      {
+    GraphicsPipeline.pipe()
+      .options({
         lineWidth: 2,
         doFill: false,
         doStroke: true,
-      },
-      (ctx) => {
+      })
+      .run(ctx, (ctx) => {
         const stepSize = 20;
         const bounds = CameraManager.boundingBox;
 
@@ -182,8 +182,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         for (let y = yStart; y < maxY; y += stepSize) {
           ctx.line(minX, y, maxX, y, GRID_COLOR);
         }
-      }
-    );
+      });
 
     GraphicsPipeline.pipe()
       .options({

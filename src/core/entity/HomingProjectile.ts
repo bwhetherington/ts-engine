@@ -1,9 +1,9 @@
-import {Projectile, Entity, WorldManager} from 'core/entity';
-import {DirectionVector} from 'core/geometry';
-import {GraphicsContext} from 'core/graphics';
-import {GraphicsPipeline} from 'core/graphics/pipe';
+import {Projectile, Entity, WorldManager, Unit} from 'core/entity';
+import {DirectionVector, Rectangle} from 'core/geometry';
 import {NetworkManager} from 'core/net';
 import {Data} from 'core/serialize';
+
+const SEARCH_RADIUS = 250;
 
 export class HomingProjectile extends Projectile {
   public static typeName: string = 'HomingProjectile';
@@ -11,7 +11,8 @@ export class HomingProjectile extends Projectile {
   public velocity: DirectionVector = new DirectionVector();
   public maxSpeed: number = 1;
   public turnSpeed: number = 1;
-  public target?: Entity;
+
+  private target?: Entity;
 
   public constructor() {
     super();
@@ -19,10 +20,43 @@ export class HomingProjectile extends Projectile {
     this.friction = 0;
   }
 
+  private selectTarget(): Entity | undefined {
+    if (NetworkManager.isServer()) {
+      const [target] = WorldManager.query(
+        new Rectangle(
+          SEARCH_RADIUS * 2,
+          SEARCH_RADIUS * 2,
+          this.position.x - SEARCH_RADIUS,
+          this.position.y - SEARCH_RADIUS
+        )
+      )
+        .filter((entity) => !(this.parent === entity || this === entity))
+        .filter(
+          (entity) => entity.position.distanceTo(this.position) < SEARCH_RADIUS
+        )
+        .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
+        .filter((unit) => unit.isAlive)
+        .filter((unit) => !this.hitEntities.has(unit.id))
+        .map<[Unit | undefined, number]>((unit) => [
+          unit,
+          unit.position.distanceTo(this.position),
+        ])
+        .fold(
+          [undefined as Unit | undefined, Number.POSITIVE_INFINITY],
+          (min, cur) => (cur[1] < min[1] ? cur : min)
+        );
+      this.target = target;
+      return target;
+    } else {
+      return this.target;
+    }
+  }
+
   public step(dt: number): void {
     if (NetworkManager.isServer()) {
-      if (this.target) {
-        this.vectorBuffer.set(this.target.position);
+      const target = this.selectTarget();
+      if (target) {
+        this.vectorBuffer.set(target.position);
         this.vectorBuffer.add(this.position, -1);
         this.vectorBuffer.magnitude = this.turnSpeed;
         this.velocity.add(this.vectorBuffer);

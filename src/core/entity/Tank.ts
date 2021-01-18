@@ -93,8 +93,8 @@ export class Tank extends Unit {
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       this.renderCannon(ctx);
 
-      // Draw main tank body
-      ctx.ellipse(-width / 2, -height / 2, width, height, color);
+      // Draw main tank bodyconst {width, height} = this.boundingBox;
+      ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
     });
   }
 
@@ -104,10 +104,6 @@ export class Tank extends Unit {
       cannonShape: this.cannonShape,
       weapon: this.weapon?.serialize(),
     };
-  }
-
-  protected deserializeColor(): void {
-    this.setColor(hsv(0, 0.65, 0.9));
   }
 
   public deserialize(data: Data): void {

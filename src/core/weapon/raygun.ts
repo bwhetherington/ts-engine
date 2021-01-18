@@ -25,7 +25,6 @@ export class BaseRayGun extends Weapon {
   public static typeName: string = 'BaseRayGun';
 
   private raySpread: number = 0.05;
-  private rayPierce: number = 1;
   private rayDistance: number = 1000;
 
   public constructor() {
@@ -39,19 +38,15 @@ export class BaseRayGun extends Weapon {
     return {
       ...super.serialize(),
       raySpread: this.raySpread,
-      rayPierce: this.rayPierce,
       rayDistance: this.rayDistance,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const {raySpread, rayPierce, rayDistance} = data;
+    const {raySpread, rayDistance} = data;
     if (typeof raySpread === 'number') {
       this.raySpread = raySpread;
-    }
-    if (typeof rayPierce === 'number') {
-      this.rayPierce = rayPierce;
     }
     if (typeof rayDistance === 'number') {
       this.rayDistance = rayDistance;
@@ -68,7 +63,7 @@ export class BaseRayGun extends Weapon {
       start,
       angle,
       this.rayDistance,
-      this.rayPierce,
+      this.pierce,
       (entity: Entity) => entity instanceof Unit && entity !== source
     );
     Iterator.from(hit)

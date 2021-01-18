@@ -3,7 +3,7 @@
   "extends": "BaseRayGun",
   "raySpread": 0.025,
   "rayDistance": 1000,
-  "rayPierce": 1,
+  "pierce": 2,
   "damage": 5,
   "rate": 0.35
 }

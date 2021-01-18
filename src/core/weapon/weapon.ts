@@ -14,6 +14,7 @@ export abstract class Weapon implements Serializable {
   public shotCount: number = 1;
   public shotSpread: number = 0.3;
   public damage: number = 0;
+  public pierce: number = 1;
   private cooldown: number = 0;
   private id?: UUID;
 
@@ -63,11 +64,12 @@ export abstract class Weapon implements Serializable {
       damage: this.damage,
       shotCount: this.shotCount,
       shotSpread: this.shotSpread,
+      pierce: this.pierce,
     };
   }
 
   public deserialize(data: Data): void {
-    const {type, rate, cooldown, damage, shotCount, shotSpread} = data;
+    const {type, rate, cooldown, damage, shotCount, shotSpread, pierce} = data;
 
     if (typeof type === 'string') {
       this.type = type;
@@ -91,6 +93,10 @@ export abstract class Weapon implements Serializable {
 
     if (typeof shotSpread === 'number') {
       this.shotSpread = (shotSpread * Math.PI) / 180;
+    }
+
+    if (typeof pierce === 'number') {
+      this.pierce = pierce;
     }
   }
 

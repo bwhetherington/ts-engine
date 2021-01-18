@@ -16,7 +16,6 @@ export class BaseGun extends Weapon {
   protected projectileShape: ProjectileShape = 'circle';
   protected projectileSpeed: number = 500;
   protected projectileSpread: number = 0.1;
-  protected projectilePierce: number = 1;
   protected projectileDuration: number = 1;
 
   public constructor() {
@@ -35,7 +34,7 @@ export class BaseGun extends Weapon {
     projectile.parent = source;
     projectile.bounce = 0;
     projectile.damage = this.rollDamage();
-    projectile.pierce = this.projectilePierce;
+    projectile.pierce = this.pierce;
     projectile.velocity.setXY(1, 0);
     const offset = RNGManager.nextFloat(-0.5, 0.5) * this.projectileSpread;
     projectile.velocity.angle = angle + offset;
@@ -58,7 +57,6 @@ export class BaseGun extends Weapon {
       projectileType: this.projectileType,
       projectileSpeed: this.projectileSpeed,
       projectileSpread: this.projectileSpread,
-      projectilePierce: this.projectilePierce,
       projectileShape: this.projectileShape,
       projectileDuration: this.projectileDuration,
     };
@@ -70,7 +68,6 @@ export class BaseGun extends Weapon {
       projectileType,
       projectileSpeed,
       projectileSpread,
-      projectilePierce,
       projectileShape,
       projectileDuration,
     } = data;
@@ -85,10 +82,6 @@ export class BaseGun extends Weapon {
 
     if (typeof projectileSpread === 'number') {
       this.projectileSpread = projectileSpread;
-    }
-
-    if (typeof projectilePierce === 'number') {
-      this.projectilePierce = projectilePierce;
     }
 
     if (typeof projectileDuration === 'number') {

@@ -86,6 +86,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
     method: string = 'submit'
   ) => {
     const [form, ...rest] = this.state.forms;
+    console.log('submit', form, data);
     if (form) {
       NetworkManager.sendEvent<FormSubmitEvent>({
         type: 'FormSubmitEvent',
