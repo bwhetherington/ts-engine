@@ -6,7 +6,7 @@ import {Data} from 'core/serialize';
 import {NetworkManager} from 'core/net';
 import {UUID} from 'core/uuid';
 import {iterator} from 'core/iterator';
-import {Echo} from './Echo';
+import {Echo, EchoVariant} from './Echo';
 import {EventManager} from 'core/event';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 
@@ -31,10 +31,12 @@ export class Projectile extends Entity {
   public parent?: Unit;
   public duration: number = DURATION;
   public shape: ProjectileShape = 'circle';
+  public showExplosion: boolean = true;
 
   private timeCreated: number;
 
   protected hitEntities: Set<UUID> = new Set();
+  public ignoreEntities: Set<UUID> = new Set();
 
   public onHit?: (target?: Unit) => void;
 
@@ -62,7 +64,7 @@ export class Projectile extends Entity {
       NetworkManager.isServer() &&
       EventManager.timeElapsed - this.timeCreated > this.duration
     ) {
-      this.remove();
+      this.remove(false);
     }
   }
 
@@ -74,7 +76,7 @@ export class Projectile extends Entity {
       other.collisionLayer === CollisionLayer.Geometry
     ) {
       this.hit();
-      this.remove();
+      this.remove(true);
       return;
     }
 
@@ -96,7 +98,7 @@ export class Projectile extends Entity {
 
   protected explode(): void {
     const echo = WorldManager.spawn(Echo, this.position);
-    echo.initialize(this, false, 0.35);
+    echo.initialize(this, false, 0.35, EchoVariant.Shrink);
     echo.velocity.zero();
   }
 
@@ -106,7 +108,8 @@ export class Projectile extends Entity {
     } else {
       this.isVisible = false;
       this.isCollidable = false;
-      if (showExplosion && !this.hasExploded) {
+      if (!this.hasExploded && this.showExplosion) {
+        const variant = showExplosion ? EchoVariant.Grow : EchoVariant.Shrink;
         this.explodeInternal();
       }
     }
@@ -116,25 +119,27 @@ export class Projectile extends Entity {
     return super.isAlive() && !this.hasExploded;
   }
 
+  protected onHitInternal(target?: Unit): void {}
+
   public hit(unit?: Unit): boolean {
     if (unit) {
       if (
-        !this.hitEntities.has(unit.id) &&
+        !this.hitEntities.has(unit.id) && !this.ignoreEntities.has(unit.id) &&
         this.hitEntities.size < this.pierce
       ) {
         unit.damage(this.damage, this.parent);
         unit.applyForce(this.velocity, this.mass);
-        if (this.onHit) {
-          this.onHit(unit);
-        }
+        this.onHitInternal(unit);
         this.hitEntities.add(unit.id);
         if (this.hitEntities.size >= this.pierce) {
-          this.remove();
+          this.remove(true);
           return false;
         }
       } else {
         return false;
       }
+    } else {
+      this.onHitInternal();
     }
     return true;
   }
@@ -164,17 +169,19 @@ export class Projectile extends Entity {
       ...super.serialize(),
       damage: this.damage,
       parentID: this.parent?.id,
-      hitEntities: iterator(this.hitEntities).toArray(),
+      hitEntities: [...this.hitEntities],
+      ignoreEntities: [...this.ignoreEntities],
       pierce: this.pierce,
       duration: this.duration,
       shape: this.shape,
+      showExplosion: this.showExplosion,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const {damage, parentID, hitEntities, pierce, duration, shape} = data;
+    const {damage, parentID, hitEntities, ignoreEntities, pierce, duration, shape, showExplosion} = data;
 
     if (typeof duration === 'number') {
       this.duration = duration;
@@ -197,12 +204,19 @@ export class Projectile extends Entity {
     }
 
     if (hitEntities instanceof Array) {
-      this.hitEntities.clear();
-      hitEntities.forEach((entity) => this.hitEntities.add(entity));
+      this.hitEntities = new Set(hitEntities);
+    }
+
+    if (ignoreEntities instanceof Array) {
+      this.ignoreEntities = new Set(ignoreEntities);
     }
 
     if (isProjectileShape(shape)) {
       this.shape = shape;
+    }
+
+    if (typeof showExplosion === 'boolean') {
+      this.showExplosion = showExplosion;
     }
   }
 

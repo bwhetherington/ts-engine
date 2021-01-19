@@ -1,9 +1,9 @@
 {
-  "type": "MultiGun",
+  "type": "Multigun",
   "extends": "BaseGun",
-  "projectileType": "Projectile",
+  "projectileType": "ShatterProjectile",
   "projectileSpread": 0.1,
-  "projectileSpeed": 500,
+  "projectileSpeed": 750,
   "pierce": 1,
   "projectileDuration": 0.75,
   "shotCount": 5,

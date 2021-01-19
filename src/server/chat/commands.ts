@@ -21,7 +21,6 @@ export const setColor: CommandEntry = {
       }
 
       const color = hsv(hue, 0.65, 0.9);
-      ChatManager.info(JSON.stringify(color));
       const hero = player.hero;
       if (hero) {
         hero.setColor(color);

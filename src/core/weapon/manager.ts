@@ -1,7 +1,7 @@
 import {
   Weapon,
   BaseGun,
-  BaseRayGun,
+  BaseRaygun,
   BaseHomingGun,
   BaseBurstGun,
 } from 'core/weapon';
@@ -35,7 +35,7 @@ export class WeaponManager {
 
   private async registerWeapons(): Promise<void> {
     this.registerWeapon(BaseGun);
-    this.registerWeapon(BaseRayGun);
+    this.registerWeapon(BaseRaygun);
     this.registerWeapon(BaseHomingGun);
     this.registerWeapon(BaseBurstGun);
 

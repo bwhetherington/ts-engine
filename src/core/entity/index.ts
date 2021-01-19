@@ -6,6 +6,7 @@ export * from 'core/entity/Enemy';
 export * from 'core/entity/Geometry';
 export * from 'core/entity/Projectile';
 export * from 'core/entity/HomingProjectile';
+export * from 'core/entity/ShatterProjectile';
 export * from 'core/entity/Explosion';
 export * from 'core/entity/Ray';
 export * from 'core/entity/Text';

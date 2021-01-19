@@ -1,8 +1,8 @@
 {
-  "type": "RailGun",
+  "type": "Railgun",
   "extends": "BaseGun",
-  "projectileType": "Projectile",
-  "projectileSpread": 0.1,
+  "projectileType": "ShatterProjectile",
+  "projectileSpread": 0.05,
   "projectileSpeed": 1500,
   "pierce": 1,
   "damage": 5,

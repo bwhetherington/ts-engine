@@ -21,15 +21,15 @@ const COLOR: Color = {
   alpha: 0.75,
 };
 
-export class BaseRayGun extends Weapon {
-  public static typeName: string = 'BaseRayGun';
+export class BaseRaygun extends Weapon {
+  public static typeName: string = 'BaseRaygun';
 
   private raySpread: number = 0.05;
   private rayDistance: number = 1000;
 
   public constructor() {
     super();
-    this.type = BaseRayGun.typeName;
+    this.type = BaseRaygun.typeName;
     this.rate = 0.25;
     this.damage = 5;
   }

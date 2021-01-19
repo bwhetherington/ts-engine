@@ -1,6 +1,6 @@
 {
-  "type": "RayGun",
-  "extends": "BaseRayGun",
+  "type": "Raygun",
+  "extends": "BaseRaygun",
   "raySpread": 0.025,
   "rayDistance": 1000,
   "pierce": 1,

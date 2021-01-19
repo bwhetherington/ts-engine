@@ -98,6 +98,10 @@ export class Entity
   }
 
   private updatePosition(dt: number): void {
+    if (this.isAlive()) {
+      this.addPosition(this.velocity, dt);
+    }
+
     if (this.isCollidable) {
       // Query for entities that may collide with this entity
       let collided = false;
@@ -111,7 +115,7 @@ export class Entity
         .forEach((candidate) => {
           // Collision
           if (
-            this.collisionLayer === CollisionLayer.Unit &&
+            (this.collisionLayer === CollisionLayer.Unit || this.collisionLayer === CollisionLayer.Projectile) &&
             candidate.collisionLayer === CollisionLayer.Geometry
           ) {
             shuntOutOf(this, candidate.boundingBox);
@@ -142,9 +146,6 @@ export class Entity
       if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
         this.velocity.setXY(0, 0);
       }
-    }
-    if (this.isAlive()) {
-      this.addPosition(this.velocity, dt);
     }
   }
 

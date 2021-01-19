@@ -3,9 +3,8 @@
   "extends": "BaseGun",
   "projectileType": "Projectile",
   "projectileSpread": 0.2,
-  "projectileSpeed": 500,
-  "pierce": 1,
+  "projectileSpeed": 750,
   "damage": 3,
-  "rate": 0.15,
+  "rate": 0.1,
   "projectileShape": "circle"
 }

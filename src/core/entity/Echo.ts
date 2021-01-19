@@ -6,6 +6,11 @@ import {GraphicsPipeline} from 'core/graphics/pipe';
 
 const DURATION = 0.5;
 
+export enum EchoVariant {
+  Grow,
+  Shrink,
+}
+
 export class Echo extends Entity {
   public static typeName: string = 'Echo';
 
@@ -13,6 +18,7 @@ export class Echo extends Entity {
   private timeRemaining: number = DURATION;
   private duration: number = DURATION;
   private isFancy: boolean = false;
+  private variant: EchoVariant = EchoVariant.Grow;
 
   public constructor() {
     super();
@@ -43,7 +49,8 @@ export class Echo extends Entity {
   public initialize(
     entity: Entity,
     isFancy: boolean = false,
-    duration: number = DURATION
+    duration: number = DURATION,
+    variant: EchoVariant = EchoVariant.Grow,
   ): void {
     this.parent = entity;
     this.velocity.set(this.parent.velocity);
@@ -53,12 +60,21 @@ export class Echo extends Entity {
     this.timeRemaining = duration;
     this.duration = duration;
     this.isFancy = isFancy;
+    this.variant = variant;
   }
 
   public render(ctx: GraphicsContext): void {
     if (this.parent) {
       const t = this.getParameter();
-      const u = 2 - t;
+      let u;
+      switch (this.variant) {
+        case EchoVariant.Grow:
+          u = 2 - t;
+          break;
+        case EchoVariant.Shrink:
+          u = t;
+          break;
+      }
       GraphicsPipeline.pipe()
         .alpha(t, this.isFancy)
         .scale(u)

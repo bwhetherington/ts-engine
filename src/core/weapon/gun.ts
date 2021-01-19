@@ -33,7 +33,6 @@ export class BaseGun extends Weapon {
     ) as Projectile;
     projectile.setColor(source.getBaseColor());
     projectile.parent = source;
-    projectile.bounce = 0;
     projectile.damage = this.rollDamage();
     projectile.pierce = this.pierce;
     projectile.velocity.setXY(1, 0);
@@ -48,7 +47,7 @@ export class BaseGun extends Weapon {
 
   public fire(source: Tank, angle: number): void {
     const projectile = this.createProjectile(source, angle);
-    source.applyForce(projectile.velocity, -projectile.mass);
+    source.applyForce(projectile.velocity, -projectile.mass / 4);
   }
 
   // foo

@@ -37,6 +37,7 @@ import {AssetManager} from 'core/assets';
 import {UUID, UUIDManager} from 'core/uuid';
 import {DataBuffer} from 'core/buf';
 import { Trail } from './Trail';
+import { ShatterProjectile } from './ShatterProjectile';
 
 const log = LogManager.forFile(__filename);
 
@@ -100,6 +101,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Bar);
     this.registerEntity(Echo);
     this.registerEntity(HomingProjectile);
+    this.registerEntity(ShatterProjectile);
     this.registerEntity(Feed);
     this.registerEntity(Trail);
 

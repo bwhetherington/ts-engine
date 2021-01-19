@@ -309,7 +309,7 @@ export class Unit extends Entity {
       this.markForDelete();
     }
 
-    if (this.isAlive()) {
+    if (this.isAliveInternal) {
       EventManager.emit<KillEvent>({
         type: 'KillEvent',
         data: {
