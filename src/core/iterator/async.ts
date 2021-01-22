@@ -123,9 +123,25 @@ async function* enumerate<T>(
   }
 }
 
+async function* zip<T, U>(a: AsyncIterable<T>, b: AsyncIterable<U>): AsyncIterable<[T, U]> {
+  const aGen = a[Symbol.asyncIterator]();
+  const bGen = b[Symbol.asyncIterator]();
+
+  while (true) {
+    const [aVal, bVal] = await Promise.all([aGen.next(), bGen.next()]);
+
+    if (!(aVal.done || bVal.done)) {
+      yield [aVal.value, bVal.value];
+    } else {
+      break;
+    }
+  }
+}
+
 interface IteratorFunctions<T> {
-  $yield(arg: T): void;
-  $yieldAll(args: Iterable<T>): void;
+  $yield(arg: T): Promise<void>;
+  $yieldAll(args: Iterable<T>): Promise<void>;
+  $return(): Promise<void>;
 }
 
 function buildIterator<T>(
@@ -133,27 +149,47 @@ function buildIterator<T>(
 ): AsyncIterable<T> {
   let yieldQueue: T[] = [];
   let resolver = (_?: void) => {};
-  let guard = new Promise((resolve) => (resolver = resolve));
+  let yieldResolver = (_?: void) => {};
+  let guard = new Promise<void>((resolve) => {
+    resolver = resolve
+  });
+  let yieldGuard = new Promise<void>((resolve) => {
+    yieldResolver = resolve;
+  });
+  let isRunning = true;
 
-  const $yield = (arg: T) => {
+  const $yield = async (arg: T) => {
     yieldQueue.push(arg);
     resolver();
-    guard = new Promise((resolve) => (resolver = resolve));
+    guard = new Promise<void>((resolve) => {
+      resolver = resolve;
+    });
+    await yieldGuard;
   };
 
-  const $yieldAll = (iterable: Iterable<T>) => {
+  const $return = async () => {
+    resolver();
+    isRunning = false;
+    await yieldGuard;
+  };
+
+  const $yieldAll = async (iterable: Iterable<T>) => {
     for (const x of iterable) {
-      $yield(x);
+      await $yield(x);
     }
   };
 
-  body({$yield, $yieldAll});
+  body({$yield, $yieldAll, $return});
 
   return (async function* () {
-    while (true) {
+    while (isRunning) {
       for (const val of yieldQueue) {
         yield val;
       }
+      yieldResolver();
+      yieldGuard = new Promise((resolve) => {
+        yieldResolver = resolve;
+      });
       yieldQueue = [];
       await guard;
     }
@@ -349,6 +385,10 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
 
   public async drain(): Promise<void> {
     return await this.forEach(() => {});
+  }  
+  
+  public zip<U>(b: AsyncIterable<U>): AsyncIterator<[T, U]> {
+    return AsyncIterator.generator(zip(this.generator, b));
   }
 }
 

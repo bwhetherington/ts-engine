@@ -27,7 +27,7 @@ import {EventManager, StepEvent} from 'core/event';
 import {Serializable, Data} from 'core/serialize';
 import {Iterator, iterator} from 'core/iterator';
 import {diff} from 'core/util';
-import {SyncEvent} from 'core/net';
+import {NetworkManager, SyncEvent} from 'core/net';
 import {WALL_COLOR} from 'core/entity/Geometry';
 import {WHITE, reshade} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
@@ -362,7 +362,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.getEntities().forEach((entity) => {
       entity.afterStep();
 
-      if (entity.isCollidable) {
+      if (entity.isCollidable && NetworkManager.isServer()) {
         this.space.insert(entity);
       }
       const layerIndex = entity.collisionLayer;

@@ -349,8 +349,10 @@ export class Entity
   public streamEvents<E extends EventData>(
     type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(({$yield}) => {
-      this.addListener<E>(type, $yield);
+    return AsyncIterator.from(async ({$yield}) => {
+      this.addListener<E>(type, async (event) => {
+        await $yield(event);
+      });
     });
   }
 

@@ -127,14 +127,16 @@ export class EventManager {
   public streamEvents<E extends EventData>(
     type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(({$yield}) => {
-      this.addListener(type, $yield);
+    return AsyncIterator.from(async ({$yield}) => {
+      this.addListener<E>(type, async (event) => {
+        await $yield(event);
+      });
     });
   }
 
   public streamInterval(period: number): AsyncIterator<void> {
     return AsyncIterator.from(({$yield}) => {
-      this.runPeriodic(period, () => $yield());
+      this.runPeriodic(period, async () => await $yield());
     });
   }
 }

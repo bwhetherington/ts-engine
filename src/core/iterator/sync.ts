@@ -1,3 +1,5 @@
+import { AsyncIterator } from "./async";
+
 function* map<T, U>(gen: Iterable<T>, fn: (x: T) => U): Iterable<U> {
   for (const x of gen) {
     yield fn(x);
@@ -142,6 +144,26 @@ function* iterateReadonlyArray<T>(array: readonly T[]): Iterable<Readonly<T>> {
 function* range(low: number, high: number): Iterable<number> {
   for (let i = low; i < high; i++) {
     yield i;
+  }
+}
+
+async function* toAsync<T>(gen: Iterable<T>): AsyncIterable<T> {
+  yield* gen;
+}
+
+function* zip<T, U>(a: Iterable<T>, b: Iterable<U>): Iterable<[T, U]> {
+  const aGen = a[Symbol.iterator]();
+  const bGen = b[Symbol.iterator]();
+
+  while (true) {
+    const aVal = aGen.next();
+    const bVal = bGen.next();
+
+    if (!(aVal.done || bVal.done)) {
+      yield [aVal.value, bVal.value];
+    } else {
+      break;
+    }
   }
 }
 
@@ -334,5 +356,13 @@ export class Iterator<T> implements Iterable<T> {
       count += 1;
     });
     return count;
+  }
+
+  public zip<U>(b: Iterable<U>): Iterator<[T, U]> {
+    return Iterator.from(zip(this.generator, b));
+  }
+
+  public toAsync(): AsyncIterator<T> {
+    return AsyncIterator.generator(toAsync(this.generator));
   }
 }

@@ -24,6 +24,7 @@ import {randomColor} from 'core/graphics/color';
 import {RNGManager} from 'core/random';
 import {BasicAuth} from 'core/net/http';
 import {AssetManager} from 'core/assets';
+import { AsyncIterator, Iterator } from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
