@@ -90,44 +90,52 @@ export class InputManager {
       NetworkManager.send(mouseEvent);
     });
     this.element?.addEventListener('keydown', (event) => {
-      const key = KEY_MAP[event.code];
-      if (key !== undefined) {
-        if (!this.keyStates[key]) {
-          this.keyStates[key] = true;
-          const keyEvent = {
-            type: 'KeyEvent',
-            data: <KeyEvent>{
-              action: KeyAction.KeyDown,
-              key,
-            },
-          };
-          EventManager.emit(keyEvent);
-          NetworkManager.send(keyEvent);
-        }
-      } else {
-        log.warn('unrecognized key: ' + event.code);
-      }
+      this.keyDown(event.code);
     });
     this.element?.addEventListener('keyup', (event) => {
-      const key = KEY_MAP[event.code];
-      if (key !== undefined) {
-        if (this.keyStates[key]) {
-          this.keyStates[key] = false;
-          const keyEvent = {
-            type: 'KeyEvent',
-            data: <KeyEvent>{
-              action: KeyAction.KeyUp,
-              key,
-            },
-          };
-          EventManager.emit(keyEvent);
-          NetworkManager.send(keyEvent);
-        }
-      } else {
-        log.warn('unrecognized key: ' + event.code);
-      }
+      this.keyUp(event.code);
     });
     log.debug('InputManager initialized');
+  }
+
+  public keyDown(code: string): void {
+    const key = KEY_MAP[code];
+    if (key !== undefined) {
+      if (!this.keyStates[key]) {
+        this.keyStates[key] = true;
+        const keyEvent = {
+          type: 'KeyEvent',
+          data: <KeyEvent>{
+            action: KeyAction.KeyDown,
+            key,
+          },
+        };
+        EventManager.emit(keyEvent);
+        NetworkManager.send(keyEvent);
+      }
+    } else {
+      log.warn('unrecognized key: ' + code);
+    }
+  }
+
+  public keyUp(code: string): void {
+    const key = KEY_MAP[code];
+    if (key !== undefined) {
+      if (this.keyStates[key]) {
+        this.keyStates[key] = false;
+        const keyEvent = {
+          type: 'KeyEvent',
+          data: <KeyEvent>{
+            action: KeyAction.KeyUp,
+            key,
+          },
+        };
+        EventManager.emit(keyEvent);
+        NetworkManager.send(keyEvent);
+      }
+    } else {
+      log.warn('unrecognized key: ' + code);
+    }
   }
 
   public reset(): void {

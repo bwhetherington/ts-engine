@@ -1,3 +1,4 @@
+import { InputManager } from 'client/input';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -26,6 +27,8 @@ interface InputProps<T> {
   value: T;
   onChange(x: T): void;
   isDisabled?: boolean;
+  onKeyDown?: React.EventHandler<React.KeyboardEvent<HTMLInputElement>>;
+  onKeyUp?: React.EventHandler<React.KeyboardEvent<HTMLInputElement>>;
 }
 
 function onValueChange(
@@ -48,6 +51,8 @@ export const StringInput = React.forwardRef<HTMLInputElement, StringInputProps>(
       type={props.isPassword ? 'password' : 'text'}
       value={props.value}
       onChange={onValueChange(props.onChange)}
+      onKeyDown={props.onKeyDown}
+      onKeyUp={props.onKeyUp}
     />
   )
 );
@@ -71,6 +76,8 @@ export const FloatInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       max={props.max}
       value={props.value}
       onChange={onNumberValueChange(props.onChange, parseFloat)}
+      onKeyDown={props.onKeyDown}
+      onKeyUp={props.onKeyUp}
     />
   )
 );
@@ -85,6 +92,8 @@ export const IntInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       max={props.max}
       value={props.value}
       onChange={onNumberValueChange(props.onChange, parseInt)}
+      onKeyDown={props.onKeyDown}
+      onKeyUp={props.onKeyUp}
     />
   )
 );
@@ -176,5 +185,7 @@ export const BooleanInput = React.forwardRef<
     disabled={props.isDisabled ?? false}
     onChange={onCheckboxValueChange(props.onChange)}
     checked={props.value}
+    onKeyDown={props.onKeyDown}
+    onKeyUp={props.onKeyUp}
   />
 ));

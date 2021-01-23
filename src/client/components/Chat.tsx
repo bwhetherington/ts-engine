@@ -19,14 +19,15 @@ import {
   PanelContainer,
   StringInput,
 } from 'client/components/common';
+import { clamp } from 'core/util';
 
 type Lines = Readonly<TextComponents[]>;
 
-function concatLine(
-  lines: Lines,
-  newLine: TextComponents,
+function concatLine<T>(
+  lines: Readonly<T[]>,
+  newLine: T,
   limit: number = 5
-): Lines {
+): T[] {
   const newLines = [...lines, newLine];
   if (newLines.length > limit) {
     return newLines.slice(newLines.length - limit);
@@ -41,6 +42,8 @@ interface ChatProps {
 
 interface ChatState {
   lines: Lines;
+  linesOut: string[];
+  cursorIndex: number;
   message: string;
   isFocused: boolean;
   isFresh: boolean;
@@ -157,6 +160,8 @@ export class Chat extends Component<ChatProps, ChatState> {
   public constructor(props: Props<ChatProps>) {
     super(props, {
       lines: [],
+      linesOut: [],
+      cursorIndex: 0,
       message: '',
       isFocused: false,
       isFresh: false,
@@ -178,7 +183,7 @@ export class Chat extends Component<ChatProps, ChatState> {
       ({data: {components}}) => {
         const lines = concatLine(
           this.state.lines,
-          components,
+          components as TextComponents,
           this.props.lineLimit
         );
         this.updateState({
@@ -214,26 +219,69 @@ export class Chat extends Component<ChatProps, ChatState> {
     });
   }
 
-  private onSubmit(event: React.FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
-    this.sendMessage();
+  private async scrollSaved(amount: number): Promise<void> {
+    const nextIndex = clamp(
+      (this.state.cursorIndex ?? -1) + amount, 
+      -1, 
+      this.state.linesOut.length
+    );
+    if (nextIndex === -1) {
+      await this.updateState({
+        cursorIndex: -1,
+        message: ''
+      });
+    } else if (0 <= nextIndex && nextIndex < this.state.linesOut.length) {
+      const actualIndex = this.state.linesOut.length - nextIndex - 1;
+      const line = this.state.linesOut[actualIndex];
+      await this.updateState({
+        cursorIndex: nextIndex,
+        message: line,
+      });
+      this.fixCursor();
+    }
   }
 
-  private clearInput(): void {
-    this.updateState({
+  private async scrollUpSaved(): Promise<void> {
+    await this.scrollSaved(1);
+  }
+
+  private async scrollDownSaved(): Promise<void> {
+    await this.scrollSaved(-1);
+  }
+
+  private async onKeyDown(e: React.KeyboardEvent<HTMLInputElement>): Promise<void> {
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault();
+        await this.scrollUpSaved();
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        await this.scrollDownSaved();
+        break;
+    }
+  }
+
+  private async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault();
+    await this.sendMessage();
+  }
+
+  private async clearInput(): Promise<void> {
+    await this.updateState({
       message: '',
     });
   }
 
-  private sendMessage(): void {
+  private async sendMessage(): Promise<void> {
     // Send message
     if (this.state.message.length > 0) {
-      this.handleMessage(this.state.message);
-      this.clearInput();
+      await this.handleMessage(this.state.message);
+      await this.clearInput();
     }
   }
 
-  private handleMessage(message: string): void {
+  private async handleMessage(message: string): Promise<void> {
     if (message.startsWith('/')) {
       // Handle command
       const [command, ...args] = splitWords(message.slice(1));
@@ -252,6 +300,14 @@ export class Chat extends Component<ChatProps, ChatState> {
         },
       });
     }
+    await this.updateState({
+      linesOut: concatLine(
+        this.state.linesOut,
+        message,
+        10
+      ),
+      cursorIndex: -1
+    });
   }
 
   private async onFocus(): Promise<void> {
@@ -265,6 +321,14 @@ export class Chat extends Component<ChatProps, ChatState> {
     await this.updateState({
       isFocused: false,
     });
+  }
+
+  private fixCursor(): void {
+    const input = this.inputRef?.current;
+    if (input) {
+      const len = input.value.length;
+      input.setSelectionRange(len, len);
+    }
   }
 
   public render(): JSX.Element {
@@ -292,6 +356,7 @@ export class Chat extends Component<ChatProps, ChatState> {
               placeholder="Enter message..."
               value={this.state.message}
               onChange={this.onChangeInput.bind(this)}
+              onKeyDown={this.onKeyDown.bind(this)}
             />
           </ChatForm>
         </Column>

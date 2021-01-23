@@ -48,6 +48,10 @@ export enum Key {
   Backspace,
   Meta,
   Alt,
+  Up,
+  Down,
+  Left,
+  Right,
 }
 
 export const KEY_MAP: Record<string, Key> = {
@@ -99,6 +103,10 @@ export const KEY_MAP: Record<string, Key> = {
   Backspace: Key.Backspace,
   Tab: Key.Tab,
   Enter: Key.Enter,
+  ArrowUp: Key.Up,
+  ArrowDown: Key.Down,
+  ArrowLeft: Key.Left,
+  ArrowRight: Key.Right,
 };
 
 export interface KeyEvent {

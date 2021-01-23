@@ -11,8 +11,8 @@ class Node<T> {
 }
 
 export class Queue<T> {
-  private head?: Node<T>;
-  private tail?: Node<T>;
+  protected head?: Node<T>;
+  protected tail?: Node<T>;
   private length: number = 0;
 
   public size(): number {
@@ -100,5 +100,27 @@ export class SizedQueue<T> extends Queue<T> {
     if (this.size() > this.capacity) {
       return this.dequeue();
     }
+  }
+}
+
+export class ScrollableQueue<T> extends Queue<T> {
+  private cursor?: Node<T>;
+
+  public getCursor(): T | undefined {
+    return this.cursor?.value;
+  }
+
+  public beginScroll(): void {
+    this.cursor = this.tail;
+  }
+
+  public scrollUp(): Node<T> | undefined {
+    this.cursor = this.cursor?.prev;
+    return this.cursor;
+  }
+
+  public scrollDown(): Node<T> | undefined {
+    this.cursor = this.cursor?.next;
+    return this.cursor;
   }
 }

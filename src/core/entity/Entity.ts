@@ -33,6 +33,7 @@ export class Entity
   public isVisible: boolean = true;
   public isCollidable: boolean = true;
   public doSync: boolean = true;
+  public isSpatial: boolean = false;
   private handlers: Record<string, Set<UUID>> = {};
   public isInitialized: boolean = false;
 
@@ -169,6 +170,7 @@ export class Entity
       isVisible: this.isVisible,
       doSync: this.doSync,
       isCollidable: this.isCollidable,
+      isSpatial: this.isSpatial,
       angle: this.angle,
       boundingBox: this.boundingBox.serialize(),
       position: this.position.serialize(),
@@ -248,6 +250,7 @@ export class Entity
       bounce,
       isVisible,
       isCollidable,
+      isSpatial,
       doSync,
     } = data;
     if (typeof id === 'number') {
@@ -273,6 +276,9 @@ export class Entity
     }
     if (typeof isCollidable === 'boolean') {
       this.isCollidable = isCollidable;
+    }
+    if (typeof isSpatial === 'boolean') {
+      this.isSpatial = isSpatial;
     }
     if (typeof doSync === 'boolean') {
       this.doSync = true;

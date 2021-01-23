@@ -55,6 +55,8 @@ export class Unit extends Entity {
     if (NetworkManager.isClient()) {
       this.hpBar = WorldManager.spawn(Bar, this.position);
     }
+
+    this.isSpatial = true;
   }
 
   public static initializeType(): void {

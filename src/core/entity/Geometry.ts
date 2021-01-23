@@ -20,5 +20,6 @@ export class Geometry extends Entity {
     this.type = Geometry.typeName;
     this.collisionLayer = CollisionLayer.Geometry;
     this.setColor(WALL_COLOR);
+    this.isSpatial = true;
   }
 }

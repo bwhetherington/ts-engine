@@ -213,8 +213,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
           .rotate(entity.angle)
           .run(ctx, entity.renderInternal.bind(entity));
       });
-
-    // this.graph?.render(ctx);
   }
 
   private *getEntitiesLayerOrderedInternal(): Iterable<Entity> {
@@ -362,7 +360,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.getEntities().forEach((entity) => {
       entity.afterStep();
 
-      if (entity.isCollidable && NetworkManager.isServer()) {
+      if (entity.isCollidable && entity.isSpatial) {
         this.space.insert(entity);
       }
       const layerIndex = entity.collisionLayer;
