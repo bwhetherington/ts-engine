@@ -1,4 +1,4 @@
-import { AsyncIterator } from "./async";
+import {AsyncIterator} from './async';
 
 function* map<T, U>(gen: Iterable<T>, fn: (x: T) => U): Iterable<U> {
   for (const x of gen) {

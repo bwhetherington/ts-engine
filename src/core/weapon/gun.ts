@@ -1,4 +1,4 @@
-import {Weapon} from 'core/weapon';
+import { Weapon } from 'core/weapon';
 import {
   WorldManager,
   Projectile,
@@ -7,8 +7,9 @@ import {
   isProjectileShape,
   Trail,
 } from 'core/entity';
-import {Data} from 'core/serialize';
-import {RNGManager} from 'core/random';
+import { Data } from 'core/serialize';
+import { RNGManager } from 'core/random';
+import { WeaponModifier } from './modifier';
 
 export class BaseGun extends Weapon {
   public static typeName: string = 'BaseGun';
@@ -26,27 +27,36 @@ export class BaseGun extends Weapon {
     this.damage = 5;
   }
 
-  protected createProjectile(source: Tank, angle: number): Projectile {
+  protected createProjectile(source: Tank, angle: number, modifier?: WeaponModifier): Projectile {
+    let { pierce, projectileSpread, projectileSpeed, projectileDuration } = this;
+
+    if (modifier) {
+      pierce = modifier.pierce.multiplyPoint(pierce);
+      projectileSpread = modifier.projectileSpread.multiplyPoint(projectileSpread);
+      projectileSpeed = modifier.projectileSpeed.multiplyPoint(projectileSpeed);
+      projectileDuration = modifier.projectileDuration.multiplyPoint(projectileDuration);
+    }
+
     const projectile = WorldManager.spawnEntity(
       this.projectileType,
       source.getCannonTip()
     ) as Projectile;
     projectile.setColor(source.getBaseColor());
     projectile.parent = source;
-    projectile.damage = this.rollDamage();
-    projectile.pierce = this.pierce;
+    projectile.damage = this.rollDamage(modifier);
+    projectile.pierce = pierce;
     projectile.velocity.setXY(1, 0);
-    const offset = RNGManager.nextFloat(-0.5, 0.5) * this.projectileSpread;
+    const offset = RNGManager.nextFloat(-0.5, 0.5) * projectileSpread;
     projectile.velocity.angle = angle + offset;
     projectile.angle = projectile.velocity.angle;
-    projectile.velocity.magnitude = this.projectileSpeed;
+    projectile.velocity.magnitude = projectileSpeed;
     projectile.shape = this.projectileShape;
-    projectile.duration = this.projectileDuration;
+    projectile.duration = projectileDuration;
     return projectile;
   }
 
-  public fire(source: Tank, angle: number): void {
-    const projectile = this.createProjectile(source, angle);
+  public fire(source: Tank, angle: number, modifier?: WeaponModifier): void {
+    const projectile = this.createProjectile(source, angle, modifier);
     source.applyForce(projectile.velocity, -projectile.mass / 4);
   }
 

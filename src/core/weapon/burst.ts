@@ -1,7 +1,8 @@
-import {Tank} from 'core/entity';
-import {EventManager} from 'core/event';
-import {Data} from 'core/serialize';
-import {BaseGun} from 'core/weapon';
+import { Tank } from 'core/entity';
+import { EventManager } from 'core/event';
+import { Data } from 'core/serialize';
+import { BaseGun } from 'core/weapon';
+import { WeaponModifier } from './modifier';
 
 export class BaseBurstGun extends BaseGun {
   public static typeName: string = 'BaseBurstGun';
@@ -27,7 +28,7 @@ export class BaseBurstGun extends BaseGun {
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const {burstCount, burstInterval} = data;
+    const { burstCount, burstInterval } = data;
     if (typeof burstCount === 'number') {
       this.burstCount = burstCount;
     }
@@ -36,9 +37,9 @@ export class BaseBurstGun extends BaseGun {
     }
   }
 
-  public async fire(source: Tank, angle: number): Promise<void> {
+  public async fire(source: Tank, angle: number, modifier?: WeaponModifier): Promise<void> {
     for (let i = 0; i < this.burstCount; i++) {
-      const projectile = this.createProjectile(source, angle);
+      const projectile = this.createProjectile(source, angle, modifier);
       source.applyForce(projectile.velocity, -projectile.mass);
       await EventManager.sleep(this.burstInterval);
     }

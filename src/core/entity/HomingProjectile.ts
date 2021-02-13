@@ -1,4 +1,5 @@
 import {Projectile, Entity, WorldManager, Unit} from 'core/entity';
+import {EventManager} from 'core/event';
 import {DirectionVector, Rectangle} from 'core/geometry';
 import {NetworkManager} from 'core/net';
 import {Data} from 'core/serialize';
@@ -13,11 +14,18 @@ export class HomingProjectile extends Projectile {
   public turnSpeed: number = 1;
 
   private target?: Entity;
+  private isHoming: boolean = false;
 
   public constructor() {
     super();
     this.type = HomingProjectile.typeName;
     this.friction = 0;
+    this.onCreate();
+  }
+
+  private async onCreate(): Promise<void> {
+    await EventManager.sleep(0.2);
+    this.isHoming = true;
   }
 
   private selectTarget(): Entity | undefined {
@@ -53,7 +61,7 @@ export class HomingProjectile extends Projectile {
   }
 
   public step(dt: number): void {
-    if (NetworkManager.isServer()) {
+    if (NetworkManager.isServer() && this.isHoming) {
       const target = this.selectTarget();
       if (target) {
         this.vectorBuffer.set(target.position);

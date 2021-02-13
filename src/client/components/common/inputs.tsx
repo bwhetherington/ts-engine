@@ -1,4 +1,4 @@
-import { InputManager } from 'client/input';
+import {InputManager} from 'client/input';
 import React from 'react';
 import styled from 'styled-components';
 

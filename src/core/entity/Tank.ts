@@ -14,12 +14,12 @@ const FIRE_DURATION = 0.25;
 export type ShapeType = CircleType | PolygonType;
 
 export interface CircleType {
-  tag: 'circle',
+  tag: 'circle';
 }
 
 export interface PolygonType {
-  tag: 'polygon',
-  sides: number,
+  tag: 'polygon';
+  sides: number;
 }
 
 export class Tank extends Unit {
@@ -33,7 +33,7 @@ export class Tank extends Unit {
   };
 
   private fireTimer: number = 0;
-  private weapon?: Weapon;
+  protected weapon?: Weapon;
 
   public constructor() {
     super();

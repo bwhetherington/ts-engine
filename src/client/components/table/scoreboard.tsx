@@ -31,7 +31,9 @@ export class Scoreboard extends Component<{}, {}> {
   public componentDidMount(): void {
     this.streamInterval(1).forEach(() => {
       const rows = PlayerManager.getPlayers()
-        .filter((player) => player.hasJoined && (player.hero?.isAlive() ?? false))
+        .filter(
+          (player) => player.hasJoined && (player.hero?.isAlive() ?? false)
+        )
         .map((player) => ({
           id: player.id,
           name: player.name,

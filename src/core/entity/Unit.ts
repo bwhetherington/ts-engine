@@ -333,7 +333,8 @@ export class Unit extends Entity {
 
   public getColor(): Color {
     const color =
-      EventManager.timeElapsed - this.lastFlash < FLASH_DURATION && this.isAlive()
+      EventManager.timeElapsed - this.lastFlash < FLASH_DURATION &&
+      this.isAlive()
         ? this.flashColor ?? this.color
         : this.color;
     return color;

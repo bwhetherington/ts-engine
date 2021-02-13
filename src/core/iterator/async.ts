@@ -3,6 +3,8 @@ import {Iterator} from './sync';
 
 type MaybePromise<T> = T | Promise<T>;
 
+type MaybeAsyncIterable<T> = AsyncIterable<T> | Iterable<T>;
+
 async function* map<T, U>(
   gen: AsyncIterable<T>,
   fn: (x: T) => MaybePromise<U>
@@ -14,7 +16,7 @@ async function* map<T, U>(
 
 async function* flatMap<T, U>(
   gen: AsyncIterable<T>,
-  fn: (x: T) => AsyncIterable<U>
+  fn: (x: T) => MaybeAsyncIterable<U>
 ): AsyncIterable<U> {
   for await (const x of gen) {
     yield* fn(x);
@@ -123,7 +125,10 @@ async function* enumerate<T>(
   }
 }
 
-async function* zip<T, U>(a: AsyncIterable<T>, b: AsyncIterable<U>): AsyncIterable<[T, U]> {
+async function* zip<T, U>(
+  a: AsyncIterable<T>,
+  b: AsyncIterable<U>
+): AsyncIterable<[T, U]> {
   const aGen = a[Symbol.asyncIterator]();
   const bGen = b[Symbol.asyncIterator]();
 
@@ -151,7 +156,7 @@ function buildIterator<T>(
   let resolver = (_?: void) => {};
   let yieldResolver = (_?: void) => {};
   let guard = new Promise<void>((resolve) => {
-    resolver = resolve
+    resolver = resolve;
   });
   let yieldGuard = new Promise<void>((resolve) => {
     yieldResolver = resolve;
@@ -231,7 +236,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return AsyncIterator.generator(map(this, fn));
   }
 
-  public flatMap<U>(fn: (x: T) => AsyncIterable<U>): AsyncIterator<U> {
+  public flatMap<U>(fn: (x: T) => MaybeAsyncIterable<U>): AsyncIterator<U> {
     return AsyncIterator.generator(flatMap(this, fn));
   }
 
@@ -385,8 +390,8 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
 
   public async drain(): Promise<void> {
     return await this.forEach(() => {});
-  }  
-  
+  }
+
   public zip<U>(b: AsyncIterable<U>): AsyncIterator<[T, U]> {
     return AsyncIterator.generator(zip(this.generator, b));
   }

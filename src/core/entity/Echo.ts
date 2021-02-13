@@ -50,7 +50,7 @@ export class Echo extends Entity {
     entity: Entity,
     isFancy: boolean = false,
     duration: number = DURATION,
-    variant: EchoVariant = EchoVariant.Grow,
+    variant: EchoVariant = EchoVariant.Grow
   ): void {
     this.parent = entity;
     this.velocity.set(this.parent.velocity);

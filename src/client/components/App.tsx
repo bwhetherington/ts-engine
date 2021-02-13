@@ -6,8 +6,9 @@ import {
   BarStyle,
   Scoreboard,
   FormContainer,
+  Radar,
 } from 'client/components';
-import {Radar} from './Radar';
+import {Column, Panel} from './common';
 
 export const App: React.FunctionComponent<{}> = () => (
   <>
@@ -16,10 +17,12 @@ export const App: React.FunctionComponent<{}> = () => (
     </div>
     <div className="bottom left col">
       <Chat lineLimit={100} />
-      <div className="dialog col">
-        <EventBar label="HP" barStyle={BarStyle.Life} id="life-bar" />
-        <EventBar label="XP" barStyle={BarStyle.XP} id="xp-bar" />
-      </div>
+      <Panel>
+        <Column>
+          <EventBar label="HP" barStyle={BarStyle.Life} id="life-bar" />
+          <EventBar label="XP" barStyle={BarStyle.XP} id="xp-bar" />
+        </Column>
+      </Panel>
     </div>
     <div className="bottom right">
       <Radar />

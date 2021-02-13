@@ -3,7 +3,7 @@ import {sleep, clamp, smoothStep, Queue} from 'core/util';
 import {EventManager, StepEvent} from 'core/event';
 import {BLACK, GraphicsContext} from 'core/graphics';
 import {GraphicsPipeline} from 'core/graphics/pipe';
-import { Vector, VectorLike } from 'core/geometry';
+import {Vector, VectorLike} from 'core/geometry';
 
 const DURATION = 0.1;
 
@@ -33,7 +33,7 @@ export class Trail extends Entity {
       // We know it's not undefined since we already checked that the list is not empty
       const lastPosition = this.snapshots.peek() as PositionSnapshot;
 
-      if ((EventManager.timeElapsed - lastPosition.time) < this.duration) {
+      if (EventManager.timeElapsed - lastPosition.time < this.duration) {
         break;
       }
 
@@ -52,11 +52,17 @@ export class Trail extends Entity {
     }
     this.drain();
 
-    const {x: startX, y: startY} = this.snapshots.peek()?.position ?? {x: 0, y: 0};
-    const {x: endX, y: endY} = {x: this.parent?.position.x ?? 0, y: this.parent?.position.y ?? 0};
+    const {x: startX, y: startY} = this.snapshots.peek()?.position ?? {
+      x: 0,
+      y: 0,
+    };
+    const {x: endX, y: endY} = {
+      x: this.parent?.position.x ?? 0,
+      y: this.parent?.position.y ?? 0,
+    };
 
     const minX = Math.min(startX, endX);
-    const maxX = Math.max(startX, endX);    
+    const maxX = Math.max(startX, endX);
     const minY = Math.min(startY, endY);
     const maxY = Math.max(startY, endY);
 
@@ -77,10 +83,7 @@ export class Trail extends Entity {
     this.render(ctx);
   }
 
-  public initialize(
-    entity: Entity,
-    duration: number = DURATION
-  ): void {
+  public initialize(entity: Entity, duration: number = DURATION): void {
     this.parent = entity;
     this.duration = duration;
   }
@@ -89,18 +92,19 @@ export class Trail extends Entity {
     if (this.parent) {
       const color = {
         ...this.parent.getColor(),
-        alpha: 0.25
+        alpha: 0.25,
       };
       GraphicsPipeline.pipe()
-      .options({
-        lineWidth: (this.parent?.boundingBox.width ?? 20) * 0.75,
-      })
-      .translate(-this.position.x, -this.position.y)
-      .run(ctx, (ctx) => {
-        const points = this.snapshots.iterator()
-          .map(({position}) => position);
-        ctx.path(points, color);
-      });
+        .options({
+          lineWidth: (this.parent?.boundingBox.width ?? 20) * 0.75,
+        })
+        .translate(-this.position.x, -this.position.y)
+        .run(ctx, (ctx) => {
+          const points = this.snapshots
+            .iterator()
+            .map(({position}) => position);
+          ctx.path(points, color);
+        });
     }
   }
 }

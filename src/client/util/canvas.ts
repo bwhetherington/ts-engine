@@ -447,7 +447,6 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
-  
   public path(points: Iterable<VectorLike>, color: Color): void {
     const ctx = this.curContext;
     if (ctx) {

@@ -6,6 +6,7 @@ export * from 'client/components/Chat';
 export * from 'client/components/Debug';
 export * from 'client/components/table';
 export * from 'client/components/form';
+export * from 'client/components/Radar';
 
 import {App} from 'client/components/App';
 import {LogManager} from 'core/log';

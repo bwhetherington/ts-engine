@@ -21,8 +21,7 @@ const Background = styled.div`
   top: 0px;
   bottom: 0px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -116,7 +116,8 @@ export class Entity
         .forEach((candidate) => {
           // Collision
           if (
-            (this.collisionLayer === CollisionLayer.Unit || this.collisionLayer === CollisionLayer.Projectile) &&
+            (this.collisionLayer === CollisionLayer.Unit ||
+              this.collisionLayer === CollisionLayer.Projectile) &&
             candidate.collisionLayer === CollisionLayer.Geometry
           ) {
             shuntOutOf(this, candidate.boundingBox);

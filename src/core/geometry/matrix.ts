@@ -1,5 +1,5 @@
-import {Vector} from 'core/geometry';
-import {Data, Serializable} from 'core/serialize';
+import { Vector } from 'core/geometry';
+import { Data, Serializable } from 'core/serialize';
 
 export class Matrix3 implements Serializable {
   private a0: number = 0;
@@ -115,7 +115,7 @@ export class Matrix3 implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    const {cells} = data;
+    const { cells } = data;
     if (cells) {
       const [a0, a1, a2, b0, b1, b2, c0, c1, c2] = cells;
       if (
@@ -196,6 +196,12 @@ export class Matrix2 implements Serializable {
     return this;
   }
 
+  public setFields(a0: number, a1: number): void {
+    this.identity();
+    this.a0 = a0;
+    this.a1 = a1;
+  }
+
   public toString(): string {
     return `${this.a0},${this.a1}\n${this.b0},${this.b1}`;
   }
@@ -207,7 +213,7 @@ export class Matrix2 implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    const {cells} = data;
+    const { cells } = data;
     if (cells) {
       const [a0, a1, b0, b1] = cells;
       if (

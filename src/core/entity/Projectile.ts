@@ -124,7 +124,8 @@ export class Projectile extends Entity {
   public hit(unit?: Unit): boolean {
     if (unit) {
       if (
-        !this.hitEntities.has(unit.id) && !this.ignoreEntities.has(unit.id) &&
+        !this.hitEntities.has(unit.id) &&
+        !this.ignoreEntities.has(unit.id) &&
         this.hitEntities.size < this.pierce
       ) {
         unit.damage(this.damage, this.parent);
@@ -181,7 +182,16 @@ export class Projectile extends Entity {
   public deserialize(data: Data): void {
     super.deserialize(data);
 
-    const {damage, parentID, hitEntities, ignoreEntities, pierce, duration, shape, showExplosion} = data;
+    const {
+      damage,
+      parentID,
+      hitEntities,
+      ignoreEntities,
+      pierce,
+      duration,
+      shape,
+      showExplosion,
+    } = data;
 
     if (typeof duration === 'number') {
       this.duration = duration;

@@ -19,7 +19,7 @@ import {
   PanelContainer,
   StringInput,
 } from 'client/components/common';
-import { clamp } from 'core/util';
+import {clamp} from 'core/util';
 
 type Lines = Readonly<TextComponents[]>;
 
@@ -221,14 +221,14 @@ export class Chat extends Component<ChatProps, ChatState> {
 
   private async scrollSaved(amount: number): Promise<void> {
     const nextIndex = clamp(
-      (this.state.cursorIndex ?? -1) + amount, 
-      -1, 
+      (this.state.cursorIndex ?? -1) + amount,
+      -1,
       this.state.linesOut.length
     );
     if (nextIndex === -1) {
       await this.updateState({
         cursorIndex: -1,
-        message: ''
+        message: '',
       });
     } else if (0 <= nextIndex && nextIndex < this.state.linesOut.length) {
       const actualIndex = this.state.linesOut.length - nextIndex - 1;
@@ -249,7 +249,9 @@ export class Chat extends Component<ChatProps, ChatState> {
     await this.scrollSaved(-1);
   }
 
-  private async onKeyDown(e: React.KeyboardEvent<HTMLInputElement>): Promise<void> {
+  private async onKeyDown(
+    e: React.KeyboardEvent<HTMLInputElement>
+  ): Promise<void> {
     switch (e.key) {
       case 'ArrowUp':
         e.preventDefault();
@@ -262,7 +264,9 @@ export class Chat extends Component<ChatProps, ChatState> {
     }
   }
 
-  private async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+  private async onSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> {
     event.preventDefault();
     await this.sendMessage();
   }
@@ -301,12 +305,8 @@ export class Chat extends Component<ChatProps, ChatState> {
       });
     }
     await this.updateState({
-      linesOut: concatLine(
-        this.state.linesOut,
-        message,
-        10
-      ),
-      cursorIndex: -1
+      linesOut: concatLine(this.state.linesOut, message, 10),
+      cursorIndex: -1,
     });
   }
 

@@ -56,9 +56,10 @@ export const saveAll: CommandEntry = {
   permissionLevel: 1,
   async handler(player) {
     try {
-      ChatManager.info('Saving players');
+      const start = Date.now();
       await PlayerManager.saveAll();
-      ChatManager.info('All players saved', player);
+      const time = Date.now() - start;
+      ChatManager.info(`All players saved (${time} ms)`, player);
     } catch (ex) {
       ChatManager.error('Error saving players', player);
       log.error(ex.message ?? 'Could not load file');

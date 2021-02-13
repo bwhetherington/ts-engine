@@ -7,9 +7,9 @@ export abstract class AbstractTimer {
     this.onTick = onTick;
   }
 
-  public abstract async start(): Promise<void>;
+  public abstract start(): Promise<void>;
 
-  public abstract async stop(): Promise<void>;
+  public abstract stop(): Promise<void>;
 }
 
 export async function sleep(time: number): Promise<void> {
