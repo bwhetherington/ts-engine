@@ -11,6 +11,9 @@
     "length": 30,
     "height": 25
   },
-  "maxHPTransform": {"cells": [2, 0, 0, 1]},
+  "modifiers": {
+    "life": {"cells": [1.5, 0, 0, 1]},
+    "damage": {"cells": [1.2, 0, 0, 1]}
+  },
   "weapon": "HeavyGun"
 }

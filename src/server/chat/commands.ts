@@ -7,6 +7,8 @@ import {RNGManager} from 'core/random';
 import {NetworkManager} from 'core/net';
 import {isOk} from 'core/net/http';
 import {WorldManager} from 'core/entity';
+import {Matrix2} from 'core/geometry';
+import { ModifierUpgrade } from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -173,5 +175,88 @@ export const checkSize: CommandEntry = {
       .byteLength;
     const binSize = WorldManager.dataSerializeAll().toRaw().byteLength;
     ChatManager.info(`json: ${jsonSize}, binary: ${binSize}`, player);
+  },
+};
+
+export const powerfulShots: CommandEntry = {
+  name: 'powerfulshots',
+  help: "Increase the player's damage",
+  permissionLevel: 1,
+  async handler(player) {
+    const {hero} = player;
+    if (hero) {
+      const upgrade = new ModifierUpgrade({
+        damage: new Matrix2().fields(1.2, 0),
+      });
+      upgrade.applyTo(hero);
+      ChatManager.info('Powerful Shots unlocked', player);
+    }
+  },
+};
+
+export const rapidFire: CommandEntry = {
+  name: 'rapidfire',
+  help: "Increase the player's rate of attack",
+  permissionLevel: 1,
+  async handler(player) {
+    const {hero} = player;
+    if (hero) {
+      const upgrade = new ModifierUpgrade({
+        rate: new Matrix2().fields(0.8, 0),
+      });
+      upgrade.applyTo(hero);
+      ChatManager.info('Rapid Fire unlocked', player);
+    }
+  },
+};
+export const addShots: CommandEntry = {
+  name: 'addshots',
+  help: "Adds shots to the player's weapon",
+  permissionLevel: 1,
+  async handler(player) {
+    const {hero} = player;
+    if (hero) {
+      const upgrade = new ModifierUpgrade({
+        damage: new Matrix2().fields(0.8, 0),
+        shotCount: new Matrix2().fields(1, 2),
+        shotSpread: new Matrix2().fields(1.2, 0),
+      });
+      upgrade.applyTo(hero);
+      ChatManager.info('Multishot unlocked', player);
+    }
+  },
+};
+
+export const fusilage: CommandEntry = {
+  name: 'fusilage',
+  help: "Doubles the number of shots at reduced damage",
+  permissionLevel: 1,
+  async handler(player) {
+    const {hero} = player;
+    if (hero) {
+      const upgrade = new ModifierUpgrade({
+        damage: new Matrix2().fields(0.5, 0),
+        shotCount: new Matrix2().fields(2, 1),
+        shotSpread: new Matrix2().fields(1.5, 0),
+      });
+      upgrade.applyTo(hero);
+      ChatManager.info('Fusilage unlocked', player);
+    }
+  },
+};
+
+export const focusFire: CommandEntry = {
+  name: 'focusfire',
+  help: "Tightens the shot spread",
+  permissionLevel: 1,
+  async handler(player) {
+    const {hero} = player;
+    if (hero) {
+      const upgrade = new ModifierUpgrade({
+        shotSpread: new Matrix2().fields(0.6, 0),
+      });
+      upgrade.applyTo(hero);
+      ChatManager.info('Focus Fire unlocked', player);
+    }
   },
 };

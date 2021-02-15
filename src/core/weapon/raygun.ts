@@ -1,4 +1,4 @@
-import { Weapon } from 'core/weapon';
+import {Weapon} from 'core/weapon';
 import {
   WorldManager,
   Ray,
@@ -7,13 +7,13 @@ import {
   Unit,
   DisplayRayEvent,
 } from 'core/entity';
-import { Iterator, iterator } from 'core/iterator';
-import { EventManager } from 'core/event';
-import { Color } from 'core/graphics/color';
-import { NetworkManager } from 'core/net';
-import { RNGManager } from 'core/random';
-import { Data } from 'core/serialize';
-import { WeaponModifier } from './modifier';
+import {Iterator, iterator} from 'core/iterator';
+import {EventManager} from 'core/event';
+import {Color} from 'core/graphics/color';
+import {NetworkManager} from 'core/net';
+import {RNGManager} from 'core/random';
+import {Data} from 'core/serialize';
+import {HeroModifier} from 'core/upgrade';
 
 const COLOR: Color = {
   red: 0.8,
@@ -45,7 +45,7 @@ export class BaseRaygun extends Weapon {
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const { raySpread, rayDistance } = data;
+    const {raySpread, rayDistance} = data;
     if (typeof raySpread === 'number') {
       this.raySpread = raySpread;
     }
@@ -54,30 +54,30 @@ export class BaseRaygun extends Weapon {
     }
   }
 
-  public fire(source: Tank, angle: number, modifier?: WeaponModifier): void {
+  public fire(source: Tank, angle: number, modifier?: HeroModifier): void {
     angle += RNGManager.nextFloat(-0.5, 0.5) * this.raySpread;
 
     const start = source.getCannonTip();
     const set: Set<Entity> = new Set();
     set.add(source);
-    const { hit, end } = WorldManager.castRay(
+    const {hit, end} = WorldManager.castRay(
       start,
       angle,
       this.rayDistance,
       this.pierce,
       (entity: Entity) => entity instanceof Unit && entity !== source
     );
+
+    const damage = this.rollDamage(modifier);
     Iterator.from(hit)
-      .filterMap((entity: Entity) =>
-        entity instanceof Unit ? entity : undefined
-      )
-      .forEach((unit: Unit) => unit.damage(this.rollDamage(modifier), source));
+      .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
+      .forEach((unit) => unit.damage(damage, source));
 
     const event = {
       type: 'DisplayRayEvent',
       data: {
-        start: { x: start.x, y: start.y },
-        stop: { x: end.x, y: end.y },
+        start: {x: start.x, y: start.y},
+        stop: {x: end.x, y: end.y},
         sourceID: source.id,
       },
     };

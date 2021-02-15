@@ -1,4 +1,4 @@
-import { Weapon } from 'core/weapon';
+import {Weapon} from 'core/weapon';
 import {
   WorldManager,
   Projectile,
@@ -7,9 +7,9 @@ import {
   isProjectileShape,
   Trail,
 } from 'core/entity';
-import { Data } from 'core/serialize';
-import { RNGManager } from 'core/random';
-import { WeaponModifier } from './modifier';
+import {Data} from 'core/serialize';
+import {RNGManager} from 'core/random';
+import {HeroModifier} from '../upgrade/modifier';
 
 export class BaseGun extends Weapon {
   public static typeName: string = 'BaseGun';
@@ -27,14 +27,22 @@ export class BaseGun extends Weapon {
     this.damage = 5;
   }
 
-  protected createProjectile(source: Tank, angle: number, modifier?: WeaponModifier): Projectile {
-    let { pierce, projectileSpread, projectileSpeed, projectileDuration } = this;
+  protected createProjectile(
+    source: Tank,
+    angle: number,
+    modifier?: HeroModifier
+  ): Projectile {
+    let {pierce, projectileSpread, projectileSpeed, projectileDuration} = this;
 
     if (modifier) {
-      pierce = modifier.pierce.multiplyPoint(pierce);
-      projectileSpread = modifier.projectileSpread.multiplyPoint(projectileSpread);
+      pierce = Math.round(modifier.pierce.multiplyPoint(pierce));
+      projectileSpread = modifier.projectileSpread.multiplyPoint(
+        projectileSpread
+      );
       projectileSpeed = modifier.projectileSpeed.multiplyPoint(projectileSpeed);
-      projectileDuration = modifier.projectileDuration.multiplyPoint(projectileDuration);
+      projectileDuration = modifier.projectileDuration.multiplyPoint(
+        projectileDuration
+      );
     }
 
     const projectile = WorldManager.spawnEntity(
@@ -55,12 +63,11 @@ export class BaseGun extends Weapon {
     return projectile;
   }
 
-  public fire(source: Tank, angle: number, modifier?: WeaponModifier): void {
+  public fire(source: Tank, angle: number, modifier?: HeroModifier): void {
     const projectile = this.createProjectile(source, angle, modifier);
-    source.applyForce(projectile.velocity, -projectile.mass / 4);
+    source.applyForce(projectile.velocity, -projectile.mass / 16);
   }
 
-  // foo
   public serialize(): Data {
     return {
       ...super.serialize(),

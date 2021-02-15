@@ -13,18 +13,18 @@ import {
   MouseEvent,
   MouseAction,
 } from 'core/input';
-import { EventData, Event, EventManager } from 'core/event';
-import { Data } from 'core/serialize';
-import { Player, PlayerManager } from 'core/player';
-import { LogManager } from 'core/log';
-import { NetworkManager, SyncEvent } from 'core/net';
-import { CameraManager, rgb, GraphicsContext, hsv } from 'core/graphics';
-import { BarUpdateEvent, clamp, sleep } from 'core/util';
-import { RNGManager } from 'core/random';
-import { TextColor } from 'core/chat';
-import { Matrix2 } from 'core/geometry';
-import { UUID } from 'core/uuid';
-import { WeaponModifier } from 'core/weapon/modifier';
+import {EventData, Event, EventManager} from 'core/event';
+import {Data} from 'core/serialize';
+import {Player, PlayerManager} from 'core/player';
+import {LogManager} from 'core/log';
+import {NetworkManager, SyncEvent} from 'core/net';
+import {CameraManager, rgb, GraphicsContext, hsv} from 'core/graphics';
+import {BarUpdateEvent, clamp, sleep} from 'core/util';
+import {RNGManager} from 'core/random';
+import {TextColor} from 'core/chat';
+import {Matrix2} from 'core/geometry';
+import {UUID} from 'core/uuid';
+import {HeroModifier} from 'core/upgrade/modifier';
 
 const log = LogManager.forFile(__filename);
 
@@ -36,13 +36,11 @@ export class BaseHero extends Tank {
 
   private xp: number = 0;
   private level: number = 0;
-
-  private maxHPTransform: Matrix2 = new Matrix2().identity();
-  private weaponModifier: WeaponModifier = new WeaponModifier();
+  public modifiers: HeroModifier = new HeroModifier();
 
   public constructor() {
     super();
-    this.weaponModifier.damage.setFields(1, 10);
+    this.modifiers.damage.chain(1, 10);
 
     this.type = BaseHero.typeName;
 
@@ -53,7 +51,7 @@ export class BaseHero extends Tank {
 
     this.addListener<MouseEvent>('MouseEvent', (event) => {
       if (this.isEventSubject(event)) {
-        const { action, x, y } = event.data;
+        const {action, x, y} = event.data;
         if (action === MouseAction.Move) {
           // Subtract our position from mouse position
           this.vectorBuffer.setXY(x, y);
@@ -69,7 +67,7 @@ export class BaseHero extends Tank {
 
     this.addListener<KeyEvent>('KeyEvent', (event) => {
       if (this.isEventSubject(event)) {
-        const { action, key } = event.data;
+        const {action, key} = event.data;
         const state = action === KeyAction.KeyDown;
         const direction = MOVEMENT_DIRECTION_MAP[key];
         if (direction !== undefined) {
@@ -80,7 +78,7 @@ export class BaseHero extends Tank {
 
     if (NetworkManager.isClient()) {
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
-        const { targetID, sourceID, amount } = event.data;
+        const {targetID, sourceID, amount} = event.data;
         const target = WorldManager.getEntity(targetID);
         const source = WorldManager.getEntity(sourceID);
         if (
@@ -108,12 +106,12 @@ export class BaseHero extends Tank {
     } else {
       this.streamEvents<KillEvent>('KillEvent')
         .map((event) => {
-          const { targetID, sourceID } = event.data;
+          const {targetID, sourceID} = event.data;
           const target = WorldManager.getEntity(targetID);
           const source = WorldManager.getEntity(sourceID);
-          return { target, source };
+          return {target, source};
         })
-        .filterMap(({ target, source }) =>
+        .filterMap(({target, source}) =>
           target instanceof Unit && this === source ? target : undefined
         )
         .forEach((target) => this.addExperience(target.getXPWorth()));
@@ -140,7 +138,7 @@ export class BaseHero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return this.maxHPTransform.multiplyPoint(50 + (level - 1) * 5);
+    return this.modifiers.life.multiplyPoint(50 + (level - 1) * 5);
   }
 
   protected regenForLevel(level: number): number {
@@ -255,7 +253,7 @@ export class BaseHero extends Tank {
     const player = this.getPlayer();
     if (player) {
       if (player.isActivePlayer()) {
-        const { centerX: x, centerY: y } = this.boundingBox;
+        const {centerX: x, centerY: y} = this.boundingBox;
         CameraManager.setTargetXY(x, y);
       }
 
@@ -274,14 +272,14 @@ export class BaseHero extends Tank {
       ...super.serialize(),
       playerID: this.player?.id,
       xp: this.xp,
-      maxHPTransform: this.maxHPTransform.serialize(),
+      modifiers: this.modifiers.serialize(),
     };
   }
 
   public deserialize(data: Data): void {
-    const { x: oldX, y: oldY } = this.position;
-    const { angle: oldAngle } = this;
-    const { playerID, xp, maxHPTransform } = data;
+    const {x: oldX, y: oldY} = this.position;
+    const {angle: oldAngle} = this;
+    const {playerID, xp, modifiers} = data;
 
     if (playerID !== undefined) {
       this.setPlayer(playerID);
@@ -291,8 +289,8 @@ export class BaseHero extends Tank {
       }
     }
 
-    if (maxHPTransform) {
-      this.maxHPTransform.deserialize(maxHPTransform);
+    if (modifiers) {
+      this.modifiers.deserialize(modifiers);
     }
 
     if (typeof xp === 'number') {
@@ -324,7 +322,7 @@ export class BaseHero extends Tank {
   }
 
   public isEventSubject<E extends EventData>(event: Event<E>): boolean {
-    const { socket } = event;
+    const {socket} = event;
     const player = this.getPlayer();
     const isLocal = socket === undefined && player?.isActivePlayer();
     return isLocal || socket === player?.socket;
@@ -335,6 +333,6 @@ export class BaseHero extends Tank {
   }
 
   public fire(angle: number): void {
-    this.weapon?.fireInternal(this, angle, this.weaponModifier);
+    this.weapon?.fireInternal(this, angle, this.modifiers);
   }
 }

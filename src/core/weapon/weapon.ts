@@ -1,11 +1,11 @@
-import { Serializable, Data } from 'core/serialize';
-import { Tank } from 'core/entity';
-import { EventManager, StepEvent, Event } from 'core/event';
-import { UUID } from 'core/uuid';
-import { FireEvent } from 'core/weapon';
-import { NetworkManager } from 'core/net';
-import { RNGManager } from 'core/random';
-import { WeaponModifier } from './modifier';
+import {Serializable, Data} from 'core/serialize';
+import {Tank} from 'core/entity';
+import {EventManager, StepEvent, Event} from 'core/event';
+import {UUID} from 'core/uuid';
+import {FireEvent} from 'core/weapon';
+import {NetworkManager} from 'core/net';
+import {RNGManager} from 'core/random';
+import {HeroModifier} from 'core/upgrade';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';
@@ -21,8 +21,10 @@ export abstract class Weapon implements Serializable {
 
   public constructor() {
     this.id = EventManager.addListener<StepEvent>('StepEvent', (event) => {
-      const { dt } = event.data;
-      this.cooldown = Math.max(this.cooldown - dt, 0);
+      const {dt} = event.data;
+      if (this.cooldown > 0) {
+        this.cooldown -= dt;
+      }
     });
   }
 
@@ -35,25 +37,25 @@ export abstract class Weapon implements Serializable {
   public abstract fire(
     source: Tank,
     angle: number,
-    modifier?: WeaponModifier
+    modifier?: HeroModifier
   ): void;
 
   public fireInternal(
     source: Tank,
     angle: number,
-    modifier?: WeaponModifier
+    modifier?: HeroModifier
   ): void {
-    if (this.cooldown <= 0) {
+    while (this.cooldown <= 0) {
       let rate = this.rate;
       let shotCount = this.shotCount;
       let shotSpread = this.shotSpread;
       if (modifier) {
         rate = modifier.rate.multiplyPoint(rate);
         shotCount = Math.round(modifier.shotCount.multiplyPoint(shotCount));
-        shotSpread = modifier.rate.multiplyPoint(shotSpread);
+        shotSpread = modifier.shotSpread.multiplyPoint(shotSpread);
       }
 
-      this.cooldown += this.rate;
+      this.cooldown += rate;
 
       // Spread shots out
       const deltaAngle = shotSpread / shotCount;
@@ -65,7 +67,7 @@ export abstract class Weapon implements Serializable {
 
       const event: Event<FireEvent> = {
         type: 'FireEvent',
-        data: { sourceID: source.id },
+        data: {sourceID: source.id},
       };
       EventManager.emit(event);
       if (NetworkManager.isServer()) {
@@ -87,7 +89,7 @@ export abstract class Weapon implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    const { type, rate, cooldown, damage, shotCount, shotSpread, pierce } = data;
+    const {type, rate, cooldown, damage, shotCount, shotSpread, pierce} = data;
 
     if (typeof type === 'string') {
       this.type = type;
@@ -118,12 +120,12 @@ export abstract class Weapon implements Serializable {
     }
   }
 
-  protected rollDamage(modifier?: WeaponModifier): number {
-    let { damage } = this;
+  protected rollDamage(modifier?: HeroModifier): number {
+    let {damage} = this;
     if (modifier) {
       damage = modifier.damage.multiplyPoint(damage);
     }
-    const roll = RNGManager.nextFloat(-damage / 5, damage / 5);
-    return Math.max(1, damage + roll);
+    // const roll = RNGManager.nextFloat(-damage / 5, damage / 5);
+    return Math.max(1, damage);
   }
 }

@@ -47,11 +47,11 @@ export class Tank extends Unit {
     this.setMaxLife(50);
     this.setLife(50);
 
-    this.addListener<FireEvent>('FireEvent', (event) => {
-      if (this.id === event.data.sourceID) {
+    this.streamEvents<FireEvent>('FireEvent')
+      .filter(({data: {sourceID}}) => sourceID === this.id)
+      .forEach(() => {
         this.fireTimer = FIRE_DURATION;
-      }
-    });
+      });
 
     if (NetworkManager.isClient()) {
       this.label = WorldManager.spawn(Text, this.position);
@@ -81,31 +81,40 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderCannon(ctx: GraphicsContext): void {
+  protected renderCannonShape(i: number, ctx: GraphicsContext): void {
+    const cannon = this.cannonShape;
     const color = this.getColor();
     const horizontalScale = this.getFireParameter();
     const verticalScale = horizontalScale / 2 + 0.5;
 
-    if (this.cannonShape.farHeight !== undefined) {
-      // Trapezoid cannon
-      ctx.trapezoid(
-        this.cannonShape.length / 2,
-        0,
-        this.cannonShape.height * verticalScale,
-        this.cannonShape.farHeight * verticalScale,
-        this.cannonShape.length * horizontalScale,
-        color
-      );
-    } else {
-      // Rectangle cannon
-      ctx.rect(
-        0,
-        -(this.cannonShape.height * verticalScale) / 2,
-        this.cannonShape.length * horizontalScale,
-        this.cannonShape.height * verticalScale,
-        color
-      );
-    }
+    GraphicsPipeline.pipe()
+      .rotate(cannon.angle)
+      .run(ctx, (ctx) => {
+        if (cannon.farHeight !== undefined) {
+          // Trapezoid cannon
+          ctx.trapezoid(
+            cannon.offset.x + cannon.length / 2,
+            cannon.offset.y + 0,
+            cannon.height * verticalScale,
+            cannon.farHeight * verticalScale,
+            cannon.length * horizontalScale,
+            color
+          );
+        } else {
+          // Rectangle cannon
+          ctx.rect(
+            cannon.offset.x + 0,
+            cannon.offset.y - (cannon.height * verticalScale) / 2,
+            cannon.length * horizontalScale,
+            cannon.height * verticalScale,
+            color
+          );
+        }
+      });
+  }
+
+  protected renderCannon(ctx: GraphicsContext): void {
+    this.renderCannonShape(0, ctx);
   }
 
   public render(ctx: GraphicsContext): void {
@@ -163,9 +172,17 @@ export class Tank extends Unit {
 
   public getCannonTip(): Vector {
     this.vectorBuffer.set(this.position);
-    const dx = Math.cos(this.angle);
-    const dy = Math.sin(this.angle);
-    this.vectorBuffer.addXY(dx, dy, this.cannonShape.length);
+    const angle = this.angle + this.cannonShape.angle;
+    const tipX = this.cannonShape.offset.x + this.cannonShape.length;
+    const tipY = this.cannonShape.offset.y;
+
+    const dist = Math.sqrt(tipX * tipX + tipY * tipY);
+    const offsetAngle = Math.atan2(tipY, tipX);
+
+    const dx = dist * Math.cos(angle + offsetAngle);
+    const dy = dist * Math.sin(angle + offsetAngle);
+
+    this.vectorBuffer.addXY(dx, dy);
     return this.vectorBuffer;
   }
 
