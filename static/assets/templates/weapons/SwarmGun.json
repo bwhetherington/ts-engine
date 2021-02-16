@@ -1,0 +1,13 @@
+{
+  "type": "SwarmGun",
+  "extends": "BaseHomingGun",
+  "projectileType": "HomingProjectile",
+  "projectileSpread": 0.5,
+  "projectileSpeed": 300,
+  "pierce": 1,
+  "projectileDuration": 2.5,
+  "damage": 5,
+  "rate": 0.35,
+  "burstCount": 4,
+  "burstInterval": 0
+}

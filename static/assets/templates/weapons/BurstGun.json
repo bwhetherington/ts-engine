@@ -1,6 +1,6 @@
 {
   "type": "BurstGun",
-  "extends": "BaseBurstGun",
+  "extends": "BaseGun",
   "projectileType": "Projectile",
   "projectileSpread": 0.1,
   "projectileSpeed": 750,

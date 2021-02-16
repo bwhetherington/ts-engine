@@ -6,6 +6,9 @@ import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
 import {CannonShape, Rectangle, Vector} from 'core/geometry';
 import {GraphicsPipeline} from 'core/graphics/pipe';
+import { Iterator } from 'core/iterator';
+import { EventManager } from 'core/event';
+import { clamp } from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -20,6 +23,18 @@ export interface CircleType {
 export interface PolygonType {
   tag: 'polygon';
   sides: number;
+  angle?: number;
+}
+
+interface TankCannon {
+  key: number;
+  shape: CannonShape;
+  lastFired: number;
+}
+
+function getFireParameter(lastFired: number): number {
+  const t = clamp((EventManager.timeElapsed - lastFired) / FIRE_DURATION, 0, 1);
+  return t * 0.2 + 1;
 }
 
 export class Tank extends Unit {
@@ -27,7 +42,13 @@ export class Tank extends Unit {
 
   public armor: number = 0;
 
-  protected cannonShape: CannonShape = new CannonShape(25, 15);
+  protected cannonIndex: number = 0;
+  protected cannons: TankCannon[] = [{
+    shape: new CannonShape(25, 15),
+    lastFired: 0,
+    key: 0,
+  }];
+
   protected bodyShape: ShapeType = {
     tag: 'circle',
   };
@@ -47,14 +68,13 @@ export class Tank extends Unit {
     this.setMaxLife(50);
     this.setLife(50);
 
-    this.streamEvents<FireEvent>('FireEvent')
-      .filter(({data: {sourceID}}) => sourceID === this.id)
-      .forEach(() => {
-        this.fireTimer = FIRE_DURATION;
-      });
-
     if (NetworkManager.isClient()) {
       this.label = WorldManager.spawn(Text, this.position);
+      this.streamEvents<FireEvent>('FireEvent')
+      .filter(({data: {sourceID}}) => sourceID === this.id)
+      .forEach(({data: {cannonIndex}}) => {
+        this.cannons[cannonIndex].lastFired = EventManager.timeElapsed;
+      });
     }
   }
 
@@ -77,44 +97,54 @@ export class Tank extends Unit {
     if (this.bodyShape.tag === 'circle') {
       ctx.ellipse(-radius, -radius, radius * 2, radius * 2, this.getColor());
     } else if (this.bodyShape.tag === 'polygon') {
-      ctx.regularPolygon(0, 0, this.bodyShape.sides, radius, this.getColor());
+      ctx.regularPolygon(0, 0, this.bodyShape.sides, radius, this.getColor(), this.bodyShape.angle);
     }
   }
 
-  protected renderCannonShape(i: number, ctx: GraphicsContext): void {
-    const cannon = this.cannonShape;
+  protected renderCannonShape(ctx: GraphicsContext, cannon: TankCannon): void {
     const color = this.getColor();
-    const horizontalScale = this.getFireParameter();
+
+    const {shape, lastFired} = cannon;
+    const horizontalScale = getFireParameter(lastFired);
     const verticalScale = horizontalScale / 2 + 0.5;
 
     GraphicsPipeline.pipe()
-      .rotate(cannon.angle)
+      .rotate(shape.angle)
       .run(ctx, (ctx) => {
-        if (cannon.farHeight !== undefined) {
+        if (shape.farHeight !== undefined) {
           // Trapezoid cannon
           ctx.trapezoid(
-            cannon.offset.x + cannon.length / 2,
-            cannon.offset.y + 0,
-            cannon.height * verticalScale,
-            cannon.farHeight * verticalScale,
-            cannon.length * horizontalScale,
+            shape.offset.x + shape.length / 2,
+            shape.offset.y + 0,
+            shape.height * verticalScale,
+            shape.farHeight * verticalScale,
+            shape.length * horizontalScale,
             color
           );
         } else {
           // Rectangle cannon
           ctx.rect(
-            cannon.offset.x + 0,
-            cannon.offset.y - (cannon.height * verticalScale) / 2,
-            cannon.length * horizontalScale,
-            cannon.height * verticalScale,
+            shape.offset.x + 0,
+            shape.offset.y - (shape.height * verticalScale) / 2,
+            shape.length * horizontalScale,
+            shape.height * verticalScale,
             color
           );
         }
       });
   }
 
+  public getCannonIndex(): number {
+    return this.cannonIndex;
+  }
+
+  public incrementCannonIndex(): void {
+    this.cannonIndex = (this.cannonIndex + 1) % this.cannons.length;
+  }
+
   protected renderCannon(ctx: GraphicsContext): void {
-    this.renderCannonShape(0, ctx);
+    Iterator.array(this.cannons)
+      .forEach(this.renderCannonShape.bind(this, ctx));
   }
 
   public render(ctx: GraphicsContext): void {
@@ -127,20 +157,44 @@ export class Tank extends Unit {
   public serialize(): Data {
     return {
       ...super.serialize(),
-      cannonShape: this.cannonShape,
+      cannons: this.cannons.map(({lastFired, shape}) => ({
+        lastFired,
+        shape: shape.serialize(),
+      })),
       weapon: this.weapon?.serialize(),
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const {cannonShape, bodyShape, weapon} = data;
-    if (cannonShape) {
-      this.cannonShape.deserialize(cannonShape);
+    const {cannons, bodyShape, weapon} = data;
+    if (cannons instanceof Array) {
+      Iterator.array(cannons)
+        .filter((obj) => !!(obj?.shape))
+        .forEach(({shape, key}) => {
+          if (typeof key === 'number') {
+            const cannon = new CannonShape(0, 0);
+            cannon.deserialize(shape);
+            this.cannons[key] = {
+              key,
+              lastFired: (this.cannons[key]?.lastFired) ?? 0,
+              shape: cannon,
+            }
+          }
+        });
     }
     if (bodyShape) {
       // TODO Add type checking
-      this.bodyShape = bodyShape;
+      if (bodyShape.tag === 'polygon') {
+        const {tag, sides, angle} = bodyShape;
+        this.bodyShape = {
+          tag,
+          sides,
+          angle: (angle !== undefined) ? (angle * Math.PI / 180) : undefined,
+        };
+      } else {
+        this.bodyShape = bodyShape;
+      }
     }
     if (weapon) {
       const {type} = weapon;
@@ -171,19 +225,13 @@ export class Tank extends Unit {
   }
 
   public getCannonTip(): Vector {
-    this.vectorBuffer.set(this.position);
-    const angle = this.angle + this.cannonShape.angle;
-    const tipX = this.cannonShape.offset.x + this.cannonShape.length;
-    const tipY = this.cannonShape.offset.y;
-
-    const dist = Math.sqrt(tipX * tipX + tipY * tipY);
-    const offsetAngle = Math.atan2(tipY, tipX);
-
-    const dx = dist * Math.cos(angle + offsetAngle);
-    const dy = dist * Math.sin(angle + offsetAngle);
-
-    this.vectorBuffer.addXY(dx, dy);
+    const cannon = this.cannons[this.cannonIndex];
+    cannon?.shape?.getTip(this.position.x, this.position.y, this.angle, this.vectorBuffer);
     return this.vectorBuffer;
+  }
+
+  public getCannonAngle(): number {
+    return this.cannons[this.cannonIndex]?.shape?.angle ?? 0;
   }
 
   public fire(angle: number): void {

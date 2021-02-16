@@ -5,10 +5,10 @@ export * from 'core/weapon/weapon';
 export * from 'core/weapon/gun';
 export * from 'core/weapon/raygun';
 export * from 'core/weapon/homing';
-export * from 'core/weapon/burst';
 
 export interface FireEvent {
   sourceID: UUID;
+  cannonIndex: number;
 }
 
 const manager = new WeaponManager();

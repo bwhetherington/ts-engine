@@ -2,9 +2,14 @@
   "type": "MachineGunHero",
   "extends": "BaseHero",
   "weapon": "MachineGun",
-  "cannonShape": {
-    "length": 30,
-    "height": 10,
-    "farHeight": 17.5
-  }
+  "cannons": [
+    {
+      "key": 0,
+      "shape": {
+        "length": 25,
+        "height": 12.5,
+        "farHeight": 17.5
+      }
+    }
+  ]
 }

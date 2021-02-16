@@ -3,7 +3,6 @@ import {
   BaseGun,
   BaseRaygun,
   BaseHomingGun,
-  BaseBurstGun,
 } from 'core/weapon';
 import {LogManager} from 'core/log';
 import {Template} from 'core/entity/template';
@@ -37,7 +36,6 @@ export class WeaponManager {
     this.registerWeapon(BaseGun);
     this.registerWeapon(BaseRaygun);
     this.registerWeapon(BaseHomingGun);
-    this.registerWeapon(BaseBurstGun);
 
     const weaponList = await AssetManager.loadDirectory('templates/weapons');
     const weaponFiles = await AssetManager.loadAllJSON(weaponList);

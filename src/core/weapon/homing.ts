@@ -29,7 +29,7 @@ export class BaseHomingGun extends BaseGun {
       angle,
       modifier
     ) as HomingProjectile;
-    base.turnSpeed = this.projectileSpeed / 10;
+    base.turnSpeed = this.projectileSpeed / 5;
     base.maxSpeed = this.projectileSpeed;
     base.shape = 'triangle';
     return base;

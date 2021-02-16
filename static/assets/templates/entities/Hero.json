@@ -1,9 +1,14 @@
 {
   "type": "Hero",
   "extends": "BaseHero",
-  "cannonShape": {
-    "length": 25,
-    "height": 15
-  },
+  "cannons": [
+    {
+      "key": 0,
+      "shape": {
+        "length": 25,
+        "height": 15
+      }
+    }
+  ],
   "weapon": "Gun"
 }

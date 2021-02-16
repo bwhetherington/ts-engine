@@ -217,7 +217,7 @@ export const addShots: CommandEntry = {
     const {hero} = player;
     if (hero) {
       const upgrade = new ModifierUpgrade({
-        damage: new Matrix2().fields(0.8, 0),
+        damage: new Matrix2().fields(0.5, 0),
         shotCount: new Matrix2().fields(1, 2),
         shotSpread: new Matrix2().fields(1.2, 0),
       });
@@ -228,7 +228,7 @@ export const addShots: CommandEntry = {
 };
 
 export const fusilage: CommandEntry = {
-  name: 'fusilage',
+  name: 'barrage',
   help: "Doubles the number of shots at reduced damage",
   permissionLevel: 1,
   async handler(player) {

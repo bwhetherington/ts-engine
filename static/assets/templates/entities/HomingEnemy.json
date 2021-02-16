@@ -10,11 +10,16 @@
     "width": 30,
     "height": 30
   },
-  "cannonShape": {
-    "length": 25,
-    "height": 17.5,
-    "farHeight": 12.5
-  },
+  "cannons": [
+    {
+      "key": 0,
+      "shape": {
+        "length": 25,
+        "height": 17.5,
+        "farHeight": 12.5
+      }
+    }
+  ],
   "weapon": "HomingGun",
   "xpWorth": 25,
   "name": "Seeker"

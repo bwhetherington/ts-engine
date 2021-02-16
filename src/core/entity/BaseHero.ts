@@ -40,7 +40,6 @@ export class BaseHero extends Tank {
 
   public constructor() {
     super();
-    this.modifiers.damage.chain(1, 10);
 
     this.type = BaseHero.typeName;
 
@@ -127,7 +126,7 @@ export class BaseHero extends Tank {
   }
 
   protected damageBonusForLevel(level: number): number {
-    return 1 + level / 20;
+    return 0;
   }
 
   protected experienceForLevel(level: number): number {
@@ -146,7 +145,7 @@ export class BaseHero extends Tank {
   }
 
   protected armorForLevel(level: number): number {
-    return Math.floor(level / 6);
+    return 1;
   }
 
   public getExperience(): number {
@@ -329,7 +328,7 @@ export class BaseHero extends Tank {
   }
 
   protected calculateDamageOut(amount: number): number {
-    return amount * this.damageBonusForLevel(this.getLevel());
+    return amount;
   }
 
   public fire(angle: number): void {

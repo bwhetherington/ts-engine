@@ -399,11 +399,15 @@ export class HDCanvas implements GraphicsContext {
     centerY: number,
     vertexCount: number,
     radius: number,
-    color: Color
+    color: Color,
+    angleOffset?: number,
   ): void {
+    if (angleOffset === undefined) {
+      angleOffset = 0;
+    }
     const vertices = [];
     for (let i = 0; i < vertexCount; i++) {
-      const angle = (i / vertexCount) * (2 * Math.PI);
+      const angle = (i / vertexCount) * (2 * Math.PI) + angleOffset;
       const x = Math.cos(angle) * radius + centerX;
       const y = Math.sin(angle) * radius + centerY;
       vertices.push({x, y});

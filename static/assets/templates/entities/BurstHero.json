@@ -2,9 +2,14 @@
   "type": "BurstHero",
   "extends": "BaseHero",
   "weapon": "BurstGun",
-  "cannonShape": {
-    "length": 30,
-    "height": 10,
-    "farHeight": 17.5
-  }
+  "cannons": [
+    {
+      "key": 0,
+      "shape": {
+        "length": 30,
+        "height": 10,
+        "farHeight": 17.5
+      }
+    }
+  ]
 }

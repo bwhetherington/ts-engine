@@ -2,9 +2,14 @@
   "type": "RailgunHero",
   "extends": "BaseHero",
   "weapon": "Railgun",
-  "cannonShape": {
-    "length": 30,
-    "height": 17.5,
-    "farHeight": 12.5
-  }
+  "cannons": [
+    {
+      "key": 0,
+      "shape": {
+        "length": 30,
+        "height": 17.5,
+        "farHeight": 12.5
+      }
+    }
+  ]
 }

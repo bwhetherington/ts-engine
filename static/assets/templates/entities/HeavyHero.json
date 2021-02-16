@@ -7,10 +7,15 @@
     "width": 40,
     "height": 40
   },
-  "cannonShape": {
-    "length": 30,
-    "height": 25
-  },
+  "cannons": [
+    {
+      "key": 0,
+      "shape": {
+        "length": 30,
+        "height": 25
+      }
+    }
+  ],
   "modifiers": {
     "life": {"cells": [1.5, 0, 0, 1]},
     "damage": {"cells": [1.2, 0, 0, 1]}
