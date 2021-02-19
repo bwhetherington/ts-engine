@@ -6,9 +6,9 @@ import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
 import {CannonShape, Rectangle, Vector} from 'core/geometry';
 import {GraphicsPipeline} from 'core/graphics/pipe';
-import { Iterator } from 'core/iterator';
-import { EventManager } from 'core/event';
-import { clamp } from 'core/util';
+import {Iterator} from 'core/iterator';
+import {EventManager} from 'core/event';
+import {clamp} from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -43,11 +43,13 @@ export class Tank extends Unit {
   public armor: number = 0;
 
   protected cannonIndex: number = 0;
-  protected cannons: TankCannon[] = [{
-    shape: new CannonShape(25, 15),
-    lastFired: 0,
-    key: 0,
-  }];
+  protected cannons: TankCannon[] = [
+    {
+      shape: new CannonShape(25, 15),
+      lastFired: 0,
+      key: 0,
+    },
+  ];
 
   protected bodyShape: ShapeType = {
     tag: 'circle',
@@ -71,10 +73,10 @@ export class Tank extends Unit {
     if (NetworkManager.isClient()) {
       this.label = WorldManager.spawn(Text, this.position);
       this.streamEvents<FireEvent>('FireEvent')
-      .filter(({data: {sourceID}}) => sourceID === this.id)
-      .forEach(({data: {cannonIndex}}) => {
-        this.cannons[cannonIndex].lastFired = EventManager.timeElapsed;
-      });
+        .filter(({data: {sourceID}}) => sourceID === this.id)
+        .forEach(({data: {cannonIndex}}) => {
+          this.cannons[cannonIndex].lastFired = EventManager.timeElapsed;
+        });
     }
   }
 
@@ -97,7 +99,14 @@ export class Tank extends Unit {
     if (this.bodyShape.tag === 'circle') {
       ctx.ellipse(-radius, -radius, radius * 2, radius * 2, this.getColor());
     } else if (this.bodyShape.tag === 'polygon') {
-      ctx.regularPolygon(0, 0, this.bodyShape.sides, radius, this.getColor(), this.bodyShape.angle);
+      ctx.regularPolygon(
+        0,
+        0,
+        this.bodyShape.sides,
+        radius,
+        this.getColor(),
+        this.bodyShape.angle
+      );
     }
   }
 
@@ -143,8 +152,9 @@ export class Tank extends Unit {
   }
 
   protected renderCannon(ctx: GraphicsContext): void {
-    Iterator.array(this.cannons)
-      .forEach(this.renderCannonShape.bind(this, ctx));
+    Iterator.array(this.cannons).forEach(
+      this.renderCannonShape.bind(this, ctx)
+    );
   }
 
   public render(ctx: GraphicsContext): void {
@@ -157,7 +167,8 @@ export class Tank extends Unit {
   public serialize(): Data {
     return {
       ...super.serialize(),
-      cannons: this.cannons.map(({lastFired, shape}) => ({
+      cannons: this.cannons.map(({lastFired, shape, key}) => ({
+        key,
         lastFired,
         shape: shape.serialize(),
       })),
@@ -170,16 +181,16 @@ export class Tank extends Unit {
     const {cannons, bodyShape, weapon} = data;
     if (cannons instanceof Array) {
       Iterator.array(cannons)
-        .filter((obj) => !!(obj?.shape))
+        .filter((obj) => !!obj?.shape)
         .forEach(({shape, key}) => {
           if (typeof key === 'number') {
             const cannon = new CannonShape(0, 0);
             cannon.deserialize(shape);
             this.cannons[key] = {
               key,
-              lastFired: (this.cannons[key]?.lastFired) ?? 0,
+              lastFired: this.cannons[key]?.lastFired ?? 0,
               shape: cannon,
-            }
+            };
           }
         });
     }
@@ -190,7 +201,7 @@ export class Tank extends Unit {
         this.bodyShape = {
           tag,
           sides,
-          angle: (angle !== undefined) ? (angle * Math.PI / 180) : undefined,
+          angle: angle !== undefined ? (angle * Math.PI) / 180 : undefined,
         };
       } else {
         this.bodyShape = bodyShape;
@@ -226,7 +237,12 @@ export class Tank extends Unit {
 
   public getCannonTip(): Vector {
     const cannon = this.cannons[this.cannonIndex];
-    cannon?.shape?.getTip(this.position.x, this.position.y, this.angle, this.vectorBuffer);
+    cannon?.shape?.getTip(
+      this.position.x,
+      this.position.y,
+      this.angle,
+      this.vectorBuffer
+    );
     return this.vectorBuffer;
   }
 

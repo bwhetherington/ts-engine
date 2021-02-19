@@ -1,9 +1,4 @@
-import {
-  Weapon,
-  BaseGun,
-  BaseRaygun,
-  BaseHomingGun,
-} from 'core/weapon';
+import {Weapon, BaseGun, BaseRaygun, BaseHomingGun} from 'core/weapon';
 import {LogManager} from 'core/log';
 import {Template} from 'core/entity/template';
 import {Iterator} from 'core/iterator';

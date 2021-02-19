@@ -102,7 +102,9 @@ export class BaseHero extends Tank {
           text.textSize = 20;
         }
       });
-    } else {
+    }
+
+    if (NetworkManager.isServer()) {
       this.streamEvents<KillEvent>('KillEvent')
         .map((event) => {
           const {targetID, sourceID} = event.data;

@@ -1,7 +1,7 @@
 import {Data, Serializable} from 'core/serialize';
 import {Matrix2} from 'core/geometry';
-import { Upgrade } from 'core/upgrade';
-import { BaseHero } from 'core/entity';
+import {Upgrade} from 'core/upgrade';
+import {BaseHero} from 'core/entity';
 
 type NumberModifier = Matrix2;
 

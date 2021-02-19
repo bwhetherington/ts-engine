@@ -16,7 +16,7 @@ export class CannonShape implements Serializable {
       length: this.length,
       height: this.height,
       offset: this.offset.serialize(),
-      angle: this.angle * 180 / Math.PI,
+      angle: (this.angle * 180) / Math.PI,
     };
     if (this.farHeight !== undefined) {
       obj.farHeight = this.farHeight;
@@ -39,11 +39,16 @@ export class CannonShape implements Serializable {
       this.offset.deserialize(offset);
     }
     if (typeof angle === 'number') {
-      this.angle = angle * Math.PI / 180;
+      this.angle = (angle * Math.PI) / 180;
     }
   }
 
-  public getTip(x: number = 0, y: number = 0, angle: number = 0, dst: Vector = new Vector(0, 0)): Vector {
+  public getTip(
+    x: number = 0,
+    y: number = 0,
+    angle: number = 0,
+    dst: Vector = new Vector(0, 0)
+  ): Vector {
     dst.setXY(x, y);
     const baseAngle = angle + this.angle;
     const tipX = this.offset.x + this.length;
@@ -57,5 +62,5 @@ export class CannonShape implements Serializable {
 
     dst.addXY(dx, dy);
     return dst;
-  } 
+  }
 }

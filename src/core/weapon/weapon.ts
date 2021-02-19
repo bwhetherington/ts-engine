@@ -42,14 +42,24 @@ export abstract class Weapon implements Serializable {
     modifier?: HeroModifier
   ): void;
 
-  private async burstFire(source: Tank, angle: number, shotCount: number, shotSpread: number, modifier?: HeroModifier): Promise<void> {
+  private async burstFire(
+    source: Tank,
+    angle: number,
+    shotCount: number,
+    shotSpread: number,
+    modifier?: HeroModifier
+  ): Promise<void> {
     for (let i = 0; i < this.burstCount; i++) {
       // Spread shots out
       const deltaAngle = shotSpread / shotCount;
       const baseAngleOffset = (deltaAngle * (shotCount - 1)) / 2;
       for (let i = 0; i < shotCount; i++) {
         const angleOffset = i * deltaAngle - baseAngleOffset;
-        this.fire(source, angle + angleOffset + source.getCannonAngle(), modifier);
+        this.fire(
+          source,
+          angle + angleOffset + source.getCannonAngle(),
+          modifier
+        );
       }
       const event = {
         type: 'FireEvent',
@@ -105,7 +115,17 @@ export abstract class Weapon implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    const {type, rate, cooldown, damage, shotCount, shotSpread, pierce, burstCount, burstInterval} = data;
+    const {
+      type,
+      rate,
+      cooldown,
+      damage,
+      shotCount,
+      shotSpread,
+      pierce,
+      burstCount,
+      burstInterval,
+    } = data;
 
     if (typeof type === 'string') {
       this.type = type;

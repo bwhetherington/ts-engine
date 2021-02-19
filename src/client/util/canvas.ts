@@ -400,7 +400,7 @@ export class HDCanvas implements GraphicsContext {
     vertexCount: number,
     radius: number,
     color: Color,
-    angleOffset?: number,
+    angleOffset?: number
   ): void {
     if (angleOffset === undefined) {
       angleOffset = 0;

@@ -66,7 +66,7 @@ export interface GraphicsContext {
     vertexCount: number,
     radius: number,
     color: Color,
-    angle?: number,
+    angle?: number
   ): void;
   line(x1: number, y1: number, x2: number, y2: number, color: Color): void;
   path(points: Iterable<VectorLike>, color: Color): void;

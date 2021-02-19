@@ -1,5 +1,6 @@
-import { BaseHero } from "core/entity";
+import {BaseHero} from 'core/entity';
+import {Serializable, Data} from 'core/serialize';
 
-export abstract class Upgrade {
-  public abstract applyTo(hero: BaseHero): void;
+export class Upgrade {
+  public applyTo(hero: BaseHero): void {}
 }

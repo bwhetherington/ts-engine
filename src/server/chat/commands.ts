@@ -8,7 +8,7 @@ import {NetworkManager} from 'core/net';
 import {isOk} from 'core/net/http';
 import {WorldManager} from 'core/entity';
 import {Matrix2} from 'core/geometry';
-import { ModifierUpgrade } from 'core/upgrade';
+import {ModifierUpgrade} from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -229,7 +229,7 @@ export const addShots: CommandEntry = {
 
 export const fusilage: CommandEntry = {
   name: 'barrage',
-  help: "Doubles the number of shots at reduced damage",
+  help: 'Doubles the number of shots at reduced damage',
   permissionLevel: 1,
   async handler(player) {
     const {hero} = player;
@@ -247,7 +247,7 @@ export const fusilage: CommandEntry = {
 
 export const focusFire: CommandEntry = {
   name: 'focusfire',
-  help: "Tightens the shot spread",
+  help: 'Tightens the shot spread',
   permissionLevel: 1,
   async handler(player) {
     const {hero} = player;
