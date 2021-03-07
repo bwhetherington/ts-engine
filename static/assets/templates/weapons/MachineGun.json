@@ -5,6 +5,6 @@
   "projectileSpread": 0.2,
   "projectileSpeed": 750,
   "damage": 3,
-  "rate": 0.1,
+  "rate": 0.175,
   "projectileShape": "circle"
 }

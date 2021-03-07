@@ -147,6 +147,11 @@ function* range(low: number, high: number): Iterable<number> {
   }
 }
 
+function* concatenate<T, U>(a: Iterable<T>, b: Iterable<U>): Iterable<T | U> {
+  yield* a;
+  yield* b;
+}
+
 async function* toAsync<T>(gen: Iterable<T>): AsyncIterable<T> {
   yield* gen;
 }
@@ -216,6 +221,10 @@ export class Iterator<T> implements Iterable<T> {
     for (const x of this.generator) {
       yield x;
     }
+  }
+
+  public concatenate<U>(other: Iterable<U>): Iterator<T | U> {
+    return Iterator.from(concatenate(this, other));
   }
 
   public enumerate(): Iterator<[T, number]> {

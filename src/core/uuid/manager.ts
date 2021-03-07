@@ -1,11 +1,11 @@
 import {UUID} from 'core/uuid';
 import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
-import {BasicRNG, RNG, RNGManager} from 'core/random';
+import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
-const UUID_SIZE = 1000000;
+const UUID_SIZE = 100000000;
 
 export class UUIDManager {
   private generated: Set<UUID> = new Set();

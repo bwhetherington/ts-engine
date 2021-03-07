@@ -7,8 +7,20 @@
       "key": 0,
       "shape": {
         "length": 25,
-        "height": 12.5,
-        "farHeight": 17.5
+        "height": 10,
+        "offset": {
+          "y": -7.5
+        }
+      }
+    },
+    {
+      "key": 1,
+      "shape": {
+        "length": 25,
+        "height": 10,
+        "offset": {
+          "y": 7.5
+        }
       }
     }
   ]
