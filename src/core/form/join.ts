@@ -26,7 +26,7 @@ export function isJoinForm(form: Data): form is JoinForm {
 export const JOIN_FORM: Form = {
   label: 'Join Game',
   name: 'JoinForm',
-  description: 'Please enter a name when joining the game.',
+  description: 'Please log in, register, or join anonymously.',
   submitMethods: [
     {
       name: 'login',
