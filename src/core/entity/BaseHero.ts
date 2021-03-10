@@ -288,6 +288,8 @@ export class BaseHero extends Tank {
       }
     }
 
+    console.log(this.getPlayer()?.ping);
+
     if (modifiers) {
       this.modifiers.deserialize(modifiers);
     }
@@ -303,8 +305,13 @@ export class BaseHero extends Tank {
       // Use our angle
       this.angle = oldAngle;
 
+      // Calculate acceptable distance based on speed and latency
+      const latency = this.getPlayer()?.ping ?? 0;
+      const tolerance = (latency * 1.2) * this.speed;
+      const toleranceSquared = tolerance * tolerance;
+
       // Use our own position only if it was within 5px of the new location
-      if (this.position.distanceToXYSquared(oldX, oldY) < 25) {
+      if (this.position.distanceToXYSquared(oldX, oldY) <= toleranceSquared) {
         this.setPositionXY(oldX, oldY);
         NetworkManager.sendEvent<SyncEvent>({
           type: 'SyncEvent',
