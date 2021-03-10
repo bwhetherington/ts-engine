@@ -38,14 +38,16 @@ export class Client extends Node {
     this.socket = new WebSocket(connect);
     this.initializeSocket(this.socket);
 
-    EventManager.addListener<InitialSyncEvent>('InitialSyncEvent', (event) => {
-      log.debug('initial sync event');
-      const {socket, sync} = event.data;
-      PlayerManager.setActivePlayer(socket);
-      const {worldData, playerData} = sync;
-      WorldManager.deserialize(worldData);
-      PlayerManager.deserialize(playerData);
-    });
+    EventManager.streamEvents<InitialSyncEvent>('InitialSyncEvent')
+      .take(1)
+      .forEach((event) => {
+        log.debug('initial sync event');
+        const {socket, sync} = event.data;
+        PlayerManager.setActivePlayer(socket);
+        const {worldData, playerData} = sync;
+        WorldManager.deserialize(worldData);
+        PlayerManager.deserialize(playerData);
+      });
   }
 
   private initializeSocket(socket: WebSocket) {

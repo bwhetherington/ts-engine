@@ -56,12 +56,30 @@ export class Component<P = {}, S = {}> extends React.Component<
     return id;
   }
 
-  protected streamEvents<E extends EventData>(
+  public async removeListener(type: string, id: UUID): Promise<void> {
+    const newList = this.state.handlers[type].filter((id) => id !== id);
+    EventManager.removeListener(type, id);
+    await this.updateState({
+      handlers: {
+        ...this.state.handlers,
+        [type]: newList,
+      },
+    });
+  }
+
+  public streamEvents<E extends EventData>(
     type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(({$yield}) => {
-      this.addListener<E>(type, $yield);
+    let id: UUID;
+    const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
+      id = this.addListener<E>(type, async (event) => {
+        await $yield(event);
+      });
     });
+    iter.onComplete = async () => {
+      this.removeListener(type, id);
+    };
+    return iter;
   }
 
   public componentWillUnmount(): void {

@@ -100,21 +100,16 @@ export class FormContainer extends Component<{}, FormContainerState> {
         document.getElementById('game')?.focus();
       }
 
-      const cleanup = (id: UUID) => {
-        EventManager.removeListener('FormValidatedEvent', id);
-        this.updateState({
-          forms: rest,
-        });
-      };
-
-      this.addListener<FormValidatedEvent>(
-        'FormValidatedEvent',
-        (event, handler) => {
-          if (event.data.id === form.id) {
-            cleanup(handler);
-          }
-        }
-      );
+      this.streamEvents<FormValidatedEvent>('FormValidatedEvent')
+        .filter((event) => event.data.id === form.id)
+        .take(1)
+        .forEach(async () => {
+          await this.updateState({
+            forms: rest,
+          });
+          console.log('foo');
+        })
+        .then(() => console.log('cleaned up'));
     }
   };
 

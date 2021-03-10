@@ -33,7 +33,8 @@ interface TankCannon {
 }
 
 function getFireParameter(lastFired: number): number {
-  const t = 1 - clamp((EventManager.timeElapsed - lastFired) / FIRE_DURATION, 0, 1);
+  const t =
+    1 - clamp((EventManager.timeElapsed - lastFired) / FIRE_DURATION, 0, 1);
   return t * 0.2 + 1;
 }
 

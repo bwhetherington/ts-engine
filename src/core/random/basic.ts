@@ -9,13 +9,11 @@ export class BasicRNG extends AbstractRNG {
 
   public constructor() {
     super();
-    // this.seed(Date.now());
     this.seed(0);
   }
 
   public seed(seed: number): void {
     this.current = seed;
-    this.next();
   }
 
   public next(): number {

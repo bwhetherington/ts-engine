@@ -92,7 +92,7 @@ export class Unit extends Entity {
 
   public setLife(life: number, source?: Unit): void {
     this.life = clamp(life, 0, this.maxLife);
-    if (this.life === 0) {
+    if (this.life <= 0) {
       this.kill(source);
     }
   }
@@ -299,6 +299,7 @@ export class Unit extends Entity {
     }
 
     if (this.hpBar) {
+      this.hpBar.progress = 0;
       const barEcho = WorldManager.spawn(Echo, this.hpBar.position);
       barEcho.initialize(this.hpBar, true);
     }

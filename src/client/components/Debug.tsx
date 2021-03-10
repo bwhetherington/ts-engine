@@ -41,15 +41,15 @@ export class Debug extends Component<{}, DebugState> {
   }
 
   public componentDidMount(): void {
-    this.addListener<StepEvent>('StepEvent', () => {
-      this.updateState({
+    this.streamEvents<StepEvent>('StepEvent').forEach(async () => {
+      await this.updateState({
         fps: MetricsManager.getAverageFPS(),
         clientEntities: WorldManager.getEntityCount(),
         clientListeners: EventManager.getListenerCount(),
       });
     });
 
-    this.addListener<MetricsEvent>('MetricsEvent', (event) => {
+    this.streamEvents<MetricsEvent>('MetricsEvent').forEach(async (event) => {
       // Calculate client ping
       const partialState: Partial<DebugState> = {
         tps: event.data.tps,
@@ -61,7 +61,7 @@ export class Debug extends Component<{}, DebugState> {
         const ping = event.data.pings[player.id];
         partialState.ping = ping;
       }
-      this.updateState(partialState);
+      await this.updateState(partialState);
     });
   }
 

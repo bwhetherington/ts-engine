@@ -39,7 +39,7 @@ export class Bar extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    if (this.progress < 1) {
+    if (0 < this.progress && this.progress < 1) {
       const lineWidth = 4;
       const progress = clamp(this.progress, 0, 1);
 

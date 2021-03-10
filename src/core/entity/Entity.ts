@@ -356,11 +356,16 @@ export class Entity
   public streamEvents<E extends EventData>(
     type: string
   ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(async ({$yield}) => {
-      this.addListener<E>(type, async (event) => {
+    let id: UUID;
+    const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
+      id = this.addListener<E>(type, async (event) => {
         await $yield(event);
       });
     });
+    iter.onComplete = () => {
+      this.removeListener(type, id);
+    };
+    return iter;
   }
 
   public handleEvent<E extends EventData>(type: string, event: Event<E>): void {
