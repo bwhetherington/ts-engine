@@ -107,9 +107,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
           await this.updateState({
             forms: rest,
           });
-          console.log('foo');
         })
-        .then(() => console.log('cleaned up'));
     }
   };
 

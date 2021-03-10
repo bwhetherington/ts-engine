@@ -20,11 +20,9 @@ export class Enemy extends Tank {
     this.setWeapon('Gun');
     this.selectTarget();
 
-    this.addListener<KillEvent>('KillEvent', (event) => {
-      if (this.target === WorldManager.getEntity(event.data.targetID)) {
-        this.selectTarget();
-      }
-    });
+    this.streamEvents<KillEvent>('KillEvent')
+      .filter((event) => this.target === WorldManager.getEntity(event.data.targetID))
+      .forEach(() => this.selectTarget());
 
     if (this.label) {
       this.label.tag = ' [AI]';

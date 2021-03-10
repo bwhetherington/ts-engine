@@ -105,11 +105,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.registerEntity(Feed);
     this.registerEntity(Trail);
 
-    // Template entities
-    // Iterator.values(templateEntities).forEach(
-    //   this.registerTemplateEntity.bind(this)
-    // );
-
     const entityList = await AssetManager.loadDirectory('templates/entities');
     const entityFiles = await AssetManager.loadAllJSON(entityList);
 
@@ -458,7 +453,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         }
       }
       if (entity && (createdEntity || entity.doSync)) {
-        entity.deserialize(entry);
+        entity.deserialize(entry, true);
       } else {
         log.warn(`failed to create entity from data: ${JSON.stringify(entry)}`);
       }

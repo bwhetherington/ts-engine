@@ -299,7 +299,6 @@ export class Entity
     if (velocity !== undefined) {
       this.velocity.deserialize(velocity);
     }
-
     if (setInitialized) {
       this.isInitialized = true;
     }

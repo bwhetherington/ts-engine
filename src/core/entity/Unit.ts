@@ -235,8 +235,8 @@ export class Unit extends Entity {
     };
   }
 
-  public deserialize(data: Data): void {
-    super.deserialize(data);
+  public deserialize(data: Data, setInitialized?: boolean): void {
+    super.deserialize(data, setInitialized);
     const {life, maxLife, movement, xpWorth, speed, name} = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);

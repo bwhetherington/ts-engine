@@ -177,8 +177,8 @@ export class Tank extends Unit {
     };
   }
 
-  public deserialize(data: Data): void {
-    super.deserialize(data);
+  public deserialize(data: Data, setInitialized?: boolean): void {
+    super.deserialize(data, setInitialized);
     const {cannons, bodyShape, weapon} = data;
     if (cannons instanceof Array) {
       Iterator.array(cannons)

@@ -44,10 +44,14 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
   }
 
   public distanceTo(v: VectorLike): number {
-    const {x, y} = this;
-    this.add(v, -1);
-    const dist = this.magnitude;
-    this.setXY(x, y);
+    return Math.sqrt(this.distanceToXYSquared(v.x, v.y));
+  }
+
+  public distanceToXYSquared(x: number, y: number): number {
+    const {x: oldX, y: oldY} = this;
+    this.addXY(-x, -y);
+    const dist = this.magnitudeSquared;
+    this.setXY(oldX, oldY);
     return dist;
   }
 

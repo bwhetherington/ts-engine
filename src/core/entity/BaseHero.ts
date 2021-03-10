@@ -22,7 +22,7 @@ import {CameraManager, rgb, GraphicsContext, hsv} from 'core/graphics';
 import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
-import {Matrix2} from 'core/geometry';
+import {Matrix2, Vector} from 'core/geometry';
 import {UUID} from 'core/uuid';
 import {HeroModifier} from 'core/upgrade/modifier';
 
@@ -48,9 +48,9 @@ export class BaseHero extends Tank {
     this.setExperience(0);
     this.setLevelInternal(1);
 
-    this.addListener<MouseEvent>('MouseEvent', (event) => {
-      if (this.isEventSubject(event)) {
-        const {action, x, y} = event.data;
+    this.streamEvents<MouseEvent>('MouseEvent')
+      .filter((event) => this.isEventSubject(event))
+      .forEach(({data: {action, x, y}}) => {
         if (action === MouseAction.Move) {
           // Subtract our position from mouse position
           this.vectorBuffer.setXY(x, y);
@@ -61,19 +61,17 @@ export class BaseHero extends Tank {
         } else if (action === MouseAction.ButtonUp) {
           this.mouseDown = false;
         }
-      }
-    });
+      });
 
-    this.addListener<KeyEvent>('KeyEvent', (event) => {
-      if (this.isEventSubject(event)) {
-        const {action, key} = event.data;
+    this.streamEvents<KeyEvent>('KeyEvent')
+      .filter((event) => this.isEventSubject(event))
+      .forEach(({data: {action, key}}) => {
         const state = action === KeyAction.KeyDown;
         const direction = MOVEMENT_DIRECTION_MAP[key];
         if (direction !== undefined) {
           this.setMovement(direction, state);
         }
-      }
-    });
+      });
 
     if (NetworkManager.isClient()) {
       this.addListener<DamageEvent>('DamageEvent', async (event) => {
@@ -277,7 +275,7 @@ export class BaseHero extends Tank {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data, setInitialized?: boolean): void {
     const {x: oldX, y: oldY} = this.position;
     const {angle: oldAngle} = this;
     const {playerID, xp, modifiers} = data;
@@ -298,27 +296,32 @@ export class BaseHero extends Tank {
       this.setExperience(xp);
     }
 
-    super.deserialize(data);
+    const wasInitialized = this.isInitialized;
+    super.deserialize(data, setInitialized);
 
-    if (this.getPlayer()?.isActivePlayer() && this.isInitialized) {
+    if (this.getPlayer()?.isActivePlayer() && wasInitialized) {
       // Use our angle
       this.angle = oldAngle;
 
-      // Use our own position
-      this.setPositionXY(oldX, oldY);
-      NetworkManager.sendEvent<SyncEvent>({
-        type: 'SyncEvent',
-        data: {
-          worldData: {
-            entities: {
-              [this.id]: {
-                position: this.position.serialize(),
+      // Use our own position only if it was within 5px of the new location
+      if (this.position.distanceToXYSquared(oldX, oldY) < 25) {
+        this.setPositionXY(oldX, oldY);
+        NetworkManager.sendEvent<SyncEvent>({
+          type: 'SyncEvent',
+          data: {
+            worldData: {
+              entities: {
+                [this.id]: {
+                  position: this.position.serialize(),
+                },
               },
             },
+            playerData: {},
           },
-          playerData: {},
-        },
-      });
+        });
+      } else {
+        log.info(`${this.toString()} position out of sync with server`);
+      }
     }
   }
 
