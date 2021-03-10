@@ -107,7 +107,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
           await this.updateState({
             forms: rest,
           });
-        })
+        });
     }
   };
 

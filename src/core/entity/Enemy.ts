@@ -21,7 +21,9 @@ export class Enemy extends Tank {
     this.selectTarget();
 
     this.streamEvents<KillEvent>('KillEvent')
-      .filter((event) => this.target === WorldManager.getEntity(event.data.targetID))
+      .filter(
+        (event) => this.target === WorldManager.getEntity(event.data.targetID)
+      )
       .forEach(() => this.selectTarget());
 
     if (this.label) {

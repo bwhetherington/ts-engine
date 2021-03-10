@@ -288,8 +288,6 @@ export class BaseHero extends Tank {
       }
     }
 
-    console.log(this.getPlayer()?.ping);
-
     if (modifiers) {
       this.modifiers.deserialize(modifiers);
     }
@@ -307,7 +305,7 @@ export class BaseHero extends Tank {
 
       // Calculate acceptable distance based on speed and latency
       const latency = this.getPlayer()?.ping ?? 0;
-      const tolerance = (latency * 1.2) * this.speed;
+      const tolerance = latency * 1.2 * this.speed;
       const toleranceSquared = tolerance * tolerance;
 
       // Use our own position only if it was within 5px of the new location
