@@ -1,4 +1,5 @@
 import {Socket} from 'core/net';
+import {Player} from 'core/player';
 import {UUID} from 'core/uuid';
 
 export type Handler<T extends EventData> = (arg: Event<T>, id: UUID) => void;
@@ -7,6 +8,12 @@ export type GameHandler = Handler<any>;
 
 export interface Event<T extends EventData> {
   socket?: Socket;
+  type: string;
+  data: T;
+}
+
+export interface PlayerEvent<T extends EventData> {
+  player: Player;
   type: string;
   data: T;
 }

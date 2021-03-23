@@ -60,12 +60,11 @@ export const JOIN_FORM: Form = {
 };
 
 export function registerJoinForm(): void {
-  EventManager.addListener<ConnectEvent>('ConnectEvent', async (event) => {
-    const player = PlayerManager.getSocket(event.data.socket);
-    if (player) {
+  EventManager.streamEvents<ConnectEvent>('ConnectEvent')
+    .filterMap(({data: {socket}}) => PlayerManager.getSocket(socket))
+    .forEach((player) => {
       FormManager.sendForm(player, 'JoinForm');
-    }
-  });
+    });
   FormManager.registerForm(JoinFormEntry);
 }
 

@@ -5,6 +5,8 @@ import {LogManager} from 'core/log';
 import {formatData} from 'core/util';
 import {AsyncIterator} from 'core/iterator';
 import {Observer} from './observer';
+import {PlayerEvent} from './util';
+import {PlayerManager} from 'core/player';
 
 const log = LogManager.forFile(__filename);
 
@@ -148,5 +150,14 @@ export class EventManager {
       this.removeListener('StepEvent', id);
     };
     return iter;
+  }
+
+  public streamEventsForPlayer<E extends EventData>(
+    type: string
+  ): AsyncIterator<PlayerEvent<E>> {
+    return this.streamEvents<E>(type).filterMap(({data, socket, type}) => {
+      const player = PlayerManager.getSocket(socket);
+      return player ? {data, player, type} : undefined;
+    });
   }
 }

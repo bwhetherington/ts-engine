@@ -9,9 +9,6 @@ import {
   TextStyle,
 } from 'core/chat';
 
-const MESSAGE_FORMAT =
-  '{color=$authorColor,style=bold|hello $authorName}: $messageContent';
-
 type ComponentFormatter = (
   input: Data
 ) => Iterable<TextComponent | string | null>;

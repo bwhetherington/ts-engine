@@ -148,6 +148,22 @@ async function* zip<T, U>(
   }
 }
 
+async function* debounce<T>(
+  gen: AsyncIterable<T>,
+  time: number
+): AsyncIterable<T> {
+  const timeMs = time * 1000;
+  let lastTime = Date.now();
+
+  for await (const x of gen) {
+    const currentTime = Date.now();
+    if (currentTime - lastTime >= timeMs) {
+      lastTime = currentTime;
+      yield x;
+    }
+  }
+}
+
 interface IteratorFunctions<T> {
   $yield(arg: T): Promise<void>;
   $yieldAll(args: Iterable<T>): Promise<void>;
@@ -238,6 +254,14 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
 
       yield x;
     }
+  }
+
+  private chain<U>(gen: AsyncIterable<U>): AsyncIterator<U> {
+    return AsyncIterator.generator(gen, this.onComplete);
+  }
+
+  public debounce(time: number): AsyncIterator<T> {
+    return this.chain(debounce(this, time));
   }
 
   public enumerate(): AsyncIterator<[T, number]> {
@@ -365,9 +389,8 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param fn A predicate function
    */
   public async all(fn: (x: T) => MaybePromise<boolean>): Promise<boolean> {
-    const res = !(await this.any(async (x) => !(await fn(x))));
-    this.cleanup();
-    return res;
+    const didAnyFail = await this.any(async (x) => !(await fn(x)));
+    return !didAnyFail;
   }
 
   /**

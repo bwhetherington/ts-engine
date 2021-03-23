@@ -1,5 +1,5 @@
-import {Player} from 'core/player';
-import {TextFormatter} from './format';
+export {TextFormatter} from 'core/chat/format';
+export {ChatManager as CM} from 'core/chat/manager';
 
 export type TextColor =
   | 'none'

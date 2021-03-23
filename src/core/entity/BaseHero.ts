@@ -74,16 +74,21 @@ export class BaseHero extends Tank {
       });
 
     if (NetworkManager.isClient()) {
-      this.addListener<DamageEvent>('DamageEvent', async (event) => {
-        const {targetID, sourceID, amount} = event.data;
-        const target = WorldManager.getEntity(targetID);
-        const source = WorldManager.getEntity(sourceID);
-        if (
-          target &&
+      this.streamEvents<DamageEvent>('DamageEvent')
+        .map(({data: {targetID, sourceID, amount}}) => ({
+          amount,
+          target: WorldManager.getEntity(targetID),
+          source: WorldManager.getEntity(sourceID),
+        }))
+        .filterMap(({amount, target, source}) =>
+          !!target &&
           amount > 0 &&
-          this.getPlayer()?.isActivePlayer() &&
+          (this.getPlayer()?.isActivePlayer() ?? false) &&
           (this === target || this === source)
-        ) {
+            ? {amount, target}
+            : undefined
+        )
+        .forEach(({amount, target}) => {
           const label = Math.round(amount).toLocaleString();
           const text = WorldManager.spawn(TimedText, target.position);
           const color = this === target ? 'red' : 'yellow';
@@ -98,8 +103,7 @@ export class BaseHero extends Tank {
           text.velocity.angle += RNGManager.nextFloat(-0.3, 0.3);
           text.friction = 50;
           text.textSize = 20;
-        }
-      });
+        });
     }
 
     if (NetworkManager.isServer()) {

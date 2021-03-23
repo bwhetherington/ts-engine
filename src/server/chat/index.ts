@@ -1,4 +1,4 @@
-import {ChatManager} from 'server/chat/ChatManager';
+import {ServerChatManager} from 'server/chat/manager';
 import {Player} from 'core/player';
 
 export interface CommandEntry {
@@ -9,5 +9,5 @@ export interface CommandEntry {
   aliases?: [];
 }
 
-const CM = new ChatManager();
+const CM = new ServerChatManager();
 export {CM as ChatManager};

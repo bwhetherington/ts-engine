@@ -44,7 +44,7 @@ interface Command {
   handler: CommandHandler;
 }
 
-export class ChatManager {
+export class ServerChatManager {
   private commands: {[command: string]: Command} = {};
   private aliases: {[alias: string]: string} = {};
 
@@ -116,45 +116,27 @@ export class ChatManager {
   public initialize(): void {
     log.debug('ChatManager initialized');
 
-    EventManager.addListener<SetNameEvent>('SetNameEvent', (event) => {
-      const {data, socket} = event;
-
-      if (socket !== undefined) {
-        const player = PlayerManager.getSocket(socket);
-        if (player) {
-          player.name = data.name;
-          log.debug(`player ${socket} set name to ${data.name}`);
-        } else {
-          log.error(`player ${socket} not found`);
-        }
-      } else {
-        log.error('unknown socket');
-      }
-    });
-
-    EventManager.addListener<TextMessageInEvent>(
-      'TextMessageInEvent',
-      (event) => {
-        const {data, socket} = event;
-        const player = PlayerManager.getSocket(socket);
-        if (player) {
-          const {name, hasJoined} = player;
-          if (hasJoined) {
-            const components = this.formatMessage(player, event.data.content);
-            this.sendComponents(components);
-            log.info(`[<${name}> ${data.content}]`);
-          }
-        }
+    EventManager.streamEventsForPlayer<SetNameEvent>('SetNameEvent').forEach(
+      ({data, player}) => {
+        player.name = data.name;
+        log.debug(`player ${player.socket} set name to ${player.name}`);
       }
     );
 
-    EventManager.addListener<TextCommandEvent>('TextCommandEvent', (event) => {
-      const {socket, data} = event;
-      const player = PlayerManager.getSocket(socket);
-      if (player && player.hasJoined) {
-        this.handleCommand(player, data.command, data.args);
-      }
-    });
+    EventManager.streamEventsForPlayer<TextMessageInEvent>('TextMessageInEvent')
+      .filter(({player}) => player.hasJoined)
+      .forEach(({data, player}) => {
+        const {name} = player;
+        const components = this.formatMessage(player, data.content);
+        this.sendComponents(components);
+        log.info(`[<${name}> ${data.content}]`);
+      });
+
+    EventManager.streamEventsForPlayer<TextCommandEvent>('TextCommandEvent')
+      .filter(({player}) => player.hasJoined)
+      .forEach(({data: {command, args}, player}) => {
+        this.handleCommand(player, command, args);
+      });
 
     this.registerCommand(
       'help',

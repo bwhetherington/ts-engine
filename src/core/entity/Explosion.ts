@@ -26,8 +26,8 @@ export class Explosion extends Entity {
     this.isCollidable = false;
     this.isVisible = true;
 
-    this.addListener<StepEvent>('StepEvent', (event) => {
-      this.timeRemaining -= event.data.dt;
+    this.streamEvents<StepEvent>('StepEvent').forEach(({data: {dt}}) => {
+      this.timeRemaining -= dt;
       if (this.timeRemaining <= 0) {
         this.markForDelete();
       }

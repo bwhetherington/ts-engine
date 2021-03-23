@@ -121,6 +121,12 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
     await this.registerAllEntities();
 
+    EventManager.streamEvents<SyncEvent>('SyncEvent').forEach(
+      ({data: {worldData}}) => {
+        this.deserialize(worldData);
+      }
+    );
+
     EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
       this.deserialize(event.data.worldData);
     });
