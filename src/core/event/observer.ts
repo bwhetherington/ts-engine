@@ -8,7 +8,7 @@ import {
   PlayerEvent,
 } from 'core/event';
 import {AsyncIterator} from 'core/iterator';
-import { PlayerManager } from 'core/player';
+import {PlayerManager} from 'core/player';
 import {UUID} from 'core/uuid';
 
 export abstract class Observer {

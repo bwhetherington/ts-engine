@@ -5,7 +5,7 @@ import {MetricsManager} from 'client/metrics';
 import {WorldManager} from 'core/entity';
 import {MetricsEvent} from 'core/metrics';
 import {PlayerManager} from 'core/player';
-import { UUIDManager } from 'core/uuid';
+import {UUIDManager} from 'core/uuid';
 
 interface LineProps {
   label: string;

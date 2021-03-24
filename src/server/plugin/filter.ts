@@ -1,6 +1,6 @@
 import {TextMessageInEvent} from 'core/chat';
 import {EventManager, Priority} from 'core/event';
-import { ChatManager } from 'server/chat';
+import {ChatManager} from 'server/chat';
 
 import {Server} from 'server/net';
 import {Plugin} from 'server/plugin';
@@ -20,10 +20,12 @@ export class FilterPlugin extends Plugin {
       'TextMessageInEvent',
       Priority.Highest
     )
-      .filter((event) => FILTER_WORDS.some((word) => event.data.content.includes(word)))
+      .filter((event) =>
+        FILTER_WORDS.some((word) => event.data.content.includes(word))
+      )
       .forEach((event) => {
         // Reprimand player
-        ChatManager.warn('Don\'t use such foul language!', event.socket);
+        ChatManager.warn("Don't use such foul language!", event.socket);
 
         // Stop the event
         EventManager.stopPropagation();

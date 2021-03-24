@@ -30,7 +30,10 @@ const DEFAULT_OPTIONS: Options = {
 };
 
 function isSmall(component: string | TextComponent | null): boolean {
-  return (typeof component === 'object') && (component?.style?.styles?.includes('small') ?? false);
+  return (
+    typeof component === 'object' &&
+    (component?.style?.styles?.includes('small') ?? false)
+  );
 }
 
 export class HDCanvas implements GraphicsContext {
@@ -234,9 +237,9 @@ export class HDCanvas implements GraphicsContext {
       ctx.textAlign = 'left';
 
       const normalFont = createFontString(font, size, scaleValue);
-      const smallFont = createFontString(font, size * 3/4, scaleValue);
+      const smallFont = createFontString(font, (size * 3) / 4, scaleValue);
       ctx.font = normalFont;
-      
+
       this.setRound(ctx);
 
       // Compute width
