@@ -265,29 +265,29 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   }
 
   public enumerate(): AsyncIterator<[T, number]> {
-    return AsyncIterator.generator(enumerate(this), this.onComplete);
+    return this.chain(enumerate(this));
   }
 
   public map<U>(fn: (x: T) => MaybePromise<U>): AsyncIterator<U> {
-    return AsyncIterator.generator(map(this, fn), this.onComplete);
+    return this.chain(map(this, fn));
   }
 
   public flatMap<U>(fn: (x: T) => MaybeAsyncIterable<U>): AsyncIterator<U> {
-    return AsyncIterator.generator(flatMap(this, fn), this.onComplete);
+    return this.chain(flatMap(this, fn));
   }
 
   public filter(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
-    return AsyncIterator.generator(filter(this, fn), this.onComplete);
+    return this.chain(filter(this, fn));
   }
 
   public filterType<U extends T>(fn: (x: T) => x is U): AsyncIterator<U> {
-    return AsyncIterator.generator(filterType(this, fn), this.onComplete);
+    return this.chain(filterType(this, fn));
   }
 
   public filterMap<U>(
     fn: (x: T) => MaybePromise<U | undefined>
   ): AsyncIterator<U> {
-    return AsyncIterator.generator(filterMap(this, fn), this.onComplete);
+    return this.chain(filterMap(this, fn));
   }
 
   public async fold<U>(
@@ -308,7 +308,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param amount The number of elements to take
    */
   public take(amount: number): AsyncIterator<T> {
-    return AsyncIterator.generator(take(this, amount), this.onComplete);
+    return this.chain(take(this, amount));
   }
 
   /**
@@ -318,7 +318,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param fn A predicate function
    */
   public takeWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
-    return AsyncIterator.generator(takeWhile(this, fn), this.onComplete);
+    return this.chain(takeWhile(this, fn));
   }
 
   /**
@@ -327,7 +327,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param amount The number of elements to skip
    */
   public skip(amount: number): AsyncIterator<T> {
-    return AsyncIterator.generator(skip(this, amount), this.onComplete);
+    return this.chain(skip(this, amount));
   }
 
   /**
@@ -337,7 +337,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param fn A predicate function
    */
   public skipWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
-    return AsyncIterator.generator(skipWhile(this, fn), this.onComplete);
+    return this.chain(skipWhile(this, fn));
   }
 
   /**
@@ -346,7 +346,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * @param fn A function
    */
   public use(fn: (x: T) => MaybePromise<void>): AsyncIterator<T> {
-    return AsyncIterator.generator(use(this, fn), this.onComplete);
+    return this.chain(use(this, fn));
   }
 
   /**
@@ -417,6 +417,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
 
   public removeSubscriber(id: UUID): void {
     delete this.subscribers[id];
+    UUIDManager.free(id);
   }
 
   public subscribe(): IteratorSubscriber<T> {

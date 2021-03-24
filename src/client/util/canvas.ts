@@ -10,7 +10,7 @@ import {
 import {COLOR_MAPPING, WHITE} from 'core/graphics/color';
 import {GraphicsProc, ShadowStyle} from 'core/graphics/context';
 import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
-import {TextColor, TextComponents} from 'core/chat';
+import {TextColor, TextComponent, TextComponents} from 'core/chat';
 
 interface Options {
   width: number;
@@ -28,6 +28,10 @@ const DEFAULT_OPTIONS: Options = {
   height: 400,
   isFullScreen: false,
 };
+
+function isSmall(component: string | TextComponent | null): boolean {
+  return (typeof component === 'object') && (component?.style?.styles?.includes('small') ?? false);
+}
 
 export class HDCanvas implements GraphicsContext {
   private canvas?: HTMLCanvasElement;
@@ -228,7 +232,11 @@ export class HDCanvas implements GraphicsContext {
       const {font = 'Roboto Mono', size = 12} = style;
       ctx.lineWidth = this.options.lineWidth / scaleValue;
       ctx.textAlign = 'left';
-      ctx.font = createFontString(font, size, scaleValue);
+
+      const normalFont = createFontString(font, size, scaleValue);
+      const smallFont = createFontString(font, size * 3/4, scaleValue);
+      ctx.font = normalFont;
+      
       this.setRound(ctx);
 
       // Compute width
@@ -237,6 +245,11 @@ export class HDCanvas implements GraphicsContext {
         const text =
           (typeof component === 'string' ? component : component?.content) ??
           '';
+        if (isSmall(component)) {
+          ctx.font = smallFont;
+        } else {
+          ctx.font = normalFont;
+        }
         const width = ctx.measureText(text).width;
         totalWidth += width;
       }
@@ -250,6 +263,8 @@ export class HDCanvas implements GraphicsContext {
           (typeof component === 'string' ? 'none' : component?.style?.color) ??
           'none';
         const color = COLOR_MAPPING[colorString];
+
+        ctx.font = isSmall(component) ? smallFont : normalFont;
 
         this.setStyles(ctx, color, -0.35);
 

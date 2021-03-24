@@ -38,6 +38,11 @@ export abstract class AbstractRNG implements RNG {
     return this.next() < chance;
   }
 
+  public nextEntry<T>(entries: T[]): T {
+    const index = this.nextInt(0, entries.length);
+    return entries[index];
+  }
+
   private *iteratorInternal(): Iterable<number> {
     while (true) {
       yield this.next();

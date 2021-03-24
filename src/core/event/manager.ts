@@ -1,11 +1,17 @@
 import {Queue} from 'core/util/queue';
-import {Event, GameEvent, GameHandler, Handler, EventData} from 'core/event';
+import {
+  Event,
+  GameEvent,
+  GameHandler,
+  Handler,
+  EventData,
+  PlayerEvent,
+  Priority,
+} from 'core/event';
 import {UUID, UUIDManager} from 'core/uuid';
 import {LogManager} from 'core/log';
 import {formatData} from 'core/util';
-import {AsyncIterator} from 'core/iterator';
-import {Observer} from './observer';
-import {PlayerEvent} from './util';
+import {AsyncIterator, Iterator} from 'core/iterator';
 import {PlayerManager} from 'core/player';
 
 const log = LogManager.forFile(__filename);
@@ -14,40 +20,47 @@ export interface StepEvent {
   dt: number;
 }
 
+type GameHandlers = Record<UUID, GameHandler>[];
+
 export class EventManager {
-  private handlers: Record<string, Record<UUID, GameHandler>> = {};
+  private handlers: Record<string, GameHandlers> = {};
   private events: Queue<GameEvent> = new Queue();
   private listenerCount: number = 0;
   public timeElapsed: number = 0;
   public stepCount: number = 0;
 
+  private isPropagationCanceled: boolean = false;
+
   public emit<E extends EventData>(event: Event<E>): void {
     this.events.enqueue(event);
   }
 
-  private getHandlers(type: string): Record<string, GameHandler> {
+  private getHandlers(type: string): GameHandlers {
     let handlers = this.handlers[type];
     if (handlers === undefined) {
-      handlers = {};
+      handlers = [];
+
+      for (let i = Priority.Highest; i <= Priority.Lowest; i++) {
+        handlers[i] = {};
+      }
+
       this.handlers[type] = handlers;
     }
     return handlers;
   }
 
-  public getHandler(type: string, id: UUID): GameHandler | undefined {
-    const handlers = this.handlers[type];
-    if (handlers) {
-      return handlers[id];
-    }
+  public stopPropagation(): void {
+    this.isPropagationCanceled = true;
   }
 
   public addListener<E extends EventData>(
     type: string,
-    handler: Handler<E>
+    handler: Handler<E>,
+    priority: Priority = Priority.Normal
   ): UUID {
     const handlers = this.getHandlers(type);
     const id = UUIDManager.generate();
-    handlers[id] = handler;
+    handlers[priority][id] = handler;
     this.listenerCount += 1;
     log.trace(`add listener ${type}[${id}]`);
     return id;
@@ -55,26 +68,42 @@ export class EventManager {
 
   public removeListener(type: string, id: UUID): boolean {
     const handlers = this.getHandlers(type);
-    if (id in handlers) {
-      this.listenerCount -= 1;
-      delete handlers[id];
-      UUIDManager.free(id);
-      log.trace(`remove listener ${type}[${id}]`);
-      return true;
-    } else {
-      log.warn(`failed to remove listener ${type}[${id}]`);
-      return false;
+    for (let i = Priority.Highest; i <= Priority.Lowest; i++) {
+      const priorityHandlers = handlers[i];
+      if (id in priorityHandlers) {
+        this.listenerCount -= 1;
+        delete priorityHandlers[id];
+        UUIDManager.free(id);
+        log.trace(`remove listener ${type}[${id}]`);
+        return true;
+      }
     }
+    log.warn(`failed to remove listener ${type}[${id}]`);
+    return false;
   }
 
-  private handleEvent(event: GameEvent): void {
+  private async handleEvent(event: GameEvent): Promise<void> {
     // Check handlers
+    this.isPropagationCanceled = false;
+
     const {type} = event;
     log.trace(`handle event: ${formatData(event)}`);
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
-      for (const id in handlers) {
-        handlers[id](event, UUIDManager.from(id));
+      for (
+        let priority = Priority.Highest;
+        priority <= Priority.Lowest;
+        priority++
+      ) {
+        for (const id in handlers[priority]) {
+          // Check if the event has been canceled
+          if (this.isPropagationCanceled) {
+            return;
+          }
+
+          const handler = handlers[priority][id];
+          await handler(event, UUIDManager.from(id));
+        }
       }
     }
   }
@@ -127,13 +156,12 @@ export class EventManager {
   }
 
   public streamEvents<E extends EventData>(
-    type: string
+    type: string,
+    priority: Priority = Priority.Normal
   ): AsyncIterator<Event<E>> {
     let id: number;
     const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
-      id = this.addListener<E>(type, async (event) => {
-        await $yield(event);
-      });
+      id = this.addListener<E>(type, $yield, priority);
     });
     iter.onComplete = () => {
       this.removeListener(type, id);
@@ -141,23 +169,24 @@ export class EventManager {
     return iter;
   }
 
-  public streamInterval(period: number): AsyncIterator<void> {
-    let id: number;
-    const iter = AsyncIterator.from<void>(({$yield}) => {
-      id = this.runPeriodic(period, async () => await $yield());
-    });
-    iter.onComplete = () => {
-      this.removeListener('StepEvent', id);
-    };
-    return iter;
+  public streamInterval(
+    period: number,
+    priority: Priority = Priority.Normal
+  ): AsyncIterator<void> {
+    return this.streamEvents<StepEvent>('StepEvent', priority)
+      .map(() => {})
+      .debounce(period);
   }
 
   public streamEventsForPlayer<E extends EventData>(
-    type: string
+    type: string,
+    priority: Priority = Priority.Normal
   ): AsyncIterator<PlayerEvent<E>> {
-    return this.streamEvents<E>(type).filterMap(({data, socket, type}) => {
-      const player = PlayerManager.getSocket(socket);
-      return player ? {data, player, type} : undefined;
-    });
+    return this.streamEvents<E>(type, priority).filterMap(
+      ({data, socket, type}) => {
+        const player = PlayerManager.getSocket(socket);
+        return player ? {data, player, type} : undefined;
+      }
+    );
   }
 }

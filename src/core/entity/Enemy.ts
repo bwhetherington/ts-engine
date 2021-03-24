@@ -15,7 +15,7 @@ export class Enemy extends Tank {
   public constructor() {
     super();
     this.type = Enemy.typeName;
-    this.setName('Tank');
+    this.setName('Gunner');
 
     this.setWeapon('Gun');
     this.selectTarget();
@@ -27,7 +27,7 @@ export class Enemy extends Tank {
       .forEach(() => this.selectTarget());
 
     if (this.label) {
-      this.label.tag = ' [AI]';
+      this.label.tag = ' AI';
     }
 
     this.setMaxLife(40);

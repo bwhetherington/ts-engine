@@ -5,7 +5,7 @@ import {Timer} from 'server/util';
 import {MetricsEvent} from 'core/metrics';
 import {WorldManager} from 'core/entity';
 import {NetworkManager} from 'core/net';
-import {UUID} from 'core/uuid';
+import {UUID, UUIDManager} from 'core/uuid';
 import {Player} from 'core/player';
 
 const log = LogManager.forFile(__filename);
@@ -39,18 +39,18 @@ export class MetricsManager {
       this.timer += event.data.dt;
       if (this.timer > 1) {
         this.timer %= 1;
-        const event = {
+        NetworkManager.sendEvent<MetricsEvent>({
           type: 'MetricsEvent',
-          data: <MetricsEvent>{
+          data: {
             tps: calculateTps(frameTimes),
             entities: WorldManager.getEntityCount(),
             listeners: EventManager.getListenerCount(),
             connections: 0,
             timeElapsed: EventManager.timeElapsed,
             pings: this.pings,
+            uuids: UUIDManager.getCount(),
           },
-        };
-        NetworkManager.send(event);
+        });
       }
     });
   }

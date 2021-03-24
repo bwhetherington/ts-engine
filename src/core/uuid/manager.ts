@@ -5,7 +5,7 @@ import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
-const UUID_SIZE = 100000000;
+const UUID_SIZE = 1_000_000_000;
 
 export class UUIDManager {
   private generated: Set<UUID> = new Set();
@@ -14,6 +14,10 @@ export class UUIDManager {
     const num = RNGManager.nextInt(0, UUID_SIZE);
     const flag = NetworkManager.isClient() ? UUID_SIZE : 0;
     return num + flag;
+  }
+
+  public getCount(): number {
+    return this.generated.size;
   }
 
   public generate(): UUID {

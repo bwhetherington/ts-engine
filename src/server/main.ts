@@ -1,4 +1,4 @@
-import {EventManager, StepEvent} from 'core/event';
+import {EventManager, Priority, StepEvent} from 'core/event';
 import {
   Timer,
   ServerLogger,
@@ -20,11 +20,14 @@ import {WeaponManager} from 'core/weapon';
 import process from 'process';
 import {registerRenameForm} from 'core/form/rename';
 import {isEmpty} from 'core/util/object';
-import {randomColor} from 'core/graphics/color';
 import {RNGManager} from 'core/random';
 import {BasicAuth} from 'core/net/http';
 import {AssetManager} from 'core/assets';
-import {AsyncIterator, Iterator} from 'core/iterator';
+import {EnemiesPlugin} from 'server/plugin/enemies';
+import {PluginManager} from 'server/plugin';
+import {FeedPlugin} from 'server/plugin/feed';
+import {TextMessageInEvent} from 'core/chat';
+import {FilterPlugin} from './plugin/filter';
 
 const log = LogManager.forFile(__filename);
 
@@ -59,6 +62,7 @@ async function main(): Promise<void> {
   registerRenameForm();
 
   MetricsManager.initialize();
+  await PluginManager.initialize(server);
 
   if (process.send) {
     process.send({type: 'ready'});
@@ -91,33 +95,11 @@ async function main(): Promise<void> {
 
   RNGManager.seed(Date.now());
 
-  EventManager.streamInterval(0.5)
-    .filter(() => false)
-    .filter(() => WorldManager.getEntityCount() < 60)
-    .forEach(() => {
-      const num = RNGManager.nextFloat(0, 1);
-      const position = WorldManager.getRandomPosition();
-      if (num < 0.5) {
-        let size;
-        if (num < 0.1) {
-          size = FeedVariant.Large;
-        } else if (num < 0.25) {
-          size = FeedVariant.Medium;
-        } else {
-          size = FeedVariant.Small;
-        }
-        const entity = WorldManager.spawnEntity('Feed', position) as Feed;
-        entity.setVariant(size);
-      } else {
-        const type =
-          num < 0.9 ? (num < 0.7 ? 'Enemy' : 'HomingEnemy') : 'HeavyEnemy';
-        const entity = WorldManager.spawnEntity(type, position);
-        entity.setColor(randomColor());
-      }
-    });
-
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);
+
+  // Load plugins
+  await PluginManager.loadPlugins([FeedPlugin, EnemiesPlugin, FilterPlugin]);
 }
 
 main().catch((ex) => {

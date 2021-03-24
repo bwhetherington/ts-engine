@@ -18,7 +18,7 @@ export interface ColorHSV {
 
 export const COLOR_MAPPING: Record<TextColor, Color> = {
   none: rgb(1, 1, 1),
-  grey: rgba(1, 1, 1, 0.75),
+  grey: rgb(0.95, 0.95, 0.95),
   red: hsv(0, 0.65, 1),
   orange: hsv(30, 0.65, 1),
   yellow: hsv(60, 0.65, 1),

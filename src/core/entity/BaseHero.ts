@@ -261,7 +261,7 @@ export class BaseHero extends Tank {
       }
 
       if (this.label) {
-        this.label.tag = ` [${this.level}]`;
+        this.label.tag = ` ${this.level}`;
       }
     }
 
@@ -307,30 +307,20 @@ export class BaseHero extends Tank {
       // Use our angle
       this.angle = oldAngle;
 
-      // Calculate acceptable distance based on speed and latency
-      const latency = this.getPlayer()?.ping ?? 0;
-      const tolerance = latency * 1.5 * this.speed;
-      const toleranceSquared = tolerance * tolerance;
-
-      // Use our own position only if it was within 5px of the new location
-      if (this.position.distanceToXYSquared(oldX, oldY) <= toleranceSquared) {
-        this.setPositionXY(oldX, oldY);
-        NetworkManager.sendEvent<SyncEvent>({
-          type: 'SyncEvent',
-          data: {
-            worldData: {
-              entities: {
-                [this.id]: {
-                  position: this.position.serialize(),
-                },
+      this.setPositionXY(oldX, oldY);
+      NetworkManager.sendEvent<SyncEvent>({
+        type: 'SyncEvent',
+        data: {
+          worldData: {
+            entities: {
+              [this.id]: {
+                position: this.position.serialize(),
               },
             },
-            playerData: {},
           },
-        });
-      } else {
-        log.info(`${this.toString()} position out of sync with server`);
-      }
+          playerData: {},
+        },
+      });
     }
   }
 

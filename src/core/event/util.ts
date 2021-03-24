@@ -2,7 +2,12 @@ import {Socket} from 'core/net';
 import {Player} from 'core/player';
 import {UUID} from 'core/uuid';
 
-export type Handler<T extends EventData> = (arg: Event<T>, id: UUID) => void;
+type HandlerFunction<T, U> = (arg: Event<T>, id: UUID) => U;
+
+export type Handler<T extends EventData> = HandlerFunction<
+  T,
+  void | Promise<void>
+>;
 
 export type GameHandler = Handler<any>;
 
@@ -28,6 +33,14 @@ export function isEvent(x: any): x is GameEvent {
     x.hasOwnProperty('data') &&
     typeof x.data === 'object'
   );
+}
+
+export enum Priority {
+  Highest = 0,
+  High = 1,
+  Normal = 2,
+  Low = 3,
+  Lowest = 4,
 }
 
 export interface EventData {

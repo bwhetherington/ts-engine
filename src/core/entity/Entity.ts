@@ -4,13 +4,13 @@ import {WHITE, isColor} from 'core/graphics/color';
 import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
 import {isCollisionLayer, shuntOutOf} from './util';
-import {EventData, Handler, EventManager, Event, StepEvent} from 'core/event';
+import {EventManager, Observer} from 'core/event';
 import {UUID, UUIDManager} from 'core/uuid';
 import {AsyncIterator} from 'core/iterator';
 import {DataBuffer, DataSerializable} from 'core/buf';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 
-export class Entity
+export class Entity extends Observer
   implements Bounded, DataSerializable, Serializable, Renderable {
   public static typeName: string = 'Entity';
   public static typeNum: number = 0;
@@ -34,10 +34,10 @@ export class Entity
   public isCollidable: boolean = true;
   public doSync: boolean = true;
   public isSpatial: boolean = false;
-  private handlers: Record<string, Set<UUID>> = {};
   public isInitialized: boolean = false;
 
   constructor() {
+    super();
     this.id = UUIDManager.generate();
     this.type = Entity.typeName;
   }
@@ -316,75 +316,6 @@ export class Entity
     this.markedForDelete = true;
   }
 
-  private getHandlers(type: string): Set<UUID> {
-    let handlers = this.handlers[type];
-    if (handlers === undefined) {
-      handlers = new Set();
-      this.handlers[type] = handlers;
-    }
-    return handlers;
-  }
-
-  public addListener<E extends EventData>(
-    type: string,
-    handler: Handler<E>
-  ): UUID {
-    const id = EventManager.addListener(type, handler);
-    this.getHandlers(type).add(id);
-    return id;
-  }
-
-  public removeListener(type: string, id: UUID): boolean {
-    return (
-      this.getHandlers(type)?.delete(id) &&
-      EventManager.removeListener(type, id)
-    );
-  }
-
-  public runPeriodic(period: number, action: () => void): UUID {
-    let passed = 0;
-    return this.addListener<StepEvent>('StepEvent', (event) => {
-      passed += event.data.dt;
-      while (passed >= period) {
-        passed -= period;
-        action();
-      }
-    });
-  }
-
-  public streamEvents<E extends EventData>(
-    type: string
-  ): AsyncIterator<Event<E>> {
-    let id: UUID;
-    const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
-      id = this.addListener<E>(type, async (event) => {
-        await $yield(event);
-      });
-    });
-    iter.onComplete = () => {
-      this.removeListener(type, id);
-    };
-    return iter;
-  }
-
-  public handleEvent<E extends EventData>(type: string, event: Event<E>): void {
-    const handlers = this.handlers[type] ?? [];
-    for (const handlerID of handlers) {
-      const handler = EventManager.getHandler(type, handlerID);
-      handler?.call(null, event, handlerID);
-    }
-  }
-
-  public cleanup(): void {
-    for (const type in this.handlers) {
-      const handlerSet = this.handlers[type];
-      for (const id of handlerSet) {
-        EventManager.removeListener(type, id);
-      }
-    }
-    UUIDManager.free(this.id);
-  }
-
   public toString(): string {
     return `${this.type}(${this.id})`;
   }
@@ -400,4 +331,9 @@ export class Entity
   public afterStep(): void {}
 
   public load(): void {}
+
+  public cleanup(): void {
+    super.cleanup();
+    UUIDManager.free(this.id);
+  }
 }

@@ -28,9 +28,9 @@ export function isTextColor(str: string): str is TextColor {
   return TEXT_COLORS.includes(str);
 }
 
-export type TextStyle = 'normal' | 'bold' | 'italic';
+export type TextStyle = 'normal' | 'bold' | 'italic' | 'small';
 
-const TEXT_STYLES = ['normal', 'bold', 'italic'];
+const TEXT_STYLES = ['normal', 'bold', 'italic', 'small'];
 
 export function isTextStyle(str: string): str is TextStyle {
   return TEXT_STYLES.includes(str);

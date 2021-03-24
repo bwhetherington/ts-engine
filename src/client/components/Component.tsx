@@ -1,4 +1,11 @@
-import {EventData, EventManager, Handler, Event, StepEvent} from 'core/event';
+import {
+  EventData,
+  EventManager,
+  Handler,
+  Event,
+  StepEvent,
+  Priority,
+} from 'core/event';
 import {AsyncIterator, iterateKeys} from 'core/iterator';
 import {Props} from 'client/components';
 import React from 'react';
@@ -44,9 +51,10 @@ export class Component<P = {}, S = {}> extends React.Component<
 
   protected addListener<E extends EventData>(
     type: string,
-    handler: Handler<E>
+    handler: Handler<E>,
+    priority: Priority = Priority.Normal
   ): UUID {
-    const id = EventManager.addListener(type, handler);
+    const id = EventManager.addListener(type, handler, priority);
     const oldList = this.state.handlers[type] ?? [];
     const newList = [id, ...oldList];
     const newHandlers = {...this.state.handlers, [type]: newList};
@@ -68,13 +76,18 @@ export class Component<P = {}, S = {}> extends React.Component<
   }
 
   public streamEvents<E extends EventData>(
-    type: string
+    type: string,
+    priority: Priority = Priority.Normal
   ): AsyncIterator<Event<E>> {
     let id: UUID;
     const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
-      id = this.addListener<E>(type, async (event) => {
-        await $yield(event);
-      });
+      id = this.addListener<E>(
+        type,
+        async (event) => {
+          await $yield(event);
+        },
+        priority
+      );
     });
     iter.onComplete = async () => {
       this.removeListener(type, id);
@@ -92,20 +105,12 @@ export class Component<P = {}, S = {}> extends React.Component<
     });
   }
 
-  public runPeriodic(period: number, action: () => void): UUID {
-    let passed = 0;
-    return this.addListener<StepEvent>('StepEvent', (event) => {
-      passed += event.data.dt;
-      while (passed >= period) {
-        passed -= period;
-        action();
-      }
-    });
-  }
-
-  public streamInterval(period: number): AsyncIterator<void> {
-    return AsyncIterator.from(({$yield}) => {
-      this.runPeriodic(period, () => $yield());
-    });
+  public streamInterval(
+    period: number,
+    priority: Priority = Priority.Normal
+  ): AsyncIterator<void> {
+    return this.streamEvents<StepEvent>('StepEvent', priority)
+      .debounce(period)
+      .map(() => {});
   }
 }
