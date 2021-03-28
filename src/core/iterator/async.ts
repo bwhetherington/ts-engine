@@ -302,6 +302,30 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return output;
   }
 
+  public join<U>(
+    other: AsyncIterator<U>,
+  ): AsyncIterator<T | U> {
+    const iter = AsyncIterator.from<T | U>(({$yield}) => {
+      (async () => {
+        for await (const x of this) {
+          await $yield(x);
+        }
+      })();
+      (async () => {
+        for await (const y of other) {
+          await $yield(y);
+        }
+      })();
+    });
+
+    iter.onComplete = () => {
+      this.onComplete?.();
+      other.onComplete?.();
+    };
+
+    return iter;
+  }
+
   /**
    * Produces a new iterator which yields some number of elements from the
    * beginning of this iterator.

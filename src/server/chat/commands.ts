@@ -9,6 +9,7 @@ import {isOk} from 'core/net/http';
 import {WorldManager} from 'core/entity';
 import {Matrix2} from 'core/geometry';
 import {ModifierUpgrade} from 'core/upgrade';
+import {PluginManager} from 'server/plugin';
 
 const log = LogManager.forFile(__filename);
 

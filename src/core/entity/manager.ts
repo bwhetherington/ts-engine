@@ -304,6 +304,11 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public step(dt: number): void {
+    // Delete marked entities
+    for (const entity of this.toDelete) {
+      this.remove(entity);
+    }
+
     // Clear deleted entities
     this.toDelete = [];
 
@@ -369,11 +374,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     });
 
     this.populateGraph();
-
-    // Delete marked entities
-    for (const entity of this.toDelete) {
-      this.remove(entity);
-    }
   }
 
   public registerEntity(Type: (new () => Entity) & typeof Entity) {

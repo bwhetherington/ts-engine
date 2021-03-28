@@ -1,7 +1,7 @@
 import {Form, FormManager, StringEntry, FormEntry, FormResult} from 'core/form';
 import {EventManager} from 'core/event';
 import {ConnectEvent, NetworkManager} from 'core/net';
-import {PlayerManager, Player} from 'core/player';
+import {PlayerManager, Player, PlayerJoinEvent} from 'core/player';
 import {Data} from 'core/serialize';
 import {LogManager} from 'core/log';
 import {capitalize} from 'core/util';
@@ -202,12 +202,21 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
   ): Promise<void> {
     switch (method) {
       case 'login':
-        return await handleSubmit(player, response, data);
+        await handleSubmit(player, response, data);
+        break;
       case 'register':
-        return await handleRegister(player, response, data);
+        await handleRegister(player, response, data);
+        break;
       case 'noAccount':
-        return handleNoAccount(player, response);
+        handleNoAccount(player, response);
+        break;
     }
+    EventManager.emit<PlayerJoinEvent>({
+      type: 'PlayerJoinEvent',
+      data: {
+        player,
+      },
+    });
     await handleSubmit(player, response, data);
   },
   onReject(player: Player): void {

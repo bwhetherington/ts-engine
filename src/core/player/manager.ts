@@ -1,4 +1,4 @@
-import {Player, PlayerLeaveEvent} from 'core/player';
+import {Player, PlayerJoinEvent, PlayerLeaveEvent} from 'core/player';
 import {Serializable, Data} from 'core/serialize';
 import {LogManager} from 'core/log';
 import {SyncEvent, NetworkManager} from 'core/net';

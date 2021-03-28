@@ -1,20 +1,48 @@
+import {Iterator} from 'core/iterator';
+import {UUID, UUIDManager} from 'core/uuid';
 import {Server} from 'server/net';
 import {Plugin} from 'server/plugin';
 
+type PluginType = (new () => Plugin) & typeof Plugin;
+
 export class PluginManager {
-  private plugins: Plugin[] = [];
+  private registeredPlugins: Record<string, PluginType> = {};
+  private plugins: Record<string, Plugin> = {};
   private server?: Server;
 
-  public async loadPlugin(ToLoad: new () => Plugin): Promise<void> {
-    const plugin = new ToLoad();
-    this.plugins.push(plugin);
-
-    if (this.server) {
-      await plugin.initialize(this.server);
-    }
+  public registerPlugin(ToRegister: PluginType): void {
+    this.registeredPlugins[ToRegister.typeName] = ToRegister;
   }
 
-  public async loadPlugins(plugins: (new () => Plugin)[]): Promise<void> {
+  public getPlugins(): Iterator<Plugin> {
+    return Iterator.values(this.plugins);
+  }
+
+  public async loadPlugin(pluginType: PluginType | string): Promise<boolean> {
+    let ToLoad: PluginType;
+    if (typeof pluginType === 'string') {
+      ToLoad = this.registeredPlugins[pluginType];
+    } else {
+      ToLoad = pluginType;
+      if (!this.registeredPlugins.hasOwnProperty(ToLoad.typeName)) {
+        this.registerPlugin(ToLoad);
+      }
+    }
+
+    if (ToLoad) {
+      const plugin = new ToLoad();
+      plugin.name = ToLoad.typeName;
+      this.plugins[plugin.name] = plugin;
+
+      if (this.server) {
+        await plugin.initialize(this.server);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public async loadPlugins(plugins: (PluginType | string)[]): Promise<void> {
     await Promise.all(plugins.map(this.loadPlugin.bind(this)));
   }
 
@@ -22,9 +50,20 @@ export class PluginManager {
     this.server = server;
   }
 
+  public async unloadPlugin(name: string): Promise<boolean> {
+    if (this.plugins.hasOwnProperty(name)) {
+      await this.plugins[name].cleanup();
+      delete this.plugins[name];
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public async cleanup(): Promise<void> {
-    for (const plugin of this.plugins) {
-      await plugin.cleanup();
+    const plugins = Iterator.keys(this.plugins).toArray();
+    for (const plugin of plugins) {
+      await this.unloadPlugin(plugin);
     }
   }
 }

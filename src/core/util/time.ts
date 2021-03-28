@@ -1,4 +1,4 @@
-export type TimerHandler = (dt: number) => void;
+export type TimerHandler = (dt: number) => void | Promise<void>;
 
 export abstract class AbstractTimer {
   protected onTick: TimerHandler;

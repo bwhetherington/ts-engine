@@ -1,12 +1,15 @@
 import {ServerChatManager} from 'server/chat/manager';
 import {Player} from 'core/player';
 
+type CommandHandler = (player: Player, ...args: string[]) => void;
+
 export interface CommandEntry {
   name: string;
   handler: (player: Player, ...args: string[]) => void;
   help: string;
   permissionLevel?: number;
-  aliases?: [];
+  subcommands?: Record<string, CommandHandler>;
+  aliases?: Array<string>;
 }
 
 const CM = new ServerChatManager();

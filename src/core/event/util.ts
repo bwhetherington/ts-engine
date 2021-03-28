@@ -43,6 +43,12 @@ export enum Priority {
   Lowest = 4,
 }
 
+export function* priorities(): Iterable<Priority> {
+  for (let i = Priority.Highest; i <= Priority.Lowest; i++) {
+    yield i as Priority;
+  }
+}
+
 export interface EventData {
   [key: string]: any;
 }

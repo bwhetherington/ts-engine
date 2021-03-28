@@ -11,6 +11,10 @@ export interface Account {
   permissionLevel: number;
 }
 
+export interface PlayerJoinEvent {
+  player: Player;
+}
+
 export interface PlayerLeaveEvent {
   player: Player;
 }

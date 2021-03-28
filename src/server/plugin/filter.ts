@@ -8,18 +8,12 @@ import {Plugin} from 'server/plugin';
 const FILTER_WORDS = ['badword'];
 
 export class FilterPlugin extends Plugin {
-  public constructor() {
-    super();
-    this.type = 'FilterPlugin';
-  }
+  public static typeName: string = 'FilterPlugin';
 
   public async initialize(server: Server): Promise<void> {
     await super.initialize(server);
 
-    this.streamEvents<TextMessageInEvent>(
-      'TextMessageInEvent',
-      Priority.Highest
-    )
+    this.streamEvents<TextMessageInEvent>('TextMessageInEvent', Priority.High)
       .filter((event) =>
         FILTER_WORDS.some((word) => event.data.content.includes(word))
       )

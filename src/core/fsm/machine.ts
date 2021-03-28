@@ -1,5 +1,7 @@
 import {Iterator} from 'core/iterator';
 
+type MaybePromise<T> = T | Promise<T>;
+
 export type StateTransition<S, A> = {
   from: S;
   to: S;
@@ -9,7 +11,7 @@ export type StateTransition<S, A> = {
 export class StateMachine<S extends number, A extends number> {
   private currentState: S;
   private transitions: StateTransition<S, A>[];
-  private actions: Record<number, () => void> = {};
+  private actions: Record<number, () => MaybePromise<void>> = {};
 
   public constructor(
     initialState: S,
@@ -43,15 +45,19 @@ export class StateMachine<S extends number, A extends number> {
       .first();
   }
 
-  public transition(action: A): boolean {
+  public async transition(action: A): Promise<boolean> {
     const nextState = this.getNextState(action);
     if (nextState) {
       const fn = this.actions[action];
-      fn();
+      await fn?.();
       this.currentState = nextState;
       return true;
     } else {
       return false;
     }
+  }
+
+  public getState(): S {
+    return this.currentState;
   }
 }

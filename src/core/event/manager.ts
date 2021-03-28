@@ -13,6 +13,7 @@ import {LogManager} from 'core/log';
 import {formatData} from 'core/util';
 import {AsyncIterator, Iterator} from 'core/iterator';
 import {PlayerManager} from 'core/player';
+import {priorities} from './util';
 
 const log = LogManager.forFile(__filename);
 
@@ -68,8 +69,8 @@ export class EventManager {
 
   public removeListener(type: string, id: UUID): boolean {
     const handlers = this.getHandlers(type);
-    for (let i = Priority.Highest; i <= Priority.Lowest; i++) {
-      const priorityHandlers = handlers[i];
+    for (const priority of priorities()) {
+      const priorityHandlers = handlers[priority];
       if (id in priorityHandlers) {
         this.listenerCount -= 1;
         delete priorityHandlers[id];
@@ -87,42 +88,39 @@ export class EventManager {
     this.isPropagationCanceled = false;
 
     const {type} = event;
-    log.trace(`handle event: ${formatData(event)}`);
+    // log.trace(`handle event: ${formatData(event)}`);
+
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
-      for (
-        let priority = Priority.Highest;
-        priority <= Priority.Lowest;
-        priority++
-      ) {
+      for (const priority of priorities()) {
         for (const id in handlers[priority]) {
           // Check if the event has been canceled
           if (this.isPropagationCanceled) {
+            log.trace(`event ${event} canceled`);
             return;
           }
-
           const handler = handlers[priority][id];
-          await handler(event, UUIDManager.from(id));
+          handler(event, UUIDManager.from(id));
         }
       }
     }
   }
 
-  public pollEvents(): void {
+  public async pollEvents(): Promise<void> {
     while (this.events.size() > 0) {
       const event = this.events.dequeue();
       if (event !== undefined) {
-        this.handleEvent(event);
+        await this.handleEvent(event);
       }
     }
   }
 
-  public step(dt: number): void {
+  public async step(dt: number): Promise<void> {
     this.emit<StepEvent>({
       type: 'StepEvent',
       data: {dt},
     });
-    this.pollEvents();
+    await this.pollEvents();
     this.timeElapsed += dt;
     this.stepCount += 1;
   }
@@ -161,7 +159,13 @@ export class EventManager {
   ): AsyncIterator<Event<E>> {
     let id: number;
     const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
-      id = this.addListener<E>(type, $yield, priority);
+      id = this.addListener<E>(
+        type,
+        async (event) => {
+          await $yield(event);
+        },
+        priority
+      );
     });
     iter.onComplete = () => {
       this.removeListener(type, id);

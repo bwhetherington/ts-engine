@@ -1,4 +1,25 @@
-import {EventManager, Priority, StepEvent} from 'core/event';
+import process from 'process';
+
+import {EventManager} from 'core/event';
+import {LogManager} from 'core/log';
+import {registerRenameForm} from 'core/form/rename';
+import {isEmpty} from 'core/util/object';
+import {RNGManager} from 'core/random';
+import {BasicAuth} from 'core/net/http';
+import {AssetManager} from 'core/assets';
+import {NetworkManager, SyncEvent} from 'core/net';
+import {WorldManager} from 'core/entity';
+import {PlayerManager} from 'core/player';
+import {FormManager} from 'core/form';
+import {registerJoinForm} from 'core/form';
+import {WeaponManager} from 'core/weapon';
+
+import {Server, createServer, ServerHTTPClient} from 'server/net';
+import {ChatManager} from 'server/chat';
+import {MetricsManager} from 'server/metrics';
+import {PluginManager} from 'server/plugin';
+import {FilterPlugin} from 'server/plugin/filter';
+import {LoaderPlugin} from 'server/plugin/loader';
 import {
   Timer,
   ServerLogger,
@@ -7,27 +28,8 @@ import {
   loadFile,
   loadDirectory,
 } from 'server/util';
-import {LogManager} from 'core/log';
-import {Server, createServer, ServerHTTPClient} from 'server/net';
-import {NetworkManager, SyncEvent} from 'core/net';
-import {ChatManager} from 'server/chat';
-import {WorldManager, FeedVariant, Feed} from 'core/entity';
-import {PlayerManager} from 'core/player';
-import {FormManager} from 'core/form';
-import {registerJoinForm} from 'core/form';
-import {MetricsManager} from 'server/metrics';
-import {WeaponManager} from 'core/weapon';
-import process from 'process';
-import {registerRenameForm} from 'core/form/rename';
-import {isEmpty} from 'core/util/object';
-import {RNGManager} from 'core/random';
-import {BasicAuth} from 'core/net/http';
-import {AssetManager} from 'core/assets';
-import {EnemiesPlugin} from 'server/plugin/enemies';
-import {PluginManager} from 'server/plugin';
-import {FeedPlugin} from 'server/plugin/feed';
-import {TextMessageInEvent} from 'core/chat';
-import {FilterPlugin} from './plugin/filter';
+import {ChatLogPlugin} from 'server/plugin/chatLog';
+import {GamePlugin} from 'server/plugin/game';
 
 const log = LogManager.forFile(__filename);
 
@@ -64,10 +66,6 @@ async function main(): Promise<void> {
   MetricsManager.initialize();
   await PluginManager.initialize(server);
 
-  if (process.send) {
-    process.send({type: 'ready'});
-  }
-
   function sync() {
     const event = {
       type: 'SyncEvent',
@@ -82,14 +80,15 @@ async function main(): Promise<void> {
     }
   }
 
-  const timer = new Timer((dt) => {
-    EventManager.step(dt);
+  const timer = new Timer(async (dt) => {
+    await EventManager.step(dt);
     sync();
   }, 1 / 30);
   TimerManager.initialize(timer);
 
   async function cleanup(): Promise<never> {
     await PlayerManager.cleanup();
+    await PluginManager.cleanup();
     process.exit(0);
   }
 
@@ -99,7 +98,12 @@ async function main(): Promise<void> {
   process.once('SIGTERM', cleanup);
 
   // Load plugins
-  await PluginManager.loadPlugins([FeedPlugin, EnemiesPlugin, FilterPlugin]);
+  await PluginManager.loadPlugins([
+    ChatLogPlugin,
+    LoaderPlugin,
+    FilterPlugin,
+    GamePlugin,
+  ]);
 }
 
 main().catch((ex) => {

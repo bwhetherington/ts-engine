@@ -267,12 +267,14 @@ export class HDCanvas implements GraphicsContext {
           'none';
         const color = COLOR_MAPPING[colorString];
 
-        ctx.font = isSmall(component) ? smallFont : normalFont;
+        const componentIsSmall = isSmall(component);
+        ctx.font = componentIsSmall ? smallFont : normalFont;
+        const yOffset = componentIsSmall ? -1 * scaleValue : 0;
 
         this.setStyles(ctx, color, -0.35);
 
-        ctx.strokeText(text, x + xOffset, y);
-        ctx.fillText(text, x + xOffset, y);
+        ctx.strokeText(text, x + xOffset, y + yOffset);
+        ctx.fillText(text, x + xOffset, y + yOffset);
 
         const width = ctx.measureText(text).width;
         xOffset += width;

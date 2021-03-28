@@ -14,15 +14,9 @@ export class Timer extends AbstractTimer {
     super(onTick);
     this.previous = performance.now();
 
-    this.trigger = (time: number) => {
+    this.trigger = async (time: number) => {
       let dt = (time - this.previous) / 1000;
-      // if (dt - this.target > MIN_TOLERANCE) {
-      //   LM.warn("can't keep up");
-      // }
-      // while (dt > MIN_TOLERANCE) {
-      this.onTick(Math.min(dt, MAX_TIME));
-      //   dt -= target;
-      // }
+      await this.onTick(Math.min(dt, MAX_TIME));
       this.previous = time;
       this.handle = window.requestAnimationFrame(this.trigger);
     };

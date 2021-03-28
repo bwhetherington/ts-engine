@@ -1,7 +1,7 @@
 import {LogManager} from 'core/log';
 import {Player, PlayerManager} from 'core/player';
 import {Data} from 'core/serialize';
-import {EventManager} from 'core/event';
+import {Event, EventManager} from 'core/event';
 import {
   FormSubmitEvent,
   Form,
@@ -110,49 +110,45 @@ export class FormManager {
     log.trace(`form ${formEntry.name} registered`);
     const {name, form, checkType, validate, onSubmit, onReject} = formEntry;
     this.forms[name] = form;
-    EventManager.addListener<FormSubmitEvent>(
-      'FormSubmitEvent',
-      async (event) => {
-        const {socket, data} = event;
-        log.debug('receive form submit');
-        const player = PlayerManager.getSocket(socket);
-        if (player) {
-          const {
-            name: responseName,
-            data: response,
-            method = 'submit',
-            id,
-          } = data;
-          if (responseName === name) {
-            if (checkType(response)) {
-              const result = await validate(response, method, player);
-              const {
-                isValid,
-                message = 'Error validating form.',
-                data,
-              } = result;
-              if (isValid) {
-                onSubmit(player, response, method, data);
-                player.send({
-                  type: 'FormValidatedEvent',
-                  data: {id},
-                });
+    const formSubmitHandler = async (event: Event<FormSubmitEvent>) => {
+      const {socket, data} = event;
+      log.debug('receive form submit');
+      const player = PlayerManager.getSocket(socket);
+      if (player) {
+        const {
+          name: responseName,
+          data: response,
+          method = 'submit',
+          id,
+        } = data;
+        if (responseName === name) {
+          if (checkType(response)) {
+            const result = await validate(response, method, player);
+            const {isValid, message = 'Error validating form.', data} = result;
+            if (isValid) {
+              onSubmit(player, response, method, data);
+              player.send({
+                type: 'FormValidatedEvent',
+                data: {id},
+              });
 
-                // Free ID on successful submission
-                UUIDManager.free(id);
-              } else {
-                // Send the form back to the user
-                this.sendForm(player, formEntry.name, id, [message]);
-              }
+              // Free ID on successful submission
+              UUIDManager.free(id);
             } else {
               // Send the form back to the user
-              this.sendForm(player, formEntry.name, id, [
-                'Response did not include all required fields.',
-              ]);
+              this.sendForm(player, formEntry.name, id, [message]);
             }
+          } else {
+            // Send the form back to the user
+            this.sendForm(player, formEntry.name, id, [
+              'Response did not include all required fields.',
+            ]);
           }
         }
       }
+    };
+    EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) =>
+      formSubmitHandler(event)
     );
     if (onReject) {
       EventManager.addListener<FormRejectEvent>('FormRejectEvent', (event) => {

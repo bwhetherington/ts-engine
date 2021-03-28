@@ -3,7 +3,7 @@ import {Serializable, Data} from 'core/serialize';
 import {Socket, NetworkManager} from 'core/net';
 import {PlayerManager, Account} from 'core/player';
 import {UUIDManager, UUID} from 'core/uuid';
-import {EventData, Handler, EventManager, Event} from 'core/event';
+import {EventData, Handler, EventManager, Event, Observer} from 'core/event';
 import {capitalize} from 'core/util';
 import {LogManager} from 'core/log';
 import {BasicAuth} from 'core/net/http';
@@ -15,7 +15,14 @@ import {AsyncIterator} from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
-export class Player implements Serializable {
+const DEFAULT_ACCOUNT = {
+  username: 'Username',
+  xp: 0,
+  className: 'Hero',
+  permissionLevel: 0,
+};
+
+export class Player extends Observer implements Serializable {
   public name: string = 'Anonymous';
   public id: UUID;
   public hero?: BaseHero;
@@ -25,79 +32,26 @@ export class Player implements Serializable {
   public score: number = 0;
   public chat: PlayerChatManager;
 
-  private permissionLevel: number = 0;
-
   private auth?: BasicAuth;
-
-  private listeners: Record<string, Set<UUID>> = {};
+  private account: Account = {...DEFAULT_ACCOUNT};
 
   public constructor(id?: UUID) {
+    super();
     if (id) {
       this.id = id;
     } else {
       this.id = UUIDManager.generate();
     }
 
-    if (NetworkManager.isServer()) {
-      this.addListener<KillEvent>('KillEvent', async (event) => {
-        const {targetID} = event.data;
-        if (targetID && this.hero && targetID === this.hero.id) {
-          await EventManager.sleep(3);
-
-          // Check that we haven't already respawned
-          if (targetID === this.hero.id) {
-            const hero = WorldManager.spawnEntity('Hero') as BaseHero;
-
-            const x = RNGManager.nextFloat(-560, 560);
-            const y = RNGManager.nextFloat(-560, 560);
-            log.debug('respawn ' + x + ',' + y);
-            hero.setPositionXY(x, y);
-
-            hero.setColor(this.hero.getColor());
-            this.setHero(hero);
-          }
-        }
-      });
-    }
-
     this.chat = new PlayerChatManager(this);
   }
 
   public getPermissionLevel(): number {
-    return this.permissionLevel ?? 0;
+    return this.account.permissionLevel ?? 0;
   }
 
   public isAdmin(): boolean {
     return this.getPermissionLevel() > 0;
-  }
-
-  private getListeners(type: string): Set<UUID> {
-    let set = this.listeners[type];
-
-    if (!set) {
-      set = new Set();
-      this.listeners[type] = set;
-    }
-
-    return set;
-  }
-
-  public addListener<E extends EventData>(
-    type: string,
-    handler: Handler<E>
-  ): void {
-    const id = EventManager.addListener(type, handler);
-    this.getListeners(type).add(id);
-  }
-
-  public streamEvents<E extends EventData>(
-    type: string
-  ): AsyncIterator<Event<E>> {
-    return AsyncIterator.from(async ({$yield}) => {
-      this.addListener<E>(type, async (event) => {
-        await $yield(event);
-      });
-    });
   }
 
   public serialize(): Data {
@@ -146,15 +100,9 @@ export class Player implements Serializable {
   }
 
   public async cleanup(): Promise<void> {
+    super.cleanup();
     this.hero?.markForDelete();
     UUIDManager.free(this.id);
-
-    for (const type in this.listeners) {
-      const handlerSet = this.listeners[type];
-      for (const id of handlerSet) {
-        EventManager.removeListener(type, id);
-      }
-    }
 
     log.info('cleanup ' + this.name);
     await this.save();
@@ -168,33 +116,34 @@ export class Player implements Serializable {
     return this.auth;
   }
 
-  private spawnHero(): BaseHero {
-    const hero = WorldManager.spawnEntity('Hero') as BaseHero;
-    const x = RNGManager.nextFloat(-560, 560);
-    const y = RNGManager.nextFloat(-560, 560);
-    hero.setPositionXY(x, y);
+  public spawnHero(): BaseHero {
+    // Delete existing hero if present
+    this.hero?.markForDelete();
+
+    const hero = WorldManager.spawnEntity(this.account.className) as BaseHero;
+    hero.setPosition(WorldManager.getRandomPosition());
     hero.setPlayer(this);
+    this.setHero(hero);
     const color = randomColor();
     hero.setColor(color);
+    hero.setExperience(this.account.xp);
+    hero.setLife(hero.getMaxLife());
     return hero;
   }
 
+  public reset(): void {
+    const blankAccount = {
+      ...DEFAULT_ACCOUNT,
+      username: this.account.username,
+      permissionLevel: this.account.permissionLevel,
+    };
+    this.load(blankAccount);
+  }
+
   public load(account: Account): void {
-    // Delete the current hero, if it exists
-    this.hero?.markForDelete();
-
-    const {xp, permissionLevel, username, className} = account;
-
-    this.name = capitalize(username);
-    const hero = this.spawnHero();
-    const color = randomColor();
-    hero.setColor(color);
-    this.setHero(hero);
+    this.account = account;
+    this.name = capitalize(account.username ?? 'Player');
     this.hasJoined = true;
-    hero.setExperience(xp ?? 0);
-    hero.setLife(hero.getMaxLife());
-    this.setClass(className);
-    this.permissionLevel = permissionLevel;
   }
 
   public async save(): Promise<void> {

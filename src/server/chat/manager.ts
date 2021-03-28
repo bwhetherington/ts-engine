@@ -46,10 +46,13 @@ interface Command {
 
 export class ServerChatManager {
   private commands: {[command: string]: Command} = {};
-  private aliases: {[alias: string]: string} = {};
 
   private loadCommands(): void {
     Iterator.values(commands).forEach(this.registerCommandEntry.bind(this));
+  }
+
+  public removeCommand(name: string): void {
+    delete this.commands[name];
   }
 
   public registerCommandEntry(command: CommandEntry): void {
@@ -76,9 +79,6 @@ export class ServerChatManager {
       permissionLevel,
     };
     this.commands[command] = entry;
-    for (const alias of aliases) {
-      this.aliases[alias] = command;
-    }
   }
 
   private handleCommand(player: Player, command: string, args: string[]): void {
@@ -97,11 +97,8 @@ export class ServerChatManager {
       } else {
         this.error('Insufficient permissions', player);
       }
-    } else if (command in this.aliases) {
-      const handler = this.commands[this.aliases[command]];
-      handler.handler.apply(null, [player, ...args]);
     } else {
-      this.error(`command '${command}' is undefined`, player);
+      this.error(`Command '${command}' is undefined`, player);
     }
   }
 
@@ -313,7 +310,7 @@ export class ServerChatManager {
       'stop',
       (player) => {
         this.info('Stopping the server');
-        process.exit(0);
+        process.kill(process.pid, 'SIGINT');
       },
       'Stops the server',
       1
@@ -448,13 +445,15 @@ export class ServerChatManager {
     components: (string | null | TextComponent)[],
     target: number | Player = -1
   ): void {
+    const socket = target instanceof Player ? target.socket : target;
     const outEvent = {
       type: 'TextMessageOutEvent',
       data: <TextMessageOutEvent>{
         components,
       },
+      socket,
     };
-    const socket = target instanceof Player ? target.socket : target;
+    EventManager.emit(outEvent);
     NetworkManager.send(outEvent, socket);
   }
 
