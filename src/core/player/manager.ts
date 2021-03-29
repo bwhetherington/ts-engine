@@ -185,7 +185,6 @@ export class PlayerManager implements Serializable {
     await Promise.all(
       this.getPlayers()
         .map((player) => player.save())
-        .toArray()
     );
     log.trace('all players saved');
   }

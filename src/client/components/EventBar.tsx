@@ -23,15 +23,15 @@ export class EventBar extends Component<EventBarProps, EventBarState> {
   }
 
   public componentDidMount(): void {
-    this.addListener<BarUpdateEvent>('BarUpdateEvent', (event) => {
-      const {id, value, maxValue} = event.data;
-      if (id === this.props.id) {
+    this.streamEvents<BarUpdateEvent>('BarUpdateEvent')
+      .map(({data}) => data)
+      .filter(({id}) => id === this.props.id)
+      .forEach(({value, maxValue}) => {
         this.updateState({
           value,
           maxValue,
         });
-      }
-    });
+      });
   }
 
   public render(): JSX.Element {

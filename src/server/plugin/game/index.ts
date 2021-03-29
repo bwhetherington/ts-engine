@@ -1,4 +1,3 @@
-import {assert} from 'console';
 import {
   BaseHero,
   Feed,
@@ -7,14 +6,13 @@ import {
   Unit,
   WorldManager,
 } from 'core/entity';
-import {Event, EventData, EventManager, Priority} from 'core/event';
+import {EventManager} from 'core/event';
 import {StateMachine} from 'core/fsm';
 import {randomColor} from 'core/graphics';
 import {AsyncIterator} from 'core/iterator';
-import {ConnectEvent} from 'core/net';
 import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {RNGManager} from 'core/random';
-import { Data } from 'core/serialize';
+import {Data} from 'core/serialize';
 import {ChatManager} from 'server/chat';
 import {Server} from 'server/net';
 import {Plugin} from 'server/plugin';
@@ -74,15 +72,19 @@ export class GamePlugin extends Plugin {
     enemy.setColor(randomColor());
   }
 
-  private async countdown(total: number, points: number[]): Promise<void> {
+  private async countdown(state: GameState, total: number, points: number[]): Promise<boolean> {
     let timeSlept = 0;
     for (const point of points) {
       const timeToSleep = total - timeSlept - point;
       await EventManager.sleep(timeToSleep);
+      if (this.machine.getState() !== state) {
+        return false;
+      }
       ChatManager.info(`${point} seconds remaining`);
       timeSlept += timeToSleep;
     }
     await EventManager.sleep(total - timeSlept);
+    return this.machine.getState() === state;
   }
 
   private createMachine(): GameStateMachine {
@@ -155,10 +157,12 @@ export class GamePlugin extends Plugin {
           PlayerManager.getPlayers().forEach((player) => player.spawnHero());
 
           // Start timer
-          (async () => {
-            await this.countdown(120, [60, 30, 15, 10, 5, 4, 3, 2, 1]);
-            this.transition(GameAction.Stop);
-          })();
+          this.countdown(GameState.Running, 300, [60, 30, 15, 10, 5, 4, 3, 2, 1])
+            .then((shouldTransition) => {
+              if (shouldTransition) {
+                this.transition(GameAction.Stop);
+              }
+            });
         },
         [GameAction.Stop]: async () => {
           ChatManager.info('Stopping the game');

@@ -261,7 +261,7 @@ export class BaseHero extends Tank {
       }
 
       if (this.label) {
-        this.label.tag = ` ${this.level}`;
+        this.label.tag = ` [${this.level}]`;
       }
     }
 

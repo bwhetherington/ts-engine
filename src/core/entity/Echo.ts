@@ -72,7 +72,7 @@ export class Echo extends Entity {
           u = 2 - t;
           break;
         case EchoVariant.Shrink:
-          u = t;
+          u = t / 2 + 0.5;
           break;
       }
       GraphicsPipeline.pipe()

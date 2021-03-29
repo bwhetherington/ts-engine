@@ -32,7 +32,7 @@ export class Unit extends Entity {
   protected speed: number = 250;
   private xpWorth: number = 1;
 
-  protected label?: Text;
+  public label?: Text;
   protected hpBar?: Bar;
   protected trail?: Trail;
 

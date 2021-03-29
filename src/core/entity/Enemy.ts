@@ -27,7 +27,7 @@ export class Enemy extends Tank {
       .forEach(() => this.selectTarget());
 
     if (this.label) {
-      this.label.tag = ' AI';
+      this.label.tag = ' [AI]';
     }
 
     this.setMaxLife(40);
