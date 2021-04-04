@@ -81,12 +81,12 @@ export class Tank extends Unit {
     }
   }
 
-  public step(dt: number) {
+  public override step(dt: number) {
     super.step(dt);
     this.fireTimer = Math.max(0, this.fireTimer - dt);
   }
 
-  public calculateDamageIn(amount: number): number {
+  public override calculateDamageIn(amount: number): number {
     return Math.max(1, amount - this.armor);
   }
 
@@ -158,14 +158,14 @@ export class Tank extends Unit {
     );
   }
 
-  public render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext): void {
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       this.renderCannon(ctx);
       this.renderBody(ctx);
     });
   }
 
-  public serialize(): Data {
+  public override serialize(): Data {
     return {
       ...super.serialize(),
       cannons: this.cannons.map(({lastFired, shape, key}) => ({
@@ -177,7 +177,7 @@ export class Tank extends Unit {
     };
   }
 
-  public deserialize(data: Data, setInitialized?: boolean): void {
+  public override deserialize(data: Data, setInitialized?: boolean): void {
     super.deserialize(data, setInitialized);
     const {cannons, bodyShape, weapon} = data;
     if (cannons instanceof Array) {
@@ -227,11 +227,7 @@ export class Tank extends Unit {
     }
   }
 
-  public markForDelete(): void {
-    super.markForDelete();
-  }
-
-  public cleanup(): void {
+  public override cleanup(): void {
     this.weapon?.cleanup();
     super.cleanup();
   }

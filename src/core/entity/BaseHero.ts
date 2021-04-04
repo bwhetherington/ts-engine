@@ -44,7 +44,6 @@ export class BaseHero extends Tank {
     this.type = BaseHero.typeName;
 
     this.setWeapon('Gun');
-
     this.setExperience(0);
     this.setLevelInternal(1);
 
@@ -121,11 +120,11 @@ export class BaseHero extends Tank {
     }
   }
 
-  protected getNameColor(): TextColor {
+  protected override getNameColor(): TextColor {
     return this.getPlayer()?.getNameColor() ?? super.getNameColor();
   }
 
-  public getXPWorth(): number {
+  public override getXPWorth(): number {
     return Math.max(1, this.getExperience() / 2);
   }
 
@@ -218,7 +217,7 @@ export class BaseHero extends Tank {
     return this.player;
   }
 
-  public setMaxLife(maxLife: number): void {
+  public override setMaxLife(maxLife: number): void {
     super.setMaxLife(maxLife);
     if (this.getPlayer()?.isActivePlayer()) {
       EventManager.emit({
@@ -232,7 +231,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public setLife(life: number, source?: Unit): void {
+  public override setLife(life: number, source?: Unit): void {
     super.setLife(life, source);
     if (this.getPlayer()?.isActivePlayer()) {
       EventManager.emit({
@@ -246,11 +245,11 @@ export class BaseHero extends Tank {
     }
   }
 
-  public getName(): string {
+  public override getName(): string {
     return this.getPlayer()?.name ?? super.getName();
   }
 
-  public step(dt: number): void {
+  public override step(dt: number): void {
     super.step(dt);
 
     const player = this.getPlayer();
@@ -270,7 +269,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public serialize(): Data {
+  public override serialize(): Data {
     return {
       ...super.serialize(),
       playerID: this.player?.id,
@@ -279,7 +278,7 @@ export class BaseHero extends Tank {
     };
   }
 
-  public deserialize(data: Data, setInitialized?: boolean): void {
+  public override deserialize(data: Data, setInitialized?: boolean): void {
     const {x: oldX, y: oldY} = this.position;
     const {angle: oldAngle} = this;
     const {playerID, xp, modifiers} = data;
@@ -331,11 +330,11 @@ export class BaseHero extends Tank {
     return isLocal || socket === player?.socket;
   }
 
-  protected calculateDamageOut(amount: number): number {
+  protected override calculateDamageOut(amount: number): number {
     return amount;
   }
 
-  public fire(angle: number): void {
+  public override fire(angle: number): void {
     this.weapon?.fireInternal(this, angle, this.modifiers);
   }
 }

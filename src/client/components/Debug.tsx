@@ -45,7 +45,7 @@ export class Debug extends Component<{}, DebugState> {
     });
   }
 
-  public componentDidMount(): void {
+  public override componentDidMount(): void {
     this.streamEvents<StepEvent>('StepEvent').forEach(async () => {
       await this.updateState({
         fps: MetricsManager.getAverageFPS(),
@@ -72,7 +72,7 @@ export class Debug extends Component<{}, DebugState> {
     });
   }
 
-  public render(): JSX.Element {
+  public override render(): JSX.Element {
     return (
       <Panel>
         <PanelHeader>

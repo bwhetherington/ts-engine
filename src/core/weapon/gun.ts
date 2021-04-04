@@ -68,7 +68,7 @@ export class BaseGun extends Weapon {
     source.applyForce(projectile.velocity, -projectile.mass / 16);
   }
 
-  public serialize(): Data {
+  public override serialize(): Data {
     return {
       ...super.serialize(),
       projectileType: this.projectileType,
@@ -79,7 +79,7 @@ export class BaseGun extends Weapon {
     };
   }
 
-  public deserialize(data: Data): void {
+  public override deserialize(data: Data): void {
     super.deserialize(data);
     const {
       projectileType,

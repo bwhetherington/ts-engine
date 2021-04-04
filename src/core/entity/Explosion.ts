@@ -34,11 +34,11 @@ export class Explosion extends Entity {
     });
   }
 
-  public renderInternal(ctx: GraphicsContext): void {
+  public override renderInternal(ctx: GraphicsContext): void {
     this.render(ctx);
   }
 
-  public render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext): void {
     const t = this.timeRemaining / DURATION;
     const r = explodeFunction(t) * this.radius;
     ctx.ellipse(-r, -r, 2 * r, 2 * r, this.getColor());

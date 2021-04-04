@@ -128,7 +128,7 @@ export class ModifierUpgrade extends Upgrade {
     super();
   }
 
-  public applyTo(hero: BaseHero): void {
+  public override applyTo(hero: BaseHero): void {
     hero.modifiers.multiply(this.modifiers);
   }
 }

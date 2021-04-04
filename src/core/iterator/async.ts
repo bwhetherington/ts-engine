@@ -302,9 +302,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return output;
   }
 
-  public join<U>(
-    other: AsyncIterator<U>,
-  ): AsyncIterator<T | U> {
+  public join<U>(other: AsyncIterator<U>): AsyncIterator<T | U> {
     const iter = AsyncIterator.from<T | U>(async ({$yield}) => {
       const thisPromise = (async () => {
         for await (const x of this) {

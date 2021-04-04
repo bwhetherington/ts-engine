@@ -157,7 +157,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     this.updateState(newData);
   }
 
-  public componentDidUpdate(nextProps: Props<FormProps>): void {
+  public override componentDidUpdate(nextProps: Props<FormProps>): void {
     if (nextProps.form.messages?.length !== this.props.form.messages?.length) {
       this.updateState({
         isSubmitted: false,
@@ -229,7 +229,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     );
   }
 
-  public render(): JSX.Element {
+  public override render(): JSX.Element {
     return (
       <Panel>
         <Container>

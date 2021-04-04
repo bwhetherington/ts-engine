@@ -85,7 +85,7 @@ export class Client extends Node {
     }
   }
 
-  public onConnect(socket: Socket) {
+  public override onConnect(socket: Socket) {
     this.isConnected = true;
     this.send({
       type: 'SetNameEvent',
@@ -100,13 +100,13 @@ export class Client extends Node {
     super.onConnect(socket);
   }
 
-  public onDisconnect(socket: Socket) {
+  public override onDisconnect(socket: Socket) {
     this.isConnected = false;
     log.debug('disconnected');
     super.onDisconnect(socket);
   }
 
-  public isClient(): boolean {
+  public override isClient(): boolean {
     return true;
   }
 }

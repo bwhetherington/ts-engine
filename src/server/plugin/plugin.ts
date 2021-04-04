@@ -15,7 +15,7 @@ export abstract class Plugin extends Observer {
     log.debug(`plugin ${this.name} initialized`);
   }
 
-  public async cleanup(): Promise<void> {
+  public async override cleanup(): Promise<void> {
     super.cleanup();
     for (const command of this.registeredCommands) {
       ChatManager.removeCommand(command);

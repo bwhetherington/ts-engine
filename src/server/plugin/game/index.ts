@@ -203,7 +203,7 @@ export class GamePlugin extends Plugin {
     });
   }
 
-  public async initialize(server: Server): Promise<void> {
+  public override async initialize(server: Server): Promise<void> {
     const stopHandler = async () => {
       await this.transition(GameAction.Stop);
       console.log('stopped');
@@ -229,7 +229,7 @@ export class GamePlugin extends Plugin {
     await super.initialize(server);
   }
 
-  public async cleanup(): Promise<void> {
+  public async override cleanup(): Promise<void> {
     await this.machine.transition(GameAction.Stop);
     await super.cleanup();
   }

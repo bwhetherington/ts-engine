@@ -20,7 +20,7 @@ export class FileLogger extends LoggerWrapper {
     this.addTag(findRelativePath(fileName));
   }
 
-  public logRaw(content: string) {
+  public override logRaw(content: string) {
     this.logger?.logRaw(content);
   }
 }

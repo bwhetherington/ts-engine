@@ -19,7 +19,7 @@ export class BaseHomingGun extends BaseGun {
     this.projectileType = HomingProjectile.typeName;
   }
 
-  protected createProjectile(
+  protected override createProjectile(
     source: Tank,
     angle: number,
     modifier?: HeroModifier

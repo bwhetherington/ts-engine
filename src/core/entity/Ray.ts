@@ -76,7 +76,7 @@ export class Ray extends Entity {
     }
   }
 
-  public step(dt: number): void {
+  public override step(dt: number): void {
     super.step(dt);
     this.timeElapsed += dt;
   }
@@ -105,11 +105,11 @@ export class Ray extends Entity {
     this.markForDelete();
   }
 
-  public load(): void {
+  public override load(): void {
     this.loadInternal().catch((why) => log.error(why));
   }
 
-  public render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext): void {
     const t = this.getParameter();
     GraphicsPipeline.pipe()
       .alpha((t * 2) / 3)

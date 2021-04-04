@@ -1,8 +1,4 @@
-import {Text, WorldManager} from 'core/entity';
-import {Data} from 'core/serialize';
-import {GraphicsContext} from 'core/graphics';
-import {clamp, sleep} from 'core/util';
-import {Echo} from './Echo';
+import {Text, WorldManager, Echo} from 'core/entity';
 import {EventManager} from 'core/event';
 
 export class TimedText extends Text {

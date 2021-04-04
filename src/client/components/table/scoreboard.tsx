@@ -28,7 +28,7 @@ const SCOREBOARD_COLUMNS = [
 ];
 
 export class Scoreboard extends Component<{}, {}> {
-  public componentDidMount(): void {
+  public override componentDidMount(): void {
     this.streamInterval(1).forEach(() => {
       const rows = PlayerManager.getPlayers()
         .filter(
@@ -53,7 +53,7 @@ export class Scoreboard extends Component<{}, {}> {
     });
   }
 
-  public render(): JSX.Element {
+  public override render(): JSX.Element {
     return (
       <Panel>
         <PanelHeader>

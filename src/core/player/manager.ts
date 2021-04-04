@@ -182,10 +182,7 @@ export class PlayerManager implements Serializable {
 
   public async saveAll(): Promise<void> {
     log.trace('saving all players');
-    await Promise.all(
-      this.getPlayers()
-        .map((player) => player.save())
-    );
+    await Promise.all(this.getPlayers().map((player) => player.save()));
     log.trace('all players saved');
   }
 

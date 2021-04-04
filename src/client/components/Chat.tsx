@@ -178,7 +178,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     this.endRef.current?.scrollIntoView({behavior: 'auto'});
   }
 
-  public componentDidMount(): void {
+  public override componentDidMount(): void {
     this.streamEvents<TextMessageOutEvent>('TextMessageOutEvent').forEach(
       ({data: {components}}) => {
         const lines = concatLine(
@@ -190,8 +190,7 @@ export class Chat extends Component<ChatProps, ChatState> {
           lines,
           lastFlash: EventManager.timeElapsed,
           isFresh: true,
-        });
-        this.scrollToBottom();
+        }).then(() => this.scrollToBottom());
       }
     );
 
@@ -331,7 +330,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     }
   }
 
-  public render(): JSX.Element {
+  public override render(): JSX.Element {
     const panelStyle: React.CSSProperties = this.isFocused()
       ? {}
       : {

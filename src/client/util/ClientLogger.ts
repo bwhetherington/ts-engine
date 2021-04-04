@@ -8,15 +8,15 @@ export class ClientLogger extends AbstractLogger {
     console.log(...text);
   }
 
-  public logRawError(...text: string[]): void {
+  public override logRawError(...text: string[]): void {
     console.error(...text);
   }
 
-  public logRawWarn(...text: string[]): void {
+  public override logRawWarn(...text: string[]): void {
     console.warn(...text);
   }
 
-  public log(
+  public override log(
     level: LogLevel,
     message: string,
     method: (content: string) => void
