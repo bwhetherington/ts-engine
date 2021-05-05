@@ -99,7 +99,7 @@ export class Player extends Observer implements Serializable {
     }
   }
 
-  public override async cleanup(): Promise<void> {
+  public async cleanup(): Promise<void> {
     super.cleanup();
     this.hero?.markForDelete();
     UUIDManager.free(this.id);
@@ -120,7 +120,9 @@ export class Player extends Observer implements Serializable {
     // Delete existing hero if present
     this.hero?.markForDelete();
 
-    const hero = WorldManager.spawnEntity(this.account.className) as BaseHero;
+    const hero = WorldManager.spawnEntity(
+      this.account.className ?? 'Hero'
+    ) as BaseHero;
     hero.setPosition(WorldManager.getRandomPosition());
     hero.setPlayer(this);
     this.setHero(hero);
@@ -205,7 +207,7 @@ export class Player extends Observer implements Serializable {
     return this.isAdmin() ? 'blue' : 'none';
   }
 
-  public override toString(): string {
+  public toString(): string {
     return `${this.name}(${this.id})`;
   }
 }

@@ -15,7 +15,7 @@ export class PlayerController extends Controller {
   private keyListenerID?: UUID;
   private mouseListenerID?: UUID;
 
-  public override attach(hero: BaseHero): void {
+  public attach(hero: BaseHero): void {
     super.attach(hero);
 
     this.mouseListenerID = hero.addListener<MouseEvent>(
@@ -49,7 +49,7 @@ export class PlayerController extends Controller {
     });
   }
 
-  public override detach(): void {
+  public detach(): void {
     if (this.mouseListenerID) {
       this.hero?.removeListener('MouseEvent', this.mouseListenerID);
     }
@@ -59,7 +59,7 @@ export class PlayerController extends Controller {
     super.detach();
   }
 
-  public override step(_: number): void {
+  public step(_: number): void {
     if (this.mouseDown && NetworkManager.isServer()) {
       this.hero?.fire(this.hero?.angle);
     }

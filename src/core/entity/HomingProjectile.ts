@@ -9,7 +9,7 @@ const SEARCH_RADIUS = 250;
 export class HomingProjectile extends Projectile {
   public static typeName: string = 'HomingProjectile';
 
-  public override velocity: DirectionVector = new DirectionVector();
+  public velocity: DirectionVector = new DirectionVector();
   public maxSpeed: number = 1;
   public turnSpeed: number = 1;
 
@@ -60,7 +60,7 @@ export class HomingProjectile extends Projectile {
     }
   }
 
-  public override step(dt: number): void {
+  public step(dt: number): void {
     if (NetworkManager.isServer() && this.isHoming) {
       const target = this.selectTarget();
       if (target) {
@@ -79,7 +79,7 @@ export class HomingProjectile extends Projectile {
     this.angle = this.velocity.direction;
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       maxSpeed: this.maxSpeed,
@@ -88,7 +88,7 @@ export class HomingProjectile extends Projectile {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public deserialize(data: Data): void {
     super.deserialize(data);
 
     const {maxSpeed, turnSpeed, targetID} = data;

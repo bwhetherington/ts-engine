@@ -136,7 +136,7 @@ export class DirectionVector extends Vector {
     this.setXY(x, y);
   }
 
-  public override setXY(x: number, y: number): void {
+  public setXY(x: number, y: number): void {
     super.setXY(x, y);
     if (!(x === 0 && y === 0)) {
       this.curAngle = Math.atan2(y, x);

@@ -95,7 +95,7 @@ export class Component<P = {}, S = {}> extends React.Component<
     return iter;
   }
 
-  public override componentWillUnmount(): void {
+  public componentWillUnmount(): void {
     // Unregister all listeners
     iterateKeys(this.state.handlers).forEach((type) => {
       for (const index of this.state.handlers[type]) {

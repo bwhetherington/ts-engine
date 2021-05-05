@@ -26,7 +26,7 @@ export class Text extends Entity {
     this.friction = 0;
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       text: this.text,
@@ -36,7 +36,7 @@ export class Text extends Entity {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public deserialize(data: Data): void {
     super.deserialize(data);
 
     const {text, tag, textColor, textSize} = data;
@@ -54,7 +54,7 @@ export class Text extends Entity {
     }
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext): void {
     const components = TEXT_FORMATTER.format({
       color: this.textColor,
       text: this.text,

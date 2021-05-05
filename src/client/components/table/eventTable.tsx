@@ -19,14 +19,14 @@ export class EventTable extends Component<EventTableProps, EventTableState> {
     });
   }
 
-  public override componentDidMount(): void {
+  public componentDidMount(): void {
     this.streamEvents<TableEvent>('TableEvent')
       .map(({data}) => data)
       .filter(({id}) => id === this.props.id)
       .forEach(({data}) => this.setState({data}));
   }
 
-  public override render(): JSX.Element {
+  public render(): JSX.Element {
     return <DataTable columns={this.props.columns} data={this.state.data} />;
   }
 }

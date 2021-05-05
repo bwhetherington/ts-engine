@@ -72,7 +72,7 @@ export class Unit extends Entity {
     }
   }
 
-  public override cleanup(): void {
+  public cleanup(): void {
     this.label?.markForDelete();
     this.hpBar?.markForDelete();
     if (NetworkManager.isClient() && !this.hasExploded) {
@@ -82,7 +82,7 @@ export class Unit extends Entity {
     this.isAliveInternal = false;
   }
 
-  public override isAlive(): boolean {
+  public isAlive(): boolean {
     return this.isAliveInternal && super.isAlive();
   }
 
@@ -162,7 +162,7 @@ export class Unit extends Entity {
     return 'none';
   }
 
-  public override step(dt: number): void {
+  public step(dt: number): void {
     // Regenerate life
     this.setLife(this.life + this.lifeRegen * dt);
 
@@ -190,17 +190,18 @@ export class Unit extends Entity {
 
     // Handle maximum speed
     if (this.velocity.magnitude > this.speed) {
+      // If we've exceeded the maximum velocity, apply a scaling friction
       const excess = this.velocity.magnitude - this.speed;
       this.vectorBuffer.set(this.velocity);
       this.vectorBuffer.normalize();
-      this.vectorBuffer.scale(-excess);
+      this.vectorBuffer.scale(-0.2 * excess);
       this.velocity.add(this.vectorBuffer);
     }
 
     super.step(dt);
   }
 
-  public override afterStep(): void {
+  public afterStep(): void {
     if (NetworkManager.isClient()) {
       if (this.label) {
         this.label.position.set(this.position);
@@ -223,7 +224,7 @@ export class Unit extends Entity {
     this.movement[direction] = state;
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       life: this.life,
@@ -235,7 +236,7 @@ export class Unit extends Entity {
     };
   }
 
-  public override deserialize(data: Data, setInitialized?: boolean): void {
+  public deserialize(data: Data, setInitialized?: boolean): void {
     super.deserialize(data, setInitialized);
     const {life, maxLife, movement, xpWorth, speed, name} = data;
     if (typeof maxLife === 'number') {
@@ -332,7 +333,7 @@ export class Unit extends Entity {
     return this.color;
   }
 
-  public override getColor(): Color {
+  public getColor(): Color {
     const color =
       EventManager.timeElapsed - this.lastFlash < FLASH_DURATION &&
       this.isAlive()
@@ -341,12 +342,12 @@ export class Unit extends Entity {
     return color;
   }
 
-  public override setColor(color: Color): void {
+  public setColor(color: Color): void {
     super.setColor(color);
     this.flashColor = reshade(this.color, 0.5);
   }
 
-  public override collide(other?: Entity): void {
+  public collide(other?: Entity): void {
     if (
       NetworkManager.isServer() &&
       other &&

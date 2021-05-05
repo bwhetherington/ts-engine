@@ -63,7 +63,7 @@ export class Tank extends Unit {
     super();
     this.type = Tank.typeName;
     this.friction = 500;
-    this.bounce = 0.1;
+    this.bounce = 0.3;
 
     this.boundingBox.width = 30;
     this.boundingBox.height = 30;
@@ -81,12 +81,12 @@ export class Tank extends Unit {
     }
   }
 
-  public override step(dt: number) {
+  public step(dt: number) {
     super.step(dt);
     this.fireTimer = Math.max(0, this.fireTimer - dt);
   }
 
-  public override calculateDamageIn(amount: number): number {
+  public calculateDamageIn(amount: number): number {
     return Math.max(1, amount - this.armor);
   }
 
@@ -158,14 +158,14 @@ export class Tank extends Unit {
     );
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext): void {
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       this.renderCannon(ctx);
       this.renderBody(ctx);
     });
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       cannons: this.cannons.map(({lastFired, shape, key}) => ({
@@ -177,7 +177,7 @@ export class Tank extends Unit {
     };
   }
 
-  public override deserialize(data: Data, setInitialized?: boolean): void {
+  public deserialize(data: Data, setInitialized?: boolean): void {
     super.deserialize(data, setInitialized);
     const {cannons, bodyShape, weapon} = data;
     if (cannons instanceof Array) {
@@ -227,7 +227,7 @@ export class Tank extends Unit {
     }
   }
 
-  public override cleanup(): void {
+  public cleanup(): void {
     this.weapon?.cleanup();
     super.cleanup();
   }

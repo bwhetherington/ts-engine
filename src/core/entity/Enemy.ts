@@ -34,7 +34,7 @@ export class Enemy extends Tank {
     this.setXPWorth(10);
   }
 
-  public override damage(amount: number, source?: Unit): void {
+  public damage(amount: number, source?: Unit): void {
     super.damage(amount, source);
     if (source) {
       this.target = source;
@@ -66,7 +66,7 @@ export class Enemy extends Tank {
     }
   }
 
-  public override step(dt: number): void {
+  public step(dt: number): void {
     super.step(dt);
 
     if (NetworkManager.isServer()) {

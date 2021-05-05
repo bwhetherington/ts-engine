@@ -33,7 +33,7 @@ export class HeroPanel extends Component<HeroPanelProps, HeroPanelState> {
     }
   }
 
-  public override componentDidMount(): void {
+  public componentDidMount(): void {
     // Create hero
 
     const hero = WorldManager.spawnEntity(this.props.type);

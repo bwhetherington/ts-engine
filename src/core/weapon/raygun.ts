@@ -35,7 +35,7 @@ export class BaseRaygun extends Weapon {
     this.damage = 5;
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       raySpread: this.raySpread,
@@ -43,7 +43,7 @@ export class BaseRaygun extends Weapon {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public deserialize(data: Data): void {
     super.deserialize(data);
     const {raySpread, rayDistance} = data;
     if (typeof raySpread === 'number') {
@@ -54,7 +54,7 @@ export class BaseRaygun extends Weapon {
     }
   }
 
-  public override fire(source: Tank, angle: number, modifier?: HeroModifier): void {
+  public fire(source: Tank, angle: number, modifier?: HeroModifier): void {
     angle += RNGManager.nextFloat(-0.5, 0.5) * this.raySpread;
 
     const start = source.getCannonTip();

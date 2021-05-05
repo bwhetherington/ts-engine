@@ -111,13 +111,13 @@ export class FormContainer extends Component<{}, FormContainerState> {
     }
   };
 
-  public override componentDidMount(): void {
+  public componentDidMount(): void {
     this.addListener<FormShowEvent>('FormShowEvent', (event) => {
       this.showForm(event.data);
     });
   }
 
-  public override render(): JSX.Element {
+  public render(): JSX.Element {
     const form = this.state.forms[0];
     if (form) {
       return (

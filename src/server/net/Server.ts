@@ -169,7 +169,7 @@ export class Server extends Node {
     log.info(`listening on port ${port}`);
   }
 
-  public override onConnect(socket: Socket): void {
+  public onConnect(socket: Socket): void {
     super.onConnect(socket);
 
     // Initialize player
@@ -195,7 +195,7 @@ export class Server extends Node {
     this.send(event, socket);
   }
 
-  public override onDisconnect(socket: Socket): void {
+  public onDisconnect(socket: Socket): void {
     super.onDisconnect(socket);
 
     const player = PlayerManager.getSocket(socket);
@@ -210,11 +210,11 @@ export class Server extends Node {
     }
   }
 
-  public override isClient(): boolean {
+  public isClient(): boolean {
     return false;
   }
 
-  public override onMessage(message: Message, socket: Socket): void {
+  public onMessage(message: Message, socket: Socket): void {
     if (message.type === 'PingEvent' && typeof message.data?.id === 'number') {
       const id = message.data.id as number;
       const entry = this.pingResolvers[id];

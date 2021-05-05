@@ -22,7 +22,7 @@ export class EventBar extends Component<EventBarProps, EventBarState> {
     });
   }
 
-  public override componentDidMount(): void {
+  public componentDidMount(): void {
     this.streamEvents<BarUpdateEvent>('BarUpdateEvent')
       .map(({data}) => data)
       .filter(({id}) => id === this.props.id)
@@ -34,7 +34,7 @@ export class EventBar extends Component<EventBarProps, EventBarState> {
       });
   }
 
-  public override render(): JSX.Element {
+  public render(): JSX.Element {
     return (
       <Bar
         barStyle={this.props.barStyle}

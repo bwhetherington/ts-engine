@@ -120,11 +120,11 @@ export class BaseHero extends Tank {
     }
   }
 
-  protected override getNameColor(): TextColor {
+  protected getNameColor(): TextColor {
     return this.getPlayer()?.getNameColor() ?? super.getNameColor();
   }
 
-  public override getXPWorth(): number {
+  public getXPWorth(): number {
     return Math.max(1, this.getExperience() / 2);
   }
 
@@ -217,7 +217,7 @@ export class BaseHero extends Tank {
     return this.player;
   }
 
-  public override setMaxLife(maxLife: number): void {
+  public setMaxLife(maxLife: number): void {
     super.setMaxLife(maxLife);
     if (this.getPlayer()?.isActivePlayer()) {
       EventManager.emit({
@@ -231,7 +231,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public override setLife(life: number, source?: Unit): void {
+  public setLife(life: number, source?: Unit): void {
     super.setLife(life, source);
     if (this.getPlayer()?.isActivePlayer()) {
       EventManager.emit({
@@ -245,11 +245,11 @@ export class BaseHero extends Tank {
     }
   }
 
-  public override getName(): string {
+  public getName(): string {
     return this.getPlayer()?.name ?? super.getName();
   }
 
-  public override step(dt: number): void {
+  public step(dt: number): void {
     super.step(dt);
 
     const player = this.getPlayer();
@@ -269,7 +269,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       playerID: this.player?.id,
@@ -278,7 +278,7 @@ export class BaseHero extends Tank {
     };
   }
 
-  public override deserialize(data: Data, setInitialized?: boolean): void {
+  public deserialize(data: Data, setInitialized?: boolean): void {
     const {x: oldX, y: oldY} = this.position;
     const {angle: oldAngle} = this;
     const {playerID, xp, modifiers} = data;
@@ -330,11 +330,11 @@ export class BaseHero extends Tank {
     return isLocal || socket === player?.socket;
   }
 
-  protected override calculateDamageOut(amount: number): number {
+  protected calculateDamageOut(amount: number): number {
     return amount;
   }
 
-  public override fire(angle: number): void {
+  public fire(angle: number): void {
     this.weapon?.fireInternal(this, angle, this.modifiers);
   }
 }

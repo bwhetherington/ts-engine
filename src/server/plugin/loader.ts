@@ -40,7 +40,7 @@ async function handleListPlugins(player: Player): Promise<void> {
 export class LoaderPlugin extends Plugin {
   public static typeName: string = 'LoaderPlugin';
 
-  public async override initialize(server: Server): Promise<void> {
+  public async initialize(server: Server): Promise<void> {
     this.registerCommand({
       name: 'plugin',
       help: 'Load and unload plugins',

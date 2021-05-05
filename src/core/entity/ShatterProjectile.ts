@@ -14,14 +14,14 @@ export class ShatterProjectile extends Projectile {
     this.type = ShatterProjectile.typeName;
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       fragCount: this.fragCount,
     };
   }
 
-  public override deserialize(data: Data): void {
+  public deserialize(data: Data): void {
     super.deserialize(data);
 
     const {fragCount} = data;
@@ -31,7 +31,7 @@ export class ShatterProjectile extends Projectile {
     }
   }
 
-  public override step(dt: number): void {
+  public step(dt: number): void {
     super.step(dt);
 
     if (this.velocity.magnitudeSquared > 0) {
@@ -39,7 +39,7 @@ export class ShatterProjectile extends Projectile {
     }
   }
 
-  protected override onHitInternal(target?: Unit): void {
+  protected onHitInternal(target?: Unit): void {
     if (NetworkManager.isServer()) {
       const offset = RNGManager.nextFloat(0, 2 * Math.PI);
       for (let i = 0; i < this.fragCount; i++) {

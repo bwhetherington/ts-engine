@@ -29,7 +29,7 @@ export class Echo extends Entity {
     this.isVisible = true;
   }
 
-  public override step(dt: number): void {
+  public step(dt: number): void {
     super.step(dt);
     this.timeRemaining -= dt;
     if (this.timeRemaining <= 0) {
@@ -42,7 +42,7 @@ export class Echo extends Entity {
     return smoothStep(t);
   }
 
-  public override renderInternal(ctx: GraphicsContext): void {
+  public renderInternal(ctx: GraphicsContext): void {
     this.render(ctx);
   }
 
@@ -63,7 +63,7 @@ export class Echo extends Entity {
     this.variant = variant;
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext): void {
     if (this.parent) {
       const t = this.getParameter();
       let u;

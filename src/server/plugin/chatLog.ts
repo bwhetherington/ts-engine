@@ -49,7 +49,7 @@ export class ChatLogPlugin extends Plugin {
     this.handle?.write(line + '\n');
   }
 
-  public async override initialize(server: Server): Promise<void> {
+  public async initialize(server: Server): Promise<void> {
     // Acquire file handle
     this.handle = fs.createWriteStream(LOG_FILE, {
       flags: 'a',
@@ -68,7 +68,7 @@ export class ChatLogPlugin extends Plugin {
     await super.initialize(server);
   }
 
-  public async override cleanup(): Promise<void> {
+  public async cleanup(): Promise<void> {
     this.handle?.end();
     await super.cleanup();
   }

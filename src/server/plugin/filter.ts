@@ -10,7 +10,7 @@ const FILTER_WORDS = ['badword'];
 export class FilterPlugin extends Plugin {
   public static typeName: string = 'FilterPlugin';
 
-  public async override initialize(server: Server): Promise<void> {
+  public async initialize(server: Server): Promise<void> {
     await super.initialize(server);
 
     this.streamEvents<TextMessageInEvent>('TextMessageInEvent', Priority.High)

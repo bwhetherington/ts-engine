@@ -178,7 +178,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     this.endRef.current?.scrollIntoView({behavior: 'auto'});
   }
 
-  public override componentDidMount(): void {
+  public componentDidMount(): void {
     this.streamEvents<TextMessageOutEvent>('TextMessageOutEvent').forEach(
       ({data: {components}}) => {
         const lines = concatLine(
@@ -330,7 +330,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     }
   }
 
-  public override render(): JSX.Element {
+  public render(): JSX.Element {
     const panelStyle: React.CSSProperties = this.isFocused()
       ? {}
       : {

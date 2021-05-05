@@ -58,14 +58,14 @@ export class Feed extends Unit {
     }
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       variant: this.variant,
     };
   }
 
-  public override deserialize(obj: Data): void {
+  public deserialize(obj: Data): void {
     super.deserialize(obj);
 
     const {variant} = obj;
@@ -74,7 +74,7 @@ export class Feed extends Unit {
     }
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext): void {
     const {width} = this.boundingBox;
     GraphicsPipeline.pipe()
       .rotate(EventManager.timeElapsed / 10)

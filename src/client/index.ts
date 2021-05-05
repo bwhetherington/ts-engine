@@ -60,8 +60,8 @@ async function main(): Promise<void> {
       InputManager.reset();
     });
 
-    const timer = new Timer((dt) => {
-      EventManager.step(dt);
+    const timer = new Timer(async (dt) => {
+      await EventManager.step(dt);
       CameraManager.update();
       WorldManager.render(canvas);
     });

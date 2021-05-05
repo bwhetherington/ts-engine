@@ -95,7 +95,7 @@ export class SizedQueue<T> extends Queue<T> {
     this.capacity = capacity;
   }
 
-  public override enqueue(element: T): T | undefined {
+  public enqueue(element: T): T | undefined {
     super.enqueue(element);
     if (this.size() > this.capacity) {
       return this.dequeue();

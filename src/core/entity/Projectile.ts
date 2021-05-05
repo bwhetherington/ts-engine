@@ -46,7 +46,7 @@ export class Projectile extends Entity {
     this.collisionLayer = CollisionLayer.Projectile;
     this.friction = 350;
     this.bounce = 0;
-    this.mass = 0.1;
+    this.mass = 0.2;
     this.setColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.boundingBox.width = 20;
     this.boundingBox.height = 20;
@@ -58,7 +58,7 @@ export class Projectile extends Entity {
     }
   }
 
-  public override step(dt: number): void {
+  public step(dt: number): void {
     super.step(dt);
     if (
       NetworkManager.isServer() &&
@@ -68,7 +68,7 @@ export class Projectile extends Entity {
     }
   }
 
-  public override collide(other?: Entity) {
+  public collide(other?: Entity) {
     super.collide(other);
 
     if (
@@ -115,7 +115,7 @@ export class Projectile extends Entity {
     }
   }
 
-  public override isAlive(): boolean {
+  public isAlive(): boolean {
     return super.isAlive() && !this.hasExploded;
   }
 
@@ -145,7 +145,7 @@ export class Projectile extends Entity {
     return true;
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext): void {
     const {width, height} = this.boundingBox;
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       switch (this.shape) {
@@ -165,7 +165,7 @@ export class Projectile extends Entity {
     });
   }
 
-  public override serialize(): Data {
+  public serialize(): Data {
     return {
       ...super.serialize(),
       damage: this.damage,
@@ -179,7 +179,7 @@ export class Projectile extends Entity {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public deserialize(data: Data): void {
     super.deserialize(data);
 
     const {
@@ -230,7 +230,7 @@ export class Projectile extends Entity {
     }
   }
 
-  public override cleanup(): void {
+  public cleanup(): void {
     if (!this.hasExploded) {
       this.explodeInternal();
     }

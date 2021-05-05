@@ -41,7 +41,7 @@ export class Trail extends Entity {
     }
   }
 
-  public override step(dt: number): void {
+  public step(dt: number): void {
     super.step(dt);
     if (this.parent?.isAlive()) {
       this.snapshots.enqueue({
@@ -79,7 +79,7 @@ export class Trail extends Entity {
     }
   }
 
-  public override renderInternal(ctx: GraphicsContext): void {
+  public renderInternal(ctx: GraphicsContext): void {
     this.render(ctx);
   }
 
@@ -88,7 +88,7 @@ export class Trail extends Entity {
     this.duration = duration;
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext): void {
     if (this.parent) {
       const color = {
         ...this.parent.getColor(),

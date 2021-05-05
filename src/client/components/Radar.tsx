@@ -58,7 +58,7 @@ export class Radar extends Component<{}, RadarState> {
     }
   };
 
-  public override componentDidMount(): void {
+  public componentDidMount(): void {
     this.streamEvents<StepEvent>('StepEvent').forEach(async () => {
       this.renderRadar();
       this.updateState({
@@ -67,7 +67,7 @@ export class Radar extends Component<{}, RadarState> {
     });
   }
 
-  public override render(): JSX.Element {
+  public render(): JSX.Element {
     return (
       <Panel>
         <PanelHeader>

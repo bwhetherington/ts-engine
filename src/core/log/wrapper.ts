@@ -7,19 +7,19 @@ export class LoggerWrapper extends AbstractLogger {
     this.logger = logger;
   }
 
-  public override setLogLevel(level: LogLevel): void {
+  public setLogLevel(level: LogLevel): void {
     this.logger?.setLogLevel(level);
   }
 
-  public override getLogLevel(): LogLevel {
+  public getLogLevel(): LogLevel {
     return this.logger?.getLogLevel() ?? 'trace';
   }
 
-  public override getPriority(): number {
+  public getPriority(): number {
     return this.logger?.getPriority() ?? 4;
   }
 
-  public override logRaw(content: string): void {
+  public logRaw(content: string): void {
     this.logger?.logRaw(content);
   }
 }
