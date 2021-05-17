@@ -79,11 +79,6 @@ export function Bar(props: BarProps): JSX.Element {
     ...barStyles[props.barStyle],
     width: widthPercent,
   };
-  const numberLabel = formatLabel(props.value, props.maxValue);
-  const labelText = props.label
-    ? `${props.label}: ${numberLabel}`
-    : numberLabel;
-  const label = <span style={labelStyle}>{labelText}</span>;
   return (
     <div style={containerStyle}>
       <div style={newBarStyle} />
