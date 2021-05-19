@@ -78,13 +78,13 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       });
 
     // Spawn enemy units
-    // this.takeDuringState(GameState.Running, this.streamInterval(1))
-    //   .filter(
-    //     () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
-    //   )
-    //   .forEach(() => {
-    //     this.spawnEnemy();
-    //   });
+    this.takeDuringState(GameState.Running, this.streamInterval(1))
+      .filter(
+        () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
+      )
+      .forEach(() => {
+        this.spawnEnemy();
+      });
 
     const respawnHero = async (hero: BaseHero) => {
       const player = hero.getPlayer();

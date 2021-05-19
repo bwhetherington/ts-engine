@@ -193,7 +193,7 @@ export class Unit extends Entity {
       const excess = this.velocity.magnitude - this.speed;
       this.vectorBuffer.set(this.velocity);
       this.vectorBuffer.normalize();
-      this.vectorBuffer.scale(-0.2 * excess);
+      this.vectorBuffer.scale(-excess);
       this.velocity.add(this.vectorBuffer);
     }
 
