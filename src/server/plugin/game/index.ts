@@ -8,7 +8,7 @@ import {
 } from 'core/entity';
 import {EventManager} from 'core/event';
 import {StateMachine} from 'core/fsm';
-import { Vector } from 'core/geometry';
+import {Vector} from 'core/geometry';
 import {randomColor} from 'core/graphics';
 import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {RNGManager} from 'core/random';
@@ -78,13 +78,13 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       });
 
     // Spawn enemy units
-    this.takeDuringState(GameState.Running, this.streamInterval(1))
-      .filter(
-        () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
-      )
-      .forEach(() => {
-        this.spawnEnemy();
-      });
+    // this.takeDuringState(GameState.Running, this.streamInterval(1))
+    //   .filter(
+    //     () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
+    //   )
+    //   .forEach(() => {
+    //     this.spawnEnemy();
+    //   });
 
     const respawnHero = async (hero: BaseHero) => {
       const player = hero.getPlayer();
@@ -124,13 +124,24 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     PlayerManager.getPlayers().forEach((player) => player.spawnHero());
 
     // Start timer
-    this.countdown(GameState.Running, 120, [60, 30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]).then(
-      (shouldTransition) => {
-        if (shouldTransition) {
-          this.transition(GameAction.Stop);
-        }
+    this.countdown(GameState.Running, 120, [
+      60,
+      30,
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1,
+    ]).then((shouldTransition) => {
+      if (shouldTransition) {
+        this.transition(GameAction.Stop);
       }
-    );
+    });
   }
 
   private stopGame(): void {
@@ -208,8 +219,8 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
           const amountNumber = parseFloat(amount);
           hero.applyForce(new Vector(amountNumber, 0));
         }
-      }
-    })
+      },
+    });
 
     await this.transition(GameAction.Start);
   }

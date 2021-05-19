@@ -37,16 +37,16 @@ export class PlayerController extends Controller {
       }
     );
 
-    this.keyListenerID = hero.addListener<KeyEvent>('KeyEvent', (event) => {
-      if (hero.isEventSubject(event)) {
-        const {action, key} = event.data;
-        const state = action === KeyAction.KeyDown;
-        const direction = MOVEMENT_DIRECTION_MAP[key];
-        if (direction !== undefined) {
-          hero.setMovement(direction, state);
-        }
-      }
-    });
+    // this.keyListenerID = hero.addListener<KeyEvent>('KeyEvent', (event) => {
+    //   if (hero.isEventSubject(event)) {
+    //     const {action, key} = event.data;
+    //     const state = action === KeyAction.KeyDown;
+    //     const direction = MOVEMENT_DIRECTION_MAP[key];
+    //     if (direction !== undefined) {
+    //       hero.setMovement(direction, state);
+    //     }
+    //   }
+    // });
   }
 
   public detach(): void {

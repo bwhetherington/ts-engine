@@ -60,7 +60,8 @@ export class ChatLogPlugin extends Plugin {
       Priority.Highest
     )
       .filter((event) => event.socket === -1)
-      .map((event) => generateString(event.data.components))
+      .map(({data: {components}}) => components)
+      .map(generateString)
       .forEach((line) => {
         this.writeLine(line);
       });

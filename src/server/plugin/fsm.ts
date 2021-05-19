@@ -10,7 +10,10 @@ interface TransitionEvent<A> {
   action: A;
 }
 
-export abstract class FsmPlugin<S extends number, A extends number> extends Plugin {
+export abstract class FsmPlugin<
+  S extends number,
+  A extends number
+> extends Plugin {
   public static typeName: string = 'SoccerPlugin';
 
   private transitionEventName: string = '';

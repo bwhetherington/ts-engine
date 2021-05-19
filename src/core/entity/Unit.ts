@@ -35,16 +35,11 @@ export class Unit extends Entity {
   public label?: Text;
   protected hpBar?: Bar;
   protected trail?: Trail;
+  protected thrusting: number = 0;
 
   private lastFlash: number = 0;
   private flashColor?: Color;
   private isAliveInternal: boolean = true;
-  private movement = {
-    [MovementDirection.Up]: false,
-    [MovementDirection.Down]: false,
-    [MovementDirection.Left]: false,
-    [MovementDirection.Right]: false,
-  };
   private acceleration: Vector = new Vector(0, 0);
   private hasExploded: boolean = false;
 
@@ -169,24 +164,28 @@ export class Unit extends Entity {
     // Handle movement
     this.acceleration.setXY(0, 0);
 
-    if (this.movement[MovementDirection.Up]) {
-      this.acceleration.addXY(0, -1);
-    }
+    // if (this.movement[MovementDirection.Up]) {
+    //   this.acceleration.addXY(0, -1);
+    // }
 
-    if (this.movement[MovementDirection.Down]) {
-      this.acceleration.addXY(0, 1);
-    }
+    // if (this.movement[MovementDirection.Down]) {
+    //   this.acceleration.addXY(0, 1);
+    // }
 
-    if (this.movement[MovementDirection.Left]) {
-      this.acceleration.addXY(-1, 0);
-    }
+    // if (this.movement[MovementDirection.Left]) {
+    //   this.acceleration.addXY(-1, 0);
+    // }
 
-    if (this.movement[MovementDirection.Right]) {
-      this.acceleration.addXY(1, 0);
-    }
+    // if (this.movement[MovementDirection.Right]) {
+    //   this.acceleration.addXY(1, 0);
+    // }
 
-    this.acceleration.magnitude = ACCELERATION * dt;
-    this.applyForce(this.acceleration, (this.mass * this.friction) / 500);
+    this.acceleration.setXY(1, 0);
+    this.acceleration.angle = this.angle;
+
+    this.acceleration.magnitude =
+      ACCELERATION * dt * this.thrusting * this.mass;
+    this.applyForce(this.acceleration);
 
     // Handle maximum speed
     if (this.velocity.magnitude > this.speed) {
@@ -220,8 +219,8 @@ export class Unit extends Entity {
     }
   }
 
-  public setMovement(direction: MovementDirection, state: boolean): void {
-    this.movement[direction] = state;
+  public setThrusting(thrusting: number): void {
+    this.thrusting = thrusting;
   }
 
   public serialize(): Data {
@@ -232,13 +231,14 @@ export class Unit extends Entity {
       speed: this.speed,
       xpWorth: this.xpWorth,
       name: this.name,
+      thrusting: this.thrusting,
       color: this.getBaseColor(),
     };
   }
 
   public deserialize(data: Data, setInitialized?: boolean): void {
     super.deserialize(data, setInitialized);
-    const {life, maxLife, movement, xpWorth, speed, name} = data;
+    const {life, maxLife, thrusting, xpWorth, speed, name} = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }
@@ -254,31 +254,8 @@ export class Unit extends Entity {
     if (typeof name === 'string') {
       this.setName(name);
     }
-    if (movement) {
-      if (MovementDirection.Up in movement) {
-        this.setMovement(MovementDirection.Up, movement[MovementDirection.Up]);
-      }
-
-      if (MovementDirection.Down in movement) {
-        this.setMovement(
-          MovementDirection.Down,
-          movement[MovementDirection.Down]
-        );
-      }
-
-      if (MovementDirection.Left in movement) {
-        this.setMovement(
-          MovementDirection.Left,
-          movement[MovementDirection.Left]
-        );
-      }
-
-      if (MovementDirection.Right in movement) {
-        this.setMovement(
-          MovementDirection.Right,
-          movement[MovementDirection.Right]
-        );
-      }
+    if (typeof thrusting === 'number') {
+      this.setThrusting(thrusting);
     }
   }
 

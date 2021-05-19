@@ -365,7 +365,6 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
     this.getEntities().forEach((entity) => {
       entity.afterStep();
-
       if (entity.isCollidable && entity.isSpatial) {
         this.space.insert(entity);
       }

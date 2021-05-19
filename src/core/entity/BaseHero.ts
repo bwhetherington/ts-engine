@@ -12,6 +12,9 @@ import {
   MOVEMENT_DIRECTION_MAP,
   MouseEvent,
   MouseAction,
+  Key,
+  MouseButton,
+  MovementDirection,
 } from 'core/input';
 import {EventData, Event, EventManager} from 'core/event';
 import {Data} from 'core/serialize';
@@ -33,6 +36,12 @@ export class BaseHero extends Tank {
 
   private player?: Player;
   private mouseDown: boolean = false;
+  private turning = {
+    [MovementDirection.Up]: false,
+    [MovementDirection.Down]: false,
+    [MovementDirection.Left]: false,
+    [MovementDirection.Right]: false,
+  };
 
   private xp: number = 0;
   private level: number = 0;
@@ -49,16 +58,21 @@ export class BaseHero extends Tank {
 
     this.streamEvents<MouseEvent>('MouseEvent')
       .filter((event) => this.isEventSubject(event))
-      .forEach(({data: {action, x, y}}) => {
+      .forEach(({data: {action, x, y, button}}) => {
         if (action === MouseAction.Move) {
           // Subtract our position from mouse position
           this.vectorBuffer.setXY(x, y);
           this.vectorBuffer.add(this.position, -1);
-          this.angle = this.vectorBuffer.angle;
-        } else if (action === MouseAction.ButtonDown) {
-          this.mouseDown = true;
-        } else if (action === MouseAction.ButtonUp) {
-          this.mouseDown = false;
+          this.weaponAngle = this.vectorBuffer.angle;
+          // this.targetAngle = this.vectorBuffer.angle;
+        }
+        if (action === MouseAction.ButtonDown || MouseAction.ButtonUp) {
+          const state = action === MouseAction.ButtonDown;
+          switch (button) {
+            case MouseButton.Left:
+              this.mouseDown = state;
+              break;
+          }
         }
       });
 
@@ -66,9 +80,19 @@ export class BaseHero extends Tank {
       .filter((event) => this.isEventSubject(event))
       .forEach(({data: {action, key}}) => {
         const state = action === KeyAction.KeyDown;
-        const direction = MOVEMENT_DIRECTION_MAP[key];
-        if (direction !== undefined) {
-          this.setMovement(direction, state);
+        switch (key) {
+          case Key.W:
+            this.turning[MovementDirection.Up] = state;
+            break;
+          case Key.S:
+            this.turning[MovementDirection.Down] = state;
+            break;
+          case Key.A:
+            this.turning[MovementDirection.Left] = state;
+            break;
+          case Key.D:
+            this.turning[MovementDirection.Right] = state;
+            break;
         }
       });
 
@@ -249,9 +273,34 @@ export class BaseHero extends Tank {
     return this.getPlayer()?.name ?? super.getName();
   }
 
-  public step(dt: number): void {
-    super.step(dt);
+  private computeMovementInput(): void {
+    this.vectorBuffer.setXY(0, 0);
+    if (this.turning[MovementDirection.Up]) {
+      this.vectorBuffer.addXY(0, -1);
+    }
+    if (this.turning[MovementDirection.Down]) {
+      this.vectorBuffer.addXY(0, 1);
+    }
+    if (this.turning[MovementDirection.Left]) {
+      this.vectorBuffer.addXY(-1, 0);
+    }
+    if (this.turning[MovementDirection.Right]) {
+      this.vectorBuffer.addXY(1, 0);
+    }
+    this.vectorBuffer.normalize();
+    if (this.vectorBuffer.magnitudeSquared > 0) {
+      this.setThrusting(1);
+      this.targetAngle = this.vectorBuffer.angle % (2 * Math.PI);
+    } else {
+      this.setThrusting(0);
+      this.targetAngle = this.angle;
+    }
+  }
 
+  public step(dt: number): void {
+    this.computeMovementInput();
+    super.step(dt);
+  
     const player = this.getPlayer();
     if (player) {
       if (player.isActivePlayer()) {
@@ -265,7 +314,7 @@ export class BaseHero extends Tank {
     }
 
     if (this.mouseDown && NetworkManager.isServer()) {
-      this.fire(this.angle);
+      this.fire(this.weaponAngle);
     }
   }
 
@@ -280,7 +329,7 @@ export class BaseHero extends Tank {
 
   public deserialize(data: Data, setInitialized?: boolean): void {
     const {x: oldX, y: oldY} = this.position;
-    const {angle: oldAngle} = this;
+    const {angle: oldAngle, weaponAngle: oldWeaponAngle, targetAngle: oldTargetAngle} = this;
     const {playerID, xp, modifiers} = data;
 
     if (playerID !== undefined) {
@@ -305,6 +354,8 @@ export class BaseHero extends Tank {
     if (this.getPlayer()?.isActivePlayer() && wasInitialized) {
       // Use our angle
       this.angle = oldAngle;
+      this.weaponAngle = oldWeaponAngle;
+      this.targetAngle = oldTargetAngle;
 
       this.setPositionXY(oldX, oldY);
       NetworkManager.sendEvent<SyncEvent>({

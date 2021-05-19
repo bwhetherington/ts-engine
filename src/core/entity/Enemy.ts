@@ -15,6 +15,7 @@ export class Enemy extends Tank {
   public constructor() {
     super();
     this.type = Enemy.typeName;
+    this.turnSpeed = Math.PI;
     this.setName('Gunner');
 
     this.setWeapon('Gun');
@@ -75,35 +76,19 @@ export class Enemy extends Tank {
       }
 
       // Reset movement
-      this.setMovement(MovementDirection.Up, false);
-      this.setMovement(MovementDirection.Down, false);
-      this.setMovement(MovementDirection.Left, false);
-      this.setMovement(MovementDirection.Right, false);
+      this.setThrusting(0);
 
       const {target} = this;
       if (target && target.isAlive) {
         if (target.position.distanceTo(this.position) > 150) {
-          // Calculate movement to reach target
-          const dx = this.position.x - target.position.x;
-          const dy = this.position.y - target.position.y;
-
-          if (dy > 10) {
-            this.setMovement(MovementDirection.Up, true);
-          } else if (dy < -10) {
-            this.setMovement(MovementDirection.Down, true);
-          }
-
-          if (dx > 10) {
-            this.setMovement(MovementDirection.Left, true);
-          } else if (dx < -10) {
-            this.setMovement(MovementDirection.Right, true);
-          }
+          this.setThrusting(1);
         }
 
         // Point cannon at target
         const angle = this.position.angleTo(target.position);
-        this.angle = angle;
-        this.fire(this.angle);
+        this.weaponAngle = angle;
+        this.targetAngle = angle;
+        this.fire(this.weaponAngle);
       }
     }
   }

@@ -7,6 +7,7 @@
   },
   "bodyShape": {
     "tag": "polygon",
+    "lockToWeapon": true,
     "sides": 4,
     "angle": 45
   },
