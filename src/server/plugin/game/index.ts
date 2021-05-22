@@ -1,5 +1,6 @@
 import {
   BaseHero,
+  Enemy,
   Feed,
   FeedVariant,
   KillEvent,
@@ -9,7 +10,7 @@ import {
 import {EventManager} from 'core/event';
 import {StateMachine} from 'core/fsm';
 import {Vector} from 'core/geometry';
-import {randomColor} from 'core/graphics';
+import {COLORS, randomColor} from 'core/graphics';
 import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {RNGManager} from 'core/random';
 import {ChatManager} from 'server/chat';
@@ -124,7 +125,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     PlayerManager.getPlayers().forEach((player) => player.spawnHero());
 
     // Start timer
-    this.countdown(GameState.Running, 120, [
+    this.countdown(GameState.Running, 300, [
       60,
       30,
       10,
@@ -191,12 +192,35 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     const stopHandler = async () => {
       await this.transition(GameAction.Stop);
-      console.log('stopped');
     };
     this.registerCommand({
       name: 'stopGame',
       help: 'Stops the current game',
       handler: stopHandler,
+    });
+
+    this.registerCommand({
+      name: 'spawnColors',
+      help: 'Spawns tanks with the current color palette',
+      handler() {
+        const {width, x, y} = WorldManager.boundingBox;
+        const num = COLORS.length;
+
+        const indent = 30;
+        const usableWidth = width - 2 * indent;
+        const spacing = usableWidth / (num - 1);
+
+        for (let i = 0; i < num; i++) {
+          const color = {...COLORS[i]};
+          const posX = x + indent + spacing * i;
+          const posY = y + indent;
+          const tank = WorldManager.spawn(Enemy, new Vector(posX, posY));
+          tank.setName('' + (1 + i));
+          tank.isActive = false;
+          tank.weaponAngle = Math.PI / 2;
+          tank.setColor(color);
+        }
+      },
     });
 
     const startHandler = async () => {

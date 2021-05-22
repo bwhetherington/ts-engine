@@ -28,17 +28,35 @@ export const COLOR_MAPPING: Record<TextColor, Color> = {
   purple: hsv(300, 0.65, 1),
 };
 
-export function randomColor(
-  saturation: number = 0.65,
-  value: number = 0.9
-): Color {
-  const hue = RNGManager.nextFloat(0, 360);
-  return hsv(hue, saturation, value);
+export const COLORS: Color[] = [
+  fromHSV({hue: 0, value: 0.85, saturation: 0.6}),
+  fromHSV({hue: 20, value: 0.8, saturation: 0.65}),
+  fromHSV({hue: 40, value: 0.8, saturation: 0.7}),
+  fromHSV({hue: 60, value: 0.9, saturation: 0.7}),
+  fromHSV({hue: 80, value: 0.8, saturation: 0.7}),
+  fromHSV({hue: 100, value: 0.75, saturation: 0.75}),
+  fromHSV({hue: 120, value: 0.7, saturation: 0.8}),
+  fromHSV({hue: 140, value: 0.75, saturation: 0.75}),
+  fromHSV({hue: 160, value: 0.8, saturation: 0.7}),
+  fromHSV({hue: 180, value: 0.85, saturation: 0.7}),
+  fromHSV({hue: 200, value: 0.9, saturation: 0.5}),
+  fromHSV({hue: 220, value: 0.9, saturation: 0.45}),
+  fromHSV({hue: 240, value: 0.9, saturation: 0.4}),
+  fromHSV({hue: 260, value: 0.9, saturation: 0.45}),
+  fromHSV({hue: 280, value: 0.9, saturation: 0.5}),
+  fromHSV({hue: 300, value: 0.9, saturation: 0.5}),
+  fromHSV({hue: 320, value: 0.9, saturation: 0.5}),
+  fromHSV({hue: 340, value: 0.85, saturation: 0.55}),
+];
+
+export function randomColor(): Color {
+  const i = RNGManager.nextInt(0, COLORS.length);
+  return {...COLORS[i]};
 }
 
-const RED_LIGHTNESS = 0.2126;
-const GREEN_LIGHTNESS = 0.7152;
-const BLUE_LIGHTNESS = 0.0722;
+// const RED_LIGHTNESS = 0.2126;
+// const GREEN_LIGHTNESS = 0.7152;
+// const BLUE_LIGHTNESS = 0.0722;
 
 export function fromRGB(color: Color): ColorHSV {
   const {red, green, blue, alpha} = color;
@@ -94,6 +112,9 @@ export function hsva(
   const c = value * saturation;
   const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
   const m = value - c;
+  const RED_LIGHTNESS = 0.314;
+  const GREEN_LIGHTNESS = 0.512;
+  const BLUE_LIGHTNESS = 0.174;
 
   let r = 0;
   let g = 0;

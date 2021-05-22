@@ -53,9 +53,9 @@ export class Tank extends Unit {
       key: 0,
     },
   ];
-  protected targetAngle: number = 0;
-  protected weaponAngle: number = 0;
-  protected turnSpeed: number = Math.PI * 1000;
+  public targetAngle: number = 0;
+  public weaponAngle: number = 0;
+  public turnSpeed: number = Math.PI * 1000;
 
   private thrustTime: number = 0;
 
@@ -164,7 +164,9 @@ export class Tank extends Unit {
     let {width} = this.boundingBox;
     width *= 1.1;
     const radius = width / 2;
-    const rotation = this.bodyShape.lockToWeapon ? (this.weaponAngle - this.angle) : 0;
+    const rotation = this.bodyShape.lockToWeapon
+      ? this.weaponAngle - this.angle
+      : 0;
     GraphicsPipeline.pipe()
       .options({
         doFill: true,

@@ -300,7 +300,7 @@ export class BaseHero extends Tank {
   public step(dt: number): void {
     this.computeMovementInput();
     super.step(dt);
-  
+
     const player = this.getPlayer();
     if (player) {
       if (player.isActivePlayer()) {
@@ -329,7 +329,11 @@ export class BaseHero extends Tank {
 
   public deserialize(data: Data, setInitialized?: boolean): void {
     const {x: oldX, y: oldY} = this.position;
-    const {angle: oldAngle, weaponAngle: oldWeaponAngle, targetAngle: oldTargetAngle} = this;
+    const {
+      angle: oldAngle,
+      weaponAngle: oldWeaponAngle,
+      targetAngle: oldTargetAngle,
+    } = this;
     const {playerID, xp, modifiers} = data;
 
     if (playerID !== undefined) {

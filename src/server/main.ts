@@ -17,7 +17,7 @@ import {WeaponManager} from 'core/weapon';
 import {Server, createServer, ServerHTTPClient} from 'server/net';
 import {ChatManager} from 'server/chat';
 import {MetricsManager} from 'server/metrics';
-import {PluginManager} from 'server/plugin';
+import {PluginManager, UtilsPlugin} from 'server/plugin';
 import {FilterPlugin} from 'server/plugin/filter';
 import {LoaderPlugin} from 'server/plugin/loader';
 import {
@@ -30,6 +30,7 @@ import {
 } from 'server/util';
 import {ChatLogPlugin} from 'server/plugin/chatLog';
 import {GamePlugin} from 'server/plugin/game';
+import {Heap} from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -103,6 +104,7 @@ async function main(): Promise<void> {
     LoaderPlugin,
     FilterPlugin,
     GamePlugin,
+    UtilsPlugin,
   ]);
 }
 

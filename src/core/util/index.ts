@@ -45,4 +45,7 @@ export {
   diff,
 };
 
+export * from 'core/util/heap';
+export * from 'core/metrics';
+
 // export * from 'core/util/map';

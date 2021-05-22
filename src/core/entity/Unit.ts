@@ -162,24 +162,6 @@ export class Unit extends Entity {
     this.setLife(this.life + this.lifeRegen * dt);
 
     // Handle movement
-    this.acceleration.setXY(0, 0);
-
-    // if (this.movement[MovementDirection.Up]) {
-    //   this.acceleration.addXY(0, -1);
-    // }
-
-    // if (this.movement[MovementDirection.Down]) {
-    //   this.acceleration.addXY(0, 1);
-    // }
-
-    // if (this.movement[MovementDirection.Left]) {
-    //   this.acceleration.addXY(-1, 0);
-    // }
-
-    // if (this.movement[MovementDirection.Right]) {
-    //   this.acceleration.addXY(1, 0);
-    // }
-
     this.acceleration.setXY(1, 0);
     this.acceleration.angle = this.angle;
 

@@ -27,9 +27,9 @@ import {EventManager, StepEvent} from 'core/event';
 import {Serializable, Data} from 'core/serialize';
 import {Iterator, iterator} from 'core/iterator';
 import {diff} from 'core/util';
-import {NetworkManager, SyncEvent} from 'core/net';
+import {SyncEvent} from 'core/net';
 import {WALL_COLOR} from 'core/entity/Geometry';
-import {WHITE, reshade} from 'core/graphics/color';
+import {WHITE, reshade, BLACK} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
@@ -206,6 +206,8 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         );
       });
 
+    // this.graph?.render(ctx);
+
     this.getEntitiesLayerOrdered()
       .filter((entity) => entity.boundingBox.intersects(camBounds))
       .forEach((entity) => {
@@ -229,12 +231,23 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public getRandomPosition(): Vector {
-    return RNGManager.nextVector(this.boundingBox);
+    const cursor = new Rectangle(5, 5, 0, 0);
+    let position = RNGManager.nextVector(this.boundingBox);
+    cursor.setCenter(position);
+    let attempts = 0;
+    while (attempts < 10 && this.query(cursor)
+      .filter((entity) => entity.collisionLayer === CollisionLayer.Geometry)
+      .any((entity) => entity.boundingBox.intersects(cursor)))
+    {
+      attempts += 1;
+      position = RNGManager.nextVector(this.boundingBox);
+    }
+    return position;
   }
 
   private populateGraph(): void {
     if (this.shouldPopulateGraph) {
-      this.graph = Graph.sample(25);
+      this.graph = Graph.sample(50);
       this.shouldPopulateGraph = false;
     }
   }
@@ -301,6 +314,10 @@ export class WorldManager implements Bounded, Serializable, Renderable {
 
   public querySet(box: Rectangle): Set<Entity> {
     return this.space.query(box);
+  }
+
+  public findPath(from: Vector, to: Vector): Vector[] | undefined {
+    return this.graph?.findPath(from, to);
   }
 
   public step(dt: number): void {
