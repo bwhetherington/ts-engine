@@ -27,7 +27,7 @@ import {EventManager, StepEvent} from 'core/event';
 import {Serializable, Data} from 'core/serialize';
 import {Iterator, iterator} from 'core/iterator';
 import {diff} from 'core/util';
-import {SyncEvent} from 'core/net';
+import {NetworkManager, SyncEvent} from 'core/net';
 import {WALL_COLOR} from 'core/entity/Geometry';
 import {WHITE, reshade, BLACK} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
@@ -235,10 +235,12 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     let position = RNGManager.nextVector(this.boundingBox);
     cursor.setCenter(position);
     let attempts = 0;
-    while (attempts < 10 && this.query(cursor)
-      .filter((entity) => entity.collisionLayer === CollisionLayer.Geometry)
-      .any((entity) => entity.boundingBox.intersects(cursor)))
-    {
+    while (
+      attempts < 10 &&
+      this.query(cursor)
+        .filter((entity) => entity.collisionLayer === CollisionLayer.Geometry)
+        .any((entity) => entity.boundingBox.intersects(cursor))
+    ) {
       attempts += 1;
       position = RNGManager.nextVector(this.boundingBox);
     }
@@ -330,49 +332,61 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.toDelete = [];
 
     // Step each entity
+    const isClient = NetworkManager.isClient();
+    const shouldProcessLocalEntity = (entity: Entity) =>
+      isClient ? CameraManager.isInFrame(entity) : true;
     this.getEntities().forEach((entity) => {
       if (entity.markedForDelete) {
         this.toDelete.push(entity.id);
       }
-      entity.step(dt);
 
-      // Check for collision with bounds
-      if (entity.isCollidable) {
-        let dx = 0;
-        let dy = 0;
+      const shouldProcessEntity = isClient
+        ? entity.shouldUpdateLocally()
+        : true;
+      if (shouldProcessEntity) {
+        entity.step(dt);
 
-        if (entity.boundingBox.x < this.boundingBox.x) {
-          dx += this.boundingBox.x - entity.boundingBox.x;
-        }
-        if (entity.boundingBox.farX > this.boundingBox.farX) {
-          dx += this.boundingBox.farX - entity.boundingBox.farX;
-        }
-        if (entity.boundingBox.y < this.boundingBox.y) {
-          dy += this.boundingBox.y - entity.boundingBox.y;
-        }
-        if (entity.boundingBox.farY > this.boundingBox.farY) {
-          dy += this.boundingBox.farY - entity.boundingBox.farY;
-        }
+        // Check for collision with bounds
+        if (entity.isCollidable && shouldProcessLocalEntity(entity)) {
+          let dx = 0;
+          let dy = 0;
 
-        let didCollide = false;
-        if (dx !== 0) {
-          entity.velocity.x *= -entity.bounce;
-          didCollide = true;
-        }
-        if (dy !== 0) {
-          entity.velocity.y *= -entity.bounce;
-          didCollide = true;
-        }
+          if (entity.boundingBox.x < this.boundingBox.x) {
+            dx += this.boundingBox.x - entity.boundingBox.x;
+          }
+          if (entity.boundingBox.farX > this.boundingBox.farX) {
+            dx += this.boundingBox.farX - entity.boundingBox.farX;
+          }
+          if (entity.boundingBox.y < this.boundingBox.y) {
+            dy += this.boundingBox.y - entity.boundingBox.y;
+          }
+          if (entity.boundingBox.farY > this.boundingBox.farY) {
+            dy += this.boundingBox.farY - entity.boundingBox.farY;
+          }
 
-        if (didCollide) {
-          entity.collide();
-          EventManager.emit<CollisionEvent>({
-            type: 'CollisionEvent',
-            data: {collider: entity},
-          });
-        }
+          let didCollide = false;
+          if (dx !== 0) {
+            entity.velocity.x *= -entity.bounce;
+            didCollide = true;
+          }
+          if (dy !== 0) {
+            entity.velocity.y *= -entity.bounce;
+            didCollide = true;
+          }
 
-        entity.addPositionXY(dx, dy);
+          if (didCollide) {
+            entity.collide();
+            EventManager.emit<CollisionEvent>({
+              type: 'CollisionEvent',
+              data: {collider: entity},
+            });
+          }
+
+          entity.addPositionXY(dx, dy);
+        }
+      } else if (isClient && entity.shouldDeleteIfOffscreen()) {
+        entity.markForDelete();
+        this.toDelete.push(entity.id);
       }
     });
 
@@ -381,12 +395,21 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.collisionLayers = [[], [], [], [], [], []];
 
     this.getEntities().forEach((entity) => {
-      entity.afterStep();
-      if (entity.isCollidable && entity.isSpatial) {
-        this.space.insert(entity);
+      const shouldProcessEntity = isClient
+        ? entity.shouldUpdateLocally()
+        : true;
+      if (shouldProcessEntity) {
+        entity.afterStep();
+        if (
+          entity.isCollidable &&
+          entity.isSpatial &&
+          shouldProcessLocalEntity(entity)
+        ) {
+          this.space.insert(entity);
+        }
+        const layerIndex = entity.collisionLayer;
+        this.collisionLayers[layerIndex]?.push(entity);
       }
-      const layerIndex = entity.collisionLayer;
-      this.collisionLayers[layerIndex]?.push(entity);
     });
 
     this.populateGraph();
@@ -485,7 +508,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       iterator(deleted)
         .map((id) => this.getEntity(id))
         .filterType((entity): entity is Entity => !!entity)
-        .forEach((entity) => entity.markForDelete());
+        .forEach((entity) => {
+          entity.markForDelete();
+        });
     }
 
     if (boundingBox) {

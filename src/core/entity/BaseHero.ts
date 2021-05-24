@@ -9,7 +9,6 @@ import {
 import {
   KeyEvent,
   KeyAction,
-  MOVEMENT_DIRECTION_MAP,
   MouseEvent,
   MouseAction,
   Key,
@@ -21,11 +20,10 @@ import {Data} from 'core/serialize';
 import {Player, PlayerManager} from 'core/player';
 import {LogManager} from 'core/log';
 import {NetworkManager, SyncEvent} from 'core/net';
-import {CameraManager, rgb, GraphicsContext, hsv} from 'core/graphics';
+import {CameraManager} from 'core/graphics';
 import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
-import {Matrix2, Vector} from 'core/geometry';
 import {UUID} from 'core/uuid';
 import {HeroModifier} from 'core/upgrade/modifier';
 
@@ -391,5 +389,10 @@ export class BaseHero extends Tank {
 
   public fire(angle: number): void {
     this.weapon?.fireInternal(this, angle, this.modifiers);
+  }
+
+  public shouldUpdateLocally(): boolean {
+    // Always update the current player's character
+    return this.getPlayer()?.isActivePlayer() ?? false;
   }
 }

@@ -22,4 +22,8 @@ export class TimedText extends Text {
       echo.initialize(this, false, 0.5);
     }
   }
+
+  public shouldDeleteIfOffscreen(): boolean {
+    return true;
+  }
 }

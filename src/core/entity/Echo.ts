@@ -81,4 +81,8 @@ export class Echo extends Entity {
         .run(ctx, this.parent.render.bind(this.parent));
     }
   }
+
+  public shouldDeleteIfOffscreen(): boolean {
+    return true;
+  }
 }

@@ -5,10 +5,10 @@ import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
 import {RNGManager} from 'core/random';
 import {Data} from 'core/serialize';
-import { Vector, VectorLike } from 'core/geometry';
-import { BLACK, GraphicsContext, rgb } from 'core/graphics';
-import { Iterator } from 'core/iterator';
-import { GraphicsPipeline } from 'core/graphics/pipe';
+import {Vector, VectorLike} from 'core/geometry';
+import {BLACK, GraphicsContext, rgb} from 'core/graphics';
+import {Iterator} from 'core/iterator';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 
 const log = LogManager.forFile(__filename);
 
@@ -38,14 +38,11 @@ export class Enemy extends Tank {
     if (NetworkManager.isServer()) {
       // Select target
       this.selectTarget();
-      this.streamInterval(1)
-        .forEach(() => {
-          this.selectTarget();
-        });
+      this.streamInterval(1).forEach(() => {
+        this.selectTarget();
+      });
       this.streamEvents<KillEvent>('KillEvent')
-        .filter(
-          (event) => this.target?.id === event.data.targetID
-        )
+        .filter((event) => this.target?.id === event.data.targetID)
         .forEach(() => this.selectTarget());
     }
   }
@@ -93,8 +90,11 @@ export class Enemy extends Tank {
 
   private moveToTarget(): void {
     // Check if we're within range of the target unit
-    const distanceToTarget = this.target?.position?.distanceToXYSquared(this.position.x, this.position.y);
-    if (distanceToTarget !== undefined && distanceToTarget <= (100 * 100)) {
+    const distanceToTarget = this.target?.position?.distanceToXYSquared(
+      this.position.x,
+      this.position.y
+    );
+    if (distanceToTarget !== undefined && distanceToTarget <= 100 * 100) {
       this.moveQueue = new Queue();
       this.setThrusting(0);
       return;
@@ -104,10 +104,15 @@ export class Enemy extends Tank {
     const closeEnough = this.boundingBox.width * 1.5;
 
     if (targetPoint) {
-      if (this.position.distanceToXYSquared(targetPoint.x, targetPoint.y) < (closeEnough * closeEnough)) {
+      if (
+        this.position.distanceToXYSquared(targetPoint.x, targetPoint.y) <
+        closeEnough * closeEnough
+      ) {
         // Close enough
         this.moveQueue.dequeue();
-        this.setThrusting(0);
+        if (this.moveQueue.isEmpty()) {
+          this.setThrusting(0);
+        }
       } else {
         this.targetAngle = this.position.angleTo(targetPoint);
         this.weaponAngle = this.targetAngle;
@@ -169,7 +174,7 @@ export class Enemy extends Tank {
     if (!this.moveQueue.isEmpty()) {
       const points: VectorLike[] = [
         this.position,
-        ...this.moveQueue.iterator()
+        ...this.moveQueue.iterator(),
       ];
       GraphicsPipeline.pipe()
         .rotate(-this.angle)
@@ -177,7 +182,6 @@ export class Enemy extends Tank {
         .run(ctx, (ctx) => {
           ctx.path(points, rgb(0, 0, 0));
         });
-      
     }
   }
 }

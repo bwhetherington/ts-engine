@@ -5,8 +5,8 @@ import {WHITE, BLACK, rgb} from 'core/graphics/color';
 import {Heap} from 'core/util';
 import {Iterator} from 'core/iterator';
 import {LogManager} from 'core/log';
-import { Console } from 'console';
-import { Entity } from './Entity';
+import {Console} from 'console';
+import {Entity} from './Entity';
 
 const log = LogManager.forFile(__filename);
 
@@ -21,14 +21,19 @@ export interface Node {
 }
 
 const NEIGHBOR_OFFSETS = [
-  [-1, -1, Math.SQRT2], [0, -1, 1], [1, -1, Math.SQRT2],
-  [-1, 0, 1], [1, 0, 1],
-  [-1, 1, Math.SQRT2], [0, 1, 1], [1, 1, Math.SQRT2],
+  [-1, -1, Math.SQRT2],
+  [0, -1, 1],
+  [1, -1, Math.SQRT2],
+  [-1, 0, 1],
+  [1, 0, 1],
+  [-1, 1, Math.SQRT2],
+  [0, 1, 1],
+  [1, 1, Math.SQRT2],
 ];
 
 export interface CheckpointReachedEvent {
-  point: Vector,
-  entity: Entity,
+  point: Vector;
+  entity: Entity;
 }
 
 export class Graph {
@@ -53,7 +58,7 @@ export class Graph {
 
     from.gScore = 0;
     from.prev = undefined;
-  
+
     visit(from);
 
     while (!openSet.isEmpty()) {
@@ -92,14 +97,18 @@ export class Graph {
         const fScore = neighbor.gScore + neighbor.hScore;
         const newFScore = node.gScore + dist + neighbor.hScore;
 
-        if (!closedSet.has(neighbor) && neighbor.isPathable && !(fScore < newFScore)) {
+        if (
+          !closedSet.has(neighbor) &&
+          neighbor.isPathable &&
+          !(fScore < newFScore)
+        ) {
           neighbor.gScore = node.gScore + dist;
           neighbor.prev = node;
           visit(neighbor);
         }
       }
     }
-  
+
     return undefined;
   }
 
@@ -121,11 +130,9 @@ export class Graph {
       return undefined;
     }
 
-    const mappedPath = Iterator.array(path)
-      .map((node) => new Vector(
-        node.x,
-        node.y,
-      ));
+    const mappedPath = Iterator.array(path).map(
+      (node) => new Vector(node.x, node.y)
+    );
 
     return [new Vector(from.x, from.y), ...mappedPath, new Vector(to.x, to.y)];
   }
@@ -141,8 +148,10 @@ export class Graph {
     const ry1 = ry0 + 1;
 
     const pts = [
-      [rx0, ry0], [rx1, ry0],
-      [rx0, ry1], [rx1, ry1],
+      [rx0, ry0],
+      [rx1, ry0],
+      [rx0, ry1],
+      [rx1, ry1],
     ];
 
     let minDist2 = Infinity;

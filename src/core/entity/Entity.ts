@@ -1,5 +1,5 @@
 import {Bounded, Rectangle, Vector} from 'core/geometry';
-import {GraphicsContext, Color, Renderable} from 'core/graphics';
+import {GraphicsContext, Color, Renderable, CameraManager} from 'core/graphics';
 import {WHITE, isColor} from 'core/graphics/color';
 import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
@@ -335,5 +335,14 @@ export class Entity extends Observer
   public cleanup(): void {
     super.cleanup();
     UUIDManager.free(this.id);
+  }
+
+  public shouldUpdateLocally(): boolean {
+    // return !this.isInitialized || CameraManager.isInFrame(this);
+    return true;
+  }
+
+  public shouldDeleteIfOffscreen(): boolean {
+    return false;
   }
 }

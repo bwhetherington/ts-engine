@@ -19,6 +19,10 @@ export class CameraManager implements Bounded {
     log.debug('CameraManager initialized');
   }
 
+  public isInFrame(bounded: Bounded): boolean {
+    return this.boundingBox.intersects(bounded.boundingBox);
+  }
+
   public setSize(width: number, height: number): void {
     const {centerX, centerY} = this.boundingBox;
 

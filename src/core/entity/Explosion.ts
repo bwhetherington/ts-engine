@@ -43,4 +43,8 @@ export class Explosion extends Entity {
     const r = explodeFunction(t) * this.radius;
     ctx.ellipse(-r, -r, 2 * r, 2 * r, this.getColor());
   }
+
+  public shouldDeleteIfOffscreen(): boolean {
+    return true;
+  }
 }

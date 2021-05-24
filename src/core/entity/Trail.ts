@@ -107,4 +107,8 @@ export class Trail extends Entity {
         });
     }
   }
+
+  public shouldDeleteIfOffscreen(): boolean {
+    return true;
+  }
 }
