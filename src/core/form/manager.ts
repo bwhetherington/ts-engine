@@ -17,8 +17,13 @@ const log = LogManager.forFile(__filename);
 
 type FormResolver = (response: Data) => void;
 
+type FormSubmitHandler = (event: Event<FormSubmitEvent>) => void;
+type FormRejectHandler = (event: Event<FormRejectEvent>) => void;
+
 export class FormManager {
   private forms: Record<string, Form> = {};
+  private submitHandlers: Record<string, FormSubmitHandler> = {};
+  private rejectHandlers: Record<string, FormRejectHandler> = {};
 
   public initialize(): void {
     log.debug('FormManager initialized');
@@ -27,6 +32,27 @@ export class FormManager {
       EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
         NetworkManager.send(event);
       });
+    }
+
+    if (NetworkManager.isServer()) {
+      EventManager.streamEvents<FormSubmitEvent>('FormSubmitEvent')
+        .filterMap((event) => {
+          const {name} = event.data;
+          const handler = this.submitHandlers[name];
+          if (handler) {
+            return [event, handler] as const;
+          }
+        })
+        .forEach(([event, handler]) => handler(event));
+      EventManager.streamEvents<FormRejectEvent>('FormRejectEvent')
+        .filterMap((event) => {
+          const {name} = event.data;
+          const handler = this.rejectHandlers[name];
+          if (handler) {
+            return [event, handler] as const;
+          }
+        })
+        .forEach(([event, handler]) => handler(event));
     }
   }
 
@@ -37,14 +63,13 @@ export class FormManager {
     timeout: number
   ): Promise<Data> {
     // Send form to player
-    const event = {
+    player.sendEvent<FormShowEvent>({
       type: 'FormShowEvent',
-      data: <FormShowEvent>{
+      data: {
         form,
         id,
       },
-    };
-    player.send(event);
+    });
 
     const promise = new Promise<Data>(async (resolve, reject) => {
       let hasResolved = false;
@@ -101,13 +126,13 @@ export class FormManager {
 
     EventManager.emit<FormRejectEvent>({
       type: 'FormRejectEvent',
-      data: {player, id},
+      data: {player, id, name: formName},
     });
     return false;
   }
 
   public registerForm<T extends Data>(formEntry: FormEntry<T>): void {
-    log.trace(`form ${formEntry.name} registered`);
+    log.debug(`form ${formEntry.name} registered`);
     const {name, form, checkType, validate, onSubmit, onReject} = formEntry;
     this.forms[name] = form;
     const formSubmitHandler = async (event: Event<FormSubmitEvent>) => {
@@ -116,45 +141,41 @@ export class FormManager {
       const player = PlayerManager.getSocket(socket);
       if (player) {
         const {
-          name: responseName,
           data: response,
           method = 'submit',
           id,
         } = data;
-        if (responseName === name) {
-          if (checkType(response)) {
-            const result = await validate(response, method, player);
-            const {isValid, message = 'Error validating form.', data} = result;
-            if (isValid) {
-              onSubmit(player, response, method, data);
-              player.send({
-                type: 'FormValidatedEvent',
-                data: {id},
-              });
+        if (checkType(response)) {
+          const result = await validate(response, method, player);
+          const {isValid, message = 'Error validating form.', data} = result;
+          if (isValid) {
+            onSubmit(player, response, method, data);
+            player.send({
+              type: 'FormValidatedEvent',
+              data: {id},
+            });
 
-              // Free ID on successful submission
-              UUIDManager.free(id);
-            } else {
-              // Send the form back to the user
-              this.sendForm(player, formEntry.name, id, [message]);
-            }
+            // Free ID on successful submission
+            UUIDManager.free(id);
           } else {
             // Send the form back to the user
-            this.sendForm(player, formEntry.name, id, [
-              'Response did not include all required fields.',
-            ]);
+            this.sendForm(player, formEntry.name, id, [message]);
           }
+        } else {
+          // Send the form back to the user
+          this.sendForm(player, formEntry.name, id, [
+            'Response did not include all required fields.',
+          ]);
         }
       }
     };
-    EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) =>
-      formSubmitHandler(event)
-    );
+
+    this.submitHandlers[name] = formSubmitHandler;
     if (onReject) {
-      EventManager.addListener<FormRejectEvent>('FormRejectEvent', (event) => {
+      this.rejectHandlers[name] = (event) => {
         const {player} = event.data;
         onReject(player);
-      });
+      };
     }
   }
 }

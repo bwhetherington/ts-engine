@@ -162,7 +162,7 @@ export class BaseHero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return this.modifiers.life.multiplyPoint(50 + (level - 1) * 5);
+    return this.modifiers.get('life').multiplyPoint(50 + (level - 1) * 5);
   }
 
   protected regenForLevel(level: number): number {
@@ -393,6 +393,7 @@ export class BaseHero extends Tank {
 
   public shouldUpdateLocally(): boolean {
     // Always update the current player's character
-    return this.getPlayer()?.isActivePlayer() ?? false;
+    // return this.getPlayer()?.isActivePlayer() ?? false;
+    return true;
   }
 }

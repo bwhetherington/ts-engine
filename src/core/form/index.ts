@@ -95,6 +95,7 @@ export interface FormSubmitEvent {
 
 export interface FormRejectEvent {
   player: Player;
+  name: string;
   id: UUID;
 }
 

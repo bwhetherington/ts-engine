@@ -2,8 +2,7 @@ import {GraphicsContext} from 'core/graphics';
 import {Rectangle, Partioner, Bounded} from 'core/geometry';
 import {BLACK, WHITE} from 'core/graphics/color';
 
-export class Cell<T extends Bounded> implements Partioner<T> {
-  public boundingBox: Rectangle = new Rectangle(1, 1);
+export class Cell<T extends Bounded> extends Partioner<T> {
   private cells: T[][] = [];
 
   private cellWidth: number;
@@ -11,8 +10,10 @@ export class Cell<T extends Bounded> implements Partioner<T> {
 
   private width: number = 1;
   private height: number = 1;
+  private size: number = 0;
 
   public constructor(bounds: Rectangle, cellWidth: number, cellHeight: number) {
+    super(bounds);
     this.cellWidth = cellWidth;
     this.cellHeight = cellHeight;
     this.initializeSize(bounds);
@@ -73,6 +74,8 @@ export class Cell<T extends Bounded> implements Partioner<T> {
         cell.push(element);
       }
     }
+
+    this.size += 1;
   }
 
   private *queryInternal(area: Rectangle): Iterable<T> {
@@ -95,6 +98,12 @@ export class Cell<T extends Bounded> implements Partioner<T> {
       set.add(element);
     }
     return set;
+  }
+
+  public queryPointXY(x: number, y: number): Set<T> {
+    const row = this.getRow(y);
+    const col = this.getCol(x);
+    return new Set(this.getCell(row * this.width + col));
   }
 
   public render(ctx: GraphicsContext): void {
@@ -130,5 +139,10 @@ export class Cell<T extends Bounded> implements Partioner<T> {
 
   public clear(): void {
     this.cells = [];
+    this.size = 0;
+  }
+
+  public getSize(): number {
+    return this.size;
   }
 }

@@ -143,6 +143,10 @@ export class Player extends Observer implements Serializable {
   }
 
   public load(account: Account): void {
+    if (this.hasJoined) {
+      log.warn(`user ${this.id} has already joined`);
+      return;
+    }
     this.account = account;
     this.name = capitalize(account.username ?? 'Player');
     this.hasJoined = true;
@@ -178,6 +182,10 @@ export class Player extends Observer implements Serializable {
     if (this.socket > -1) {
       NetworkManager.send(packet, this.socket);
     }
+  }
+
+  public sendEvent<T extends EventData>(event: Event<T>): void {
+    this.send(event);
   }
 
   public disconnect(): void {

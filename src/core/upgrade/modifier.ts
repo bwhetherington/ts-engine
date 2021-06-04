@@ -2,133 +2,104 @@ import {Data, Serializable} from 'core/serialize';
 import {Matrix2} from 'core/geometry';
 import {Upgrade} from 'core/upgrade';
 import {BaseHero} from 'core/entity';
+import { Iterator } from 'core/iterator';
 
-type NumberModifier = Matrix2;
+type Modifiers = Record<string, Matrix2>;
+
+const MODIFIER_KEYS = [
+  'life',
+  'armor',
+  'damage',
+  'pierce',
+  'rate',
+  'shotCount',
+  'shotSpread',
+  'projectileSpeed',
+  'projectileDuration',
+  'projectileSpread',
+];
 
 export class HeroModifier implements Serializable {
-  public damage: NumberModifier = new Matrix2().identity();
-  public pierce: NumberModifier = new Matrix2().identity();
-  public rate: NumberModifier = new Matrix2().identity();
-  public shotCount: NumberModifier = new Matrix2().identity();
-  public shotSpread: NumberModifier = new Matrix2().identity();
-  public projectileSpeed: NumberModifier = new Matrix2().identity();
-  public projectileDuration: NumberModifier = new Matrix2().identity();
-  public projectileSpread: NumberModifier = new Matrix2().identity();
-  public life: NumberModifier = new Matrix2().identity();
-  public armor: NumberModifier = new Matrix2().identity();
+  public modifiers: Modifiers = {};
 
   public serialize(): Data {
-    return {
-      damage: this.damage.serialize(),
-      pierce: this.pierce.serialize(),
-      rate: this.rate.serialize(),
-      shotCount: this.shotCount.serialize(),
-      shotSpread: this.shotSpread.serialize(),
-      projectileSpeed: this.projectileSpeed.serialize(),
-      projectileDuration: this.projectileDuration.serialize(),
-      projectileSpread: this.projectileSpread.serialize(),
-    };
+    return Iterator.entries(this.modifiers)
+      .fold({} as Data, (data, [key, value]) => {
+        data[key] = value.serialize();
+        return data;
+      });
   }
 
   public deserialize(data: Data): void {
-    const {
-      life,
-      armor,
-      damage,
-      pierce,
-      rate,
-      shotCount,
-      shotSpread,
-      projectileSpeed,
-      projectileDuration,
-      projectileSpread,
-    } = data;
-    if (life) {
-      this.life.deserialize(life);
-    }
-    if (armor) {
-      this.armor.deserialize(armor);
-    }
-    if (damage) {
-      this.damage.deserialize(damage);
-    }
-    if (pierce) {
-      this.pierce.deserialize(pierce);
-    }
-    if (rate) {
-      this.rate.deserialize(rate);
-    }
-    if (shotCount) {
-      this.shotCount.deserialize(shotCount);
-    }
-    if (shotSpread) {
-      this.shotSpread.deserialize(shotSpread);
-    }
-    if (projectileSpeed) {
-      this.projectileSpeed.deserialize(projectileSpeed);
-    }
-    if (projectileDuration) {
-      this.projectileDuration.deserialize(projectileDuration);
-    }
-    if (projectileSpread) {
-      this.projectileSpread.deserialize(projectileSpread);
-    }
+    Iterator.array(MODIFIER_KEYS)
+      .map((key) => [key, data[key]])
+      .filter(([_, value]) => value !== undefined)
+      .forEach(([key, value]) => {
+        let mod = this.modifiers[key];
+        if (!mod) {
+          mod = new Matrix2().identity();
+          this.modifiers[key] = mod;
+        }
+        mod.deserialize(value);
+      });
   }
 
-  public multiply(modifiers: Partial<HeroModifier>): void {
-    const {
-      armor,
-      life,
-      damage,
-      pierce,
-      rate,
-      shotCount,
-      shotSpread,
-      projectileSpeed,
-      projectileSpread,
-      projectileDuration,
-    } = modifiers;
-    if (armor) {
-      this.armor = this.armor.multiply(armor);
+  public get(key: string): Matrix2 {
+    let mod = this.modifiers[key];
+    if (!mod) {
+      mod = new Matrix2().identity();
+      this.modifiers[key] = mod;
     }
-    if (life) {
-      this.life = this.life.multiply(life);
+    return mod;
+  }
+
+  private multiplyKey(key: string, other: Modifiers): void {
+    let existing = this.modifiers[key];
+    if (!existing) {
+      existing = new Matrix2().identity();
     }
-    if (damage) {
-      this.damage = this.damage.multiply(damage);
+    const target = other[key];
+    if (target) {
+      existing = existing.multiply(target);
     }
-    if (pierce) {
-      this.pierce = this.pierce.multiply(pierce);
-    }
-    if (rate) {
-      this.rate = this.rate.multiply(rate);
-    }
-    if (shotCount) {
-      this.shotCount = this.shotCount.multiply(shotCount);
-    }
-    if (shotSpread) {
-      this.shotSpread = this.shotSpread.multiply(shotSpread);
-    }
-    if (projectileSpeed) {
-      this.projectileSpeed = this.projectileSpeed.multiply(projectileSpeed);
-    }
-    if (projectileSpread) {
-      this.projectileSpread = this.projectileSpread.multiply(projectileSpread);
-    }
-    if (projectileDuration) {
-      this.projectileDuration = this.projectileDuration.multiply(
-        projectileDuration
-      );
-    }
+    this.modifiers[key] = existing;
+  }
+
+  public multiply(other: HeroModifier): void {
+    this.multiplyModifiers(other.modifiers);
+  }
+
+  public multiplyModifiers(other: Modifiers): void {
+    Iterator.array(MODIFIER_KEYS)
+      .filter((key) => this.modifiers.hasOwnProperty(key) || other.hasOwnProperty(key))
+      .forEach((key) => {
+        this.multiplyKey(key, other);
+      })
   }
 }
 
 export class ModifierUpgrade extends Upgrade {
-  public constructor(private modifiers: Partial<HeroModifier>) {
+  private modifiers: HeroModifier = new HeroModifier();
+
+  public constructor(modifiers: Modifiers) {
     super();
+    this.modifiers.multiplyModifiers(modifiers);
   }
 
   public applyTo(hero: BaseHero): void {
     hero.modifiers.multiply(this.modifiers);
+  }
+
+  public serialize(): Data {
+    return {
+      ...super.serialize(),
+      modifiers: this.modifiers?.serialize?.(),
+    };
+  }
+
+  public deserialize(data: Data): void {
+    super.deserialize(data);
+    const {modifiers} = data;
+    this.modifiers.deserialize(modifiers);
   }
 }

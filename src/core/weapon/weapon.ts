@@ -86,11 +86,11 @@ export abstract class Weapon implements Serializable {
       let shotCount = this.shotCount;
       let shotSpread = this.shotSpread;
       if (modifier) {
-        shotCount = Math.round(modifier.shotCount.multiplyPoint(shotCount));
-        shotSpread = modifier.shotSpread.multiplyPoint(shotSpread);
+        shotCount = Math.round(modifier.get('shotCount').multiplyPoint(shotCount));
+        shotSpread = modifier.get('shotSpread').multiplyPoint(shotSpread);
       }
       if (modifier) {
-        rate = modifier.rate.multiplyPoint(rate);
+        rate = modifier.get('rate').multiplyPoint(rate);
       }
 
       this.cooldown += rate;
@@ -167,7 +167,7 @@ export abstract class Weapon implements Serializable {
   protected rollDamage(modifier?: HeroModifier): number {
     let {damage} = this;
     if (modifier) {
-      damage = modifier.damage.multiplyPoint(damage);
+      damage = modifier.get('damage').multiplyPoint(damage);
     }
     const roll = RNGManager.nextFloat(-damage / 5, damage / 5);
     return Math.max(1, damage + roll);

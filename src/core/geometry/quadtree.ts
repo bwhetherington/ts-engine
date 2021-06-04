@@ -16,11 +16,11 @@ function calculateMaxDepth(size: number): number {
 
 class QuadNode<T extends Bounded> {
   public boundingBox: Rectangle;
-  public children: T[] = [];
-  public nodes: QuadNode<T>[] = [];
-  public maxChildren: number;
-  public maxDepth: number;
-  public depth: number;
+  private children: T[] = [];
+  private nodes: QuadNode<T>[] = [];
+  private maxChildren: number;
+  private maxDepth: number;
+  private depth: number;
 
   constructor(
     boundingBox: Rectangle,
@@ -157,6 +157,19 @@ class QuadNode<T extends Bounded> {
     }
   }
 
+  public *retrievePointXY(x: number, y: number): Iterable<T> {
+    if (this.boundingBox.containsPointXY(x, y)) {
+      if (this.nodes.length === 0) {
+        for (const child of this.children) {
+          yield child;
+        }
+      }
+      for (const node of this.nodes) {
+        yield* node.retrievePointXY(x, y);
+      }
+    }
+  }
+
   public retrieve(rect: Rectangle): Set<T> {
     return new Set(this.retrieveInternal(rect));
   }
@@ -175,13 +188,13 @@ class QuadNode<T extends Bounded> {
   }
 }
 
-export class QuadTree<T extends Bounded> implements Partioner<T> {
+export class QuadTree<T extends Bounded> extends Partioner<T> {
   private root: QuadNode<T>;
-  public boundingBox: Rectangle;
+  private size: number = 0;
 
   constructor(bounds: Rectangle) {
+    super(bounds);
     this.root = new QuadNode(bounds, 0, 4);
-    this.boundingBox = bounds;
   }
 
   public resize(bounds: Rectangle): void {
@@ -201,13 +214,23 @@ export class QuadTree<T extends Bounded> implements Partioner<T> {
 
   public insert(element: T): void {
     this.root.insert(element);
+    this.size += 1;
   }
 
   public query(rect: Rectangle): Set<T> {
     return this.root.retrieve(rect);
   }
 
+  public queryPointXY(x: number, y: number): Set<T> {
+    return new Set(this.root.retrievePointXY(x, y));
+  }
+
   public clear(): void {
     this.root.clear();
+    this.size = 0;
+  }
+
+  public getSize(): number {
+    return this.size;
   }
 }
