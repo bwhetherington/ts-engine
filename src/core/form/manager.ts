@@ -140,11 +140,7 @@ export class FormManager {
       log.debug('receive form submit');
       const player = PlayerManager.getSocket(socket);
       if (player) {
-        const {
-          data: response,
-          method = 'submit',
-          id,
-        } = data;
+        const {data: response, method = 'submit', id} = data;
         if (checkType(response)) {
           const result = await validate(response, method, player);
           const {isValid, message = 'Error validating form.', data} = result;

@@ -1,4 +1,4 @@
-import {Rectangle, QuadTree, Bounded, Vector, Partioner} from 'core/geometry';
+import {Rectangle, QuadTree, Bounded, Vector, Partioner, VectorLike} from 'core/geometry';
 import {GraphicsContext, CameraManager, Renderable} from 'core/graphics';
 import {
   Entity,
@@ -239,7 +239,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       attempts < 10 &&
       this.query(cursor)
         .filter((entity) => entity.collisionLayer === CollisionLayer.Geometry)
-        .any((entity) => entity.boundingBox.intersects(cursor))
+        .any((entity) => !!entity)
     ) {
       attempts += 1;
       position = RNGManager.nextVector(this.boundingBox);
@@ -305,17 +305,25 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   private *queryInternal(box: Rectangle): Iterable<Entity> {
-    for (const entity of this.space.query(box)) {
-      yield entity;
-    }
+    yield* this.space.query(box);
   }
 
   public query(box: Rectangle): Iterator<Entity> {
-    return iterator(this.queryInternal(box));
+    return Iterator.from(this.queryInternal(box)).filter((entity) =>
+      entity.boundingBox.intersects(box)
+    );
   }
 
-  public querySet(box: Rectangle): Set<Entity> {
-    return this.space.query(box);
+  private *queryPointXYInternal(x: number, y: number): Iterable<Entity> {
+    yield* this.space.queryPointXY(x, y);
+  }
+
+  public queryPointXY(x: number, y: number): Iterator<Entity> {
+    return Iterator.from(this.queryPointXYInternal(x, y)).filter((entity) => entity.boundingBox.containsPointXY(x, y));
+  }
+
+  public queryPoint(pt: VectorLike): Iterator<Entity> {
+    return this.queryPointXY(pt.x, pt.y);
   }
 
   public findPath(from: Vector, to: Vector): Vector[] | undefined {
@@ -546,6 +554,10 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     return this.boundingBox.contains(rect);
   }
 
+  public isInBoundsPoint(pt: VectorLike): boolean {
+    return this.boundingBox.containsPointXY(pt.x, pt.y);
+  }
+
   public castRay(
     from: Vector,
     angle: number,
@@ -557,25 +569,22 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     let traveled = 0;
 
     const hit: Set<Entity> = new Set();
-    const vecBuffer = new Vector(1, 0);
+    const vec = new Vector(1, 0);
 
-    vecBuffer.angle = angle;
-    vecBuffer.magnitude = stepSize;
-
-    const cursor = new Rectangle(stepSize * 2, stepSize * 2);
-    cursor.setCenter(from);
+    vec.angle = angle;
+    vec.magnitude = stepSize;
+    const {x: dx, y: dy} = vec;
+    vec.set(from);
 
     while (
       traveled < maxDist &&
       hit.size < maxTargets &&
-      this.isInBounds(cursor)
+      this.isInBoundsPoint(vec)
     ) {
       // Check if we collide with any entities
-      const query = this.querySet(cursor);
+      const querySet = new Set(this.queryPoint(vec));
 
-      const candidates = Iterator.from(query)
-        .filter((candidate) => candidate.boundingBox.intersects(cursor))
-        .filter(validate);
+      const candidates = Iterator.set(querySet).filter(validate);
       for (const candidate of candidates) {
         hit.add(candidate);
         if (hit.size >= maxTargets) {
@@ -583,26 +592,22 @@ export class WorldManager implements Bounded, Serializable, Renderable {
         }
       }
 
-      const hitWall = iterator(query)
-        .filter((candidate) => candidate.boundingBox.intersects(cursor))
-        .any(
-          (candidate) => candidate.collisionLayer === CollisionLayer.Geometry
-        );
+      const hitWall = Iterator.set(querySet).any(
+        (candidate) => candidate.collisionLayer === CollisionLayer.Geometry
+      );
       if (hitWall) {
         break;
       }
 
       // Move cursor forwards
-      cursor.centerX += vecBuffer.x;
-      cursor.centerY += vecBuffer.y;
+      vec.x += dx;
+      vec.y += dy;
       traveled += stepSize;
     }
 
-    vecBuffer.setXY(cursor.centerX, cursor.centerY);
-
     return {
       hit,
-      end: vecBuffer,
+      end: vec,
     };
   }
 

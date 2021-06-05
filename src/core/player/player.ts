@@ -194,6 +194,7 @@ export class Player extends Observer implements Serializable {
 
   public setClass(type: string): boolean {
     const newHero = WorldManager.createEntity(type);
+    console.log(newHero);
     if (newHero instanceof BaseHero) {
       if (this.hero) {
         newHero.setPosition(this.hero.position);

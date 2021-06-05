@@ -208,8 +208,7 @@ export class Graph {
           WorldManager.boundingBox.contains(sampler) &&
           !WorldManager.query(sampler).any(
             (entity) =>
-              entity.collisionLayer === CollisionLayer.Geometry &&
-              entity.boundingBox.intersects(sampler)
+              entity.collisionLayer === CollisionLayer.Geometry
           );
 
         const node: Node = {

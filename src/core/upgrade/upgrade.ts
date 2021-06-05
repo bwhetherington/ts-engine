@@ -1,5 +1,5 @@
 import {BaseHero} from 'core/entity';
-import { Serializable, Data } from 'core/serialize';
+import {Serializable, Data} from 'core/serialize';
 
 export abstract class Upgrade implements Serializable {
   public name: string = '';

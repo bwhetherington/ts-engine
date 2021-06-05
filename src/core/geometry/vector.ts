@@ -126,6 +126,10 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
   public normalize(): void {
     this.magnitude = 1;
   }
+
+  public clone(): Vector {
+    return new Vector(this.x, this.y);
+  }
 }
 
 export class DirectionVector extends Vector {
@@ -145,5 +149,11 @@ export class DirectionVector extends Vector {
 
   public get direction(): number {
     return this.curAngle;
+  }
+
+  public clone(): Vector {
+    const clone = new DirectionVector(this.x, this.y);
+    clone.curAngle = this.curAngle;
+    return clone;
   }
 }

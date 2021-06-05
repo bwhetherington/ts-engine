@@ -2,7 +2,7 @@ import {Data, Serializable} from 'core/serialize';
 import {Matrix2} from 'core/geometry';
 import {Upgrade} from 'core/upgrade';
 import {BaseHero} from 'core/entity';
-import { Iterator } from 'core/iterator';
+import {Iterator} from 'core/iterator';
 
 type Modifiers = Record<string, Matrix2>;
 
@@ -23,11 +23,13 @@ export class HeroModifier implements Serializable {
   public modifiers: Modifiers = {};
 
   public serialize(): Data {
-    return Iterator.entries(this.modifiers)
-      .fold({} as Data, (data, [key, value]) => {
+    return Iterator.entries(this.modifiers).fold(
+      {} as Data,
+      (data, [key, value]) => {
         data[key] = value.serialize();
         return data;
-      });
+      }
+    );
   }
 
   public deserialize(data: Data): void {
@@ -71,10 +73,12 @@ export class HeroModifier implements Serializable {
 
   public multiplyModifiers(other: Modifiers): void {
     Iterator.array(MODIFIER_KEYS)
-      .filter((key) => this.modifiers.hasOwnProperty(key) || other.hasOwnProperty(key))
+      .filter(
+        (key) => this.modifiers.hasOwnProperty(key) || other.hasOwnProperty(key)
+      )
       .forEach((key) => {
         this.multiplyKey(key, other);
-      })
+      });
   }
 }
 

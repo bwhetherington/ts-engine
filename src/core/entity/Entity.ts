@@ -110,8 +110,7 @@ export class Entity extends Observer
         .filter(
           (candidate) =>
             candidate.isCollidable &&
-            candidate !== this &&
-            this.boundingBox.intersects(candidate.boundingBox)
+            candidate !== this
         )
         .forEach((candidate) => {
           // Collision

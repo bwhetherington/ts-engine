@@ -86,7 +86,9 @@ export abstract class Weapon implements Serializable {
       let shotCount = this.shotCount;
       let shotSpread = this.shotSpread;
       if (modifier) {
-        shotCount = Math.round(modifier.get('shotCount').multiplyPoint(shotCount));
+        shotCount = Math.round(
+          modifier.get('shotCount').multiplyPoint(shotCount)
+        );
         shotSpread = modifier.get('shotSpread').multiplyPoint(shotSpread);
       }
       if (modifier) {
