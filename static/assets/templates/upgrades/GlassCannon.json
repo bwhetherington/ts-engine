@@ -1,0 +1,10 @@
+{
+  "type": "GlassCannon",
+  "extends": "ModifierUpgrade",
+  "name": "Class Cannon",
+  "description": "You deal 50% more damage, but have 25% less life.",
+  "modifiers": {
+    "damage": {"cells": [1.5, 0, 0, 1]},
+    "life": {"cells": [0.75, 0, 0, 1]}
+  }
+}

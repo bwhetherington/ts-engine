@@ -77,7 +77,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
           WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 2.5)
       )
       .forEach(() => {
-        // this.spawnFeed();
+        this.spawnFeed();
       });
 
     // Spawn enemy units
@@ -86,7 +86,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
       )
       .forEach(() => {
-        // this.spawnEnemy();
+        this.spawnEnemy();
       });
 
     const respawnHero = async (hero: BaseHero) => {
@@ -142,7 +142,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       1,
     ]).then((shouldTransition) => {
       if (shouldTransition) {
-        // this.transition(GameAction.Stop);
+        this.transition(GameAction.Stop);
       }
     });
   }

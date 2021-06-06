@@ -128,7 +128,7 @@ export class Player extends Observer implements Serializable {
     this.setHero(hero);
     const color = randomColor();
     hero.setColor(color);
-    hero.setExperience(this.account.xp);
+    // hero.setExperience(this.account.xp);
     hero.setLife(hero.getMaxLife());
     return hero;
   }

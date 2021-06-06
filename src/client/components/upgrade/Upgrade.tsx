@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import {sanitize} from 'dompurify';
 
 import {Upgrade} from 'core/upgrade';
 import {UUID} from 'core/uuid';
@@ -30,11 +31,12 @@ export const UpgradeComponent: React.FunctionComponent<UpgradeProps> = ({
   onSelect,
 }) => {
   const onClick = () => onSelect?.(id, upgrade);
+  const description = sanitize(upgrade.description);
   return (
       <Panel>
         <Container>
           <PanelHeader>{upgrade.name}</PanelHeader>
-          <Content>{upgrade.description}</Content>
+          <Content dangerouslySetInnerHTML={{__html: description}} />
           <Button onClick={onClick}>Select</Button>
         </Container>
       </Panel>

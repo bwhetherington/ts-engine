@@ -109,6 +109,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
   }
 
   public sampleUpgrades(): Iterator<string> {
+    
     return RNGManager
       .sample(this.availableUpgrades);
   }

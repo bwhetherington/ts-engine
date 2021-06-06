@@ -1,0 +1,9 @@
+{
+  "type": "Plated",
+  "extends": "ModifierUpgrade",
+  "name": "Plated",
+  "description": "Your armor is increased by 1.",
+  "modifiers": {
+    "armor": {"cells": [1, 1, 0, 1]}
+  }
+}

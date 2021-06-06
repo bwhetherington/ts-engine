@@ -31,6 +31,7 @@ import {
 import {ChatLogPlugin} from 'server/plugin/chatLog';
 import {GamePlugin} from 'server/plugin/game';
 import {UpgradeManager} from 'core/upgrade';
+import { UpgradePlugin } from './plugin/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -106,6 +107,7 @@ async function main(): Promise<void> {
     FilterPlugin,
     GamePlugin,
     UtilsPlugin,
+    UpgradePlugin,
   ]);
 }
 

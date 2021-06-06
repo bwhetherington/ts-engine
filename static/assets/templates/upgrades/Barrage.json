@@ -5,7 +5,7 @@
   "description": "You fire twice as many projectiles, but they deal 50% less damage.",
   "modifiers": {
     "damage": {"cells": [0.5, 0, 0, 1]},
-    "shotCount": {"cells": [2, 0, 0, 1]},
+    "shotCount": {"cells": [2, 1, 0, 1]},
     "shotSpread": {"cells": [1.2, 0, 0, 1]}
   }
 }

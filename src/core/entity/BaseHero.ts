@@ -29,6 +29,12 @@ import {HeroModifier} from 'core/upgrade/modifier';
 
 const log = LogManager.forFile(__filename);
 
+export interface LevelUpEvent {
+  id: UUID;
+  from: number;
+  to: number;
+}
+
 export class BaseHero extends Tank {
   public static typeName: string = 'BaseHero';
 
@@ -42,7 +48,7 @@ export class BaseHero extends Tank {
   };
 
   private xp: number = 0;
-  private level: number = 0;
+  private level: number = 1;
   public modifiers: HeroModifier = new HeroModifier();
 
   public constructor() {
@@ -104,7 +110,7 @@ export class BaseHero extends Tank {
         .filterMap(({amount, target, source}) =>
           !!target &&
           amount > 0 &&
-          (this.getPlayer()?.isActivePlayer() ?? false) &&
+          (this.getPlayer()?.isActivePlayer?.() ?? false) &&
           (this === target || this === source)
             ? {amount, target}
             : undefined
@@ -161,7 +167,7 @@ export class BaseHero extends Tank {
     if (level < 1) {
       return 0;
     }
-    return 3 + Math.ceil(level * level * 3);
+    return 5 * (3 + Math.ceil(level * level * 3));
   }
 
   protected lifeForLevel(level: number): number {
@@ -188,7 +194,16 @@ export class BaseHero extends Tank {
     this.xp = amount;
 
     while (this.xp >= this.experienceForLevel(this.level) && this.level < 40) {
+      const oldLevel = this.level;
       this.setLevelInternal(this.level + 1);
+      EventManager.emit<LevelUpEvent>({
+        type: 'LevelUpEvent',
+        data: {
+          id: this.id,
+          from: oldLevel,
+          to: this.level,
+        },
+      });
     }
 
     while (
@@ -198,7 +213,7 @@ export class BaseHero extends Tank {
       this.setLevelInternal(this.level - 1);
     }
 
-    if (this.getPlayer()?.isActivePlayer()) {
+    if (this.getPlayer()?.isActivePlayer?.()) {
       const prevXp = this.experienceForLevel(this.level - 1);
       EventManager.emit({
         type: 'BarUpdateEvent',
@@ -224,6 +239,7 @@ export class BaseHero extends Tank {
     level = clamp(level, 1, 40);
     if (level !== this.level) {
       this.level = level;
+
       this.setMaxLife(this.lifeForLevel(level));
       this.armor = this.armorForLevel(level);
       this.lifeRegen = this.regenForLevel(level);
@@ -244,7 +260,7 @@ export class BaseHero extends Tank {
 
   public setMaxLife(maxLife: number): void {
     super.setMaxLife(maxLife);
-    if (this.getPlayer()?.isActivePlayer()) {
+    if (this.getPlayer()?.isActivePlayer?.()) {
       EventManager.emit({
         type: 'BarUpdateEvent',
         data: <BarUpdateEvent>{
@@ -258,7 +274,7 @@ export class BaseHero extends Tank {
 
   public setLife(life: number, source?: Unit): void {
     super.setLife(life, source);
-    if (this.getPlayer()?.isActivePlayer()) {
+    if (this.getPlayer()?.isActivePlayer?.()) {
       EventManager.emit({
         type: 'BarUpdateEvent',
         data: <BarUpdateEvent>{
@@ -356,7 +372,7 @@ export class BaseHero extends Tank {
     const wasInitialized = this.isInitialized;
     super.deserialize(data, setInitialized);
 
-    if (this.getPlayer()?.isActivePlayer() && wasInitialized) {
+    if (this.getPlayer()?.isActivePlayer?.() && wasInitialized) {
       // Use our angle
       this.angle = oldAngle;
       this.weaponAngle = oldWeaponAngle;
@@ -396,7 +412,7 @@ export class BaseHero extends Tank {
 
   public shouldUpdateLocally(): boolean {
     // Always update the current player's character
-    // return this.getPlayer()?.isActivePlayer() ?? false;
+    // return this.getPlayer()?.isActivePlayer?.() ?? false;
     return true;
   }
 }
