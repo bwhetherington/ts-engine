@@ -112,6 +112,9 @@ export class BaseHero extends Tank {
         .forEach(({amount, target}) => {
           const label = Math.round(amount).toLocaleString();
           const text = WorldManager.spawn(TimedText, target.position);
+          if (!text) {
+            return;
+          }
           const color = this === target ? 'red' : 'yellow';
           text.textColor = color;
           text.isStatic = false;

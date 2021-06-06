@@ -6,7 +6,7 @@ export interface Data {
 
 export interface Serializable {
   serialize(): Data;
-  deserialize(data: Data): void;
+  deserialize(data: Data, initialize?: boolean): void;
 }
 
 const SM = new SerializeManager();

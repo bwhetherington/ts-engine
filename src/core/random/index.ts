@@ -1,5 +1,5 @@
-import {Rectangle, RectangleLike, Vector} from 'core/geometry';
-import {iterator, Iterator} from 'core/iterator';
+import {Rectangle, Vector} from 'core/geometry';
+import {Iterator} from 'core/iterator';
 
 export interface RNG {
   seed(seed: number): void;
@@ -50,7 +50,7 @@ export abstract class AbstractRNG implements RNG {
   }
 
   public iterator(): Iterator<number> {
-    return iterator(this.iteratorInternal());
+    return Iterator.from(this.iteratorInternal());
   }
 
   public ints(min: number, max: number): Iterator<number> {
@@ -59,6 +59,23 @@ export abstract class AbstractRNG implements RNG {
 
   public floats(min: number, max: number): Iterator<number> {
     return this.iterator().map((num) => num * (max - min) + min);
+  }
+
+  public sample<T>(source: T[], useReplacement?: boolean): Iterator<T> {
+    let isValid: (index: number) => boolean;
+    if (!useReplacement) {
+      const selectedIndices = new Set();
+      isValid = (index) => {
+        const allow = !selectedIndices.has(index);
+        if (allow) {
+          selectedIndices.add(index);
+        }
+        return allow;
+      };
+    } else {
+      isValid = () => true;
+    }
+    return this.ints(0, source.length).filter(isValid).map((i) => source[i]);
   }
 }
 

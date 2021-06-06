@@ -251,17 +251,17 @@ export class Unit extends Entity {
 
   protected explode(): void {
     const echo = WorldManager.spawn(Echo, this.position);
-    echo.initialize(this, true);
+    echo?.initialize(this, true);
 
     if (this.label) {
       const labelEcho = WorldManager.spawn(Echo, this.label.position);
-      labelEcho.initialize(this.label, false);
+      labelEcho?.initialize(this.label, false);
     }
 
     if (this.hpBar) {
       this.hpBar.progress = 0;
       const barEcho = WorldManager.spawn(Echo, this.hpBar.position);
-      barEcho.initialize(this.hpBar, true);
+      barEcho?.initialize(this.hpBar, true);
     }
 
     this.hasExploded = true;

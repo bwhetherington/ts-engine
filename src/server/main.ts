@@ -30,7 +30,7 @@ import {
 } from 'server/util';
 import {ChatLogPlugin} from 'server/plugin/chatLog';
 import {GamePlugin} from 'server/plugin/game';
-import {Heap} from 'core/util';
+import {UpgradeManager} from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -56,6 +56,7 @@ async function main(): Promise<void> {
 
   await WeaponManager.initialize();
   await WorldManager.initialize();
+  await UpgradeManager.initialize();
 
   await loadWorld('arena');
 

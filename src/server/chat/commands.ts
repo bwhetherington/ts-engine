@@ -8,7 +8,7 @@ import {NetworkManager} from 'core/net';
 import {isOk} from 'core/net/http';
 import {WorldManager} from 'core/entity';
 import {Matrix2} from 'core/geometry';
-import {ModifierUpgrade} from 'core/upgrade';
+import {ModifierUpgrade, UpgradeManager} from 'core/upgrade';
 import {PluginManager} from 'server/plugin';
 
 const log = LogManager.forFile(__filename);
@@ -259,5 +259,34 @@ export const focusFire: CommandEntry = {
       upgrade.applyTo(hero);
       ChatManager.info('Focus Fire unlocked', player);
     }
+  },
+};
+
+export const upgrade: CommandEntry = {
+  name: 'upgrade',
+  help: 'Adds the specified upgrade',
+  permissionLevel: 1,
+  async handler(player, ...[arg]) {
+    const {hero} = player;
+    if (!arg) {
+      // ChatManager.error('No upgrade specified', player);
+      const upgrades = UpgradeManager.sampleUpgrades().take(3).toArray();
+      await UpgradeManager.offerUpgrades(player, upgrades);
+      return;
+    }
+
+    const upgrade = UpgradeManager.instantiate(arg);
+    if (upgrade === undefined) {
+      ChatManager.info(`Upgrade ${arg} could not be found`);
+      return;
+    }
+
+    if (hero) {
+      upgrade.applyTo(hero);
+    }
+
+    ChatManager.info(
+      `Upgrade applied - ${upgrade.name}: ${upgrade.description}`
+    );
   },
 };

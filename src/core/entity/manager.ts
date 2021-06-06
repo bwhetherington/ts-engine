@@ -1,4 +1,11 @@
-import {Rectangle, QuadTree, Bounded, Vector, Partioner, VectorLike} from 'core/geometry';
+import {
+  Rectangle,
+  QuadTree,
+  Bounded,
+  Vector,
+  Partioner,
+  VectorLike,
+} from 'core/geometry';
 import {GraphicsContext, CameraManager, Renderable} from 'core/graphics';
 import {
   Entity,
@@ -17,11 +24,9 @@ import {
   Echo,
   Ray,
   RayCastResult,
-  DisplayRayEvent,
   HomingProjectile,
   Feed,
 } from 'core/entity';
-import * as templateEntities from 'core/entity/template';
 import {LogManager} from 'core/log';
 import {EventManager, StepEvent} from 'core/event';
 import {Serializable, Data} from 'core/serialize';
@@ -33,7 +38,12 @@ import {WHITE, reshade, BLACK} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
-import {AssetManager} from 'core/assets';
+import {
+  AssetManager,
+  AssetTemplate,
+  AssetType,
+  LoadingManager,
+} from 'core/assets';
 import {UUID, UUIDManager} from 'core/uuid';
 import {DataBuffer} from 'core/buf';
 import {Trail} from './Trail';
@@ -41,12 +51,12 @@ import {ShatterProjectile} from './ShatterProjectile';
 
 const log = LogManager.forFile(__filename);
 
-export class WorldManager implements Bounded, Serializable, Renderable {
+export class WorldManager extends LoadingManager<Entity>
+  implements Bounded, Serializable, Renderable {
   public space: Partioner<Entity>;
   private entities: Record<UUID, Entity> = {};
   public boundingBox: Rectangle;
   private collisionLayers: Entity[][] = [[], []];
-  private entityConstructors: Record<string, () => Entity> = {};
   public previousState: Record<UUID, Data> = {};
   private toDelete: UUID[] = [];
   private entityCount: number = 0;
@@ -58,6 +68,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   private shouldPopulateGraph: boolean = false;
 
   constructor(boundingBox: Rectangle) {
+    super('WorldManager');
     // this.space = new Cell(boundingBox, 150, 150);
     this.space = new QuadTree(boundingBox);
     this.boundingBox = boundingBox;
@@ -68,52 +79,27 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.space.resize(bounds);
   }
 
-  public registerTemplateEntity(template: templateEntities.Template): void {
-    const {type, extends: base} = template;
-    const baseConstructor = this.entityConstructors[base];
-    const gen = () => {
-      const entity = baseConstructor();
-      entity.deserialize(template, false);
-      return entity;
-    };
-
-    if (this.entityConstructors.hasOwnProperty(type)) {
-      log.error(`type ${type} is already registered`);
-    } else {
-      this.entityConstructors[type] = gen;
-      log.debug(`entity template ${type} registered`);
-    }
-  }
-
   private async registerAllEntities(): Promise<void> {
     // Class entities
-    this.registerEntity(Entity);
-    this.registerEntity(Unit);
-    this.registerEntity(BaseHero);
-    this.registerEntity(Geometry);
-    this.registerEntity(Explosion);
-    this.registerEntity(Ray);
-    this.registerEntity(Projectile);
-    this.registerEntity(Text);
-    this.registerEntity(Tank);
-    this.registerEntity(TimedText);
-    this.registerEntity(Enemy);
-    this.registerEntity(Bar);
-    this.registerEntity(Echo);
-    this.registerEntity(HomingProjectile);
-    this.registerEntity(ShatterProjectile);
-    this.registerEntity(Feed);
-    this.registerEntity(Trail);
+    this.registerAssetType(Entity);
+    this.registerAssetType(Unit);
+    this.registerAssetType(BaseHero);
+    this.registerAssetType(Geometry);
+    this.registerAssetType(Explosion);
+    this.registerAssetType(Ray);
+    this.registerAssetType(Projectile);
+    this.registerAssetType(Text);
+    this.registerAssetType(Tank);
+    this.registerAssetType(TimedText);
+    this.registerAssetType(Enemy);
+    this.registerAssetType(Bar);
+    this.registerAssetType(Echo);
+    this.registerAssetType(HomingProjectile);
+    this.registerAssetType(ShatterProjectile);
+    this.registerAssetType(Feed);
+    this.registerAssetType(Trail);
 
-    const entityList = await AssetManager.loadDirectory('templates/entities');
-    const entityFiles = await AssetManager.loadAllJSON(entityList);
-
-    Iterator.from(entityFiles)
-      .filter((template) => typeof template.type === 'string')
-      .map((template) => template as templateEntities.Template)
-      .forEach((template) => {
-        this.registerTemplateEntity(template);
-      });
+    await this.loadAssetTemplates('templates/entities');
   }
 
   public async initialize(): Promise<void> {
@@ -319,7 +305,9 @@ export class WorldManager implements Bounded, Serializable, Renderable {
   }
 
   public queryPointXY(x: number, y: number): Iterator<Entity> {
-    return Iterator.from(this.queryPointXYInternal(x, y)).filter((entity) => entity.boundingBox.containsPointXY(x, y));
+    return Iterator.from(this.queryPointXYInternal(x, y)).filter((entity) =>
+      entity.boundingBox.containsPointXY(x, y)
+    );
   }
 
   public queryPoint(pt: VectorLike): Iterator<Entity> {
@@ -423,46 +411,31 @@ export class WorldManager implements Bounded, Serializable, Renderable {
     this.populateGraph();
   }
 
-  public registerEntity(Type: (new () => Entity) & typeof Entity) {
-    const name = Type.typeName;
-    if (this.entityConstructors.hasOwnProperty(name)) {
-      log.error(`type ${name} is already registered`);
-    } else {
-      this.entityConstructors[name] = () => new Type();
-      log.debug(`entity ${name} registered`);
-    }
-    Type.initializeType();
-  }
-
   public spawn<T extends Entity>(
-    Type: (new () => T) & typeof Entity,
+    Type: AssetType<T>,
     position?: Vector
-  ): T {
-    const entity = new Type();
-    if (position) {
-      entity.position.set(position);
-    }
-    this.add(entity);
-    return entity;
-  }
-
-  public spawnEntity(type: string, position?: Vector): Entity {
-    const gen = this.entityConstructors[type];
-    const entity = gen();
-    if (position) {
-      entity.position.set(position);
-    }
-    this.add(entity);
-    return entity;
-  }
-
-  public createEntity(type: string): Entity | undefined {
-    const Type = this.entityConstructors[type];
-    if (Type) {
-      return Type();
-    } else {
+  ): T | undefined {
+    const entity = this.instantiateType(Type);
+    if (!entity) {
       return undefined;
     }
+    if (position) {
+      entity.position.set(position);
+    }
+    this.add(entity);
+    return entity;
+  }
+
+  public spawnEntity(type: string, position?: Vector): Entity | undefined {
+    const entity = this.instantiate(type);
+    if (!entity) {
+      return;
+    }
+    if (position) {
+      entity.setPosition(position);
+    }
+    this.add(entity);
+    return entity;
   }
 
   public serialize(): Data {
@@ -495,7 +468,7 @@ export class WorldManager implements Bounded, Serializable, Renderable {
       let entity = this.getEntity(idNum);
       let createdEntity = false;
       if (!entity && typeof type === 'string') {
-        entity = this.createEntity(type);
+        entity = this.instantiate(type);
         if (entity) {
           if (entity.id !== idNum) {
             UUIDManager.free(entity.id);

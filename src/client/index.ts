@@ -18,6 +18,7 @@ import {WeaponManager} from 'core/weapon';
 import {loadReactUI} from 'client/components';
 import {MetricsManager} from 'client/metrics';
 import {AssetManager} from 'core/assets';
+import { UpgradeManager } from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -34,6 +35,7 @@ async function main(): Promise<void> {
   NetworkManager.initialize(client);
   await WeaponManager.initialize();
   await WorldManager.initialize();
+  await UpgradeManager.initialize();
   PlayerManager.initialize();
   CameraManager.initialize();
   FormManager.initialize();

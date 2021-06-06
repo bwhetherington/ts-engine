@@ -44,8 +44,9 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     } else {
       size = FeedVariant.Small;
     }
-    const entity = WorldManager.spawnEntity('Feed', position) as Feed;
-    entity.setVariant(size);
+    const entity = WorldManager.spawnEntity('Feed') as Feed | undefined;
+    entity?.setPosition(position);
+    entity?.setVariant(size);
   }
 
   private spawnEnemy(): void {
@@ -60,10 +61,11 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       'HomingEnemy',
       'HeavyEnemy',
     ]);
-    const enemy = WorldManager.spawnEntity(type, position);
+    const enemy = WorldManager.spawnEntity(type);
+    enemy?.setPosition(position);
 
     // Pick color
-    enemy.setColor(randomColor());
+    enemy?.setColor(randomColor());
   }
 
   private startGame(): void {
@@ -215,6 +217,9 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
           const posX = x + indent + spacing * i;
           const posY = y + indent;
           const tank = WorldManager.spawn(Enemy, new Vector(posX, posY));
+          if (!tank) {
+            continue;
+          }
           tank.setName('' + (1 + i));
           tank.isActive = false;
           tank.weaponAngle = Math.PI / 2;

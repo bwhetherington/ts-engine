@@ -6,6 +6,7 @@ import {
   BarStyle,
   Scoreboard,
   FormContainer,
+  UpgradeContainer,
   Radar,
 } from 'client/components';
 import {Column, Panel} from './common';
@@ -31,5 +32,6 @@ export const App: React.FunctionComponent<{}> = () => (
       <Scoreboard />
     </div>
     <FormContainer />
+    <UpgradeContainer />
   </>
 );

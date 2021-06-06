@@ -117,4 +117,29 @@ export const FlexPadding = styled.div`
   flex-grow: 1;
 `;
 
+export const Background = styled.div`
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.hidden {
+    visibility: hidden;
+    opacity: 0%;
+    transition: visibility 0s 0.25s, opacity 0.25s ease-out;
+  }
+
+  &.visible {
+    visibility: visible;
+    opacity: 100%;
+    transition: opacity 0.25s ease-in;
+  }
+`;
+
 export * from 'client/components/common/inputs';

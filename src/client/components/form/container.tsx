@@ -1,43 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Component, FormComponent} from 'client/components';
+
 import {
   Entry,
   Form,
-  FormRejectEvent,
   FormShowEvent,
   FormSubmitEvent,
   FormValidatedEvent,
 } from 'core/form';
 import {NetworkManager} from 'core/net';
 import {UUID} from 'core/uuid';
-import {EventManager} from 'core/event';
 import {Iterator} from 'core/iterator';
 
-const Background = styled.div`
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &.hidden {
-    visibility: hidden;
-    opacity: 0%;
-    transition: visibility 0s 0.25s, opacity 0.25s ease-out;
-  }
-
-  &.visible {
-    visibility: visible;
-    opacity: 100%;
-    transition: opacity 0.25s ease-in;
-  }
-`;
+import {Component, FormComponent, Background} from 'client/components';
 
 const Container = styled.div`
   pointer-events: auto;

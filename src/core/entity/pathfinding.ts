@@ -207,8 +207,7 @@ export class Graph {
         const isPathable =
           WorldManager.boundingBox.contains(sampler) &&
           !WorldManager.query(sampler).any(
-            (entity) =>
-              entity.collisionLayer === CollisionLayer.Geometry
+            (entity) => entity.collisionLayer === CollisionLayer.Geometry
           );
 
         const node: Node = {

@@ -44,6 +44,9 @@ export class ShatterProjectile extends Projectile {
       const offset = RNGManager.nextFloat(0, 2 * Math.PI);
       for (let i = 0; i < this.fragCount; i++) {
         const fragment = WorldManager.spawn(Projectile, this.position);
+        if (!fragment) {
+          continue;
+        }
         fragment.boundingBox.width = this.boundingBox.width / 2;
         fragment.boundingBox.height = this.boundingBox.height / 2;
         fragment.parent = this.parent;

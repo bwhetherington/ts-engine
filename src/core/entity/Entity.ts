@@ -107,11 +107,7 @@ export class Entity extends Observer
       // Query for entities that may collide with this entity
       let collided = false;
       WorldManager.query(this.boundingBox)
-        .filter(
-          (candidate) =>
-            candidate.isCollidable &&
-            candidate !== this
-        )
+        .filter((candidate) => candidate.isCollidable && candidate !== this)
         .forEach((candidate) => {
           // Collision
           if (

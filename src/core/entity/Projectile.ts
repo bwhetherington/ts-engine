@@ -54,7 +54,7 @@ export class Projectile extends Entity {
 
     if (NetworkManager.isClient()) {
       const trail = WorldManager.spawn(Trail);
-      trail.initialize(this);
+      trail?.initialize(this);
     }
   }
 
@@ -98,6 +98,9 @@ export class Projectile extends Entity {
 
   protected explode(): void {
     const echo = WorldManager.spawn(Echo, this.position);
+    if (!echo) {
+      return;
+    }
     echo.initialize(this, false, 0.35, EchoVariant.Shrink);
     echo.velocity.zero();
   }

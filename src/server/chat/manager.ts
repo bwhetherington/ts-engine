@@ -228,8 +228,11 @@ export class ServerChatManager {
           const num = RNGManager.next();
           const type =
             num < 0.8 ? (num < 0.6 ? 'Enemy' : 'HomingEnemy') : 'HeavyEnemy';
-          const entity = WorldManager.spawnEntity(type, position);
-          entity.setColor(randomColor());
+          const entity = WorldManager.spawnEntity(type);
+          if (entity) {
+            entity.setPosition(position);
+            entity.setColor(randomColor());
+          }
         }
 
         this.info(`Spawning ${count} entities`);

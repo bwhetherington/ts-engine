@@ -9,7 +9,7 @@ import {Vector, VectorLike} from 'core/geometry';
 import {BLACK, GraphicsContext, rgb} from 'core/graphics';
 import {Iterator} from 'core/iterator';
 import {GraphicsPipeline} from 'core/graphics/pipe';
-import { Entity } from './Entity';
+import {Entity} from './Entity';
 
 const log = LogManager.forFile(__filename);
 
@@ -69,7 +69,7 @@ export class Enemy extends Tank {
       this.position.angleTo(target.position),
       this.position.distanceTo(target.position),
       1,
-      (entity: Entity) => entity.id === target.id,
+      (entity: Entity) => entity.id === target.id
     );
     return hit.size > 0;
   }

@@ -308,11 +308,11 @@ export class Tank extends Unit {
       const {type} = weapon;
       if (typeof weapon === 'string') {
         if (this.weapon?.type !== weapon) {
-          const newWeapon = WeaponManager.createWeapon(weapon);
+          const newWeapon = WeaponManager.instantiate(weapon);
           this.setWeapon(newWeapon);
         }
       } else if (type && this.weapon?.type !== type) {
-        const newWeapon = WeaponManager.createWeapon(type);
+        const newWeapon = WeaponManager.instantiate(type);
         if (newWeapon) {
           newWeapon.deserialize(weapon);
           this.setWeapon(newWeapon);
@@ -358,7 +358,7 @@ export class Tank extends Unit {
   public setWeapon(weapon?: Weapon | string): void {
     let actualWeapon: Weapon | undefined;
     if (typeof weapon === 'string') {
-      actualWeapon = WeaponManager.createWeapon(weapon);
+      actualWeapon = WeaponManager.instantiate(weapon);
     } else if (weapon) {
       actualWeapon = weapon;
     }

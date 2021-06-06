@@ -48,9 +48,9 @@ export class BaseGun extends Weapon {
     }
 
     const projectile = WorldManager.spawnEntity(
-      this.projectileType,
-      source.getCannonTip()
+      this.projectileType
     ) as Projectile;
+    projectile.setPosition(source.getCannonTip());
     projectile.setColor(source.getBaseColor());
     projectile.parent = source;
     projectile.damage = this.rollDamage(modifier);

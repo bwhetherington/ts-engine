@@ -12,7 +12,7 @@ import {
   FlexPadding,
   PanelHeader,
   UI_MARGIN,
-} from 'client/components/common';
+} from 'client/components';
 import {Form, Field, Entry} from 'core/form';
 
 const FieldContainer = styled.div`

@@ -83,11 +83,15 @@ export class HeroModifier implements Serializable {
 }
 
 export class ModifierUpgrade extends Upgrade {
+  public static typeName: string = 'ModifierUpgrade';
+
   private modifiers: HeroModifier = new HeroModifier();
 
-  public constructor(modifiers: Modifiers) {
+  constructor(modifiers?: Modifiers) {
     super();
-    this.modifiers.multiplyModifiers(modifiers);
+    if (modifiers) {
+      this.modifiers.multiplyModifiers(modifiers);
+    }
   }
 
   public applyTo(hero: BaseHero): void {
