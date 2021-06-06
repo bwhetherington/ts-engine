@@ -1,11 +1,11 @@
 import React from 'react';
 
 import {UUID} from 'core/uuid';
-import {Upgrade, UpgradeManager} from 'core/upgrade';
+import {Upgrade, UpgradeManager, Offer} from 'core/upgrade';
 import {Iterator} from 'core/iterator';
 
 import {Row} from 'client/components';
-import {Offer, UpgradeComponent} from 'client/components/upgrade';
+import {UpgradeComponent} from 'client/components/upgrade';
 
 interface OfferProps {
   offer: Offer;

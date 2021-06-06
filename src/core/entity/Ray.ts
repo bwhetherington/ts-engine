@@ -53,10 +53,12 @@ export class Ray extends Entity {
               color = WHITE;
             }
 
-            const ray = new Ray();
+            const ray = WorldManager.spawn(Ray);
+            if (!ray) {
+              return;
+            }
             ray.initialize(start, stop);
             ray.setColor(color);
-            WorldManager.add(ray);
           });
       }
     }

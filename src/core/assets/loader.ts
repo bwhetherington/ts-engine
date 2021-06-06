@@ -16,6 +16,7 @@ export interface AssetTemplate extends Data {
 
 export type AssetType<T extends Asset> = {
   typeName: string;
+  initializeType?: () => void;
 } & (new () => T);
 
 type AssetInitializer<T extends Asset> = () => T;
@@ -30,6 +31,7 @@ export class LoadingManager<T extends Asset> {
 
   public registerAssetType(Type: AssetType<T>): void {
     this.registerAssetInitializer(Type.typeName, () => new Type());
+    Type.initializeType?.();
   }
 
   public registerAssetTemplate(template: AssetTemplate): void {

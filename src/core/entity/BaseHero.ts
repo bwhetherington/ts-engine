@@ -26,6 +26,8 @@ import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
 import {UUID} from 'core/uuid';
 import {HeroModifier} from 'core/upgrade/modifier';
+import { Upgrade, UpgradeEvent, UpgradeManager } from 'core/upgrade';
+import { Iterator } from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
@@ -50,6 +52,7 @@ export class BaseHero extends Tank {
     [MovementDirection.Left]: false,
     [MovementDirection.Right]: false,
   };
+  private upgrades: string[] = [];
 
   private xp: number = 0;
   private level: number = 1;
@@ -155,6 +158,26 @@ export class BaseHero extends Tank {
     }
   }
 
+  public applyUpgrade(upgrade: Upgrade, isNew: boolean = true): void {
+    upgrade.applyTo(this);
+    this.upgrades.push(upgrade.type);
+    if (isNew) {
+      EventManager.emit<UpgradeEvent>({
+        type: 'UpgradeEvent',
+        data: {
+          hero: this,
+          upgrade: upgrade,
+        },
+      });
+    }
+  }
+
+  public copyUpgrades(other: BaseHero): void {
+    Iterator.array(other.upgrades)
+      .filterMap((type) => UpgradeManager.instantiate(type))
+      .forEach((upgrade) => this.applyUpgrade(upgrade, false));
+  }
+
   public getLifeRegen(): number {
     return this.modifiers.get('lifeRegen').multiplyPoint(super.getLifeRegen());
   }
@@ -198,20 +221,22 @@ export class BaseHero extends Tank {
     this.setExperience(this.getExperience() + amount);
   }
 
-  public setExperience(amount: number): void {
+  public setExperience(amount: number, allowLevels: boolean = true): void {
     this.xp = amount;
 
     while (this.xp >= this.experienceForLevel(this.level) && this.level < 40) {
       const oldLevel = this.level;
       this.setLevelInternal(this.level + 1);
-      EventManager.emit<LevelUpEvent>({
-        type: 'LevelUpEvent',
-        data: {
-          id: this.id,
-          from: oldLevel,
-          to: this.level,
-        },
-      });
+      if (NetworkManager.isServer() && allowLevels) {
+        EventManager.emit<LevelUpEvent>({
+          type: 'LevelUpEvent',
+          data: {
+            id: this.id,
+            from: oldLevel,
+            to: this.level,
+          },
+        });
+      }
     }
 
     while (

@@ -13,7 +13,7 @@ import {Data} from 'core/serialize';
 import {MovementDirection} from 'core/input';
 import {Vector} from 'core/geometry';
 import {clamp} from 'core/util';
-import {EventManager} from 'core/event';
+import {Event, EventManager} from 'core/event';
 import {NetworkManager} from 'core/net';
 import {Color, reshade} from 'core/graphics';
 import {TextColor} from 'core/chat';
@@ -274,17 +274,18 @@ export class Unit extends Entity {
   public kill(source?: Unit): void {
     if (NetworkManager.isServer()) {
       this.markForDelete();
-    }
-
-    if (this.isAliveInternal) {
-      EventManager.emit<KillEvent>({
-        type: 'KillEvent',
-        data: {
-          targetID: this.id,
-          sourceID: source?.id,
-        },
-      });
-      this.isAliveInternal = false;
+      if (this.isAliveInternal) {
+        const event: Event<KillEvent> = {
+          type: 'KillEvent',
+          data: {
+            targetID: this.id,
+            sourceID: source?.id,
+          },
+        };
+        EventManager.emit(event);
+        NetworkManager.sendEvent(event);
+        this.isAliveInternal = false;
+      }
     }
   }
 

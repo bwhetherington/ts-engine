@@ -179,114 +179,15 @@ export const checkSize: CommandEntry = {
   },
 };
 
-export const powerfulShots: CommandEntry = {
-  name: 'powerfulshots',
-  help: "Increase the player's damage",
-  permissionLevel: 1,
-  async handler(player) {
-    const {hero} = player;
-    if (hero) {
-      const upgrade = new ModifierUpgrade({
-        damage: new Matrix2().fields(1.2, 0),
-      });
-      upgrade.applyTo(hero);
-      ChatManager.info('Powerful Shots unlocked', player);
-    }
-  },
-};
-
-export const rapidFire: CommandEntry = {
-  name: 'rapidfire',
-  help: "Increase the player's rate of attack",
-  permissionLevel: 1,
-  async handler(player) {
-    const {hero} = player;
-    if (hero) {
-      const upgrade = new ModifierUpgrade({
-        rate: new Matrix2().fields(0.8, 0),
-      });
-      upgrade.applyTo(hero);
-      ChatManager.info('Rapid Fire unlocked', player);
-    }
-  },
-};
-export const addShots: CommandEntry = {
-  name: 'addshots',
-  help: "Adds shots to the player's weapon",
-  permissionLevel: 1,
-  async handler(player) {
-    const {hero} = player;
-    if (hero) {
-      const upgrade = new ModifierUpgrade({
-        damage: new Matrix2().fields(0.5, 0),
-        shotCount: new Matrix2().fields(1, 2),
-        shotSpread: new Matrix2().fields(1.2, 0),
-      });
-      upgrade.applyTo(hero);
-      ChatManager.info('Multishot unlocked', player);
-    }
-  },
-};
-
-export const fusilage: CommandEntry = {
-  name: 'barrage',
-  help: 'Doubles the number of shots at reduced damage',
-  permissionLevel: 1,
-  async handler(player) {
-    const {hero} = player;
-    if (hero) {
-      const upgrade = new ModifierUpgrade({
-        damage: new Matrix2().fields(0.5, 0),
-        shotCount: new Matrix2().fields(2, 1),
-        shotSpread: new Matrix2().fields(1.5, 0),
-      });
-      upgrade.applyTo(hero);
-      ChatManager.info('Fusilage unlocked', player);
-    }
-  },
-};
-
-export const focusFire: CommandEntry = {
-  name: 'focusfire',
-  help: 'Tightens the shot spread',
-  permissionLevel: 1,
-  async handler(player) {
-    const {hero} = player;
-    if (hero) {
-      const upgrade = new ModifierUpgrade({
-        shotSpread: new Matrix2().fields(0.6, 0),
-      });
-      upgrade.applyTo(hero);
-      ChatManager.info('Focus Fire unlocked', player);
-    }
-  },
-};
-
 export const upgrade: CommandEntry = {
   name: 'upgrade',
   help: 'Adds the specified upgrade',
   permissionLevel: 1,
-  async handler(player, ...[arg]) {
+  async handler(player) {
     const {hero} = player;
-    if (!arg) {
-      // ChatManager.error('No upgrade specified', player);
-      const upgrades = UpgradeManager.sampleUpgrades().take(3).toArray();
-      await UpgradeManager.offerUpgrades(player, upgrades);
-      return;
-    }
-
-    const upgrade = UpgradeManager.instantiate(arg);
-    if (upgrade === undefined) {
-      ChatManager.info(`Upgrade ${arg} could not be found`);
-      return;
-    }
-
-    if (hero) {
-      upgrade.applyTo(hero);
-    }
-
-    ChatManager.info(
-      `Upgrade applied - ${upgrade.name}: ${upgrade.description}`
-    );
+    // ChatManager.error('No upgrade specified', player);
+    const upgrades = UpgradeManager.sampleUpgrades().take(3).toArray();
+    await UpgradeManager.offerUpgrades(player, upgrades);
+    return;
   },
 };

@@ -141,10 +141,6 @@ export class Player extends Observer implements Serializable {
   }
 
   public load(account: Account): void {
-    if (this.hasJoined) {
-      log.warn(`user ${this.id} has already joined`);
-      return;
-    }
     this.account = account;
     this.name = capitalize(account.username ?? 'Player');
     this.hasJoined = true;
@@ -196,9 +192,15 @@ export class Player extends Observer implements Serializable {
       if (this.hero) {
         newHero.setPosition(this.hero.position);
         newHero.setColor(this.hero.getColor());
-        newHero.setExperience(this.hero.getExperience());
+        newHero.setExperience(this.hero.getExperience(), false);
         newHero.setLife(this.hero.getLife());
         newHero.angle = this.hero.angle;
+        newHero.targetAngle = this.hero.targetAngle;
+        newHero.weaponAngle = this.hero.weaponAngle;
+
+        // Copy upgrades
+        newHero.copyUpgrades(this.hero);
+
         this.hero.markForDelete();
       }
       WorldManager.add(newHero);

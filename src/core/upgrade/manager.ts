@@ -2,24 +2,35 @@ import {LoadingManager} from 'core/assets';
 import {EventManager} from 'core/event';
 import {Player} from 'core/player';
 import {RNGManager} from 'core/random';
-import {OfferUpgradeEvent, SelectUpgradeEvent, Upgrade} from 'core/upgrade';
+import {Offer, OfferUpgradeEvent, SelectUpgradeEvent, Upgrade, ModifierUpgrade, ClassUpgrade} from 'core/upgrade';
 import {sleep} from 'core/util';
 import {UUID, UUIDManager} from 'core/uuid';
 import {Iterator} from 'core/iterator';
-import {ModifierUpgrade} from './modifier';
 
-interface Offer {
-  id: UUID;
-  upgrades: string[];
+interface OfferEntry extends Offer {
+  hero: UUID;
   reject(): void;
-  resolve(choice: Upgrade): void;
+  resolve(choice: UpgradeSelection): void;
 }
 
-const EXCLUDED_UPGRADES = ['ModifierUpgrade'];
+interface UpgradeSelection {
+  upgrade: Upgrade;
+  hero: UUID;
+}
+
+const EXCLUDED_UPGRADES = new Set(['ModifierUpgrade', 'ClassUpgrade']);
+
+const CLASS_UPGRADES = new Set([
+  'MachineGun',
+  'Homing',
+  'Railgun',
+  'Laser',
+]);
 
 export class UpgradeManager extends LoadingManager<Upgrade> {
-  private offers: Record<UUID, Offer> = {};
+  private offers: Record<UUID, OfferEntry> = {};
   private availableUpgrades: string[] = [];
+  private availableHeroUpgrades: string[] = [...CLASS_UPGRADES];
 
   constructor() {
     super('UpgradeManager');
@@ -27,10 +38,16 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
 
   public async initialize(): Promise<void> {
     this.registerAssetType(ModifierUpgrade);
+    this.registerAssetType(ClassUpgrade);
     await this.loadAssetTemplates('templates/upgrades');
 
     this.availableUpgrades = this.getAssetInitializers()
-      .filter(([type, _initializer]) => !EXCLUDED_UPGRADES.includes(type))
+      .filter(([type, initializer]) => !(EXCLUDED_UPGRADES.has(type) || initializer() instanceof ClassUpgrade))
+      .map(([type, _initializer]) => type)
+      .toArray();
+
+    this.availableHeroUpgrades = this.getAssetInitializers()
+      .filter(([type, initializer]) => !EXCLUDED_UPGRADES.has(type) && initializer() instanceof ClassUpgrade)
       .map(([type, _initializer]) => type)
       .toArray();
 
@@ -54,7 +71,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       });
   }
 
-  private cleanupOffer(id: UUID, then: (offer: Offer) => void): void {
+  private cleanupOffer(id: UUID, then: (offer: OfferEntry) => void): void {
     const offer = this.offers[id];
     if (offer) {
       delete this.offers[id];
@@ -64,18 +81,32 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
   }
 
   private acceptOffer(id: UUID, choice: Upgrade): void {
-    this.cleanupOffer(id, (offer) => offer.resolve(choice));
+    this.cleanupOffer(id, (offer) => offer.resolve({
+      hero: offer.hero,
+      upgrade: choice,
+    }));
   }
 
   private rejectOffer(id: UUID): void {
     this.cleanupOffer(id, (offer) => offer.reject());
   }
 
-  private sendUpgrades(player: Player, upgrades: string[]): Promise<Upgrade> {
+  private sendUpgrades(player: Player, upgrades: string[]): Promise<UpgradeSelection> {
     return new Promise(async (resolve, reject) => {
+      if (upgrades.length === 0) {
+        reject();
+        return;
+      }
+
       const id = UUIDManager.generate();
+      const hero = player.hero?.id;
+      if (!hero) {
+        reject();
+        return;
+      }
       this.offers[id] = {
         id,
+        hero,
         upgrades,
         reject,
         resolve,
@@ -101,14 +132,20 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
     upgrades: string[]
   ): Promise<void> {
     try {
-      const upgrade = await this.sendUpgrades(player, upgrades);
-      if (player.hero) {
-        upgrade.applyTo(player.hero);
+      const {hero: oldHero} = player;
+      const {hero, upgrade} = await this.sendUpgrades(player, upgrades);
+      const {hero: newHero} = player;
+      if (oldHero && newHero && newHero.id === oldHero.id && oldHero.id === hero) {
+        newHero.applyUpgrade(upgrade);
       }
     } catch (_ex) {}
   }
 
   public sampleUpgrades(): Iterator<string> {
     return RNGManager.sample(this.availableUpgrades);
+  }
+
+  public sampleHeroUpgrades(): Iterator<string> {
+    return RNGManager.sample(this.availableHeroUpgrades);
   }
 }
