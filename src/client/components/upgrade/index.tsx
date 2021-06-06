@@ -1,18 +1,15 @@
 import React from 'react';
+import styled from 'styled-components';
 
-import {
-  Upgrade,
-  UpgradeManager,
-  OfferUpgradeEvent,
-  SelectUpgradeEvent,
-} from 'core/upgrade';
+import {Upgrade, OfferUpgradeEvent, SelectUpgradeEvent} from 'core/upgrade';
 import {UUID} from 'core/uuid';
 
-import {Background, Component} from 'client/components';
+import {Background, Button, Component, Panel} from 'client/components';
 export * from 'client/components/upgrade/Upgrade';
 
 import {OfferComponent} from 'client/components/upgrade/Offer';
 import {NetworkManager} from 'core/net';
+import { BlueButton } from '../common';
 
 export interface Offer {
   id: UUID;
@@ -21,12 +18,14 @@ export interface Offer {
 
 interface ContainerState {
   offers: Offer[];
+  shouldShow: boolean;
 }
 
 export class UpgradeContainer extends Component<{}, ContainerState> {
   constructor(props: {}) {
     super(props, {
       offers: [],
+      shouldShow: false,
     });
   }
 
@@ -46,10 +45,12 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
 
   private async removeTopOffer(): Promise<void> {
     const {offers} = this.state;
+    const willBeEmpty = offers.length === 1;
     await this.updateState({
       offers: offers.slice(0, offers.length - 1),
+      shouldShow: !willBeEmpty,
     });
-    if (this.state.offers.length === 0) {
+    if (willBeEmpty) {
       // Return focus to main screen
       document.getElementById('game')?.focus();
     }
@@ -58,6 +59,13 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
   private getTopOffer(): Offer | undefined {
     const {offers} = this.state;
     return offers[offers.length - 1];
+  }
+
+  private async toggleSelection(): Promise<void> {
+    await this.updateState({
+      shouldShow: !this.state.shouldShow,
+    });
+    console.log(this.state);
   }
 
   public render(): JSX.Element {
@@ -73,11 +81,25 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
       await this.removeTopOffer();
     };
     if (offer) {
-      return (
-        <Background className="visible">
+      const {shouldShow} = this.state;
+      const className = shouldShow ? 'visible' : 'hidden';
+      const container = (
+        <Background className={className}>
           <OfferComponent offer={offer} onSelect={onSelect} />
         </Background>
       );
+      if (shouldShow) {
+        return container;
+      } else {
+        const numOffers = this.state.offers.length;
+        const buttonText = numOffers > 1 ? `Upgrades available (${numOffers})` : 'Upgrade available';
+        return (
+          <div>
+            <BlueButton onClick={this.toggleSelection.bind(this)}>{buttonText}</BlueButton>
+            {container}
+          </div>
+        );
+      }
     } else {
       return <Background className="hidden" />;
     }

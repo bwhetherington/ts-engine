@@ -42,7 +42,8 @@ export abstract class Observer {
 
   public streamEvents<E extends EventData>(
     type: string,
-    priority: Priority = Priority.Normal
+    priority: Priority = Priority.Normal,
+    allowExternal: boolean = false
   ): AsyncIterator<Event<E>> {
     let id: UUID;
     const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
@@ -57,7 +58,14 @@ export abstract class Observer {
     iter.onComplete = () => {
       this.removeListener(type, id);
     };
-    return iter;
+    if (allowExternal) {
+      return iter;
+    } else {
+      return iter.filter((event) => {
+        const shouldAllow = event.socket === undefined || event.socket === -1;
+        return shouldAllow;
+      });
+    }
   }
 
   public streamInterval(

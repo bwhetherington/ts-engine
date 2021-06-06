@@ -1,4 +1,4 @@
-import {EventManager} from 'core/event';
+import {EventManager, Event, BatchEvent, GameEvent} from 'core/event';
 import {LogManager} from 'core/log';
 import {
   KEY_MAP,
@@ -8,9 +8,12 @@ import {
   MouseAction,
   MouseEvent,
   Key,
+  MouseButton,
 } from 'core/input';
 import {CameraManager} from 'core/graphics';
 import {NetworkManager} from 'core/net';
+import {Iterator} from 'core/iterator';
+import {Vector} from 'core/geometry';
 
 const log = LogManager.forFile(__filename);
 
@@ -24,66 +27,48 @@ function initializeKeyStates(): Array<boolean> {
   return obj;
 }
 
+function initializeButtonStates(): Array<boolean> {
+  const obj = [];
+
+  for (let i = 0; i < Object.keys(MouseButton).length; i++) {
+    obj.push(false);
+  }
+
+  return obj;
+}
+
 export class InputManager {
   private element?: HTMLElement;
   private keyStates: Array<boolean> = initializeKeyStates();
+  private mouseButtonStates: Array<boolean> = initializeButtonStates();
+  private mousePosition: Vector = new Vector(0, 0);
 
   public constructor() {}
 
   public initialize(element: HTMLElement): void {
     this.element = element;
+    this.element?.addEventListener('blur', () => {
+      this.reset();
+    });
     this.element?.addEventListener('contextmenu', (event) => {
       event.preventDefault();
     });
     this.element?.addEventListener('mousedown', (event) => {
-      const {clientX, clientY} = event;
-      const {x, y} = CameraManager.toWorldSpace(clientX, clientY);
-      const button = BUTTON_MAP[event.button];
-      if (button !== undefined) {
-        const mouseEvent = {
-          type: 'MouseEvent',
-          data: {
-            action: MouseAction.ButtonDown,
-            button,
-            x,
-            y,
-          },
-        };
-        NetworkManager.sendEvent<MouseEvent>(mouseEvent);
-        EventManager.emit(mouseEvent);
-      } else {
-        log.warn('unrecognized button: ' + event.button);
-      }
+      this.updateMousePosition(event);
+      this.buttonDown(event.button);
     });
     this.element?.addEventListener('mouseup', (event) => {
-      const {clientX, clientY} = event;
-      const {x, y} = CameraManager.toWorldSpace(clientX, clientY);
-      const button = BUTTON_MAP[event.button];
-      if (button !== undefined) {
-        const mouseEvent = {
-          type: 'MouseEvent',
-          data: <MouseEvent>{
-            action: MouseAction.ButtonUp,
-            button,
-            x,
-            y,
-          },
-        };
-        EventManager.emit(mouseEvent);
-        NetworkManager.send(mouseEvent);
-      } else {
-        log.warn('unrecognized button: ' + event.button);
-      }
+      this.updateMousePosition(event);
+      this.buttonUp(event.button);
     });
     this.element?.addEventListener('mousemove', (event) => {
-      const {clientX, clientY} = event;
-      const {x, y} = CameraManager.toWorldSpace(clientX, clientY);
+      this.updateMousePosition(event);
       const mouseEvent = {
         type: 'MouseEvent',
         data: <MouseEvent>{
           action: MouseAction.Move,
-          x,
-          y,
+          x: this.mousePosition.x,
+          y: this.mousePosition.y,
         },
       };
       EventManager.emit(mouseEvent);
@@ -96,6 +81,12 @@ export class InputManager {
       this.keyUp(event.code);
     });
     log.debug('InputManager initialized');
+  }
+
+  public updateMousePosition(event: globalThis.MouseEvent): void {
+    const {clientX, clientY} = event;
+    const {x, y} = CameraManager.toWorldSpace(clientX, clientY);
+    this.mousePosition.setXY(x, y);
   }
 
   public keyDown(code: string): void {
@@ -138,18 +129,82 @@ export class InputManager {
     }
   }
 
-  public reset(): void {
-    for (let key = 0; key < this.keyStates.length; key++) {
-      if (this.keyStates[key]) {
-        EventManager.emit<KeyEvent>({
-          type: 'KeyEvent',
+  public buttonUp(code: number): void {
+    const button = BUTTON_MAP[code];
+    if (button !== undefined) {
+      if (this.mouseButtonStates[button]) {
+        this.mouseButtonStates[button] = false;
+        const buttonEvent = {
+          type: 'MouseEvent',
           data: {
-            action: KeyAction.KeyUp,
-            key,
+            action: MouseAction.ButtonUp,
+            button,
+            x: this.mousePosition.x,
+            y: this.mousePosition.y,
           },
-        });
+        };
+        EventManager.emit<MouseEvent>(buttonEvent);
+        NetworkManager.sendEvent<MouseEvent>(buttonEvent);
       }
-      this.keyStates[key] = false;
+    } else {
+      log.warn('unrecognized button: ' + code);
     }
+  }
+
+  public buttonDown(code: number): void {
+    const button = BUTTON_MAP[code];
+    if (button !== undefined) {
+      if (!this.mouseButtonStates[button]) {
+        this.mouseButtonStates[button] = true;
+        const buttonEvent = {
+          type: 'MouseEvent',
+          data: {
+            action: MouseAction.ButtonDown,
+            button,
+            x: this.mousePosition.x,
+            y: this.mousePosition.y,
+          },
+        };
+        EventManager.emit<MouseEvent>(buttonEvent);
+        NetworkManager.sendEvent<MouseEvent>(buttonEvent);
+      }
+    } else {
+      log.warn('unrecognized button: ' + code);
+    }
+  }
+
+  public reset(): void {
+    const keyUpEvents: GameEvent[] = Iterator.array(this.keyStates)
+      .enumerate()
+      .map(([_state, key]) => key)
+      .map<Event<KeyEvent>>((key) => ({
+        type: 'KeyEvent',
+        data: {
+          action: KeyAction.KeyUp,
+          key,
+        },
+      }))
+      .toArray();
+    const buttonUpEvents: GameEvent[] = Iterator.array(this.mouseButtonStates)
+      .enumerate()
+      .map(([_state, button]) => button)
+      .map<Event<MouseEvent>>((button) => ({
+        type: 'MouseEvent',
+        data: {
+          action: MouseAction.ButtonUp,
+          button,
+          x: this.mousePosition.x,
+          y: this.mousePosition.y,
+        },
+      }))
+      .toArray();
+    const event: Event<BatchEvent> = {
+      type: 'BatchEvent',
+      data: {
+        events: [...keyUpEvents, ...buttonUpEvents],
+      },
+    };
+    EventManager.emit(event);
+    NetworkManager.sendEvent(event);
   }
 }

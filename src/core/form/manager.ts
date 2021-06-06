@@ -1,7 +1,7 @@
 import {LogManager} from 'core/log';
 import {Player, PlayerManager} from 'core/player';
 import {Data} from 'core/serialize';
-import {Event, EventManager} from 'core/event';
+import {Event, EventManager, Priority} from 'core/event';
 import {
   FormSubmitEvent,
   Form,
@@ -28,14 +28,12 @@ export class FormManager {
   public initialize(): void {
     log.debug('FormManager initialized');
 
-    if (NetworkManager.isClient()) {
-      EventManager.addListener<FormSubmitEvent>('FormSubmitEvent', (event) => {
-        NetworkManager.send(event);
-      });
-    }
-
     if (NetworkManager.isServer()) {
-      EventManager.streamEvents<FormSubmitEvent>('FormSubmitEvent')
+      EventManager.streamEvents<FormSubmitEvent>(
+        'FormSubmitEvent',
+        Priority.Normal,
+        true
+      )
         .filterMap((event) => {
           const {name} = event.data;
           const handler = this.submitHandlers[name];
@@ -137,7 +135,7 @@ export class FormManager {
     this.forms[name] = form;
     const formSubmitHandler = async (event: Event<FormSubmitEvent>) => {
       const {socket, data} = event;
-      log.debug('receive form submit');
+      log.debug('receive form submit ' + socket);
       const player = PlayerManager.getSocket(socket);
       if (player) {
         const {data: response, method = 'submit', id} = data;

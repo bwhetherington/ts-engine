@@ -2,9 +2,9 @@
   "type": "RapidFire",
   "extends": "ModifierUpgrade",
   "name": "Rapid Fire",
-  "description": "Your fire rate is 30% faster, and your projectiles are 30% less accurate.",
+  "description": "Your fire rate is 20% faster, and your projectiles spread is 30% greater.",
   "modifiers": {
-    "rate": {"cells": [0.7, 0, 0, 1]},
-    "shotSpread": {"cells": [0.7, 0, 0, 1]}
+    "rate": {"cells": [0.8, 0, 0, 1]},
+    "shotSpread": {"cells": [1.3, 0, 0, 1]}
   }
 }

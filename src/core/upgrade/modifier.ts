@@ -46,6 +46,10 @@ export class HeroModifier implements Serializable {
       });
   }
 
+  public has(key: string): boolean {
+    return this.modifiers.hasOwnProperty(key);
+  }
+
   public get(key: string): Matrix2 {
     let mod = this.modifiers[key];
     if (!mod) {
@@ -96,6 +100,9 @@ export class ModifierUpgrade extends Upgrade {
 
   public applyTo(hero: BaseHero): void {
     hero.modifiers.multiply(this.modifiers);
+    if (this.modifiers.has('life')) {
+      hero.updateMaxLife();
+    }
   }
 
   public serialize(): Data {

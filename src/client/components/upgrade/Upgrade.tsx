@@ -33,12 +33,12 @@ export const UpgradeComponent: React.FunctionComponent<UpgradeProps> = ({
   const onClick = () => onSelect?.(id, upgrade);
   const description = sanitize(upgrade.description);
   return (
-      <Panel>
-        <Container>
-          <PanelHeader>{upgrade.name}</PanelHeader>
-          <Content dangerouslySetInnerHTML={{__html: description}} />
-          <Button onClick={onClick}>Select</Button>
-        </Container>
-      </Panel>
+    <Panel>
+      <Container>
+        <PanelHeader>{upgrade.name}</PanelHeader>
+        <Content dangerouslySetInnerHTML={{__html: description}} />
+        <Button onClick={onClick}>Select</Button>
+      </Container>
+    </Panel>
   );
 };

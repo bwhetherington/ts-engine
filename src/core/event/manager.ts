@@ -13,7 +13,8 @@ import {LogManager} from 'core/log';
 import {formatData} from 'core/util';
 import {AsyncIterator, Iterator} from 'core/iterator';
 import {PlayerManager} from 'core/player';
-import {priorities} from './util';
+import {BatchEvent, priorities} from './util';
+import {NetworkManager} from 'core/net';
 
 const log = LogManager.forFile(__filename);
 
@@ -31,6 +32,18 @@ export class EventManager {
   public stepCount: number = 0;
 
   private isPropagationCanceled: boolean = false;
+
+  public initialize(): void {
+    // Handle all events in batch events
+    this.streamEvents<BatchEvent>('BatchEvent', Priority.Highest, true)
+      .flatMap((event) => {
+        const inner = Iterator.array(event.data.events).map<GameEvent>(
+          (newEvent) => ({...newEvent, socket: event.socket})
+        );
+        return inner;
+      })
+      .forEach((event) => this.emit(event));
+  }
 
   public emit<E extends EventData>(event: Event<E>): void {
     this.events.enqueue(event);
@@ -155,7 +168,8 @@ export class EventManager {
 
   public streamEvents<E extends EventData>(
     type: string,
-    priority: Priority = Priority.Normal
+    priority: Priority = Priority.Normal,
+    allowExternal: boolean = false
   ): AsyncIterator<Event<E>> {
     let id: number;
     const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
@@ -170,14 +184,22 @@ export class EventManager {
     iter.onComplete = () => {
       this.removeListener(type, id);
     };
-    return iter;
+    if (allowExternal) {
+      return iter;
+    } else {
+      return iter.filter((event) => {
+        const shouldAllow = event.socket === undefined || event.socket === -1;
+        return shouldAllow;
+      });
+    }
   }
 
   public streamInterval(
     period: number,
-    priority: Priority = Priority.Normal
+    priority: Priority = Priority.Normal,
+    allowExternal: boolean = false
   ): AsyncIterator<void> {
-    return this.streamEvents<StepEvent>('StepEvent', priority)
+    return this.streamEvents<StepEvent>('StepEvent', priority, allowExternal)
       .map(() => {})
       .debounce(period);
   }
@@ -186,7 +208,7 @@ export class EventManager {
     type: string,
     priority: Priority = Priority.Normal
   ): AsyncIterator<PlayerEvent<E>> {
-    return this.streamEvents<E>(type, priority).filterMap(
+    return this.streamEvents<E>(type, priority, true).filterMap(
       ({data, socket, type}) => {
         const player = PlayerManager.getSocket(socket);
         return player ? {data, player, type} : undefined;

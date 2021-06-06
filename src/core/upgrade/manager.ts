@@ -1,7 +1,7 @@
 import {LoadingManager} from 'core/assets';
 import {EventManager} from 'core/event';
 import {Player} from 'core/player';
-import { RNGManager } from 'core/random';
+import {RNGManager} from 'core/random';
 import {OfferUpgradeEvent, SelectUpgradeEvent, Upgrade} from 'core/upgrade';
 import {sleep} from 'core/util';
 import {UUID, UUIDManager} from 'core/uuid';
@@ -34,7 +34,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       .map(([type, _initializer]) => type)
       .toArray();
 
-    EventManager.streamEvents<SelectUpgradeEvent>('SelectUpgradeEvent')
+    EventManager.streamEventsForPlayer<SelectUpgradeEvent>('SelectUpgradeEvent')
       .filterMap(({data}) => {
         const offer = this.offers[data.id];
         if (offer) {
@@ -109,8 +109,6 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
   }
 
   public sampleUpgrades(): Iterator<string> {
-    
-    return RNGManager
-      .sample(this.availableUpgrades);
+    return RNGManager.sample(this.availableUpgrades);
   }
 }

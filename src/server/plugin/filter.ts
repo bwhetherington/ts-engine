@@ -13,7 +13,11 @@ export class FilterPlugin extends Plugin {
   public async initialize(server: Server): Promise<void> {
     await super.initialize(server);
 
-    this.streamEvents<TextMessageInEvent>('TextMessageInEvent', Priority.High)
+    this.streamEvents<TextMessageInEvent>(
+      'TextMessageInEvent',
+      Priority.High,
+      true
+    )
       .filter((event) =>
         FILTER_WORDS.some((word) => event.data.content.includes(word))
       )

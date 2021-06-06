@@ -87,7 +87,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
   };
 
   public componentDidMount(): void {
-    this.addListener<FormShowEvent>('FormShowEvent', (event) => {
+    this.streamEvents<FormShowEvent>('FormShowEvent').forEach((event) => {
       this.showForm(event.data);
     });
   }

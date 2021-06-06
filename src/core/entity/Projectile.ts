@@ -46,7 +46,7 @@ export class Projectile extends Entity {
     this.collisionLayer = CollisionLayer.Projectile;
     this.friction = 350;
     this.bounce = 0;
-    this.mass = 0.2;
+    this.mass = 0.05;
     this.setColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.boundingBox.width = 20;
     this.boundingBox.height = 20;

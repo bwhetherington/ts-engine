@@ -9,9 +9,7 @@ import {
   renderInfo,
   renderWarn,
   renderError,
-  renderMessage,
   TextComponents,
-  TextColor,
 } from 'core/chat';
 import {LogManager} from 'core/log';
 import {PlayerManager, Player} from 'core/player';
@@ -449,15 +447,15 @@ export class ServerChatManager {
     target: number | Player = -1
   ): void {
     const socket = target instanceof Player ? target.socket : target;
-    const outEvent = {
+    const outEvent: Event<TextMessageOutEvent> = {
       type: 'TextMessageOutEvent',
-      data: <TextMessageOutEvent>{
+      data: {
         components,
       },
       socket,
     };
     EventManager.emit(outEvent);
-    NetworkManager.send(outEvent, socket);
+    NetworkManager.sendEvent(outEvent, socket);
   }
 
   public info(message: string, target: number | Player = -1): void {

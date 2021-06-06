@@ -1,4 +1,6 @@
 import React from 'react';
+import styled from 'styled-components';
+
 import {
   Debug,
   Chat,
@@ -8,30 +10,51 @@ import {
   FormContainer,
   UpgradeContainer,
   Radar,
+  Column,
+  Panel,
+  Row,
 } from 'client/components';
-import {Column, Panel} from './common';
+
+const UIContainer = styled.div`
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+`;
 
 export const App: React.FunctionComponent<{}> = () => (
-  <>
+  <UIContainer>
     <div className="top left">
       <Debug />
     </div>
-    <div className="bottom left col">
-      <Chat lineLimit={100} />
-      <Panel>
+    <div className="bottom left">
+      <Row>
         <Column>
-          <EventBar label="HP" barStyle={BarStyle.Life} id="life-bar" />
-          <EventBar label="XP" barStyle={BarStyle.XP} id="xp-bar" />
+          <Chat lineLimit={100} />
+          <Panel>
+            <Column>
+              <EventBar label="HP" barStyle={BarStyle.Life} id="life-bar" />
+              <EventBar label="XP" barStyle={BarStyle.XP} id="xp-bar" />
+            </Column>
+          </Panel>
         </Column>
-      </Panel>
+      </Row>
     </div>
     <div className="bottom right">
-      <Radar />
+      <Column>   
+        <Radar />
+      </Column>
     </div>
     <div className="top right">
-      <Scoreboard />
+      <Column>
+        <Scoreboard />
+      </Column>
+    </div>
+    <div className="bottom center-horizontal">
+      <UpgradeContainer />
     </div>
     <FormContainer />
-    <UpgradeContainer />
-  </>
+  </UIContainer>
 );

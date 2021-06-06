@@ -19,22 +19,46 @@ body,
 }
 
 .top {
-  position: absolute;
+  position: fixed;
   top: var(--ui-margin);
 }
 
 .bottom {
-  position: absolute;
+  position: fixed;
   bottom: var(--ui-margin);
 }
 
+.center-horizontal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-horizontal button {
+  pointer-events: auto;
+}
+
+/* .center-horizontal:after {
+  transform: translateX(50%);
+} */
+
+.center-vertical {
+  top: 50%;
+  bottom: 50%;
+}
+
 .left {
-  position: absolute;
+  position: fixed;
   left: var(--ui-margin);
 }
 
 .right {
-  position: absolute;
+  position: fixed;
   right: var(--ui-margin);
 }
 

@@ -83,7 +83,8 @@ export class BaseRaygun extends Weapon {
     };
     if (NetworkManager.isServer()) {
       NetworkManager.sendEvent<DisplayRayEvent>(event);
-    } else {
+    }
+    if (NetworkManager.isClient()) {
       EventManager.emit<DisplayRayEvent>(event);
     }
   }

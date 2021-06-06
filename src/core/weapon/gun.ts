@@ -67,7 +67,7 @@ export class BaseGun extends Weapon {
 
   public fire(source: Tank, angle: number, modifier?: HeroModifier): void {
     const projectile = this.createProjectile(source, angle, modifier);
-    source.applyForce(projectile.velocity, -projectile.mass / 4);
+    source.applyForce(projectile.velocity, -projectile.mass / 20);
   }
 
   public serialize(): Data {

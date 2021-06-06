@@ -1,17 +1,15 @@
-import {BaseHero, WorldManager, KillEvent} from 'core/entity';
+import {BaseHero, WorldManager} from 'core/entity';
 import {Serializable, Data} from 'core/serialize';
 import {Socket, NetworkManager} from 'core/net';
 import {PlayerManager, Account} from 'core/player';
 import {UUIDManager, UUID} from 'core/uuid';
-import {EventData, Handler, EventManager, Event, Observer} from 'core/event';
+import {EventData, Event, Observer} from 'core/event';
 import {capitalize} from 'core/util';
 import {LogManager} from 'core/log';
 import {BasicAuth} from 'core/net/http';
 import {randomColor} from 'core/graphics/color';
-import {RNGManager} from 'core/random';
 import {PlayerChatManager} from './chat';
 import {TextColor} from 'core/chat';
-import {AsyncIterator} from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 

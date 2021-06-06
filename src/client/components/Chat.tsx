@@ -15,7 +15,6 @@ import {EventManager, StepEvent} from 'core/event';
 import {Key, KeyAction, KeyEvent} from 'core/input';
 import {
   Column,
-  Panel,
   PanelContainer,
   StringInput,
 } from 'client/components/common';
@@ -139,7 +138,16 @@ function splitWords(str: string): string[] {
   return words;
 }
 
-const ChatContainer = styled.div`
+interface ChatContainerProps {
+  isHidden?: boolean;
+}
+
+const ChatPanelContainer = styled(PanelContainer)<ChatContainerProps>`
+  pointer-events: ${props => props.isHidden ? 'none' : 'auto'};
+  background: ${props => props.isHidden ? 'transparent' : 'auto'};
+`;
+
+const ChatContainer = styled.div<ChatContainerProps>`
   height: 22vh;
   width: 22vh;
   min-width: 400px;
@@ -147,6 +155,7 @@ const ChatContainer = styled.div`
   word-wrap: break-word;
   overflow-y: auto;
   user-select: auto;
+  pointer-events: ${props => props.isHidden ? 'none' : 'auto'};
 `;
 
 const ChatForm = styled.form`
@@ -331,16 +340,17 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   public render(): JSX.Element {
-    const panelStyle: React.CSSProperties = this.isFocused()
-      ? {}
-      : {
-          backgroundColor: 'transparent',
-          pointerEvents: 'none',
-        };
+    // const panelStyle: React.CSSProperties = this.isFocused()
+    //   ? {}
+    //   : {
+    //       backgroundColor: 'transparent',
+    //       background: 'black',
+    //       pointerEvents: 'none',
+    //     };
     return (
-      <PanelContainer style={panelStyle}>
+      <ChatPanelContainer isHidden={!this.isFocused()}>
         <Column>
-          <ChatContainer>
+          <ChatContainer isHidden={!this.isFocused()}>
             {this.isFocused() ? this.renderLines() : <div />}
             <div ref={this.endRef} />
           </ChatContainer>
@@ -359,7 +369,7 @@ export class Chat extends Component<ChatProps, ChatState> {
             />
           </ChatForm>
         </Column>
-      </PanelContainer>
+      </ChatPanelContainer>
     );
   }
 }

@@ -1,12 +1,4 @@
-import {
-  HomingProjectile,
-  KillEvent,
-  Projectile,
-  Tank,
-  Unit,
-  WorldManager,
-} from 'core/entity';
-import {Rectangle} from 'core/geometry';
+import {HomingProjectile, Projectile, Tank} from 'core/entity';
 import {BaseGun} from 'core/weapon';
 import {HeroModifier} from '../upgrade/modifier';
 

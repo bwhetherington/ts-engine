@@ -17,8 +17,8 @@
     }
   ],
   "modifiers": {
-    "life": {"cells": [2, 0, 0, 1]},
-    "armor": {"cells": [2, 0, 0, 1]}
+    "life": {"cells": [1.5, 0, 0, 1]},
+    "armor": {"cells": [1, 1, 0, 1]}
   },
   "weapon": "HeavyGun"
 }

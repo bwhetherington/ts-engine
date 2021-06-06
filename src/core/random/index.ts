@@ -75,7 +75,9 @@ export abstract class AbstractRNG implements RNG {
     } else {
       isValid = () => true;
     }
-    return this.ints(0, source.length).filter(isValid).map((i) => source[i]);
+    return this.ints(0, source.length)
+      .filter(isValid)
+      .map((i) => source[i]);
   }
 }
 

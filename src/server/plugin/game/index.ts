@@ -7,7 +7,7 @@ import {
   Unit,
   WorldManager,
 } from 'core/entity';
-import {EventManager} from 'core/event';
+import {EventManager, Priority} from 'core/event';
 import {StateMachine} from 'core/fsm';
 import {Vector} from 'core/geometry';
 import {COLORS, randomColor} from 'core/graphics';
@@ -77,7 +77,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
           WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 2.5)
       )
       .forEach(() => {
-        this.spawnFeed();
+        // this.spawnFeed();
       });
 
     // Spawn enemy units
@@ -86,7 +86,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
       )
       .forEach(() => {
-        this.spawnEnemy();
+        // this.spawnEnemy();
       });
 
     const respawnHero = async (hero: BaseHero) => {
@@ -100,14 +100,15 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       }
     };
 
+    // this.streamEvents<KillEvent>('KillEvent')
+
     // Respawn players
-    this.takeDuringState(
-      GameState.Running,
-      this.streamEvents<KillEvent>('KillEvent')
-    )
+    this.streamEvents<KillEvent>('KillEvent')
       .filterMap((event) => {
         const entity = WorldManager.getEntity(event.data.targetID);
-        return entity instanceof BaseHero ? entity : undefined;
+        if (entity instanceof BaseHero) {
+          return entity;
+        }
       })
       .forEach((hero) => {
         respawnHero(hero);
@@ -127,24 +128,24 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     PlayerManager.getPlayers().forEach((player) => player.spawnHero());
 
     // Start timer
-    this.countdown(GameState.Running, 300, [
-      60,
-      30,
-      10,
-      9,
-      8,
-      7,
-      6,
-      5,
-      4,
-      3,
-      2,
-      1,
-    ]).then((shouldTransition) => {
-      if (shouldTransition) {
-        this.transition(GameAction.Stop);
-      }
-    });
+    // this.countdown(GameState.Running, 300, [
+    //   60,
+    //   30,
+    //   10,
+    //   9,
+    //   8,
+    //   7,
+    //   6,
+    //   5,
+    //   4,
+    //   3,
+    //   2,
+    //   1,
+    // ]).then((shouldTransition) => {
+    //   if (shouldTransition) {
+    //     this.transition(GameAction.Stop);
+    //   }
+    // });
   }
 
   private stopGame(): void {

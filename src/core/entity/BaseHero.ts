@@ -15,7 +15,7 @@ import {
   MouseButton,
   MovementDirection,
 } from 'core/input';
-import {EventData, Event, EventManager} from 'core/event';
+import {EventData, Event, EventManager, Priority} from 'core/event';
 import {Data} from 'core/serialize';
 import {Player, PlayerManager} from 'core/player';
 import {LogManager} from 'core/log';
@@ -33,6 +33,10 @@ export interface LevelUpEvent {
   id: UUID;
   from: number;
   to: number;
+}
+
+export interface SyncHeroEvent {
+  hero: Data;
 }
 
 export class BaseHero extends Tank {
@@ -60,7 +64,7 @@ export class BaseHero extends Tank {
     this.setExperience(0);
     this.setLevelInternal(1);
 
-    this.streamEvents<MouseEvent>('MouseEvent')
+    this.streamEvents<MouseEvent>('MouseEvent', Priority.Normal, true)
       .filter((event) => this.isEventSubject(event))
       .forEach(({data: {action, x, y, button}}) => {
         if (action === MouseAction.Move) {
@@ -80,7 +84,7 @@ export class BaseHero extends Tank {
         }
       });
 
-    this.streamEvents<KeyEvent>('KeyEvent')
+    this.streamEvents<KeyEvent>('KeyEvent', Priority.Normal, true)
       .filter((event) => this.isEventSubject(event))
       .forEach(({data: {action, key}}) => {
         const state = action === KeyAction.KeyDown;
@@ -151,6 +155,10 @@ export class BaseHero extends Tank {
     }
   }
 
+  public getLifeRegen(): number {
+    return this.modifiers.get('lifeRegen').multiplyPoint(super.getLifeRegen());
+  }
+
   protected getNameColor(): TextColor {
     return this.getPlayer()?.getNameColor() ?? super.getNameColor();
   }
@@ -171,14 +179,14 @@ export class BaseHero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return this.modifiers.get('life').multiplyPoint(50 + (level - 1) * 5);
+    return 50 + (level - 1) * 5;
   }
 
-  protected regenForLevel(level: number): number {
-    return this.lifeForLevel(level) / 30;
+  protected regenForLevel(_level: number): number {
+    return 1 / 30;
   }
 
-  protected armorForLevel(level: number): number {
+  protected armorForLevel(_level: number): number {
     return 1;
   }
 
@@ -258,8 +266,17 @@ export class BaseHero extends Tank {
     return this.player;
   }
 
+  public updateMaxLife(): void {
+    const life = this.lifeForLevel(this.level);
+    this.setMaxLife(life);
+  }
+
   public setMaxLife(maxLife: number): void {
-    super.setMaxLife(maxLife);
+    let life = maxLife;
+    if (NetworkManager.isServer() && this.modifiers) {
+      life = Math.round(this.modifiers.get('life').multiplyPoint(life));
+    }
+    super.setMaxLife(life);
     if (this.getPlayer()?.isActivePlayer?.()) {
       EventManager.emit({
         type: 'BarUpdateEvent',
@@ -379,20 +396,18 @@ export class BaseHero extends Tank {
       this.targetAngle = oldTargetAngle;
 
       this.setPositionXY(oldX, oldY);
-      NetworkManager.sendEvent<SyncEvent>({
-        type: 'SyncEvent',
+      NetworkManager.sendEvent<SyncHeroEvent>({
+        type: 'SyncHeroEvent',
         data: {
-          worldData: {
-            entities: {
-              [this.id]: {
-                position: this.position.serialize(),
-              },
-            },
-          },
-          playerData: {},
+          hero: this.serialize(),
         },
       });
     }
+  }
+
+  public calculateDamageIn(amount: number): number {
+    const armor = this.modifiers.get('armor').multiplyPoint(this.armor);
+    return Math.max(1, amount - armor);
   }
 
   public isEventSubject<E extends EventData>(event: Event<E>): boolean {

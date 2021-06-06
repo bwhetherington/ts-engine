@@ -7,10 +7,10 @@ import * as http from 'http';
 
 import {Node, Message, Socket} from 'core/net';
 import {LogManager} from 'core/log';
-import {EventManager, Event, StepEvent} from 'core/event';
+import {PlayerManager, Player} from 'core/player';
+import {EventManager, Event, StepEvent, Priority} from 'core/event';
 import {TimerManager, now} from 'server/util';
 import {WorldManager} from 'core/entity';
-import {PlayerManager, Player} from 'core/player';
 import {InitialSyncEvent, PlayerInitializedEvent} from 'core/net/util';
 import process from 'process';
 import {UUID, UUIDManager} from 'core/uuid';
@@ -135,7 +135,11 @@ export class Server extends Node {
     });
     this.wsServer.on('close', (connection) => {});
 
-    EventManager.streamEvents<PlayerInitializedEvent>('PlayerInitializedEvent')
+    EventManager.streamEvents<PlayerInitializedEvent>(
+      'PlayerInitializedEvent',
+      Priority.Normal,
+      true
+    )
       .filterMap(({socket}) => (socket !== undefined ? socket : undefined))
       .forEach((socket) => this.initialSync(socket));
   }

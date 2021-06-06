@@ -114,7 +114,7 @@ export class Unit extends Entity {
     };
     EventManager.emit<DamageEvent>(event);
     if (NetworkManager.isServer()) {
-      NetworkManager.send(event);
+      NetworkManager.sendEvent(event);
     }
     if (amount > 0) {
       this.flash();
@@ -157,9 +157,13 @@ export class Unit extends Entity {
     return 'none';
   }
 
+  public getLifeRegen(): number {
+    return this.lifeRegen;
+  }
+
   public step(dt: number): void {
     // Regenerate life
-    this.setLife(this.life + this.lifeRegen * dt);
+    this.setLife(this.life + this.getLifeRegen() * this.maxLife * dt);
 
     // Handle movement
     this.acceleration.setXY(1, 0);

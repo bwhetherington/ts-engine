@@ -26,6 +26,7 @@ import {
   RayCastResult,
   HomingProjectile,
   Feed,
+  SyncHeroEvent,
 } from 'core/entity';
 import {LogManager} from 'core/log';
 import {EventManager, StepEvent} from 'core/event';
@@ -107,19 +108,37 @@ export class WorldManager extends LoadingManager<Entity>
 
     await this.registerAllEntities();
 
-    EventManager.streamEvents<SyncEvent>('SyncEvent').forEach(
-      ({data: {worldData}}) => {
-        this.deserialize(worldData);
-      }
+    if (NetworkManager.isClient()) {
+      EventManager.streamEvents<SyncEvent>('SyncEvent').forEach(
+        ({data: {worldData}}) => {
+          this.deserialize(worldData);
+        }
+      );
+    }
+
+    if (NetworkManager.isServer()) {
+      EventManager.streamEventsForPlayer<SyncHeroEvent>('SyncHeroEvent')
+        .filterMap(({player, data: {hero}}) => {
+          const playerHero = player.hero;
+          if (playerHero) {
+            return {hero: playerHero, heroData: hero};
+          }
+        })
+        .filter(({hero, heroData}) => hero.id === heroData.id)
+        .forEach(({hero, heroData}) => {
+          const {weaponAngle, position} = heroData;
+          if (typeof weaponAngle === 'number') {
+            hero.weaponAngle = weaponAngle;
+          }
+          if (position) {
+            hero.position.deserialize(position);
+          }
+        });
+    }
+
+    EventManager.streamEvents<StepEvent>('StepEvent').forEach(({data: {dt}}) =>
+      this.step(dt)
     );
-
-    EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
-      this.deserialize(event.data.worldData);
-    });
-
-    EventManager.addListener<StepEvent>('StepEvent', (event) => {
-      this.step(event.data.dt);
-    });
   }
 
   public render(ctx: GraphicsContext): void {
@@ -318,7 +337,7 @@ export class WorldManager extends LoadingManager<Entity>
     return this.graph?.findPath(from, to);
   }
 
-  public step(dt: number): void {
+  public deleteEntities(): void {
     // Delete marked entities
     for (const entity of this.toDelete) {
       this.remove(entity);
@@ -326,7 +345,10 @@ export class WorldManager extends LoadingManager<Entity>
 
     // Clear deleted entities
     this.toDelete = [];
+  }
 
+  public step(dt: number): void {
+    this.deleteEntities();
     // Step each entity
     const isClient = NetworkManager.isClient();
     const shouldProcessLocalEntity = (entity: Entity) =>

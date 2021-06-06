@@ -52,3 +52,7 @@ export function* priorities(): Iterable<Priority> {
 export interface EventData {
   [key: string]: any;
 }
+
+export interface BatchEvent {
+  events: GameEvent[];
+}
