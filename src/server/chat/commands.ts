@@ -184,10 +184,27 @@ export const upgrade: CommandEntry = {
   help: 'Adds the specified upgrade',
   permissionLevel: 1,
   async handler(player) {
-    const {hero} = player;
     // ChatManager.error('No upgrade specified', player);
     const upgrades = UpgradeManager.sampleUpgrades().take(3).toArray();
     await UpgradeManager.offerUpgrades(player, upgrades);
     return;
   },
+};
+
+export const immune: CommandEntry = {
+  name: 'immune',
+  help: 'Toggles immunity on your hero',
+  permissionLevel: 1,
+  async handler(player) {
+    const {hero} = player;
+    if (!hero) {
+      return;
+    }
+    hero.setIsImmune(!hero.getIsImmune());
+    if (hero.getIsImmune()) {
+      ChatManager.info('You are now immune', player);
+    } else {
+      ChatManager.info('You are no longer immune', player);
+    }
+  }
 };

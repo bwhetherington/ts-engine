@@ -109,7 +109,7 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
         return container;
       } else {
         const numOffers = this.state.offers.length;
-        const buttonText = numOffers > 1 ? `Upgrades available (${numOffers})` : 'Upgrade available';
+        const buttonText = numOffers > 1 ? `Upgrades Available (${numOffers})` : 'Upgrade Available';
         return (
           <div>
             <BlueButton onClick={this.toggleSelection.bind(this)}>{buttonText}</BlueButton>

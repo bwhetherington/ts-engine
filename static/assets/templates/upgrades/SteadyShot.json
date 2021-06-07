@@ -1,0 +1,10 @@
+{
+  "type": "SteadyShot",
+  "extends": "ModifierUpgrade",
+  "name": "Steady Shot",
+  "description": "Your fire rate is 50% slower, but your damage is 50% greater.",
+  "modifiers": {
+    "rate": {"cells": [1.5, 0, 0, 1]},
+    "damage": {"cells": [1.5, 0, 0, 1]}
+  }
+}

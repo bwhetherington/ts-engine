@@ -28,6 +28,7 @@ export class Unit extends Entity {
   private name: string = '';
   private maxLife: number = 10;
   private life: number = 10;
+  private isImmune: boolean = false;
   protected lifeRegen: number = 0;
   protected speed: number = 250;
   private xpWorth: number = 1;
@@ -67,6 +68,14 @@ export class Unit extends Entity {
     }
   }
 
+  public setIsImmune(isImmune: boolean): void {
+    this.isImmune = isImmune;
+  }
+
+  public getIsImmune(): boolean {
+    return this.isImmune;
+  }
+
   public cleanup(): void {
     this.label?.markForDelete();
     this.hpBar?.markForDelete();
@@ -101,6 +110,9 @@ export class Unit extends Entity {
   }
 
   public damage(amount: number, source?: Unit): void {
+    if (this.isImmune) {
+      return;
+    }
     const damageOut = source?.calculateDamageOut(amount, this) ?? amount;
     const damageIn = this.calculateDamageIn(damageOut, source);
     this.setLife(this.life - damageIn, source);
@@ -218,13 +230,14 @@ export class Unit extends Entity {
       xpWorth: this.xpWorth,
       name: this.name,
       thrusting: this.thrusting,
+      isImmune: this.isImmune,
       color: this.getBaseColor(),
     };
   }
 
   public deserialize(data: Data, setInitialized?: boolean): void {
     super.deserialize(data, setInitialized);
-    const {life, maxLife, thrusting, xpWorth, speed, name} = data;
+    const {life, maxLife, thrusting, isImmune, xpWorth, speed, name} = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }
@@ -242,6 +255,9 @@ export class Unit extends Entity {
     }
     if (typeof thrusting === 'number') {
       this.setThrusting(thrusting);
+    }
+    if (typeof isImmune === 'boolean') {
+      this.isImmune = isImmune;
     }
   }
 

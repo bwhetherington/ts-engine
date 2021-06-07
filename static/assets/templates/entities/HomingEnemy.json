@@ -2,9 +2,8 @@
   "type": "HomingEnemy",
   "extends": "Enemy",
   "mass": 5,
-  "maxLife": 100,
-  "life": 100,
-  "armor": 1,
+  "maxLife": 50,
+  "life": 50,
   "speed": 200,
   "boundingBox": {
     "width": 30,
@@ -20,6 +19,10 @@
       }
     }
   ],
+  "modifiers": {
+    "rate": {"cells": [1.5, 0, 0, 1]},
+    "damage": {"cells": [0.75, 0, 0, 1]}
+  },
   "weapon": "HomingGun",
   "xpWorth": 25,
   "name": "Seeker"

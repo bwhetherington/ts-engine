@@ -3,5 +3,5 @@
   "extends": "ClassUpgrade",
   "name": "Homing",
   "description": "Change to a homing tank, with a seeking projectile.",
-  "className": "Homing"
+  "className": "HomingHero"
 }
