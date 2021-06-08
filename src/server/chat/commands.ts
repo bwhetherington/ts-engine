@@ -206,5 +206,5 @@ export const immune: CommandEntry = {
     } else {
       ChatManager.info('You are no longer immune', player);
     }
-  }
+  },
 };

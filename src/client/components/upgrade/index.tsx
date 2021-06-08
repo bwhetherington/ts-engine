@@ -1,7 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {Upgrade, OfferUpgradeEvent, Offer, SelectUpgradeEvent} from 'core/upgrade';
+import {
+  Upgrade,
+  OfferUpgradeEvent,
+  Offer,
+  SelectUpgradeEvent,
+} from 'core/upgrade';
 import {UUID} from 'core/uuid';
 import {NetworkManager} from 'core/net';
 
@@ -10,8 +15,8 @@ export * from 'client/components/upgrade/Upgrade';
 
 import {OfferComponent} from 'client/components/upgrade/Offer';
 import {BlueButton} from '../common';
-import { PlayerManager } from 'core/player';
-import { KillEvent } from 'core/entity';
+import {PlayerManager} from 'core/player';
+import {KillEvent} from 'core/entity';
 
 interface ContainerState {
   offers: Offer[];
@@ -36,7 +41,10 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
     // Remove all offers when player's hero is killed
     this.streamEvents<KillEvent>('KillEvent')
       .use(console.log)
-      .filter((event) => event.data.targetID === PlayerManager.getActivePlayer()?.hero?.id)
+      .filter(
+        (event) =>
+          event.data.targetID === PlayerManager.getActivePlayer()?.hero?.id
+      )
       .forEach(() => {
         this.removeOffers();
       });
@@ -109,10 +117,15 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
         return container;
       } else {
         const numOffers = this.state.offers.length;
-        const buttonText = numOffers > 1 ? `Upgrades Available (${numOffers})` : 'Upgrade Available';
+        const buttonText =
+          numOffers > 1
+            ? `Upgrades Available (${numOffers})`
+            : 'Upgrade Available';
         return (
           <div>
-            <BlueButton onClick={this.toggleSelection.bind(this)}>{buttonText}</BlueButton>
+            <BlueButton onClick={this.toggleSelection.bind(this)}>
+              {buttonText}
+            </BlueButton>
             {container}
           </div>
         );

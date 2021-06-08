@@ -43,7 +43,7 @@ export const App: React.FunctionComponent<{}> = () => (
       </Row>
     </div>
     <div className="bottom right">
-      <Column>   
+      <Column>
         <Radar />
       </Column>
     </div>

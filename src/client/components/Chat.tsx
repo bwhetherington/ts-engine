@@ -13,11 +13,7 @@ import {
 import {NetworkManager} from 'core/net';
 import {EventManager, StepEvent} from 'core/event';
 import {Key, KeyAction, KeyEvent} from 'core/input';
-import {
-  Column,
-  PanelContainer,
-  StringInput,
-} from 'client/components/common';
+import {Column, PanelContainer, StringInput} from 'client/components/common';
 import {clamp} from 'core/util';
 
 type Lines = Readonly<TextComponents[]>;
@@ -143,8 +139,8 @@ interface ChatContainerProps {
 }
 
 const ChatPanelContainer = styled(PanelContainer)<ChatContainerProps>`
-  pointer-events: ${props => props.isHidden ? 'none' : 'auto'};
-  background: ${props => props.isHidden ? 'transparent' : 'auto'};
+  pointer-events: ${(props) => (props.isHidden ? 'none' : 'auto')};
+  background: ${(props) => (props.isHidden ? 'transparent' : 'auto')};
 `;
 
 const ChatContainer = styled.div<ChatContainerProps>`
@@ -155,7 +151,7 @@ const ChatContainer = styled.div<ChatContainerProps>`
   word-wrap: break-word;
   overflow-y: auto;
   user-select: auto;
-  pointer-events: ${props => props.isHidden ? 'none' : 'auto'};
+  pointer-events: ${(props) => (props.isHidden ? 'none' : 'auto')};
 `;
 
 const ChatForm = styled.form`

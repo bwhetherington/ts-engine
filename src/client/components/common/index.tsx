@@ -22,7 +22,7 @@ export const Column = styled.div<ColumnProps>`
   flex-direction: column;
   pointer-events: inherit;
   /* pointer-events: none; */
-  gap: ${props => props.margin ?? UI_MARGIN};
+  gap: ${(props) => props.margin ?? UI_MARGIN};
 `;
 
 export const PanelHeader = styled.div`
@@ -86,7 +86,7 @@ export const Button = styled.button`
   }
 `;
 
-export const BlueButton = styled(Button)` 
+export const BlueButton = styled(Button)`
   background-color: rgba(32, 128, 192, 0.85);
 
   &:disabled {

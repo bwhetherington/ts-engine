@@ -1,5 +1,5 @@
-import { BaseHero } from 'core/entity';
-import { Data } from 'core/serialize';
+import {BaseHero} from 'core/entity';
+import {Data} from 'core/serialize';
 import {Upgrade} from 'core/upgrade';
 
 export class ClassUpgrade extends Upgrade {

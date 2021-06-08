@@ -1,7 +1,7 @@
 import {LevelUpEvent, BaseHero, WorldManager} from 'core/entity';
-import { RNGManager } from 'core/random';
+import {RNGManager} from 'core/random';
 import {UpgradeEvent, UpgradeManager} from 'core/upgrade';
-import { ChatManager } from 'server/chat';
+import {ChatManager} from 'server/chat';
 
 import {Server} from 'server/net';
 import {Plugin} from 'server/plugin';
@@ -38,13 +38,14 @@ export class UpgradePlugin extends Plugin {
         UpgradeManager.offerUpgrades(player, upgrades);
       });
 
-    this.streamEvents<UpgradeEvent>('UpgradeEvent')
-      .forEach(({data: {hero, upgrade}}) => {
+    this.streamEvents<UpgradeEvent>('UpgradeEvent').forEach(
+      ({data: {hero, upgrade}}) => {
         const player = hero.getPlayer();
         if (!player) {
           return;
         }
         ChatManager.info(`Upgrade selected: ${upgrade.name}`, player);
-      });
+      }
+    );
   }
 }

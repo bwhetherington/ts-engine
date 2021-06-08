@@ -4,7 +4,7 @@
   "name": "Rapid Fire",
   "description": "Your fire rate is 20% faster, and your projectiles spread is 30% greater.",
   "modifiers": {
-    "rate": {"cells": [0.8, 0, 0, 1]},
-    "shotSpread": {"cells": [1.3, 0, 0, 1]}
+    "rate": [0.8, 0, 0, 1],
+    "shotSpread": [1.3, 0, 0, 1]
   }
 }

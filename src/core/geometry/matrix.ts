@@ -99,44 +99,47 @@ export class Matrix3 implements Serializable {
   }
 
   public serialize(): Data {
-    return {
-      cells: [
-        this.a0,
-        this.a1,
-        this.a2,
-        this.b0,
-        this.b1,
-        this.b2,
-        this.c0,
-        this.c1,
-        this.c2,
-      ],
-    };
+    return [
+      this.a0,
+      this.a1,
+      this.a2,
+      this.b0,
+      this.b1,
+      this.b2,
+      this.c0,
+      this.c1,
+      this.c2,
+    ];
   }
 
   public deserialize(data: Data): void {
-    const {cells} = data;
-    if (cells) {
-      const [a0, a1, a2, b0, b1, b2, c0, c1, c2] = cells;
-      if (
-        typeof a0 === 'number' &&
-        typeof a1 === 'number' &&
-        typeof a2 === 'number' &&
-        typeof b0 === 'number' &&
-        typeof b1 === 'number' &&
-        typeof b2 === 'number' &&
-        typeof c0 === 'number' &&
-        typeof c1 === 'number' &&
-        typeof c2 === 'number'
-      ) {
+    if (data instanceof Array) {
+      const [a0, a1, a2, b0, b1, b2, c0, c1, c2] = data;
+      if (typeof a0 === 'number') {
         this.a0 = a0;
+      }
+      if (typeof a1 === 'number') {
         this.a1 = a1;
+      }
+      if (typeof a2 === 'number') {
         this.a2 = a2;
+      }
+      if (typeof b0 === 'number') {
         this.b0 = b0;
+      }
+      if (typeof b1 === 'number') {
         this.b1 = b1;
+      }
+      if (typeof b2 === 'number') {
         this.b2 = b2;
+      }
+      if (typeof c0 === 'number') {
         this.c0 = c0;
+      }
+      if (typeof c1 === 'number') {
         this.c1 = c1;
+      }
+      if (typeof c2 === 'number') {
         this.c2 = c2;
       }
     }
@@ -208,24 +211,22 @@ export class Matrix2 implements Serializable {
   }
 
   public serialize(): Data {
-    return {
-      cells: [this.a0, this.a1, this.b0, this.b1],
-    };
+    return [this.a0, this.a1, this.b0, this.b1];
   }
 
   public deserialize(data: Data): void {
-    const {cells} = data;
-    if (cells) {
-      const [a0, a1, b0, b1] = cells;
-      if (
-        typeof a0 === 'number' &&
-        typeof a1 === 'number' &&
-        typeof b0 === 'number' &&
-        typeof b1 === 'number'
-      ) {
+    if (data instanceof Array) {
+      const [a0, a1, b0, b1] = data;
+      if (typeof a0 === 'number') {
         this.a0 = a0;
+      }
+      if (typeof a1 === 'number') {
         this.a1 = a1;
+      }
+      if (typeof b0 === 'number') {
         this.b0 = b0;
+      }
+      if (typeof b1 === 'number') {
         this.b1 = b1;
       }
     }

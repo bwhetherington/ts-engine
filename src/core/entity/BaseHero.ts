@@ -26,8 +26,8 @@ import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
 import {UUID} from 'core/uuid';
 import {HeroModifier} from 'core/upgrade/modifier';
-import { Upgrade, UpgradeEvent, UpgradeManager } from 'core/upgrade';
-import { Iterator } from 'core/iterator';
+import {Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
+import {Iterator} from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 

@@ -4,7 +4,7 @@
   "name": "Focus Fire",
   "description": "Your projectiles have 30% less spread, and deal 10% more damage.",
   "modifiers": {
-    "damage": {"cells": [1.1, 0, 0, 1]},
-    "shotSpread": {"cells": [0.7, 0, 0, 1]}
+    "damage": [1.1, 0, 0, 1],
+    "shotSpread": [0.7, 0, 0, 1]
   }
 }

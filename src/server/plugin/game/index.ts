@@ -105,12 +105,14 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     // Respawn players
     this.streamEvents<KillEvent>('KillEvent')
       .filterMap((event) => {
-        return PlayerManager.getPlayers().map((player) => {
-          const {hero} = player;
-          if (hero && hero.id === event.data.targetID) {
-            return hero;
-          }
-        }).first();
+        return PlayerManager.getPlayers()
+          .map((player) => {
+            const {hero} = player;
+            if (hero && hero.id === event.data.targetID) {
+              return hero;
+            }
+          })
+          .first();
       })
       .forEach((hero) => {
         respawnHero(hero);

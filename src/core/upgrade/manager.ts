@@ -2,7 +2,14 @@ import {LoadingManager} from 'core/assets';
 import {EventManager} from 'core/event';
 import {Player} from 'core/player';
 import {RNGManager} from 'core/random';
-import {Offer, OfferUpgradeEvent, SelectUpgradeEvent, Upgrade, ModifierUpgrade, ClassUpgrade} from 'core/upgrade';
+import {
+  Offer,
+  OfferUpgradeEvent,
+  SelectUpgradeEvent,
+  Upgrade,
+  ModifierUpgrade,
+  ClassUpgrade,
+} from 'core/upgrade';
 import {sleep} from 'core/util';
 import {UUID, UUIDManager} from 'core/uuid';
 import {Iterator} from 'core/iterator';
@@ -20,12 +27,7 @@ interface UpgradeSelection {
 
 const EXCLUDED_UPGRADES = new Set(['ModifierUpgrade', 'ClassUpgrade']);
 
-const CLASS_UPGRADES = new Set([
-  'MachineGun',
-  'Homing',
-  'Railgun',
-  'Laser',
-]);
+const CLASS_UPGRADES = new Set(['MachineGun', 'Homing', 'Railgun', 'Laser']);
 
 export class UpgradeManager extends LoadingManager<Upgrade> {
   private offers: Record<UUID, OfferEntry> = {};
@@ -42,12 +44,20 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
     await this.loadAssetTemplates('templates/upgrades');
 
     this.availableUpgrades = this.getAssetInitializers()
-      .filter(([type, initializer]) => !(EXCLUDED_UPGRADES.has(type) || initializer() instanceof ClassUpgrade))
+      .filter(
+        ([type, initializer]) =>
+          !(
+            EXCLUDED_UPGRADES.has(type) || initializer() instanceof ClassUpgrade
+          )
+      )
       .map(([type, _initializer]) => type)
       .toArray();
 
     this.availableHeroUpgrades = this.getAssetInitializers()
-      .filter(([type, initializer]) => !EXCLUDED_UPGRADES.has(type) && initializer() instanceof ClassUpgrade)
+      .filter(
+        ([type, initializer]) =>
+          !EXCLUDED_UPGRADES.has(type) && initializer() instanceof ClassUpgrade
+      )
       .map(([type, _initializer]) => type)
       .toArray();
 
@@ -81,17 +91,22 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
   }
 
   private acceptOffer(id: UUID, choice: Upgrade): void {
-    this.cleanupOffer(id, (offer) => offer.resolve({
-      hero: offer.hero,
-      upgrade: choice,
-    }));
+    this.cleanupOffer(id, (offer) =>
+      offer.resolve({
+        hero: offer.hero,
+        upgrade: choice,
+      })
+    );
   }
 
   private rejectOffer(id: UUID): void {
     this.cleanupOffer(id, (offer) => offer.reject());
   }
 
-  private sendUpgrades(player: Player, upgrades: string[]): Promise<UpgradeSelection> {
+  private sendUpgrades(
+    player: Player,
+    upgrades: string[]
+  ): Promise<UpgradeSelection> {
     return new Promise(async (resolve, reject) => {
       if (upgrades.length === 0) {
         reject();
@@ -135,7 +150,12 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       const {hero: oldHero} = player;
       const {hero, upgrade} = await this.sendUpgrades(player, upgrades);
       const {hero: newHero} = player;
-      if (oldHero && newHero && newHero.id === oldHero.id && oldHero.id === hero) {
+      if (
+        oldHero &&
+        newHero &&
+        newHero.id === oldHero.id &&
+        oldHero.id === hero
+      ) {
         newHero.applyUpgrade(upgrade);
       }
     } catch (_ex) {}
