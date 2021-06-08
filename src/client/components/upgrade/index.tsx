@@ -17,6 +17,7 @@ import {OfferComponent} from 'client/components/upgrade/Offer';
 import {BlueButton} from '../common';
 import {PlayerManager} from 'core/player';
 import {KillEvent} from 'core/entity';
+import { Key, KeyAction, KeyEvent } from 'core/input';
 
 interface ContainerState {
   offers: Offer[];
@@ -47,6 +48,14 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
       )
       .forEach(() => {
         this.removeOffers();
+      });
+
+    // Open the upgrade menu when pressing space
+    this.streamEvents<KeyEvent>('KeyEvent')
+      .filter(({data}) => data.key === Key.Space && data.action === KeyAction.KeyDown)
+      .filter(() => this.state.offers.length > 0)
+      .forEach(() => {
+        this.toggleSelection();
       });
   }
 
@@ -82,10 +91,12 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
   }
 
   private async toggleSelection(): Promise<void> {
-    await this.updateState({
-      shouldShow: !this.state.shouldShow,
-    });
-    console.log(this.state);
+    const shouldToggle = this.state.offers.length > 0;
+    if (shouldToggle) {
+      await this.updateState({
+        shouldShow: !this.state.shouldShow,
+      });
+    }
   }
 
   public render(): JSX.Element {
@@ -124,7 +135,7 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
         return (
           <div>
             <BlueButton onClick={this.toggleSelection.bind(this)}>
-              {buttonText}
+              <strong>[Space]</strong> {buttonText}
             </BlueButton>
             {container}
           </div>
