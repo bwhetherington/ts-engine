@@ -27,6 +27,7 @@ import {
   HomingProjectile,
   Feed,
   SyncHeroEvent,
+  Follow,
 } from 'core/entity';
 import {LogManager} from 'core/log';
 import {EventManager, StepEvent} from 'core/event';
@@ -89,16 +90,19 @@ export class WorldManager extends LoadingManager<Entity>
     this.registerAssetType(Explosion);
     this.registerAssetType(Ray);
     this.registerAssetType(Projectile);
-    this.registerAssetType(Text);
     this.registerAssetType(Tank);
-    this.registerAssetType(TimedText);
     this.registerAssetType(Enemy);
-    this.registerAssetType(Bar);
-    this.registerAssetType(Echo);
     this.registerAssetType(HomingProjectile);
     this.registerAssetType(ShatterProjectile);
     this.registerAssetType(Feed);
+
+    // Effect entities
+    this.registerAssetType(Text);
+    this.registerAssetType(TimedText);
+    this.registerAssetType(Bar);
+    this.registerAssetType(Echo);
     this.registerAssetType(Trail);
+    this.registerAssetType(Follow);
 
     await this.loadAssetTemplates('templates/entities');
   }

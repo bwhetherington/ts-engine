@@ -20,11 +20,11 @@ const SCOREBOARD_COLUMNS = [
     field: 'xp',
     width: '50px',
   },
-  // {
-  //   label: 'Ping',
-  //   field: 'ping',
-  //   width: '50px',
-  // },
+  {
+    label: 'Ping',
+    field: 'ping',
+    width: '50px',
+  },
 ];
 
 export class Scoreboard extends Component<{}, {}> {

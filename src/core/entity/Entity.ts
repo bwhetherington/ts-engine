@@ -5,10 +5,12 @@ import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
 import {isCollisionLayer, shuntOutOf} from './util';
 import {EventManager, Observer} from 'core/event';
-import {UUID, UUIDManager} from 'core/uuid';
+import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {AsyncIterator} from 'core/iterator';
 import {DataBuffer, DataSerializable} from 'core/buf';
 import {GraphicsPipeline} from 'core/graphics/pipe';
+import { clamp } from 'core/util';
+import { NetworkManager } from 'core/net';
 
 export class Entity extends Observer
   implements Bounded, DataSerializable, Serializable, Renderable {
@@ -35,6 +37,10 @@ export class Entity extends Observer
   public doSync: boolean = true;
   public isSpatial: boolean = false;
   public isInitialized: boolean = false;
+  public attachedTo?: Entity;
+
+  private isExternal: boolean = false;
+  private smoothTarget: Vector = new Vector();
 
   constructor() {
     super();
@@ -98,14 +104,35 @@ export class Entity extends Observer
     }
   }
 
+  public attachTo(entity: Entity): void {
+    this.attachedTo = entity;
+  }
+
   private updatePosition(dt: number): void {
     if (this.isAlive()) {
-      this.addPosition(this.velocity, dt);
+      if (this.attachedTo?.isAlive()) {
+        this.setPosition(this.attachedTo.position);
+      } else {
+        this.addPosition(this.velocity, dt);
+      }
+    }
+
+    if (this.shouldSmooth()) {
+      // Move closer to parent entity
+      if (this.position.distanceToXYSquared(this.smoothTarget.x, this.smoothTarget.y) <= 1) {
+        this.setPosition(this.smoothTarget);
+        return;
+      }
+
+      this.vectorBuffer.set(this.smoothTarget);
+      this.vectorBuffer.add(this.position, -1);
+      const increment = clamp(10 * dt, 0, 1);
+      this.addPosition(this.vectorBuffer, increment);
+      return;
     }
 
     if (this.isCollidable) {
       // Query for entities that may collide with this entity
-      let collided = false;
       WorldManager.query(this.boundingBox)
         .filter((candidate) => candidate.isCollidable && candidate !== this)
         .forEach((candidate) => {
@@ -171,6 +198,8 @@ export class Entity extends Observer
       boundingBox: this.boundingBox.serialize(),
       position: this.position.serialize(),
       velocity: this.velocity.serialize(),
+      attachedTo: this.attachedTo?.id,
+      shouldSmooth: this.shouldSmooth,
     };
     return data;
   }
@@ -248,7 +277,11 @@ export class Entity extends Observer
       isCollidable,
       isSpatial,
       doSync,
+      attachedTo,
     } = data;
+    if (setInitialized) {
+      this.isExternal = true;
+    }
     if (typeof id === 'number') {
       this.id = id;
     }
@@ -289,13 +322,26 @@ export class Entity extends Observer
       this.boundingBox.deserialize(boundingBox);
     }
     if (position !== undefined) {
-      this.position.deserialize(position);
+      if (this.shouldSmooth()) {
+        this.smoothTarget.deserialize(position);
+        if (!this.isInitialized) {
+          this.position.deserialize(position);
+        }
+      } else {
+        this.position.deserialize(position);
+      }
     }
     if (velocity !== undefined) {
       this.velocity.deserialize(velocity);
     }
     if (setInitialized) {
       this.isInitialized = true;
+    }
+    if (isUUID(attachedTo)) {
+      const parent = WorldManager.getEntity(attachedTo);
+      if (parent) {
+        this.attachedTo = parent;
+      }
     }
   }
 
@@ -323,7 +369,9 @@ export class Entity extends Observer
       .filter(({collider}) => collider.id === this.id);
   }
 
-  public afterStep(): void {}
+  public afterStep(): void {
+    
+  }
 
   public load(): void {}
 
@@ -339,5 +387,9 @@ export class Entity extends Observer
 
   public shouldDeleteIfOffscreen(): boolean {
     return false;
+  }
+
+  public shouldSmooth(): boolean {
+    return NetworkManager.isClient() && this.isExternal;
   }
 }

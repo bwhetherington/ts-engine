@@ -388,6 +388,7 @@ export class BaseHero extends Tank {
 
   public deserialize(data: Data, setInitialized?: boolean): void {
     const {x: oldX, y: oldY} = this.position;
+    const {x: oldVX, y: oldVY} = this.velocity;
     const {
       angle: oldAngle,
       weaponAngle: oldWeaponAngle,
@@ -421,6 +422,7 @@ export class BaseHero extends Tank {
       this.targetAngle = oldTargetAngle;
 
       this.setPositionXY(oldX, oldY);
+      this.velocity.setXY(oldVX, oldVY);
       NetworkManager.sendEvent<SyncHeroEvent>({
         type: 'SyncHeroEvent',
         data: {
@@ -454,5 +456,9 @@ export class BaseHero extends Tank {
     // Always update the current player's character
     // return this.getPlayer()?.isActivePlayer?.() ?? false;
     return true;
+  }
+
+  public shouldSmooth(): boolean {
+    return NetworkManager.isClient() && !this.getPlayer()?.isActivePlayer();
   }
 }

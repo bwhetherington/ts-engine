@@ -203,7 +203,6 @@ export class Unit extends Entity {
       if (this.label) {
         this.label.position.set(this.position);
         this.label.position.addXY(0, -(this.boundingBox.height + 10));
-        this.label.velocity.set(this.velocity);
         this.label.textColor = this.getNameColor();
         this.label.text = this.getName();
       }

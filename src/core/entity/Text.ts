@@ -39,6 +39,8 @@ export class Text extends Entity {
   public deserialize(data: Data): void {
     super.deserialize(data);
 
+    console.log('deserialize text');
+
     const {text, tag, textColor, textSize} = data;
     if (typeof text === 'string') {
       this.text = text;

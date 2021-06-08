@@ -16,7 +16,6 @@ import process from 'process';
 import {UUID, UUIDManager} from 'core/uuid';
 import {MetricsManager} from 'server/metrics';
 import {Data, SerializeManager} from 'core/serialize';
-import {ServerHTTPClient} from '.';
 
 const log = LogManager.forFile(__filename);
 
@@ -96,8 +95,7 @@ export class Server extends Node {
     connection.on('message', (data) => {
       const {type, utf8Data} = data;
       if (utf8Data && type === 'utf8') {
-        const parsed: Data = SerializeManager.deserialize(utf8Data);
-        this.onMessage(parsed, index);
+        this.receiveRaw(utf8Data, index);
       }
     });
     connection.on('close', () => {
@@ -144,7 +142,7 @@ export class Server extends Node {
       .forEach((socket) => this.initialSync(socket));
   }
 
-  private sendRaw(data: string, socket: Socket) {
+  protected sendRaw(data: string, socket: Socket) {
     const connection = this.connections[socket];
     connection?.sendUTF(data);
   }
@@ -216,6 +214,11 @@ export class Server extends Node {
 
   public isClient(): boolean {
     return false;
+  }
+
+  protected receiveRaw(data: string, socket: Socket): void {
+    const parsed: Data = SerializeManager.deserialize(data);
+    this.onMessage(parsed, socket);
   }
 
   public onMessage(message: Message, socket: Socket): void {
