@@ -1,5 +1,5 @@
 import {Rectangle, Vector, Bounded} from 'core/geometry';
-import {Entity} from 'core/entity';
+import {Entity, Follow, WorldManager} from 'core/entity';
 import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
@@ -9,7 +9,7 @@ const TARGET_HEIGHT = 700;
 export class CameraManager implements Bounded {
   public boundingBox: Rectangle;
   public scale: number = 1;
-  private targetEntity?: Entity;
+  private followEntity?: Follow;
 
   constructor() {
     this.boundingBox = new Rectangle(400, 300);
@@ -17,6 +17,10 @@ export class CameraManager implements Bounded {
 
   public initialize() {
     log.debug('CameraManager initialized');
+    this.followEntity = WorldManager.spawn(Follow);
+    if (this.followEntity) {
+      this.followEntity.isPersistent = true;
+    }
   }
 
   public isInFrame(bounded: Bounded): boolean {
@@ -43,18 +47,17 @@ export class CameraManager implements Bounded {
   }
 
   public update() {
-    if (this.targetEntity) {
-      const {centerX, centerY} = this.targetEntity.boundingBox;
-      this.setTargetXY(centerX, centerY);
+    if (this.followEntity) {
+      this.setTarget(this.followEntity.position);
     }
   }
 
   public follow(entity: Entity): void {
-    this.targetEntity = entity;
+    this.followEntity?.follow(entity, 10);
   }
 
   public unfollow(): void {
-    delete this.targetEntity;
+    this.followEntity?.unfollow();
   }
 
   public toWorldSpace(x: number, y: number): Vector {

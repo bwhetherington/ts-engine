@@ -1,6 +1,6 @@
 import {Message, Socket} from 'core/net';
-import { RNGManager } from 'core/random';
-import { Server } from "./Server";
+import {RNGManager} from 'core/random';
+import {Server} from './Server';
 
 export class DelayServer extends Server {
   private delays: Record<Socket, number> = {};
@@ -37,5 +37,4 @@ export class DelayServer extends Server {
   protected receiveRaw(data: string, socket: Socket): void {
     this.delayAction(socket, () => super.receiveRaw(data, socket));
   }
-
 }

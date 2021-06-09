@@ -10,6 +10,7 @@ import {BasicAuth} from 'core/net/http';
 import {randomColor} from 'core/graphics/color';
 import {PlayerChatManager} from './chat';
 import {TextColor} from 'core/chat';
+import {CameraManager} from 'core/graphics';
 
 const log = LogManager.forFile(__filename);
 
@@ -118,15 +119,12 @@ export class Player extends Observer implements Serializable {
     // Delete existing hero if present
     this.hero?.markForDelete();
 
-    const hero = WorldManager.spawnEntity(
-      this.account.className ?? 'Hero'
-    ) as BaseHero;
+    const hero = WorldManager.spawnEntity('Hero') as BaseHero;
     hero.setPosition(WorldManager.getRandomPosition());
     hero.setPlayer(this);
     this.setHero(hero);
     const color = randomColor();
     hero.setColor(color);
-    // hero.setExperience(this.account.xp);
     hero.setLife(hero.getMaxLife());
     return hero;
   }
@@ -187,7 +185,8 @@ export class Player extends Observer implements Serializable {
   }
 
   public setClass(type: string): boolean {
-    const newHero = WorldManager.spawnEntity(type);
+    const position = this.hero?.position;
+    const newHero = WorldManager.spawnEntity(type, position);
     if (newHero instanceof BaseHero) {
       if (this.hero) {
         newHero.setPosition(this.hero.position);

@@ -17,7 +17,7 @@ import {OfferComponent} from 'client/components/upgrade/Offer';
 import {BlueButton} from '../common';
 import {PlayerManager} from 'core/player';
 import {KillEvent} from 'core/entity';
-import { Key, KeyAction, KeyEvent } from 'core/input';
+import {Key, KeyAction, KeyEvent} from 'core/input';
 
 interface ContainerState {
   offers: Offer[];
@@ -52,7 +52,9 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
 
     // Open the upgrade menu when pressing space
     this.streamEvents<KeyEvent>('KeyEvent')
-      .filter(({data}) => data.key === Key.Space && data.action === KeyAction.KeyDown)
+      .filter(
+        ({data}) => data.key === Key.Space && data.action === KeyAction.KeyDown
+      )
       .filter(() => this.state.offers.length > 0)
       .forEach(() => {
         this.toggleSelection();

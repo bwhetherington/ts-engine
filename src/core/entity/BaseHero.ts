@@ -5,6 +5,7 @@ import {
   KillEvent,
   Unit,
   TimedText,
+  Entity,
 } from 'core/entity';
 import {
   KeyEvent,
@@ -28,6 +29,7 @@ import {UUID} from 'core/uuid';
 import {HeroModifier} from 'core/upgrade/modifier';
 import {Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
 import {Iterator} from 'core/iterator';
+import {Follow} from './Follow';
 
 const log = LogManager.forFile(__filename);
 
@@ -56,6 +58,7 @@ export class BaseHero extends Tank {
 
   private xp: number = 0;
   private level: number = 1;
+  private cameraTarget?: Entity;
   public modifiers: HeroModifier = new HeroModifier();
 
   public constructor() {
@@ -280,10 +283,17 @@ export class BaseHero extends Tank {
   }
 
   public setPlayer(player: UUID | Player): void {
+    const oldPlayer = this.player;
+    let newPlayer;
     if (typeof player === 'number') {
-      this.player = PlayerManager.getPlayer(player);
+      newPlayer = PlayerManager.getPlayer(player);
     } else {
-      this.player = player;
+      newPlayer = player;
+    }
+
+    if (newPlayer !== oldPlayer) {
+      this.player = newPlayer;
+      CameraManager.follow(this);
     }
   }
 
@@ -362,8 +372,8 @@ export class BaseHero extends Tank {
 
     const player = this.getPlayer();
     if (player) {
-      if (player.isActivePlayer()) {
-        const {centerX: x, centerY: y} = this.boundingBox;
+      if (player.isActivePlayer() && this.cameraTarget) {
+        const {x, y} = this.cameraTarget.position;
         CameraManager.setTargetXY(x, y);
       }
 

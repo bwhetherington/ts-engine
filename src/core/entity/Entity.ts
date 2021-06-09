@@ -9,8 +9,8 @@ import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {AsyncIterator} from 'core/iterator';
 import {DataBuffer, DataSerializable} from 'core/buf';
 import {GraphicsPipeline} from 'core/graphics/pipe';
-import { clamp } from 'core/util';
-import { NetworkManager } from 'core/net';
+import {clamp} from 'core/util';
+import {NetworkManager} from 'core/net';
 
 export class Entity extends Observer
   implements Bounded, DataSerializable, Serializable, Renderable {
@@ -117,9 +117,17 @@ export class Entity extends Observer
       }
     }
 
-    if (this.shouldSmooth()) {
+    const shouldSmooth = this.shouldSmooth();
+
+    if (shouldSmooth) {
       // Move closer to parent entity
-      if (this.position.distanceToXYSquared(this.smoothTarget.x, this.smoothTarget.y) <= 1) {
+      const snapDistance = 0.25 ** 2;
+      if (
+        this.position.distanceToXYSquared(
+          this.smoothTarget.x,
+          this.smoothTarget.y
+        ) <= snapDistance
+      ) {
         this.setPosition(this.smoothTarget);
         return;
       }
@@ -128,7 +136,6 @@ export class Entity extends Observer
       this.vectorBuffer.add(this.position, -1);
       const increment = clamp(10 * dt, 0, 1);
       this.addPosition(this.vectorBuffer, increment);
-      return;
     }
 
     if (this.isCollidable) {
@@ -147,28 +154,29 @@ export class Entity extends Observer
 
           this.collide(candidate);
 
-          const event = {
+          EventManager.emit<CollisionEvent>({
             type: 'CollisionEvent',
-            data: <CollisionEvent>{
+            data: {
               collider: this,
               collided: candidate,
             },
-          };
-          EventManager.emit(event);
+          });
         });
     }
 
     // Apply friction
-    const normal = this.getTotalFriction();
-    if (normal > 0) {
-      const oldAngle = this.velocity.angle;
-      this.vectorBuffer.set(this.velocity);
-      this.vectorBuffer.normalize();
-      const scale = -dt * normal;
-      this.velocity.add(this.vectorBuffer, scale);
-      const newAngle = this.velocity.angle;
-      if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
-        this.velocity.setXY(0, 0);
+    if (!shouldSmooth) {
+      const normal = this.getTotalFriction();
+      if (normal > 0) {
+        const oldAngle = this.velocity.angle;
+        this.vectorBuffer.set(this.velocity);
+        this.vectorBuffer.normalize();
+        const scale = -dt * normal;
+        this.velocity.add(this.vectorBuffer, scale);
+        const newAngle = this.velocity.angle;
+        if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
+          this.velocity.setXY(0, 0);
+        }
       }
     }
   }
@@ -369,9 +377,7 @@ export class Entity extends Observer
       .filter(({collider}) => collider.id === this.id);
   }
 
-  public afterStep(): void {
-    
-  }
+  public afterStep(): void {}
 
   public load(): void {}
 

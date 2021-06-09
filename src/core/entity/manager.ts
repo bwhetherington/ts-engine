@@ -446,7 +446,7 @@ export class WorldManager extends LoadingManager<Entity>
       return undefined;
     }
     if (position) {
-      entity.position.set(position);
+      entity.setPosition(position);
     }
     this.add(entity);
     return entity;
