@@ -293,7 +293,9 @@ export class BaseHero extends Tank {
 
     if (newPlayer !== oldPlayer) {
       this.player = newPlayer;
-      CameraManager.follow(this);
+      if (this.player?.isActivePlayer()) {
+        CameraManager.follow(this);
+      }
     }
   }
 
