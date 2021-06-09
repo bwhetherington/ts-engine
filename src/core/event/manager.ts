@@ -28,6 +28,7 @@ export class EventManager {
   private handlers: Record<string, GameHandlers> = {};
   private events: Queue<GameEvent> = new Queue();
   private listenerCount: number = 0;
+  public lastStepDt: number = 0;
   public timeElapsed: number = 0;
   public stepCount: number = 0;
 
@@ -129,6 +130,7 @@ export class EventManager {
   }
 
   public async step(dt: number): Promise<void> {
+    this.lastStepDt = dt;
     this.emit<StepEvent>({
       type: 'StepEvent',
       data: {dt},

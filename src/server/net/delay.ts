@@ -16,7 +16,8 @@ export class DelayServer extends Server {
   }
 
   private getDelay(socket: Socket): number {
-    return (this.delays[socket] ?? 0) * 1000;
+    return RNGManager.nextFloat(0.025, 0.075) * 1000;
+    // return (this.delays[socket] ?? 0) * 1000;
   }
 
   private delayAction(socket: Socket, then: () => void): void {

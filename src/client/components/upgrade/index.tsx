@@ -41,7 +41,6 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
 
     // Remove all offers when player's hero is killed
     this.streamEvents<KillEvent>('KillEvent')
-      .use(console.log)
       .filter(
         (event) =>
           event.data.targetID === PlayerManager.getActivePlayer()?.hero?.id

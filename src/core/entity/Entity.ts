@@ -11,6 +11,7 @@ import {DataBuffer, DataSerializable} from 'core/buf';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {clamp} from 'core/util';
 import {NetworkManager} from 'core/net';
+import { PlayerManager } from 'core/player';
 
 export class Entity extends Observer
   implements Bounded, DataSerializable, Serializable, Renderable {
@@ -329,18 +330,27 @@ export class Entity extends Observer
     if (boundingBox !== undefined) {
       this.boundingBox.deserialize(boundingBox);
     }
-    if (position !== undefined) {
-      if (this.shouldSmooth()) {
-        this.smoothTarget.deserialize(position);
-        if (!this.isInitialized) {
-          this.position.deserialize(position);
-        }
-      } else {
-        this.position.deserialize(position);
-      }
-    }
     if (velocity !== undefined) {
       this.velocity.deserialize(velocity);
+    }
+    if (position !== undefined) {
+      // Extrapolate predicted position from velocity
+      this.vectorBuffer.set(this.position);
+      this.vectorBuffer.deserialize(position);
+      // let ping = PlayerManager.getActivePlayer()?.ping;
+      // if (ping) {
+      //   ping = clamp(ping, 0, 0.1);
+      //   this.vectorBuffer.add(this.velocity, ping);
+      // }
+
+      if (this.shouldSmooth()) {
+        this.smoothTarget.set(this.vectorBuffer);
+        if (!this.isInitialized) {
+          this.position.set(position);
+        }
+      } else {
+        this.position.set(position);
+      }
     }
     if (setInitialized) {
       this.isInitialized = true;

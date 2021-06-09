@@ -406,14 +406,6 @@ export class BaseHero extends Tank {
     } = this;
     const {playerID, xp, modifiers} = data;
 
-    if (playerID !== undefined) {
-      this.setPlayer(playerID);
-      const player = this.getPlayer();
-      if (player && player.hero !== this) {
-        player.setHero(this);
-      }
-    }
-
     if (modifiers) {
       this.modifiers.deserialize(modifiers);
     }
@@ -424,6 +416,14 @@ export class BaseHero extends Tank {
 
     const wasInitialized = this.isInitialized;
     super.deserialize(data, setInitialized);
+
+    if (playerID !== undefined) {
+      this.setPlayer(playerID);
+      const player = this.getPlayer();
+      if (player && player.hero !== this) {
+        player.setHero(this);
+      }
+    }
 
     if (this.getPlayer()?.isActivePlayer?.() && wasInitialized) {
       // Use our angle
