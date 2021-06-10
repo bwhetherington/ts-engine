@@ -59,7 +59,6 @@ export class BaseHero extends Tank {
   private xp: number = 0;
   private level: number = 1;
   private cameraTarget?: Entity;
-  public modifiers: HeroModifier = new HeroModifier();
 
   public constructor() {
     super();
@@ -394,7 +393,6 @@ export class BaseHero extends Tank {
       ...super.serialize(),
       playerID: this.player?.id,
       xp: this.xp,
-      modifiers: this.modifiers.serialize(),
     };
   }
 
@@ -407,10 +405,6 @@ export class BaseHero extends Tank {
       targetAngle: oldTargetAngle,
     } = this;
     const {playerID, xp, modifiers} = data;
-
-    if (modifiers) {
-      this.modifiers.deserialize(modifiers);
-    }
 
     if (typeof xp === 'number') {
       this.setExperience(xp);
@@ -458,10 +452,6 @@ export class BaseHero extends Tank {
 
   protected calculateDamageOut(amount: number): number {
     return amount;
-  }
-
-  public fire(angle: number): void {
-    this.weapon?.fireInternal(this, angle, this.modifiers);
   }
 
   public shouldUpdateLocally(): boolean {

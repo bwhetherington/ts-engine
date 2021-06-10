@@ -9,6 +9,7 @@ import {GraphicsPipeline} from 'core/graphics/pipe';
 import {Iterator} from 'core/iterator';
 import {EventManager} from 'core/event';
 import {clamp} from 'core/util';
+import { HeroModifier } from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -56,6 +57,7 @@ export class Tank extends Unit {
   public targetAngle: number = 0;
   public weaponAngle: number = 0;
   public turnSpeed: number = Math.PI * 1000;
+  public modifiers: HeroModifier = new HeroModifier();
 
   private thrustTime: number = 0;
 
@@ -268,13 +270,19 @@ export class Tank extends Unit {
       targetAngle: this.targetAngle,
       weaponAngle: this.weaponAngle,
       weapon: this.weapon?.serialize(),
+      modifiers: this.modifiers.serialize(),
     };
   }
 
   public deserialize(data: Data, setInitialized?: boolean): void {
     const {angle: oldAngle} = this;
     super.deserialize(data, setInitialized);
-    const {cannons, bodyShape, weapon, weaponAngle, targetAngle} = data;
+    const {cannons, bodyShape, weapon, weaponAngle, targetAngle, modifiers} = data;
+
+    if (modifiers) {
+      this.modifiers.deserialize(modifiers);
+    }
+
     if (cannons instanceof Array) {
       Iterator.array(cannons)
         .filter((obj) => !!obj?.shape)
@@ -352,7 +360,7 @@ export class Tank extends Unit {
   }
 
   public fire(angle: number): void {
-    this.weapon?.fireInternal(this, angle);
+    this.weapon?.fireInternal(this, angle, this.modifiers);
   }
 
   public setWeapon(weapon?: Weapon | string): void {
