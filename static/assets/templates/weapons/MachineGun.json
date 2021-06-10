@@ -1,10 +1,9 @@
 {
   "type": "MachineGun",
-  "extends": "BaseGun",
+  "extends": "BaseBarrageGun",
   "projectileType": "Projectile",
   "projectileSpread": 0.2,
   "projectileSpeed": 750,
   "damage": 3,
-  "rate": 0.175,
   "projectileShape": "circle"
 }

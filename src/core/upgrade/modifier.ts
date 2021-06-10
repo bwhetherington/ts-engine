@@ -14,6 +14,7 @@ const MODIFIER_KEYS = [
   'rate',
   'shotCount',
   'shotSpread',
+  'burstCount',
   'projectileSpeed',
   'projectileDuration',
   'projectileSpread',

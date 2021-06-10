@@ -32,7 +32,7 @@ import {ChatLogPlugin} from 'server/plugin/chatLog';
 import {GamePlugin} from 'server/plugin/game';
 import {UpgradeManager} from 'core/upgrade';
 import {UpgradePlugin} from './plugin/upgrade';
-import { DelayServer } from './net/delay';
+import {DelayServer} from './net/delay';
 
 const log = LogManager.forFile(__filename);
 

@@ -22,7 +22,6 @@ export class BaseGun extends Weapon {
 
   public constructor() {
     super();
-    this.type = BaseGun.typeName;
     this.rate = 0.35;
     this.damage = 5;
   }

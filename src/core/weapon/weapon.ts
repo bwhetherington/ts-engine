@@ -49,7 +49,8 @@ export abstract class Weapon implements Serializable {
     shotSpread: number,
     modifier?: HeroModifier
   ): Promise<void> {
-    for (let i = 0; i < this.burstCount; i++) {
+    const burstCount = this.getBurstCount(modifier);
+    for (let i = 0; i < burstCount; i++) {
       // Spread shots out
       const deltaAngle = shotSpread / shotCount;
       const baseAngleOffset = (deltaAngle * (shotCount - 1)) / 2;
@@ -76,24 +77,43 @@ export abstract class Weapon implements Serializable {
     }
   }
 
+  protected getRate(modifier?: HeroModifier): number {
+    if (!modifier) {
+      return this.rate;
+    }
+    return modifier.get('rate').multiplyPoint(this.rate);
+  }
+
+  protected getShotCount(modifier?: HeroModifier): number {
+    if (!modifier) {
+      return this.shotCount;
+    }
+    return modifier.get('shotCount').multiplyPoint(this.shotCount);
+  }
+
+  protected getShotSpread(modifier?: HeroModifier): number {
+    if (!modifier) {
+      return this.shotSpread;
+    }
+    return modifier.get('shotSpread').multiplyPoint(this.shotSpread);
+  }
+
+  protected getBurstCount(modifier?: HeroModifier): number {
+    if (!modifier) {
+      return this.burstCount;
+    }
+    return modifier.get('burstCount').multiplyPoint(this.burstCount);
+  }
+
   public async fireInternal(
     source: Tank,
     angle: number,
     modifier?: HeroModifier
   ): Promise<void> {
     while (this.cooldown <= 0) {
-      let rate = this.rate;
-      let shotCount = this.shotCount;
-      let shotSpread = this.shotSpread;
-      if (modifier) {
-        shotCount = Math.round(
-          modifier.get('shotCount').multiplyPoint(shotCount)
-        );
-        shotSpread = modifier.get('shotSpread').multiplyPoint(shotSpread);
-      }
-      if (modifier) {
-        rate = modifier.get('rate').multiplyPoint(rate);
-      }
+      const rate = this.getRate(modifier);
+      const shotCount = this.getShotCount(modifier);
+      const shotSpread = this.getShotSpread(modifier);
 
       this.cooldown += rate;
       this.burstFire(source, angle, shotCount, shotSpread, modifier);

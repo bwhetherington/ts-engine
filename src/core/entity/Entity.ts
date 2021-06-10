@@ -11,7 +11,7 @@ import {DataBuffer, DataSerializable} from 'core/buf';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {clamp} from 'core/util';
 import {NetworkManager} from 'core/net';
-import { PlayerManager } from 'core/player';
+import {PlayerManager} from 'core/player';
 
 export class Entity extends Observer
   implements Bounded, DataSerializable, Serializable, Renderable {

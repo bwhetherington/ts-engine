@@ -30,7 +30,6 @@ export class BaseRaygun extends Weapon {
 
   public constructor() {
     super();
-    this.type = BaseRaygun.typeName;
     this.rate = 0.25;
     this.damage = 5;
   }

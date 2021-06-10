@@ -30,7 +30,7 @@ import {
   Follow,
 } from 'core/entity';
 import {LogManager} from 'core/log';
-import {EventManager, StepEvent} from 'core/event';
+import {EventManager, Priority, StepEvent} from 'core/event';
 import {Serializable, Data} from 'core/serialize';
 import {Iterator, iterator} from 'core/iterator';
 import {diff} from 'core/util';
@@ -140,9 +140,10 @@ export class WorldManager extends LoadingManager<Entity>
         });
     }
 
-    EventManager.streamEvents<StepEvent>('StepEvent').forEach(({data: {dt}}) =>
-      this.step(dt)
-    );
+    EventManager.streamEvents<StepEvent>(
+      'StepEvent',
+      Priority.High
+    ).forEach(({data: {dt}}) => this.step(dt));
   }
 
   public render(ctx: GraphicsContext): void {

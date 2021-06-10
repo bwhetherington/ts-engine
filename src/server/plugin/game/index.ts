@@ -103,7 +103,10 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     // this.streamEvents<KillEvent>('KillEvent')
 
     // Respawn players
-    this.streamEvents<KillEvent>('KillEvent')
+    this.takeDuringState(
+      GameState.Running,
+      this.streamEvents<KillEvent>('KillEvent')
+    )
       .filterMap((event) => {
         return PlayerManager.getPlayers()
           .map((player) => {

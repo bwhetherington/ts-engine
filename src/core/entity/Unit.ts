@@ -327,14 +327,14 @@ export class Unit extends Entity {
   }
 
   public collide(other?: Entity): void {
-    if (
-      other &&
-      other.collisionLayer === CollisionLayer.Unit
-    ) {
+    if (other && other.collisionLayer === CollisionLayer.Unit) {
       this.vectorBuffer.set(other.position);
       this.vectorBuffer.add(this.position, -1);
       this.vectorBuffer.normalize();
-      other.applyForce(this.vectorBuffer, this.mass * 300 * EventManager.lastStepDt);
+      other.applyForce(
+        this.vectorBuffer,
+        this.mass * 300 * EventManager.lastStepDt
+      );
     }
   }
 }
