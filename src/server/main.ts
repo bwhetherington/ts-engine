@@ -89,7 +89,7 @@ async function main(): Promise<void> {
   const timer = new Timer(async (dt) => {
     await EventManager.step(dt);
     sync();
-  }, 1 / 30);
+  }, 1 / 60);
   TimerManager.initialize(timer);
 
   async function cleanup(): Promise<never> {

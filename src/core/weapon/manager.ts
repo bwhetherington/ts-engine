@@ -1,4 +1,10 @@
-import {Weapon, BaseGun, BaseRaygun, BaseHomingGun, BaseBarrageGun} from 'core/weapon';
+import {
+  Weapon,
+  BaseGun,
+  BaseRaygun,
+  BaseHomingGun,
+  BaseBarrageGun,
+} from 'core/weapon';
 import {LogManager} from 'core/log';
 import {LoadingManager} from 'core/assets';
 

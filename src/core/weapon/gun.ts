@@ -55,8 +55,7 @@ export class BaseGun extends Weapon {
     projectile.damage = this.rollDamage(modifier);
     projectile.pierce = pierce;
     projectile.velocity.setXY(1, 0);
-    const offset = RNGManager.nextFloat(-0.5, 0.5) * projectileSpread;
-    projectile.velocity.angle = angle + offset;
+    projectile.velocity.angle = angle;
     projectile.angle = projectile.velocity.angle;
     projectile.velocity.magnitude = projectileSpeed;
     projectile.shape = this.projectileShape;

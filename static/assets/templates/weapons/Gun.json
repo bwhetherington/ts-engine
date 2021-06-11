@@ -2,7 +2,7 @@
   "type": "Gun",
   "extends": "BaseGun",
   "projectileType": "Projectile",
-  "projectileSpread": 0.1,
+  "shotInaccuracy": 0.1,
   "projectileSpeed": 750,
   "pierce": 1,
   "damage": 5,

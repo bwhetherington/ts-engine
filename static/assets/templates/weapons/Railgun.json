@@ -2,7 +2,7 @@
   "type": "Railgun",
   "extends": "BaseGun",
   "projectileType": "ShatterProjectile",
-  "projectileSpread": 0.05,
+  "shotInaccuracy": 0.05,
   "projectileSpeed": 1500,
   "pierce": 1,
   "damage": 5,

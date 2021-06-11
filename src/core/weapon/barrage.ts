@@ -1,4 +1,3 @@
-
 import {BaseGun} from 'core/weapon';
 import {HeroModifier} from 'core/upgrade';
 

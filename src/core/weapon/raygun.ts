@@ -24,8 +24,6 @@ const COLOR: Color = {
 
 export class BaseRaygun extends Weapon {
   public static typeName: string = 'BaseRaygun';
-
-  private raySpread: number = 0.05;
   private rayDistance: number = 1000;
 
   public constructor() {
@@ -37,25 +35,19 @@ export class BaseRaygun extends Weapon {
   public serialize(): Data {
     return {
       ...super.serialize(),
-      raySpread: this.raySpread,
       rayDistance: this.rayDistance,
     };
   }
 
   public deserialize(data: Data): void {
     super.deserialize(data);
-    const {raySpread, rayDistance} = data;
-    if (typeof raySpread === 'number') {
-      this.raySpread = raySpread;
-    }
+    const {rayDistance} = data;
     if (typeof rayDistance === 'number') {
       this.rayDistance = rayDistance;
     }
   }
 
   public fire(source: Tank, angle: number, modifier?: HeroModifier): void {
-    angle += RNGManager.nextFloat(-0.5, 0.5) * this.raySpread;
-
     const start = source.getCannonTip();
     const set: Set<Entity> = new Set();
     set.add(source);

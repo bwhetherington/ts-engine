@@ -9,7 +9,7 @@ import {GraphicsPipeline} from 'core/graphics/pipe';
 import {Iterator} from 'core/iterator';
 import {EventManager} from 'core/event';
 import {clamp} from 'core/util';
-import { HeroModifier } from 'core/upgrade';
+import {HeroModifier} from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -277,7 +277,14 @@ export class Tank extends Unit {
   public deserialize(data: Data, setInitialized?: boolean): void {
     const {angle: oldAngle} = this;
     super.deserialize(data, setInitialized);
-    const {cannons, bodyShape, weapon, weaponAngle, targetAngle, modifiers} = data;
+    const {
+      cannons,
+      bodyShape,
+      weapon,
+      weaponAngle,
+      targetAngle,
+      modifiers,
+    } = data;
 
     if (modifiers) {
       this.modifiers.deserialize(modifiers);

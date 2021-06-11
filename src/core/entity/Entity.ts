@@ -208,7 +208,6 @@ export class Entity extends Observer
       position: this.position.serialize(),
       velocity: this.velocity.serialize(),
       attachedTo: this.attachedTo?.id,
-      shouldSmooth: this.shouldSmooth,
     };
     return data;
   }

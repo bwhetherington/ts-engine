@@ -362,54 +362,45 @@ export class WorldManager extends LoadingManager<Entity>
       if (entity.markedForDelete) {
         this.toDelete.push(entity.id);
       }
+      entity.step(dt);
 
-      const shouldProcessEntity = isClient
-        ? entity.shouldUpdateLocally()
-        : true;
-      if (shouldProcessEntity) {
-        entity.step(dt);
+      // Check for collision with bounds
+      if (entity.isCollidable && shouldProcessLocalEntity(entity)) {
+        let dx = 0;
+        let dy = 0;
 
-        // Check for collision with bounds
-        if (entity.isCollidable && shouldProcessLocalEntity(entity)) {
-          let dx = 0;
-          let dy = 0;
-
-          if (entity.boundingBox.x < this.boundingBox.x) {
-            dx += this.boundingBox.x - entity.boundingBox.x;
-          }
-          if (entity.boundingBox.farX > this.boundingBox.farX) {
-            dx += this.boundingBox.farX - entity.boundingBox.farX;
-          }
-          if (entity.boundingBox.y < this.boundingBox.y) {
-            dy += this.boundingBox.y - entity.boundingBox.y;
-          }
-          if (entity.boundingBox.farY > this.boundingBox.farY) {
-            dy += this.boundingBox.farY - entity.boundingBox.farY;
-          }
-
-          let didCollide = false;
-          if (dx !== 0) {
-            entity.velocity.x *= -entity.bounce;
-            didCollide = true;
-          }
-          if (dy !== 0) {
-            entity.velocity.y *= -entity.bounce;
-            didCollide = true;
-          }
-
-          if (didCollide) {
-            entity.collide();
-            EventManager.emit<CollisionEvent>({
-              type: 'CollisionEvent',
-              data: {collider: entity},
-            });
-          }
-
-          entity.addPositionXY(dx, dy);
+        if (entity.boundingBox.x < this.boundingBox.x) {
+          dx += this.boundingBox.x - entity.boundingBox.x;
         }
-      } else if (isClient && entity.shouldDeleteIfOffscreen()) {
-        entity.markForDelete();
-        this.toDelete.push(entity.id);
+        if (entity.boundingBox.farX > this.boundingBox.farX) {
+          dx += this.boundingBox.farX - entity.boundingBox.farX;
+        }
+        if (entity.boundingBox.y < this.boundingBox.y) {
+          dy += this.boundingBox.y - entity.boundingBox.y;
+        }
+        if (entity.boundingBox.farY > this.boundingBox.farY) {
+          dy += this.boundingBox.farY - entity.boundingBox.farY;
+        }
+
+        let didCollide = false;
+        if (dx !== 0) {
+          entity.velocity.x *= -entity.bounce;
+          didCollide = true;
+        }
+        if (dy !== 0) {
+          entity.velocity.y *= -entity.bounce;
+          didCollide = true;
+        }
+
+        if (didCollide) {
+          entity.collide();
+          EventManager.emit<CollisionEvent>({
+            type: 'CollisionEvent',
+            data: {collider: entity},
+          });
+        }
+
+        entity.addPositionXY(dx, dy);
       }
     });
 
@@ -418,21 +409,16 @@ export class WorldManager extends LoadingManager<Entity>
     this.collisionLayers = [[], [], [], [], [], []];
 
     this.getEntities().forEach((entity) => {
-      const shouldProcessEntity = isClient
-        ? entity.shouldUpdateLocally()
-        : true;
-      if (shouldProcessEntity) {
-        entity.afterStep();
-        if (
-          entity.isCollidable &&
-          entity.isSpatial &&
-          shouldProcessLocalEntity(entity)
-        ) {
-          this.space.insert(entity);
-        }
-        const layerIndex = entity.collisionLayer;
-        this.collisionLayers[layerIndex]?.push(entity);
+      entity.afterStep();
+      if (
+        entity.isCollidable &&
+        entity.isSpatial &&
+        shouldProcessLocalEntity(entity)
+      ) {
+        this.space.insert(entity);
       }
+      const layerIndex = entity.collisionLayer;
+      this.collisionLayers[layerIndex]?.push(entity);
     });
 
     this.populateGraph();

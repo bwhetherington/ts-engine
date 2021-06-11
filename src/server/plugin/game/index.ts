@@ -160,7 +160,11 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     ChatManager.info('Stopping the game');
 
     WorldManager.getEntities()
-      .filterMap((entity) => ((entity instanceof Unit || entity instanceof Projectile) ? entity : undefined))
+      .filterMap((entity) =>
+        entity instanceof Unit || entity instanceof Projectile
+          ? entity
+          : undefined
+      )
       .forEach((entity) => entity.markForDelete());
 
     PlayerManager.getPlayers().forEach((player) => player.reset());

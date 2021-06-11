@@ -23,6 +23,7 @@ type AssetInitializer<T extends Asset> = () => T;
 
 export class LoadingManager<T extends Asset> {
   private initializers: Record<string, AssetInitializer<T>> = {};
+  private usedTypeInitializers: Set<() => void> = new Set();
   private name: string;
 
   constructor(name: string) {
@@ -31,7 +32,11 @@ export class LoadingManager<T extends Asset> {
 
   public registerAssetType(Type: AssetType<T>): void {
     this.registerAssetInitializer(Type.typeName, () => new Type());
-    Type.initializeType?.();
+    const typeInitializer = Type.initializeType?.bind(Type);
+
+    if (typeInitializer && !this.usedTypeInitializers.has(typeInitializer)) {
+      typeInitializer();
+    }
   }
 
   public registerAssetTemplate(template: AssetTemplate): void {

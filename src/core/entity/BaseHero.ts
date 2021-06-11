@@ -160,6 +160,15 @@ export class BaseHero extends Tank {
     }
   }
 
+  public static initializeType(): void {
+    EventManager.streamEvents<SyncHeroEvent>('SyncHeroEvent')
+      // .debounce(1 / 30)
+      .forEach((event) => {
+        // console.log('sync hero event');
+        NetworkManager.sendEvent(event);
+      });
+  }
+
   public applyUpgrade(upgrade: Upgrade, isNew: boolean = true): void {
     upgrade.applyTo(this);
     this.upgrades.push(upgrade.type);
@@ -429,7 +438,7 @@ export class BaseHero extends Tank {
 
       this.setPositionXY(oldX, oldY);
       this.velocity.setXY(oldVX, oldVY);
-      NetworkManager.sendEvent<SyncHeroEvent>({
+      EventManager.emit<SyncHeroEvent>({
         type: 'SyncHeroEvent',
         data: {
           hero: this.serialize(),
@@ -462,5 +471,19 @@ export class BaseHero extends Tank {
 
   public shouldSmooth(): boolean {
     return NetworkManager.isClient() && !this.getPlayer()?.isActivePlayer();
+  }
+
+  public cleanup(): void {
+    if (this.getPlayer()?.isActivePlayer()) {
+      EventManager.emit({
+        type: 'BarUpdateEvent',
+        data: <BarUpdateEvent>{
+          id: 'life-bar',
+          value: 0,
+          maxValue: this.getMaxLife(),
+        },
+      });
+    }
+    super.cleanup();
   }
 }

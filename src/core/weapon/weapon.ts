@@ -12,6 +12,7 @@ export abstract class Weapon implements Serializable {
 
   public type: string = Weapon.typeName;
   public rate: number = 1;
+  public shotInaccuracy: number = 0.05;
   public shotCount: number = 1;
   public shotSpread: number = Math.PI / 6;
   public damage: number = 0;
@@ -56,9 +57,10 @@ export abstract class Weapon implements Serializable {
       const baseAngleOffset = (deltaAngle * (shotCount - 1)) / 2;
       for (let i = 0; i < shotCount; i++) {
         const angleOffset = i * deltaAngle - baseAngleOffset;
+        const shotOffset = this.shotInaccuracy * RNGManager.nextFloat(-0.5, 0.5);
         this.fire(
           source,
-          angle + angleOffset + source.getCannonAngle(),
+          angle + angleOffset + shotOffset + source.getCannonAngle(),
           modifier
         );
       }
@@ -128,6 +130,7 @@ export abstract class Weapon implements Serializable {
       rate: this.rate,
       cooldown: this.cooldown,
       damage: this.damage,
+      shotInaccuracy: this.shotInaccuracy,
       shotCount: this.shotCount,
       shotSpread: this.shotSpread,
       pierce: this.pierce,
@@ -142,6 +145,7 @@ export abstract class Weapon implements Serializable {
       rate,
       cooldown,
       damage,
+      shotInaccuracy,
       shotCount,
       shotSpread,
       pierce,
@@ -163,6 +167,10 @@ export abstract class Weapon implements Serializable {
 
     if (typeof damage === 'number') {
       this.damage = damage;
+    }
+
+    if (typeof shotInaccuracy === 'number') {
+      this.shotInaccuracy = shotInaccuracy;
     }
 
     if (typeof shotCount === 'number') {
