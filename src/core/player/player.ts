@@ -190,7 +190,7 @@ export class Player extends Observer implements Serializable {
     if (newHero instanceof BaseHero) {
       if (this.hero) {
         newHero.setPosition(this.hero.position);
-        newHero.setColor(this.hero.getColor());
+        newHero.setColor(this.hero.getBaseColor());
         newHero.setExperience(this.hero.getExperience(), false);
         newHero.setLife(this.hero.getLife());
         newHero.angle = this.hero.angle;

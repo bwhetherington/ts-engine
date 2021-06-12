@@ -451,6 +451,12 @@ export class WorldManager extends LoadingManager<Entity>
     return entity;
   }
 
+  public async setLevel(name: string): Promise<void> {
+    const path = `worlds/${name}.json`;
+    const data = await AssetManager.loadJSON(path);
+    this.loadLevel(data);
+  }
+
   public serialize(): Data {
     const out = <Data>{
       entities: {},

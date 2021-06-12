@@ -61,8 +61,7 @@ async function main(): Promise<void> {
   await WeaponManager.initialize();
   await WorldManager.initialize();
   await UpgradeManager.initialize();
-
-  await loadWorld('arena');
+  // await WorldManager.setLevel('arena');
 
   PlayerManager.initialize();
   FormManager.initialize();

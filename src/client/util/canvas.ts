@@ -329,6 +329,51 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
+  public roundRect(x: number, y: number, w: number, h: number, r: number, color: Color, fullW?: number): void {
+    const ctx = this.curContext;
+    if (!ctx) {
+      return;
+    }
+
+    this.setStyles(ctx, color);
+    ctx.lineWidth = this.options.lineWidth;
+    this.setRound(ctx);
+
+    if (w < 2 * r) {
+      r = w / 2;
+    }
+    if (h < 2 * r) {
+      r = h / 2;
+    }
+
+    const fullWidth = fullW ?? w;
+
+    if (this.options.ignoreScale) {
+      ctx.lineWidth /= this.scaleValue;
+      const newWidth = fullWidth / this.scaleValue;
+      const newHeight = h / this.scaleValue;
+      x += (fullWidth - newWidth) / 2;
+      y += (h - newHeight) / 2;
+      w /= this.scaleValue;
+      h /= this.scaleValue;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y,   x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x,   y+h, r);
+    ctx.arcTo(x,   y+h, x,   y,   r);
+    ctx.arcTo(x,   y,   x+w, y,   r);
+    ctx.closePath();
+
+    if (this.options.doFill) {
+      ctx.fill();
+    }
+    if (this.options.doStroke) {
+      ctx.stroke();
+    }
+  }
+
   public rect(
     x: number,
     y: number,
@@ -340,9 +385,7 @@ export class HDCanvas implements GraphicsContext {
     const ctx = this.curContext;
     if (ctx) {
       this.setStyles(ctx, color);
-
       ctx.lineWidth = this.options.lineWidth;
-
       this.setRound(ctx);
 
       const fullWidth = fullW ?? w;
@@ -358,13 +401,13 @@ export class HDCanvas implements GraphicsContext {
       }
       ctx.beginPath();
       ctx.rect(x, y, w, h);
+      ctx.closePath();
       if (this.options.doFill) {
         ctx.fill();
       }
       if (this.options.doStroke) {
         ctx.stroke();
       }
-      ctx.closePath();
       this.bounds?.insertRawTransformed(x, y, w, h, this.transform);
     }
   }

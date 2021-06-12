@@ -51,6 +51,15 @@ export interface GraphicsContext {
     color: Color,
     fullW?: number
   ): void;
+  roundRect(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    r: number,
+    color: Color,
+    fullW?: number,
+  ): void;
   trapezoid(
     centerX: number,
     centerY: number,

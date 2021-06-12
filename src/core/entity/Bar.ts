@@ -50,11 +50,12 @@ export class Bar extends Entity {
           uniformColor: true,
         })
         .run(ctx, (ctx) => {
-          ctx.rect(
+          ctx.roundRect(
             -this.boundingBox.width / 2,
             -this.boundingBox.height / 2,
             this.boundingBox.width,
             this.boundingBox.height,
+            this.boundingBox.height / 3,
             rgba(0.25, 0.25, 0.25, 0.8)
           );
         });
@@ -64,11 +65,12 @@ export class Bar extends Entity {
           ignoreScale: true,
         })
         .run(ctx, (ctx) => {
-          ctx.rect(
+          ctx.roundRect(
             -this.boundingBox.width / 2,
             -this.boundingBox.height / 2,
             this.boundingBox.width * progress,
             this.boundingBox.height,
+            this.boundingBox.height / 3,
             rgba(0.3, 0.9, 0.3, 0.8),
             this.boundingBox.width
           );

@@ -7,7 +7,7 @@ export async function loadWorldFile(file: string): Promise<void> {
   WorldManager.loadLevel(obj);
 }
 
-export async function loadWorld(worldName: string): Promise<void> {
-  const fileName = path.join('worlds', worldName + '.json');
-  return await loadWorldFile(fileName);
+export function loadWorld(worldName: string): Promise<void> {
+  const fileName = path.join('worlds', `${worldName}.json`);
+  return loadWorldFile(fileName);
 }
