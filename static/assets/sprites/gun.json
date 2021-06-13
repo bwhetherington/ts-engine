@@ -1,0 +1,20 @@
+{
+  "image": "images/gun.png",
+  "frameSize": {
+    "x": 26,
+    "y": 8
+  },
+  "size": {
+    "x": 78,
+    "y": 24
+  },
+  "animations": {
+    "stand": {
+      "frames": [0]
+    },
+    "fire": {
+      "frames": [1, 2]
+    }
+  },
+  "animation": "stand"
+}

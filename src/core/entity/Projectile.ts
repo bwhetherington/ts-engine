@@ -1,5 +1,5 @@
 import {Entity, Trail, Unit, WorldManager} from 'core/entity';
-import {BLACK, GraphicsContext, rgba, WHITE} from 'core/graphics';
+import {BLACK, GraphicsContext, rgba, Sprite, WHITE} from 'core/graphics';
 import {LogManager} from 'core/log';
 import {CollisionLayer} from './util';
 import {Data} from 'core/serialize';
@@ -9,6 +9,7 @@ import {iterator} from 'core/iterator';
 import {Echo, EchoVariant} from './Echo';
 import {EventManager} from 'core/event';
 import {GraphicsPipeline} from 'core/graphics/pipe';
+import { AssetManager } from 'core/assets';
 
 const log = LogManager.forFile(__filename);
 
@@ -51,15 +52,12 @@ export class Projectile extends Entity {
     this.boundingBox.width = 20;
     this.boundingBox.height = 20;
     this.timeCreated = EventManager.timeElapsed;
-
-    if (NetworkManager.isClient()) {
-      const trail = WorldManager.spawn(Trail);
-      trail?.initialize(this);
-    }
+    this.setSprite('sprites/bullet.json');
   }
 
   public step(dt: number): void {
     super.step(dt);
+    this.sprite?.step(dt);
     if (
       NetworkManager.isServer() &&
       EventManager.timeElapsed - this.timeCreated > this.duration
@@ -149,23 +147,24 @@ export class Projectile extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    const {width, height} = this.boundingBox;
-    GraphicsPipeline.pipe().run(ctx, (ctx) => {
-      switch (this.shape) {
-        case 'circle':
-          ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
-          break;
-        case 'triangle':
-          ctx.polygon(
-            [
-              {y: -width * 0.5, x: -width * 0.5},
-              {y: width * 0.5, x: -width * 0.5},
-              {y: 0, x: width * 0.75},
-            ],
-            this.getColor()
-          );
-      }
-    });
+    // const {width, height} = this.boundingBox;
+    // GraphicsPipeline.pipe().run(ctx, (ctx) => {
+    //   switch (this.shape) {
+    //     case 'circle':
+    //       ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
+    //       break;
+    //     case 'triangle':
+    //       ctx.polygon(
+    //         [
+    //           {y: -width * 0.5, x: -width * 0.5},
+    //           {y: width * 0.5, x: -width * 0.5},
+    //           {y: 0, x: width * 0.75},
+    //         ],
+    //         this.getColor()
+    //       );
+    //   }
+    // });
+    this.sprite?.render(ctx);
   }
 
   public serialize(): Data {

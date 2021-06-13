@@ -33,7 +33,12 @@ interface Options {
 
 async function handleFile(fp: string, res: http.ServerResponse): Promise<void> {
   const mimeType = mime.lookup(path.extname(fp)) || 'text/plain';
-  const fileContents = await readFile(fp, 'utf-8');
+  let fileContents;
+  if (mimeType === 'image/png') {
+    fileContents = await readFile(fp, 'base64');
+  } else {
+    fileContents = await readFile(fp, 'utf-8');
+  }
   res.writeHead(200, {'Content-Type': mimeType});
   res.write(fileContents);
   res.end();

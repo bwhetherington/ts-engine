@@ -2,7 +2,7 @@ import {Entity} from 'core/entity';
 import {Rectangle} from 'core/geometry';
 import {CollisionLayer} from './util';
 
-export const WALL_COLOR = {red: 0.85, green: 0.85, blue: 0.85};
+export const WALL_COLOR = {red: 0.25, green: 0.25, blue: 0.25};
 
 export class Geometry extends Entity {
   public static typeName: string = 'Geometry';

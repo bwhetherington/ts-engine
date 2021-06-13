@@ -57,7 +57,8 @@ export abstract class Weapon implements Serializable {
       const baseAngleOffset = (deltaAngle * (shotCount - 1)) / 2;
       for (let i = 0; i < shotCount; i++) {
         const angleOffset = i * deltaAngle - baseAngleOffset;
-        const shotOffset = this.shotInaccuracy * RNGManager.nextFloat(-0.5, 0.5);
+        const shotOffset =
+          this.shotInaccuracy * RNGManager.nextFloat(-0.5, 0.5);
         this.fire(
           source,
           angle + angleOffset + shotOffset + source.getCannonAngle(),

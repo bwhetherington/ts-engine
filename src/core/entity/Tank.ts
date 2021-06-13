@@ -56,7 +56,7 @@ export class Tank extends Unit {
   ];
   public targetAngle: number = 0;
   public weaponAngle: number = 0;
-  public turnSpeed: number = Math.PI * 1000;
+  public turnSpeed: number = Math.PI;
   public modifiers: HeroModifier = new HeroModifier();
 
   private thrustTime: number = 0;
@@ -72,8 +72,9 @@ export class Tank extends Unit {
   public constructor() {
     super();
     this.type = Tank.typeName;
-    this.friction = 500;
+    this.friction = 100;
     this.bounce = 0.3;
+    this.setSprite('sprites/player-ship.json');
 
     this.boundingBox.width = 30;
     this.boundingBox.height = 30;
@@ -252,12 +253,12 @@ export class Tank extends Unit {
       });
   }
 
-  public render(ctx: GraphicsContext): void {
-    GraphicsPipeline.pipe().run(ctx, (ctx) => {
-      this.renderCannon(ctx);
-      this.renderBody(ctx);
-    });
-  }
+  // public render(ctx: GraphicsContext): void {
+  //   // GraphicsPipeline.pipe().run(ctx, (ctx) => {
+  //   //   this.renderCannon(ctx);
+  //   //   this.renderBody(ctx);
+  //   // });
+  // }
 
   public serialize(): Data {
     return {

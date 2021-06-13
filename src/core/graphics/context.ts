@@ -1,7 +1,7 @@
 import {TextComponents} from 'core/chat';
 import {Vector, VectorLike} from 'core/geometry';
 import {Color} from 'core/graphics/color';
-import {GraphicsPipeline} from 'core/graphics/pipe';
+import {GameImage} from 'core/graphics';
 
 export interface TextStyle {
   font?: string;
@@ -58,7 +58,7 @@ export interface GraphicsContext {
     h: number,
     r: number,
     color: Color,
-    fullW?: number,
+    fullW?: number
   ): void;
   trapezoid(
     centerX: number,
@@ -90,4 +90,15 @@ export interface GraphicsContext {
     proc: (ctx: GraphicsContext) => void
   ): GraphicsContext;
   withShadow(shadow: ShadowStyle, proc: GraphicsProc): GraphicsContext;
+  image(
+    image: GameImage,
+    dx: number,
+    dy: number,
+    dw: number,
+    dh: number,
+    sx: number,
+    sy: number,
+    sw: number,
+    sh: number
+  ): void;
 }

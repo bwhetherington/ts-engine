@@ -270,7 +270,7 @@ export class Unit extends Entity {
 
   protected explode(): void {
     const echo = WorldManager.spawn(Echo, this.position);
-    echo?.initialize(this, true);
+    echo?.initialize(this, false);
 
     if (this.label) {
       const labelEcho = WorldManager.spawn(Echo, this.label.position);

@@ -21,15 +21,16 @@ import {Data} from 'core/serialize';
 import {Player, PlayerManager} from 'core/player';
 import {LogManager} from 'core/log';
 import {NetworkManager, SyncEvent} from 'core/net';
-import {CameraManager} from 'core/graphics';
+import {CameraManager, GraphicsContext, Sprite} from 'core/graphics';
 import {BarUpdateEvent, clamp, sleep} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
 import {UUID} from 'core/uuid';
-import {HeroModifier} from 'core/upgrade/modifier';
 import {Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
 import {Iterator} from 'core/iterator';
-import {Follow} from './Follow';
+import { AssetManager } from 'core/assets';
+import { GraphicsPipeline } from 'core/graphics/pipe';
+import { FireEvent } from 'core/weapon';
 
 const log = LogManager.forFile(__filename);
 
@@ -59,6 +60,7 @@ export class BaseHero extends Tank {
   private xp: number = 0;
   private level: number = 1;
   private cameraTarget?: Entity;
+  private weaponSprite?: Sprite;
 
   public constructor() {
     super();
@@ -143,6 +145,29 @@ export class BaseHero extends Tank {
           text.friction = 50;
           text.textSize = 20;
         });
+
+      (async () => {
+        const sprite = await AssetManager.loadSprite('sprites/gun.json');
+        this.weaponSprite = sprite;
+        sprite.playAnimation({
+          animation: 'stand',
+          repeat: true,
+        });
+      })();
+
+      this.streamEvents<FireEvent>('FireEvent')
+        // .filter(() => !!this.weaponSprite)
+        .filter(({data: {sourceID}}) => sourceID === this.id)
+        .forEach(() => {
+          console.log('fire');
+          this.weaponSprite?.playAnimation({
+            animation: 'fire',
+            next: {
+              animation: 'stand',
+              repeat: true,
+            },
+          });
+        });
     }
 
     if (NetworkManager.isServer()) {
@@ -157,6 +182,19 @@ export class BaseHero extends Tank {
           target instanceof Unit && this === source ? target : undefined
         )
         .forEach((target) => this.addExperience(target.getXPWorth()));
+    }
+  }
+
+  public render(ctx: GraphicsContext): void {
+    if (!this.sprite) {
+      super.render(ctx);
+    } else {
+      this.sprite.render(ctx);
+      GraphicsPipeline.pipe()
+        .rotate(this.weaponAngle - this.angle)
+        .run(ctx, (ctx) => {
+          this.weaponSprite?.render(ctx);
+        });
     }
   }
 
@@ -353,31 +391,38 @@ export class BaseHero extends Tank {
   }
 
   private computeMovementInput(): void {
-    this.vectorBuffer.setXY(0, 0);
+    this.vectorBuffer.setXY(1, 0);
+    let targetAngle = this.angle;
+    let thrust = 0;
     if (this.turning[MovementDirection.Up]) {
-      this.vectorBuffer.addXY(0, -1);
+      // this.vectorBuffer.addXY(0, -1);
+      thrust += 1;
     }
-    if (this.turning[MovementDirection.Down]) {
-      this.vectorBuffer.addXY(0, 1);
-    }
+    // if (this.turning[MovementDirection.Down]) {
+    //   this.vectorBuffer.addXY(0, 1);
+    // }
     if (this.turning[MovementDirection.Left]) {
-      this.vectorBuffer.addXY(-1, 0);
+      targetAngle -= 1;
     }
     if (this.turning[MovementDirection.Right]) {
-      this.vectorBuffer.addXY(1, 0);
+      targetAngle += 1;
     }
-    this.vectorBuffer.normalize();
-    if (this.vectorBuffer.magnitudeSquared > 0) {
-      this.setThrusting(1);
-      this.targetAngle = this.vectorBuffer.angle % (2 * Math.PI);
-    } else {
-      this.setThrusting(0);
-      this.targetAngle = this.angle;
-    }
+    this.targetAngle = targetAngle;
+    this.setThrusting(thrust);
+    // this.vectorBuffer.normalize();
+    // if (this.vectorBuffer.magnitudeSquared > 0) {
+    //   this.setThrusting(1);
+    //   this.targetAngle = this.vectorBuffer.angle % (2 * Math.PI);
+    // } else {
+    //   this.setThrusting(0);
+    //   this.targetAngle = this.angle;
+    // }
   }
 
   public step(dt: number): void {
     this.computeMovementInput();
+    this.sprite?.step(dt);
+    this.weaponSprite?.step(dt);
     super.step(dt);
 
     const player = this.getPlayer();

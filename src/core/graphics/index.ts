@@ -1,6 +1,9 @@
 export * from 'core/graphics/color';
 export * from 'core/graphics/camera';
+export * from 'core/graphics/image';
 export * from 'core/graphics/context';
+export * from 'core/graphics/animation';
+export * from 'core/graphics/sprite';
 
 import {GraphicsContext} from 'core/graphics/context';
 

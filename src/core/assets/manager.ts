@@ -1,3 +1,6 @@
+import {EventManager} from 'core/event';
+import { Sprite } from 'core/graphics';
+import {GameImage} from 'core/graphics/image';
 import {LogManager} from 'core/log';
 import {Data} from 'core/serialize';
 
@@ -65,13 +68,47 @@ export class AssetManager {
     encoding: BufferEncoding = 'utf-8'
   ): Promise<Data> {
     try {
-    const str = await this.load(path, encoding);
-    const obj = JSON.parse(str);
-    return obj;
+      const str = await this.load(path, encoding);
+      const obj = JSON.parse(str);
+      return obj;
     } catch (ex) {
       log.error('Error reading JSON asset: ' + path);
       throw ex;
     }
+  }
+
+  private async loadImageSrc(path: string): Promise<string> {
+    try {
+      const base64 = await this.load(path);
+      return `data:image/png;base64, ${base64}`;
+    } catch (ex) {
+      log.error('Error reading base64: ' + path);
+      throw ex;
+    }
+  }
+
+  public async loadImage(
+    path: string,
+    timeout: number = 5
+  ): Promise<GameImage> {
+    const src = await this.loadImageSrc(path);
+    const imagePromise = new Promise<GameImage>(async (resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve(img);
+      };
+      img.src = src;
+      await EventManager.sleep(timeout);
+      reject(new Error('image load timed out'));
+    });
+    return await imagePromise;
+  }
+
+  public async loadSprite(path: string): Promise<Sprite> {
+    const spriteData = await this.loadJSON(path);
+    const sprite = new Sprite();
+    sprite.deserialize(spriteData);
+    return sprite;
   }
 
   public async loadAllJSON(

@@ -71,7 +71,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
   private startGame(): void {
     ChatManager.info('Starting the game');
-    
+
     // Spawn feed units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
       .filter(
@@ -209,7 +209,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     const stopHandler = async () => {
       await this.transition(GameAction.Stop);
     };
-  
+
     this.registerCommand({
       name: 'stopGame',
       help: 'Stops the current game',

@@ -16,6 +16,7 @@ body,
   margin: 0px;
   overflow: hidden;
   font-family: 'Roboto Mono', monospace;
+  image-rendering: pixelated;
 }
 
 .top {

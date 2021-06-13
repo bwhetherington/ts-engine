@@ -1,5 +1,5 @@
 import {Bounded, Rectangle, Vector} from 'core/geometry';
-import {GraphicsContext, Color, Renderable, CameraManager} from 'core/graphics';
+import {GraphicsContext, Color, Renderable, CameraManager, Sprite} from 'core/graphics';
 import {WHITE, isColor} from 'core/graphics/color';
 import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
@@ -12,6 +12,7 @@ import {GraphicsPipeline} from 'core/graphics/pipe';
 import {clamp} from 'core/util';
 import {NetworkManager} from 'core/net';
 import {PlayerManager} from 'core/player';
+import { AssetManager } from 'core/assets';
 
 export class Entity extends Observer
   implements Bounded, DataSerializable, Serializable, Renderable {
@@ -40,6 +41,8 @@ export class Entity extends Observer
   public isInitialized: boolean = false;
   public attachedTo?: Entity;
 
+  protected sprite?: Sprite;
+  private spritePath: string = '';
   private isExternal: boolean = false;
   private smoothTarget: Vector = new Vector();
 
@@ -84,10 +87,11 @@ export class Entity extends Observer
   }
 
   public render(ctx: GraphicsContext): void {
-    const {width, height} = this.boundingBox;
-    GraphicsPipeline.pipe().run(ctx, (ctx) => {
-      ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
-    });
+    this.sprite?.render(ctx);
+    // const {width, height} = this.boundingBox;
+    // GraphicsPipeline.pipe().run(ctx, (ctx) => {
+    //   ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
+    // });
   }
 
   private updateBoundingBox(): void {
@@ -208,6 +212,7 @@ export class Entity extends Observer
       position: this.position.serialize(),
       velocity: this.velocity.serialize(),
       attachedTo: this.attachedTo?.id,
+      spritePath: this.spritePath,
     };
     return data;
   }
@@ -268,6 +273,18 @@ export class Entity extends Observer
     this.setColor(newColor);
   }
 
+  public async setSprite(path: string): Promise<void> {
+    this.spritePath = path;
+    if (NetworkManager.isClient()) {
+      const sprite = await AssetManager.loadSprite(path);
+      sprite.playAnimation({
+        animation: 'stand',
+        repeat: true,
+      });
+      this.sprite = sprite;
+    }
+  }
+
   public deserialize(data: Data, setInitialized: boolean = false): void {
     const {
       id,
@@ -286,6 +303,7 @@ export class Entity extends Observer
       isSpatial,
       doSync,
       attachedTo,
+      spritePath,
     } = data;
     if (setInitialized) {
       this.isExternal = true;

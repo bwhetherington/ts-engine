@@ -148,7 +148,7 @@ export class WorldManager extends LoadingManager<Entity>
 
   public render(ctx: GraphicsContext): void {
     ctx.clear(WALL_COLOR);
-    const GRID_COLOR = reshade(WALL_COLOR, 0.05);
+    const GRID_COLOR = {red: 0.05, green: 0.05, blue: 0.05};
     ctx.begin();
     ctx.resetTransform();
 
@@ -166,7 +166,7 @@ export class WorldManager extends LoadingManager<Entity>
       this.boundingBox.y,
       this.boundingBox.width,
       this.boundingBox.height,
-      WHITE
+      BLACK
     );
     ctx.popOptions();
 

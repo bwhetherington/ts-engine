@@ -1,0 +1,17 @@
+{
+  "image": "images/player-ship.png",
+  "frameSize": {
+    "x": 32,
+    "y": 32
+  },
+  "size": {
+    "x": 96,
+    "y": 96
+  },
+  "animations": {
+    "stand": {
+      "frames": [1, 2]
+    }
+  },
+  "animation": "stand"
+}
