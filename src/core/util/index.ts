@@ -1,4 +1,4 @@
-import {Queue, SizedQueue} from 'core/util/queue';
+import {Queue, SizedQueue, IndexQueue} from 'core/util/queue';
 import {TimerHandler, AbstractTimer, sleep} from 'core/util/time';
 import {diff} from 'core/util/object';
 import {Data} from 'core/serialize';
@@ -39,6 +39,7 @@ export {
   BarUpdateEvent,
   Queue,
   SizedQueue,
+  IndexQueue,
   TimerHandler,
   AbstractTimer,
   sleep,
@@ -46,6 +47,7 @@ export {
 };
 
 export * from 'core/util/heap';
+export * from 'core/util/cache';
 export * from 'core/metrics';
 
 // export * from 'core/util/map';

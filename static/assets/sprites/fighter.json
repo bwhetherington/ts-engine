@@ -1,0 +1,22 @@
+{
+  "image": "images/fighter.png",
+  "frameSize": {
+    "x": 8,
+    "y": 8
+  },
+  "animations": {
+    "right": {
+      "frames": [0]
+    },
+    "down": {
+      "frames": [1]
+    },
+    "left": {
+      "frames": [2]
+    },
+    "up": {
+      "frames": [3]
+    }
+  },
+  "animation": "right"
+}

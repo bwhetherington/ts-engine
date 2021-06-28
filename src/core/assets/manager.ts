@@ -1,8 +1,9 @@
 import {EventManager} from 'core/event';
-import { Sprite } from 'core/graphics';
+import {Font, Sprite} from 'core/graphics';
 import {GameImage} from 'core/graphics/image';
 import {LogManager} from 'core/log';
 import {Data} from 'core/serialize';
+import {Cache} from 'core/util';
 
 const log = LogManager.forFile(__filename);
 
@@ -13,6 +14,7 @@ type DirectoryLoader = (path: string) => Promise<string[]>;
 export class AssetManager {
   private loader?: AssetLoader;
   private directoryLoader?: DirectoryLoader;
+  private imageCache: Cache<GameImage> = new Cache(20);
 
   public initialize(
     loader: AssetLoader,
@@ -87,21 +89,25 @@ export class AssetManager {
     }
   }
 
-  public async loadImage(
+  public loadImage(
     path: string,
     timeout: number = 5
   ): Promise<GameImage> {
-    const src = await this.loadImageSrc(path);
-    const imagePromise = new Promise<GameImage>(async (resolve, reject) => {
+    return this.imageCache.getOrInsertAsync(path, async () => {
+      const src = await this.loadImageSrc(path);
       const img = new Image();
-      img.onload = () => {
-        resolve(img);
-      };
-      img.src = src;
-      await EventManager.sleep(timeout);
-      reject(new Error('image load timed out'));
+      this.imageCache.insert(path, img);
+      const imagePromise = new Promise<GameImage>(async (resolve, reject) => {
+        img.onload = () => {
+          resolve(img);
+        };
+        img.src = src;
+        await EventManager.sleep(timeout);
+        reject(new Error('image load timed out'));
+      });
+      const image = await imagePromise;
+      return image;
     });
-    return await imagePromise;
   }
 
   public async loadSprite(path: string): Promise<Sprite> {
@@ -109,6 +115,13 @@ export class AssetManager {
     const sprite = new Sprite();
     sprite.deserialize(spriteData);
     return sprite;
+  }
+
+  public async loadFont(path: string): Promise<Font> {
+    const fontData = await this.loadJSON(path);
+    const font = new Font();
+    font.deserialize(fontData);
+    return font;
   }
 
   public async loadAllJSON(

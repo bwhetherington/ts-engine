@@ -28,9 +28,9 @@ import {TextColor} from 'core/chat';
 import {UUID} from 'core/uuid';
 import {Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
 import {Iterator} from 'core/iterator';
-import { AssetManager } from 'core/assets';
-import { GraphicsPipeline } from 'core/graphics/pipe';
-import { FireEvent } from 'core/weapon';
+import {AssetManager} from 'core/assets';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {FireEvent} from 'core/weapon';
 
 const log = LogManager.forFile(__filename);
 
@@ -132,34 +132,25 @@ export class BaseHero extends Tank {
           if (!text) {
             return;
           }
+          text.setPositionXY(target.boundingBox.x, target.boundingBox.y);
+          text.addPositionXY(
+            RNGManager.nextInt(0, target.boundingBox.width + 1),
+            RNGManager.nextInt(0, target.boundingBox.height + 1),
+          );
           const color = this === target ? 'red' : 'yellow';
           text.textColor = color;
           text.isStatic = false;
-          text.position.addXY(
-            RNGManager.nextFloat(-25, 25),
-            RNGManager.nextFloat(-25, 25)
-          );
           text.text = label;
           text.velocity.setXY(0, -60);
-          text.velocity.angle += RNGManager.nextFloat(-0.3, 0.3);
+          // text.velocity.angle += RNGManager.nextFloat(-0.3, 0.3);
           text.friction = 50;
           text.textSize = 20;
         });
-
-      (async () => {
-        const sprite = await AssetManager.loadSprite('sprites/gun.json');
-        this.weaponSprite = sprite;
-        sprite.playAnimation({
-          animation: 'stand',
-          repeat: true,
-        });
-      })();
 
       this.streamEvents<FireEvent>('FireEvent')
         // .filter(() => !!this.weaponSprite)
         .filter(({data: {sourceID}}) => sourceID === this.id)
         .forEach(() => {
-          console.log('fire');
           this.weaponSprite?.playAnimation({
             animation: 'fire',
             next: {
@@ -186,23 +177,22 @@ export class BaseHero extends Tank {
   }
 
   public render(ctx: GraphicsContext): void {
-    if (!this.sprite) {
-      super.render(ctx);
-    } else {
-      this.sprite.render(ctx);
-      GraphicsPipeline.pipe()
-        .rotate(this.weaponAngle - this.angle)
-        .run(ctx, (ctx) => {
-          this.weaponSprite?.render(ctx);
-        });
-    }
+    super.render(ctx);
+    GraphicsPipeline.pipe()
+      .rotate(this.weaponAngle - this.angle)
+      .run(ctx, (ctx) => {
+        if (!this.weaponSprite) {
+          return;
+        }
+
+        ctx.sprite(this.weaponSprite);
+      });
   }
 
   public static initializeType(): void {
     EventManager.streamEvents<SyncHeroEvent>('SyncHeroEvent')
       // .debounce(1 / 30)
       .forEach((event) => {
-        // console.log('sync hero event');
         NetworkManager.sendEvent(event);
       });
   }
@@ -391,32 +381,28 @@ export class BaseHero extends Tank {
   }
 
   private computeMovementInput(): void {
-    this.vectorBuffer.setXY(1, 0);
-    let targetAngle = this.angle;
-    let thrust = 0;
+    this.vectorBuffer.setXY(0, 0);
     if (this.turning[MovementDirection.Up]) {
-      // this.vectorBuffer.addXY(0, -1);
-      thrust += 1;
+      this.vectorBuffer.addXY(0, -1);
     }
-    // if (this.turning[MovementDirection.Down]) {
-    //   this.vectorBuffer.addXY(0, 1);
-    // }
+    if (this.turning[MovementDirection.Down]) {
+      this.vectorBuffer.addXY(0, 1);
+    }
     if (this.turning[MovementDirection.Left]) {
-      targetAngle -= 1;
+      this.vectorBuffer.addXY(-1, 0);
     }
     if (this.turning[MovementDirection.Right]) {
-      targetAngle += 1;
+      this.vectorBuffer.addXY(1, 0);
     }
-    this.targetAngle = targetAngle;
-    this.setThrusting(thrust);
-    // this.vectorBuffer.normalize();
-    // if (this.vectorBuffer.magnitudeSquared > 0) {
-    //   this.setThrusting(1);
-    //   this.targetAngle = this.vectorBuffer.angle % (2 * Math.PI);
-    // } else {
-    //   this.setThrusting(0);
-    //   this.targetAngle = this.angle;
-    // }
+    this.vectorBuffer.normalize();
+    if (this.vectorBuffer.magnitudeSquared > 0) {
+      this.setThrusting(1);
+      this.targetAngle = this.vectorBuffer.angle % (2 * Math.PI);
+    } else {
+      this.setThrusting(0);
+      this.targetAngle = this.angle;
+      // this.angle = this.angle;
+    }
   }
 
   public step(dt: number): void {

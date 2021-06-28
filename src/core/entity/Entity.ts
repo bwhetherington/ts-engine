@@ -1,5 +1,11 @@
 import {Bounded, Rectangle, Vector} from 'core/geometry';
-import {GraphicsContext, Color, Renderable, CameraManager, Sprite} from 'core/graphics';
+import {
+  GraphicsContext,
+  Color,
+  Renderable,
+  Sprite,
+  PIXEL_SIZE,
+} from 'core/graphics';
 import {WHITE, isColor} from 'core/graphics/color';
 import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
@@ -8,11 +14,10 @@ import {EventManager, Observer} from 'core/event';
 import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {AsyncIterator} from 'core/iterator';
 import {DataBuffer, DataSerializable} from 'core/buf';
-import {GraphicsPipeline} from 'core/graphics/pipe';
 import {clamp} from 'core/util';
 import {NetworkManager} from 'core/net';
-import {PlayerManager} from 'core/player';
-import { AssetManager } from 'core/assets';
+import {AssetManager} from 'core/assets';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 
 export class Entity extends Observer
   implements Bounded, DataSerializable, Serializable, Renderable {
@@ -20,7 +25,7 @@ export class Entity extends Observer
   public static typeNum: number = 0;
   public static isTypeInitialized: boolean = false;
 
-  public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
+  public boundingBox: Rectangle = new Rectangle(8, 8, 0, 0);
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
   public angle: number = 0;
@@ -86,8 +91,24 @@ export class Entity extends Observer
     }
   }
 
+  private renderSprite(ctx: GraphicsContext, sprite: Sprite): void {
+    GraphicsPipeline.pipe()
+      // .rotate(-this.angle)
+      // .translate(-this.position.x, -this.position.y)
+      // .translate(Math.floor(this.position.x / PIXEL_SIZE), Math.floor(this.position.y / PIXEL_SIZE))
+      .run(ctx, (ctx) => {
+        ctx.sprite(sprite);
+      });
+  }
+
   public render(ctx: GraphicsContext): void {
-    this.sprite?.render(ctx);
+    if (this.sprite) {
+      this.renderSprite(ctx, this.sprite);
+    } else {
+      const {width, height} = this.boundingBox;
+      ctx.box(-width / 2, -height / 2, width, height);
+    }
+
     // const {width, height} = this.boundingBox;
     // GraphicsPipeline.pipe().run(ctx, (ctx) => {
     //   ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
@@ -113,6 +134,12 @@ export class Entity extends Observer
     this.attachedTo = entity;
   }
 
+  protected onSnappedToTarget(): void {}
+
+  protected onSmoothPosition(movement: Vector): void {
+    this.angle = movement.angle;
+  }
+
   private updatePosition(dt: number): void {
     if (this.isAlive()) {
       if (this.attachedTo?.isAlive()) {
@@ -134,11 +161,13 @@ export class Entity extends Observer
         ) <= snapDistance
       ) {
         this.setPosition(this.smoothTarget);
+        this.onSnappedToTarget();
         return;
       }
 
       this.vectorBuffer.set(this.smoothTarget);
       this.vectorBuffer.add(this.position, -1);
+      this.onSmoothPosition(this.vectorBuffer);
       const increment = clamp(10 * dt, 0, 1);
       this.addPosition(this.vectorBuffer, increment);
     }
@@ -278,7 +307,7 @@ export class Entity extends Observer
     if (NetworkManager.isClient()) {
       const sprite = await AssetManager.loadSprite(path);
       sprite.playAnimation({
-        animation: 'stand',
+        animation: 'standFront',
         repeat: true,
       });
       this.sprite = sprite;

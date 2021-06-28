@@ -1,4 +1,4 @@
-import {GraphicsContext, GraphicsOptions} from '.';
+import {PIXEL_SIZE, GraphicsContext, GraphicsOptions} from 'core/graphics';
 import {GraphicsProc, ShadowStyle} from './context';
 
 export class GraphicsPipeline {
@@ -38,8 +38,12 @@ export class GraphicsPipeline {
     return new OptionsPipeline(options, this);
   }
 
-  public translate(tx: number, ty: number): GraphicsPipeline {
-    return new TranslatePipeline(tx, ty, this);
+  public translate(
+    tx: number,
+    ty: number,
+    isSmooth: boolean = false
+  ): GraphicsPipeline {
+    return new TranslatePipeline(tx, ty, isSmooth, this);
   }
 
   public scale(scale: number): GraphicsPipeline {
@@ -113,10 +117,15 @@ class TranslatePipeline extends GraphicsPipeline {
   private tx: number;
   private ty: number;
 
-  public constructor(tx: number, ty: number, parent?: GraphicsPipeline) {
+  public constructor(
+    tx: number,
+    ty: number,
+    isSmooth: boolean,
+    parent?: GraphicsPipeline
+  ) {
     super(parent);
-    this.tx = tx;
-    this.ty = ty;
+    this.tx = Math.floor(tx);
+    this.ty = Math.floor(ty);
   }
 
   protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {

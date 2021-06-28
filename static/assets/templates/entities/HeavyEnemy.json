@@ -5,10 +5,10 @@
   "maxLife": 100,
   "life": 100,
   "armor": 1,
-  "speed": 200,
+  "speed": 25,
   "boundingBox": {
-    "width": 40,
-    "height": 40
+    "width": 8,
+    "height": 8
   },
   "cannons": [
     {

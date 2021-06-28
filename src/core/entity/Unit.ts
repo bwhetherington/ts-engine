@@ -15,7 +15,7 @@ import {Vector} from 'core/geometry';
 import {clamp} from 'core/util';
 import {Event, EventManager} from 'core/event';
 import {NetworkManager} from 'core/net';
-import {Color, reshade} from 'core/graphics';
+import {Color, PIXEL_SIZE, reshade} from 'core/graphics';
 import {TextColor} from 'core/chat';
 
 const ACCELERATION = 2000;
@@ -30,7 +30,7 @@ export class Unit extends Entity {
   private life: number = 10;
   private isImmune: boolean = false;
   protected lifeRegen: number = 0;
-  protected speed: number = 250;
+  protected speed: number = 35;
   private xpWorth: number = 1;
 
   public label?: Text;
@@ -178,21 +178,13 @@ export class Unit extends Entity {
     this.setLife(this.life + this.getLifeRegen() * this.maxLife * dt);
 
     // Handle movement
-    this.acceleration.setXY(1, 0);
-    this.acceleration.angle = this.angle;
-
-    this.acceleration.magnitude =
-      ACCELERATION * dt * this.thrusting * this.mass;
-    this.applyForce(this.acceleration);
-
-    // Handle maximum speed
-    if (this.velocity.magnitude > this.speed) {
-      // If we've exceeded the maximum velocity, apply a scaling friction
-      const excess = this.velocity.magnitude - this.speed;
-      this.vectorBuffer.set(this.velocity);
-      this.vectorBuffer.normalize();
-      this.vectorBuffer.scale(-excess);
-      this.velocity.add(this.vectorBuffer);
+    if (this.thrusting > 0) {
+      this.vectorBuffer.setXY(1, 0);
+      this.vectorBuffer.angle = this.angle;
+      this.vectorBuffer.x = Math.round(this.vectorBuffer.x * 1000) / 1000;
+      this.vectorBuffer.y = Math.round(this.vectorBuffer.y * 1000) / 1000;
+      this.vectorBuffer.scale(this.speed * dt);
+      this.addPosition(this.vectorBuffer);
     }
 
     super.step(dt);
@@ -202,14 +194,14 @@ export class Unit extends Entity {
     if (NetworkManager.isClient()) {
       if (this.label) {
         this.label.position.set(this.position);
-        this.label.position.addXY(0, -(this.boundingBox.height + 10));
+        this.label.position.addXY(0, -this.boundingBox.height - 4);
         this.label.textColor = this.getNameColor();
         this.label.text = this.getName();
       }
 
       if (this.hpBar) {
         this.hpBar.position.set(this.position);
-        this.hpBar.position.addXY(0, this.boundingBox.height + 12);
+        this.hpBar.position.addXY(0, this.boundingBox.height - 2);
         this.hpBar.velocity.set(this.velocity);
         this.hpBar.progress = this.getLife() / this.getMaxLife();
       }
@@ -218,6 +210,17 @@ export class Unit extends Entity {
 
   public setThrusting(thrusting: number): void {
     this.thrusting = thrusting;
+    if (thrusting === 1) {
+      this.sprite?.playAnimation({
+        animation: 'walk',
+        repeat: true,
+      });
+    } else {
+      this.sprite?.playAnimation({
+        animation: 'stand',
+        repeat: true,
+      });
+    }
   }
 
   public serialize(): Data {

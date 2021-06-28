@@ -4,13 +4,14 @@
     "x": 32,
     "y": 32
   },
-  "size": {
-    "x": 96,
-    "y": 96
-  },
   "animations": {
     "stand": {
-      "frames": [1, 2]
+      "frames": [0],
+      "transitions": ["stand", "walk"]
+    },
+    "walk": {
+      "frames": [1, 2],
+      "transitions": ["stand", "walk"]
     }
   },
   "animation": "stand"

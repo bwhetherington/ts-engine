@@ -215,11 +215,11 @@ class ColorShade implements Key {
 
   public hash(): number {
     const {red, green, blue, alpha = 1} = this.color;
-    const r = Math.floor(red * 255);
-    const g = Math.floor(green * 255);
-    const b = Math.floor(blue * 255);
-    const a = Math.floor(alpha * 255);
-    const s = Math.floor(this.shade * 255);
+    const r = Math.max(0, Math.floor(red * 255));
+    const g = Math.max(0, Math.floor(green * 255));
+    const b = Math.max(0, Math.floor(blue * 255));
+    const a = Math.max(0, Math.floor(alpha * 255));
+    const s = Math.max(0, Math.floor(this.shade * 255));
     return r + g * 127 + b * 337 + a * 743 + s * 1237;
   }
 

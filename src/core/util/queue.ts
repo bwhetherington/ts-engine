@@ -1,4 +1,5 @@
 import {iterator, Iterator} from 'core/iterator';
+import {maybe as m} from 'core/monad';
 
 class Node<T> {
   public value: T;
@@ -8,12 +9,41 @@ class Node<T> {
   constructor(value: T) {
     this.value = value;
   }
+
+  public append(item: T): void {
+    const node = new Node(item);
+    const temp = this.next;
+    this.next = node;
+    node.prev = this;
+    node.next = temp;
+  }
+
+  public prepend(item: T): void {
+    const node = new Node(item);
+    const temp = this.prev;
+    this.prev = node;
+    node.prev = temp;
+    node.next = this;
+  }
+
+  public delete(): void {
+    if (this.prev) {
+      this.prev.next = this.next;
+    }
+
+    if (this.next) {
+      this.next.prev = this.prev;
+    }
+
+    delete this.prev;
+    delete this.next;
+  }
 }
 
 export class Queue<T> {
   protected head?: Node<T>;
   protected tail?: Node<T>;
-  private length: number = 0;
+  protected length: number = 0;
 
   public size(): number {
     return this.length;
@@ -44,9 +74,7 @@ export class Queue<T> {
     return iterator(this.iteratorInternal());
   }
 
-  public enqueue(element: T): T | undefined {
-    const node = new Node(element);
-
+  protected insertNode(node: Node<T>): m.Maybe<Node<T>> {
     const {tail} = this;
 
     if (this.length === 0) {
@@ -61,6 +89,11 @@ export class Queue<T> {
 
     this.length += 1;
     return undefined;
+  }
+
+  public enqueue(element: T): m.Maybe<T> {
+    const node = new Node(element);
+    return m.map(this.insertNode(node), (node) => node.value);
   }
 
   public peek(): T | undefined {
@@ -122,5 +155,47 @@ export class ScrollableQueue<T> extends Queue<T> {
   public scrollDown(): Node<T> | undefined {
     this.cursor = this.cursor?.next;
     return this.cursor;
+  }
+}
+
+export class IndexQueue<T> extends SizedQueue<T> {
+  private index: Map<T, Node<T>> = new Map();
+
+  protected insertNode(node: Node<T>): m.Maybe<Node<T>> {
+    this.index.set(node.value, node);
+    return super.insertNode(node);
+  }
+
+  protected removeNode(node: Node<T>): void {
+    this.length -= 1;
+
+    if (node === this.head) {
+      this.head = node.next;
+    }
+
+    if (node === this.tail) {
+      this.tail = node.prev;
+    }
+
+    if (node.prev) {
+      node.prev.next = node.next;
+    }
+    if (node.next) {
+      node.next.prev = node.prev;
+    }
+
+    this.index.delete(node.value);
+  }
+
+  protected getNode(item: T): m.Maybe<Node<T>> {
+    return this.index.get(item);
+  }
+
+  public resetNode(item: T): void {
+    const node = this.getNode(item);
+    if (node) {
+      this.removeNode(node);
+      this.enqueue(item);
+    }
   }
 }

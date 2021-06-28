@@ -30,7 +30,7 @@ const log = LogManager.forFile(__filename);
 const DEFAULT_NAME = 'Unknown';
 
 const MESSAGE_FORMAT =
-  '{style=bold|<}{color=$authorColor,style=bold|$authorName}{style=bold|>} $messageContent';
+  '{color=$authorColor,style=bold|$authorName}{style=bold|:} $messageContent';
 const MESSAGE_FORMATTER = new TextFormatter(MESSAGE_FORMAT);
 
 type CommandHandler = (player: Player, ...args: string[]) => void;

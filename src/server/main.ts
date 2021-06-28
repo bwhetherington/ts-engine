@@ -34,6 +34,8 @@ import {UpgradeManager} from 'core/upgrade';
 import {UpgradePlugin} from './plugin/upgrade';
 import {DelayServer} from './net/delay';
 
+import {Cache} from 'core/util';
+
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
@@ -111,6 +113,19 @@ async function main(): Promise<void> {
     UtilsPlugin,
     UpgradePlugin,
   ]);
+
+  const cache = new Cache<number>(5);
+  cache.insert('foo', 1);
+  cache.insert('bar', 2);
+  cache.insert('baz', 3);
+  cache.insert('quux', 4);
+  cache.get('foo');
+  cache.get('foo');
+  cache.get('foo');
+  cache.insert('five', 5);
+  cache.insert('six', 6);
+  cache.insert('seven', 7);
+  // console.log(cache);
 }
 
 main().catch((ex) => {

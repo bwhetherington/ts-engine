@@ -1,0 +1,34 @@
+{
+  "image": "images/male.png",
+  "frameSize": {
+    "x": 8,
+    "y": 8
+  },
+  "animations": {
+    "standFront": {
+      "frames": [1]
+    },
+    "walkFront": {
+      "frames": [0, 2]
+    },
+    "standBack": {
+      "frames": [10]
+    },
+    "walkBack": {
+      "frames": [9, 11]
+    },
+    "standLeft": {
+      "frames": [7]
+    },
+    "walkLeft": {
+      "frames": [6, 8]
+    },
+    "standRight": {
+      "frames": [4]
+    },
+    "walkRight": {
+      "frames": [3, 5]
+    }
+  },
+  "animation": "right"
+}

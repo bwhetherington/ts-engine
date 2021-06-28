@@ -120,7 +120,7 @@ export class Player extends Observer implements Serializable {
     this.hero?.markForDelete();
 
     const hero = WorldManager.spawnEntity('Hero') as BaseHero;
-    hero.setPosition(WorldManager.getRandomPosition());
+    // hero.setPosition(WorldManager.getRandomPosition());
     hero.setPlayer(this);
     this.setHero(hero);
     const color = randomColor();

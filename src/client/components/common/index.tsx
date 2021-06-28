@@ -6,9 +6,9 @@ export const UI_MARGIN = '5px';
 export const PanelContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.75);
   padding: ${UI_MARGIN};
-  border-radius: 4px;
+  /* border-radius: 4px; */
   pointer-events: auto;
-  font-size: 0.9em;
+  /* font-size: 0.9em; */
   user-select: none;
   color: white;
 `;
@@ -30,7 +30,7 @@ export const PanelHeader = styled.div`
   padding-bottom: 4px;
   margin-left: 10px;
   margin-right: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.35);
 `;
 
 export enum PanelDirection {
@@ -63,16 +63,17 @@ export const Row = styled.div`
 `;
 
 export const Button = styled.button`
-  border: 1px solid;
+  border: 2px solid;
   border-color: rgba(255, 255, 255, 0.33);
   padding: 5px 10px 5px 10px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   background-color: rgba(255, 255, 255, 0);
   outline: none;
   color: white;
   font-family: inherit;
   margin: 2px;
   cursor: pointer;
+  font-size: 20px;
   /* white-space: nowrap; */
 
   &:disabled {

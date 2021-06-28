@@ -88,11 +88,11 @@ const Section = styled.div`
 `;
 
 const Message = styled.div`
-  border: 1px solid;
+  border: 2px solid;
   border-color: rgba(255, 128, 128, 0.33);
   color: rgb(255, 102, 102);
   padding: 5px 10px 5px 10px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
 `;
 
 interface FormProps {

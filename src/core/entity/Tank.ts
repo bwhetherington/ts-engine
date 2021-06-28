@@ -1,5 +1,5 @@
 import {Unit, Text, WorldManager, Trail} from 'core/entity';
-import {GraphicsContext, hsv} from 'core/graphics';
+import {GraphicsContext, hsv, PIXEL_SIZE} from 'core/graphics';
 import {Data} from 'core/serialize';
 import {FireEvent, Weapon, WeaponManager} from 'core/weapon';
 import {NetworkManager} from 'core/net';
@@ -56,7 +56,7 @@ export class Tank extends Unit {
   ];
   public targetAngle: number = 0;
   public weaponAngle: number = 0;
-  public turnSpeed: number = Math.PI;
+  public turnSpeed: number = Math.PI * 1000;
   public modifiers: HeroModifier = new HeroModifier();
 
   private thrustTime: number = 0;
@@ -72,12 +72,12 @@ export class Tank extends Unit {
   public constructor() {
     super();
     this.type = Tank.typeName;
-    this.friction = 100;
+    this.friction = 5000;
     this.bounce = 0.3;
-    this.setSprite('sprites/player-ship.json');
+    this.setSprite('sprites/male.json');
 
-    this.boundingBox.width = 30;
-    this.boundingBox.height = 30;
+    this.boundingBox.width = 8;
+    this.boundingBox.height = 8;
 
     this.setMaxLife(50);
     this.setLife(50);
@@ -96,21 +96,73 @@ export class Tank extends Unit {
     // Rotate towards targetAngle
     const tau = 2 * Math.PI;
     this.targetAngle = (this.targetAngle + tau) % tau;
-    this.angle = (this.angle + tau) % tau;
+    this.angle = this.targetAngle;
+    // this.angle = (this.targetAngle + tau) % tau;
 
-    let diff = (this.targetAngle - this.angle + tau) % tau;
+    // let diff = (this.targetAngle - this.angle + tau) % tau;
 
-    if (Math.abs(diff) < this.turnSpeed * dt) {
-      this.angle = this.targetAngle;
-    } else {
-      let dir = 1;
-      if (diff > Math.PI) {
-        dir = -1;
-      }
-      this.angle = (this.angle + dir * this.turnSpeed * dt + tau) % tau;
-    }
+    // if (Math.abs(diff) < this.turnSpeed * dt) {
+    //   this.angle = this.targetAngle;
+    // } else {
+    //   let dir = 1;
+    //   if (diff > Math.PI) {
+    //     dir = -1;
+    //   }
+    //   this.angle = (this.angle + dir * this.turnSpeed * dt + tau) % tau;
+    // }
     super.step(dt);
     this.fireTimer = Math.max(0, this.fireTimer - dt);
+    const {angle, thrusting, sprite} = this;
+
+    if (sprite) {
+      let adjustedAngle = angle % (2 * Math.PI);
+      adjustedAngle /= 2 * Math.PI;
+      adjustedAngle *= 8;
+      adjustedAngle = Math.floor(adjustedAngle);
+      let animName = '';
+      if (thrusting) {
+        animName += 'walk';
+      } else {
+        animName += 'stand';
+      }
+
+      switch (adjustedAngle) {
+        case 7:
+        case 0:
+        case 1:
+          animName += 'Right';
+          break;
+        case 2:
+          animName += 'Front';
+          break;
+        case 3:
+        case 4:
+        case 5:
+          animName += 'Left';
+          break;
+        case 6:
+          animName += 'Back';
+          break;
+      }
+
+      // if () {
+      //   animName += 'Right';
+      // } else if (angle === )
+
+      sprite.playAnimation({
+        animation: animName,
+        repeat: true,
+      });
+    }
+  }
+
+  protected onSnappedToTarget(): void {
+    this.thrusting = 0;
+  }
+
+  protected onSmoothPosition(movement: Vector): void {
+    // super.onSmoothPosition(movement);
+    this.thrusting = 1;
   }
 
   public calculateDamageIn(amount: number): number {
@@ -353,13 +405,14 @@ export class Tank extends Unit {
   }
 
   public getCannonTip(): Vector {
-    const cannon = this.cannons[this.cannonIndex];
-    cannon?.shape?.getTip(
-      this.position.x,
-      this.position.y,
-      this.weaponAngle,
-      this.vectorBuffer
-    );
+    // const cannon = this.cannons[this.cannonIndex];
+    // cannon?.shape?.getTip(
+    //   this.position.x,
+    //   this.position.y,
+    //   this.weaponAngle,
+    //   this.vectorBuffer
+    // );
+    this.vectorBuffer.set(this.position);
     return this.vectorBuffer;
   }
 

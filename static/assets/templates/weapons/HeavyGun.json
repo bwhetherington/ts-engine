@@ -4,7 +4,7 @@
   "projectileType": "BigProjectile",
   "pierce": 5,
   "projectileSpread": 0.1,
-  "projectileSpeed": 300,
+  "projectileSpeed": 30,
   "damage": 12,
   "rate": 0.65
 }

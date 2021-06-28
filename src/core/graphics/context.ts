@@ -1,12 +1,13 @@
 import {TextComponents} from 'core/chat';
 import {Vector, VectorLike} from 'core/geometry';
 import {Color} from 'core/graphics/color';
-import {GameImage} from 'core/graphics';
+import {GameImage, Sprite} from 'core/graphics';
 
 export interface TextStyle {
   font?: string;
   size?: number;
   color?: Color;
+  fontColor?: 'red' | 'yellow' | 'white';
 }
 
 export interface GraphicsOptions {
@@ -50,6 +51,12 @@ export interface GraphicsContext {
     h: number,
     color: Color,
     fullW?: number
+  ): void;
+  box(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
   ): void;
   roundRect(
     x: number,
@@ -101,4 +108,6 @@ export interface GraphicsContext {
     sw: number,
     sh: number
   ): void;
+  sprite(sprite: Sprite): void;
+  drawPixelBuffer(): void;
 }

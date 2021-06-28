@@ -1,5 +1,5 @@
 import {Data} from 'core/serialize';
-import {GraphicsContext} from 'core/graphics';
+import {GraphicsContext, PIXEL_SIZE} from 'core/graphics';
 import {rgb, rgba} from 'core/graphics/color';
 import {CollisionLayer, Entity} from 'core/entity';
 import {GraphicsPipeline} from 'core/graphics/pipe';
@@ -17,8 +17,8 @@ export class Bar extends Entity {
     this.isCollidable = false;
     this.isVisible = true;
     this.collisionLayer = CollisionLayer.HUD;
-    this.boundingBox.width = 65;
-    this.boundingBox.height = 8;
+    this.boundingBox.width = 8;
+    this.boundingBox.height = 1;
     this.friction = 0;
   }
 
@@ -39,39 +39,39 @@ export class Bar extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    if (0 < this.progress && this.progress < 1) {
-      const lineWidth = 4;
+    if (0 < this.progress) {
+      const lineWidth = 1;
       const progress = clamp(this.progress, 0, 1);
 
       GraphicsPipeline.pipe()
         .options({
           lineWidth,
-          ignoreScale: true,
+          // ignoreScale: true,
           uniformColor: true,
+          doStroke: false,
+          doFill: true,
         })
         .run(ctx, (ctx) => {
-          ctx.roundRect(
-            -this.boundingBox.width / 2,
-            -this.boundingBox.height / 2,
+          ctx.rect(
+            -Math.floor(this.boundingBox.width / 2),
+            -Math.floor(this.boundingBox.height / 2),
             this.boundingBox.width,
             this.boundingBox.height,
-            this.boundingBox.height / 3,
-            rgba(0.25, 0.25, 0.25, 0.8)
+            rgb(0.0625, 0.0625, 0.0625)
           );
         });
       GraphicsPipeline.pipe()
         .options({
           lineWidth,
-          ignoreScale: true,
+          doStroke: false,
         })
         .run(ctx, (ctx) => {
-          ctx.roundRect(
-            -this.boundingBox.width / 2,
-            -this.boundingBox.height / 2,
-            this.boundingBox.width * progress,
+          ctx.rect(
+            -Math.floor(this.boundingBox.width / 2),
+            -Math.floor(this.boundingBox.height / 2),
+            Math.ceil(this.boundingBox.width * progress),
             this.boundingBox.height,
-            this.boundingBox.height / 3,
-            rgba(0.3, 0.9, 0.3, 0.8),
+            rgb(0.1, 0.9, 0.1),
             this.boundingBox.width
           );
         });

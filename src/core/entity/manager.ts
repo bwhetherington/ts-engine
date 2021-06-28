@@ -6,7 +6,14 @@ import {
   Partioner,
   VectorLike,
 } from 'core/geometry';
-import {GraphicsContext, CameraManager, Renderable} from 'core/graphics';
+import {
+  GraphicsContext,
+  CameraManager,
+  Renderable,
+  TileManager,
+  GameImage,
+  PIXEL_SIZE,
+} from 'core/graphics';
 import {
   Entity,
   Unit,
@@ -64,6 +71,8 @@ export class WorldManager extends LoadingManager<Entity>
   private entityCount: number = 0;
   private unitCount: number = 0;
   private entityCounts: Record<string, number> = {};
+  private backgroundOffset: Vector = new Vector(0, 0);
+  private background?: GameImage;
   public friction: number = 1;
 
   private graph?: Graph;
@@ -105,6 +114,10 @@ export class WorldManager extends LoadingManager<Entity>
     this.registerAssetType(Follow);
 
     await this.loadAssetTemplates('templates/entities');
+
+    if (NetworkManager.isClient()) {
+      await TileManager.load('tilemaps/stone.json');
+    }
   }
 
   public async initialize(): Promise<void> {
@@ -118,6 +131,11 @@ export class WorldManager extends LoadingManager<Entity>
           this.deserialize(worldData);
         }
       );
+
+      AssetManager.loadImage('images/0000-Level_0.png').then((image) => {
+        this.background = image;
+        this.backgroundOffset.setXY(-image.width / 2, -image.height / 2);
+      });
     }
 
     if (NetworkManager.isServer()) {
@@ -153,79 +171,44 @@ export class WorldManager extends LoadingManager<Entity>
     ctx.resetTransform();
 
     const camBounds = CameraManager.boundingBox;
-    ctx.scale(CameraManager.scale);
-    ctx.translate(-camBounds.x, -camBounds.y);
-
-    ctx.pushOptions({
-      lineWidth: 4,
-      doFill: true,
-      doStroke: false,
-    });
-    ctx.rect(
-      this.boundingBox.x,
-      this.boundingBox.y,
-      this.boundingBox.width,
-      this.boundingBox.height,
-      BLACK
-    );
-    ctx.popOptions();
 
     GraphicsPipeline.pipe()
-      .options({
-        lineWidth: 2,
-        doFill: false,
-        doStroke: true,
-      })
+      .translate(-camBounds.x, -camBounds.y)
       .run(ctx, (ctx) => {
-        const stepSize = 20;
-        const bounds = CameraManager.boundingBox;
-
-        // Compute
-        const xOffset = (this.boundingBox.x - bounds.x) % stepSize;
-        const yOffset = (this.boundingBox.y - bounds.y) % stepSize;
-
-        const minX = Math.max(this.boundingBox.x, bounds.x);
-        const maxX = Math.min(this.boundingBox.farX, bounds.farX);
-        const minY = Math.max(this.boundingBox.y, bounds.y);
-        const maxY = Math.min(this.boundingBox.farY, bounds.farY);
-
-        const xStart = Math.max(this.boundingBox.x, bounds.x + xOffset);
-        const yStart = Math.max(this.boundingBox.y, bounds.y + yOffset);
-
-        for (let x = xStart; x < maxX; x += stepSize) {
-          ctx.line(x, minY, x, maxY, GRID_COLOR);
+        // Render background
+        if (this.background) {
+          ctx.image(
+            this.background,
+            this.backgroundOffset.x,
+            this.backgroundOffset.y,
+            this.background.width,
+            this.background.height,
+            0,
+            0,
+            this.background.width,
+            this.background.height
+          );
         }
-        for (let y = yStart; y < maxY; y += stepSize) {
-          ctx.line(minX, y, maxX, y, GRID_COLOR);
-        }
+
+        this.getEntitiesLayerOrdered()
+          .filter((entity) => entity.boundingBox.intersects(camBounds))
+          .forEach((entity) => {
+            GraphicsPipeline.pipe()
+              .translate(entity.position.x, entity.position.y, true)
+              .run(ctx, entity.renderInternal.bind(entity));
+          });
+
+        ctx.box(5, 5, 20, 10);
       });
 
-    GraphicsPipeline.pipe()
-      .options({
-        lineWidth: 4,
-        doFill: false,
-        doStroke: true,
-      })
-      .run(ctx, (ctx) => {
-        ctx.rect(
-          this.boundingBox.x,
-          this.boundingBox.y,
-          this.boundingBox.width,
-          this.boundingBox.height,
-          WALL_COLOR
-        );
-      });
+    // ctx.translate(-camBounds.x, -camBounds.y);
 
     // this.graph?.render(ctx);
 
-    this.getEntitiesLayerOrdered()
-      .filter((entity) => entity.boundingBox.intersects(camBounds))
-      .forEach((entity) => {
-        GraphicsPipeline.pipe()
-          .translate(entity.position.x, entity.position.y)
-          .rotate(entity.angle)
-          .run(ctx, entity.renderInternal.bind(entity));
-      });
+    // Render tile map
+    // TileManager.render(ctx);
+
+    ctx.drawPixelBuffer();
   }
 
   private *getEntitiesLayerOrderedInternal(): Iterable<Entity> {

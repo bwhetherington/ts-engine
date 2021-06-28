@@ -2,15 +2,15 @@ import {Vector} from 'core/geometry';
 import {Data, Serializable} from 'core/serialize';
 
 export class Matrix3 implements Serializable {
-  private a0: number = 0;
-  private a1: number = 0;
-  private a2: number = 0;
-  private b0: number = 0;
-  private b1: number = 0;
-  private b2: number = 0;
-  private c0: number = 0;
-  private c1: number = 0;
-  private c2: number = 0;
+  public a0: number = 0;
+  public a1: number = 0;
+  public a2: number = 0;
+  public b0: number = 0;
+  public b1: number = 0;
+  public b2: number = 0;
+  public c0: number = 0;
+  public c1: number = 0;
+  public c2: number = 0;
 
   public identity(): Matrix3 {
     this.a0 = 1;

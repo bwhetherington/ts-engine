@@ -5,7 +5,7 @@ import {GraphicsPipeline} from 'core/graphics/pipe';
 import {TextFormatter} from 'core/chat/format';
 import {isTextColor, TextColor} from 'core/chat';
 
-const TEXT_FORMAT = '{color=$color|$text}{color=grey,style=small|$tag}';
+const TEXT_FORMAT = '{color=$color|$text}';
 const TEXT_FORMATTER = new TextFormatter(TEXT_FORMAT);
 
 export class Text extends Entity {
@@ -13,7 +13,7 @@ export class Text extends Entity {
 
   public text: string = '';
   public textColor: TextColor = 'none';
-  public textSize: number = 24;
+  public textSize: number = 10;
   public tag?: string;
   public isStatic: boolean = true;
 
@@ -55,17 +55,9 @@ export class Text extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    const components = TEXT_FORMATTER.format({
-      color: this.textColor,
-      text: this.text,
-      tag: this.tag,
-    });
     GraphicsPipeline.pipe()
-      .options({lineWidth: 6})
       .run(ctx, (ctx) => {
-        ctx.textComponents(0, 0, components, {
-          size: this.textSize,
-        });
+        ctx.text(0, 0, this.text, {});
       });
   }
 }

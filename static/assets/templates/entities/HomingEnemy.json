@@ -4,10 +4,10 @@
   "mass": 5,
   "maxLife": 50,
   "life": 50,
-  "speed": 200,
+  "speed": 25,
   "boundingBox": {
-    "width": 30,
-    "height": 30
+    "width": 8,
+    "height": 8
   },
   "cannons": [
     {

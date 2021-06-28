@@ -1,5 +1,6 @@
 import {Text, WorldManager, Echo} from 'core/entity';
 import {EventManager} from 'core/event';
+import { EchoVariant } from './Echo';
 
 export class TimedText extends Text {
   public static typeName: string = 'TimedText';
@@ -19,7 +20,7 @@ export class TimedText extends Text {
       await EventManager.sleep(this.duration);
       this.markForDelete();
       const echo = WorldManager.spawn(Echo, this.position);
-      echo?.initialize(this, false, 0.5);
+      echo?.initialize(this, false, 0.5, EchoVariant.Shrink);
     }
   }
 

@@ -8,6 +8,31 @@
   --checkbox-padding: 6px;
 }
 
+@font-face {
+  font-family: 'Pixels';
+  src: url('fonts/munro-small.ttf') format('truetype');
+  font-weight: 100 800;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+}
+
+@font-face {
+  font-family: 'Pixels Mini';
+  src: url('fonts/munro-small.ttf') format('truetype');
+  font-weight: 100 800;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+}
+
+canvas {
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 html,
 body,
 #game {
@@ -15,8 +40,11 @@ body,
   height: 100%;
   margin: 0px;
   overflow: hidden;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Pixels', monospace;
+  font-size: 25px !important;
   image-rendering: pixelated;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
 }
 
 .top {
@@ -76,9 +104,8 @@ body,
 .dialog {
   background-color: rgba(0, 0, 0, 0.75);
   padding: 6px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   pointer-events: auto;
-  font-size: 0.9em;
   user-select: none;
   color: white;
 }
@@ -129,7 +156,7 @@ input[type='checkbox'] {
   appearance: none;
   width: 1.5em;
   height: 1.5em;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   margin: 2px;
   background: rgba(0, 0, 0, 0.67);
   outline: none;
@@ -153,7 +180,7 @@ input[type='checkbox']:checked::after {
 
   width: calc(100% - 2 * var(--checkbox-padding));
   height: calc(100% - 2 * var(--checkbox-padding));
-  border-radius: 2px;
+  /* border-radius: 2px; */
 }
 
 #text-pane {
@@ -221,7 +248,7 @@ input[type='range'] {
   height: 1.5em;
   color: white;
   padding: 5px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   font-size: inherit;
 }
 
@@ -234,7 +261,7 @@ input[type='range']::-webkit-slider-thumb {
   width: 0.5em;
   height: 1.25em;
   background-color: rgba(255, 255, 255, 0.75);
-  border-radius: 2px;
+  /* border-radius: 2px; */
 }
 
 /* input[type="range"]::-webkit-slider-thumb:hover {
@@ -246,7 +273,7 @@ input[type='range']::-moz-slider-thumb {
   width: 0.5em;
   height: 1.25em;
   background-color: rgba(255, 255, 255, 0.75);
-  border-radius: 2px;
+  /* border-radius: 2px; */
 }
 
 input[type='range']::-moz-slider-thumb:hover {
@@ -265,5 +292,5 @@ input[type='range']::-moz-slider-thumb:hover {
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
+  /* border-radius: 8px; */
 }

@@ -54,7 +54,7 @@ function createComponentStyle(component: TextComponent): React.CSSProperties {
       margin: '4px',
       padding: '4px',
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      border: '1px solid rgba(255, 255, 255, 0.25)',
+      border: '2px solid rgba(255, 255, 255, 0.25)',
       borderRadius: '4px',
     };
   } else {
@@ -63,7 +63,7 @@ function createComponentStyle(component: TextComponent): React.CSSProperties {
     }
 
     if (component.style?.styles?.includes('bold')) {
-      css.fontWeight = 'bold';
+      // css.fontWeight = 'bold';
     }
   }
   return css;

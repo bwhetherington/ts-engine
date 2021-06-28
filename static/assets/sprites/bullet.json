@@ -4,13 +4,10 @@
     "x": 3,
     "y": 2
   },
-  "size": {
-    "x": 9,
-    "y": 6
-  },
   "animations": {
     "stand": {
-      "frames": [0]
+      "frames": [0],
+      "transitions": ["stand"]
     }
   },
   "animation": "stand"

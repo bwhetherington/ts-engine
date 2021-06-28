@@ -16,7 +16,7 @@ export class BaseGun extends Weapon {
 
   protected projectileType: string = 'Projectile';
   protected projectileShape: ProjectileShape = 'circle';
-  protected projectileSpeed: number = 500;
+  protected projectileSpeed: number = 50;
   protected projectileSpread: number = 0.1;
   protected projectileDuration: number = 1;
 

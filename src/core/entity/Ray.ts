@@ -18,7 +18,7 @@ import {NetworkManager} from 'core/net';
 const log = LogManager.forFile(__filename);
 
 const DURATION = 0.25;
-const BASE_THICKNESS = 8;
+const BASE_THICKNESS = 2;
 
 export class Ray extends Entity {
   public static typeName: string = 'Ray';

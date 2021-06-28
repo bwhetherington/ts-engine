@@ -1,4 +1,4 @@
-import { Iterator } from 'core/iterator';
+import {Iterator} from 'core/iterator';
 import {Data, Serializable} from 'core/serialize';
 
 export class Animation implements Serializable {
@@ -67,14 +67,13 @@ export class AnimationMap implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    Iterator.entries(data)
-      .forEach(([animName, animData]) => {
-        let anim = this.map[animName];
-        if (!anim) {
-          anim = new Animation();
-          this.map[animName] = anim;
-        }
-        anim.deserialize(animData);
-      });
+    Iterator.entries(data).forEach(([animName, animData]) => {
+      let anim = this.map[animName];
+      if (!anim) {
+        anim = new Animation();
+        this.map[animName] = anim;
+      }
+      anim.deserialize(animData);
+    });
   }
 }

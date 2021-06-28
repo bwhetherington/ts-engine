@@ -42,11 +42,11 @@ export const App: React.FunctionComponent<{}> = () => (
         </Column>
       </Row>
     </div>
-    <div className="bottom right">
+    {/* <div className="bottom right">
       <Column>
         <Radar />
       </Column>
-    </div>
+    </div> */}
     <div className="top right">
       <Column>
         <Scoreboard />

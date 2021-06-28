@@ -11,14 +11,14 @@ const StyledInput = styled.input`
   height: 1.5em;
   color: white;
   padding: 5px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   font-size: inherit;
   font-weight: 500;
   pointer-events: auto;
 
   &:focus {
     outline: none;
-    border-radius: 2px;
+    /* border-radius: 2px; */
     content: normal;
   }
 `;
@@ -143,7 +143,7 @@ const StyledCheckbox = styled.input`
   appearance: none;
   width: 1.5em;
   height: 1.5em;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   margin: 2px;
   background: rgba(0, 0, 0, 0.67);
   outline: none;
@@ -166,7 +166,7 @@ const StyledCheckbox = styled.input`
 
     width: calc(100% - 2 * var(--checkbox-padding));
     height: calc(100% - 2 * var(--checkbox-padding));
-    border-radius: 2px;
+    /* border-radius: 2px; */
   }
 `;
 

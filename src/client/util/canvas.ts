@@ -7,11 +7,15 @@ import {
   GraphicsOptions,
   CameraManager,
   GameImage,
+  Sprite,
+  PIXEL_SIZE,
+  Font,
 } from 'core/graphics';
 import {BLACK, COLOR_MAPPING, WHITE} from 'core/graphics/color';
 import {GraphicsProc, ShadowStyle} from 'core/graphics/context';
 import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
 import {TextColor, TextComponent, TextComponents} from 'core/chat';
+import { threadId } from 'worker_threads';
 
 interface Options {
   width: number;
@@ -21,7 +25,7 @@ interface Options {
 
 function createFontString(font: string, size: number, scale: number): string {
   const fontSize = size / scale;
-  return `bold ${fontSize}px ${font}`;
+  return `${fontSize}pt ${font}`;
 }
 
 const DEFAULT_OPTIONS: Options = {
@@ -37,6 +41,14 @@ function isSmall(component: string | TextComponent | null): boolean {
   );
 }
 
+export const GLOBAL_FONTS: Record<string, Font> = {};
+
+const COLOR_FILTERS = {
+  white: 'none',
+  yellow: 'sepia() saturate(100000%)',
+  red: 'sepia() saturate(100000%) invert(100%) hue-rotate(120deg) brightness(95%) saturate(65%)',
+}
+
 export class HDCanvas implements GraphicsContext {
   private canvas?: HTMLCanvasElement;
   private hidden?: HDCanvas;
@@ -45,11 +57,14 @@ export class HDCanvas implements GraphicsContext {
   private ratio: number = 1;
   private scaleValue: number = 1;
   private translation: Vector = new Vector();
+  private font?: Font;
   public bounds?: Bounds;
 
   public transform: Matrix3 = new Matrix3().identity();
   private src: Matrix3 = new Matrix3();
   private dst: Matrix3 = new Matrix3();
+
+  private pixelBuffer?: HTMLCanvasElement;
 
   private options: GraphicsOptions = {
     lineWidth: 4,
@@ -68,12 +83,14 @@ export class HDCanvas implements GraphicsContext {
     const {width, height, isFullScreen} = options;
 
     this.canvas = element;
+    this.pixelBuffer = document.createElement('canvas');
+
     if (this.canvas) {
       this.setSize(width, height);
 
       // Set up auto scaling
       let ctx;
-      if ((ctx = this.getContext())) {
+      if ((ctx = this.curContext)) {
         ctx.lineCap = 'square';
         ctx.lineJoin = 'round';
       }
@@ -89,6 +106,10 @@ export class HDCanvas implements GraphicsContext {
       this.hidden = HDCanvas.create(options, false);
       this.hidden.bounds = new Bounds();
     }
+  }
+
+  public setFont(font: string): void {
+    this.font = GLOBAL_FONTS[font];
   }
 
   public static create(
@@ -156,20 +177,18 @@ export class HDCanvas implements GraphicsContext {
     const {canvas: element} = this;
     if (element) {
       ratio = ratio ?? window.devicePixelRatio ?? 1;
-      this.ratio = ratio;
-      const scale = this.ratio;
-      element.width = w * scale;
-      element.height = h * scale;
+      this.ratio = 1;
+      const aspect = h / w;
+      const bufH = 180;
+      const bufW = Math.floor(bufH / aspect);
+      element.width = bufW;
+      element.height = bufH;
       element.style.width = w + 'px';
       element.style.height = h + 'px';
-      const ctx = element.getContext('2d');
-      if (ctx) {
-        ctx.setTransform(scale, 0, 0, scale, 0, 0);
-        ctx.imageSmoothingEnabled = true;
-      }
+      CameraManager.setSize(bufW, bufH);
+      CameraManager.scale = w / bufW;
     }
     if (this.hidden) {
-      CameraManager.setSize(w, h);
       this.hidden.setSize(w * this.ratio, h * this.ratio, 1);
     }
   }
@@ -211,9 +230,14 @@ export class HDCanvas implements GraphicsContext {
   }
 
   public clear(color?: Color) {
+    const baseCtx = this.canvas?.getContext('2d');
+    if (baseCtx) {
+      baseCtx.clearRect(0, 0, this.width, this.height);
+    }
+
     const ctx = this.curContext;
-    if (ctx) {
-      ctx.clearRect(0, 0, this.width, this.height);
+    if (this.pixelBuffer && ctx) {
+      ctx.clearRect(0, 0, this.pixelBuffer.width, this.pixelBuffer.height);
       if (color) {
         if (this.canvas) {
           this.canvas.style.backgroundColor = toCss(color);
@@ -232,16 +256,20 @@ export class HDCanvas implements GraphicsContext {
   ): void {
     const ctx = this.curContext;
     if (ctx) {
-      const scaleValue = this.scaleValue;
-      const {font = 'Roboto Mono', size = 12} = style;
-      ctx.lineWidth = this.options.lineWidth / scaleValue;
+      ctx.save();
+      const scaleValue = 1;
+      const {size = 10, font = 'Pixels'} = style;
+      ctx.lineWidth = 2;
       ctx.textAlign = 'left';
+      ctx.filter = 'contrast(0%)';
 
       const normalFont = createFontString(font, size, scaleValue);
-      const smallFont = createFontString(font, (size * 3) / 4, scaleValue);
+      const smallFont = createFontString(font, size - 10, scaleValue);
       ctx.font = normalFont;
 
-      this.setRound(ctx);
+      // this.setRound(ctx);
+      ctx.lineCap = 'square';
+      ctx.lineJoin = 'miter';
 
       // Compute width
       let totalWidth = 0;
@@ -254,11 +282,11 @@ export class HDCanvas implements GraphicsContext {
         } else {
           ctx.font = normalFont;
         }
-        const width = ctx.measureText(text).width;
+        const width = Math.round(ctx.measureText(text).width);
         totalWidth += width;
       }
 
-      let xOffset = -totalWidth / 2;
+      let xOffset = Math.floor(-totalWidth / 2);
       for (const component of components) {
         const text =
           (typeof component === 'string' ? component : component?.content) ??
@@ -269,46 +297,30 @@ export class HDCanvas implements GraphicsContext {
         const color = COLOR_MAPPING[colorString];
 
         const componentIsSmall = isSmall(component);
-        ctx.font = componentIsSmall ? smallFont : normalFont;
-        const yOffset = componentIsSmall ? -1 * scaleValue : 0;
+        ctx.font = normalFont;
 
-        this.setStyles(ctx, color, -0.35);
-
-        ctx.strokeText(text, x + xOffset, y + yOffset);
-        ctx.fillText(text, x + xOffset, y + yOffset);
+        this.setStyles(ctx, color, -0.5);
+        ctx.fillText(text, x + xOffset, y);
 
         const width = ctx.measureText(text).width;
-        xOffset += width;
+        xOffset += Math.ceil(width);
       }
+      ctx.restore();
     }
   }
 
-  public text(x: number, y: number, text: string, style: TextStyle) {
+  public text(x: number, y: number, text: string, {fontColor = 'white'}: TextStyle) {
     const ctx = this.curContext;
-    if (ctx) {
-      const scaleValue = this.scaleValue;
-      const {font = 'Roboto Mono', size = 12, color = WHITE} = style;
-      ctx.lineWidth = this.options.lineWidth / scaleValue;
-      this.setStyles(ctx, color, 0.35);
-      ctx.textAlign = 'center';
-      ctx.font = createFontString(font, size, scaleValue);
-      this.setRound(ctx);
-      ctx.strokeText(text, x, y);
-      ctx.fillText(text, x, y);
-
-      // Add text to bounds
-      if (this.bounds) {
-        const width = ctx.measureText(text).width;
-        const height = size;
-        this.bounds?.insertRawTransformed(
-          x - width / 2,
-          y - height / 2,
-          width,
-          height,
-          this.transform
-        );
-      }
+    if (!(ctx && this.font)) {
+      return;
     }
+
+    const filter = COLOR_FILTERS[fontColor];
+
+    ctx.save();
+    ctx.filter = filter;
+    this.font.render(this, text, x, y);
+    ctx.restore();
   }
 
   public ellipse(x: number, y: number, w: number, h: number, color: Color) {
@@ -343,6 +355,12 @@ export class HDCanvas implements GraphicsContext {
     if (!ctx) {
       return;
     }
+
+    x = Math.floor(x);
+    y = Math.floor(y);
+    w = Math.floor(w);
+    h = Math.floor(h);
+    r = Math.floor(r);
 
     this.setStyles(ctx, color);
     ctx.lineWidth = this.options.lineWidth;
@@ -397,6 +415,14 @@ export class HDCanvas implements GraphicsContext {
       ctx.lineWidth = this.options.lineWidth;
       this.setRound(ctx);
 
+      // x = Math.floor(x / PIXEL_SIZE) * PIXEL_SIZE;
+      // y = Math.floor(y / PIXEL_SIZE) * PIXEL_SIZE;
+      // w = Math.floor(w / PIXEL_SIZE) * PIXEL_SIZE;
+      // h = Math.floor(h / PIXEL_SIZE) * PIXEL_SIZE;
+      // if (fullW) {
+      //   fullW = Math.floor(fullW / PIXEL_SIZE) * PIXEL_SIZE;
+      // }
+
       const fullWidth = fullW ?? w;
 
       if (this.options.ignoreScale) {
@@ -419,6 +445,30 @@ export class HDCanvas implements GraphicsContext {
       }
       this.bounds?.insertRawTransformed(x, y, w, h, this.transform);
     }
+  }
+
+  public box(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+  ): void {
+    const ctx = this.curContext;
+    if (!ctx) {
+      return;
+    }
+    ctx.save();
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.closePath();
+    ctx.fillStyle = 'black';
+    ctx.beginPath();
+    ctx.rect(x + 1, y + 1, w - 2, h - 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
   }
 
   public trapezoid(
@@ -555,6 +605,8 @@ export class HDCanvas implements GraphicsContext {
   }
 
   public translate(x: number, y: number) {
+    x = Math.floor(x);
+    y = Math.floor(y);
     this.src.translate(x, y);
     this.transform.multiply(this.src, this.dst);
     this.transform.set(this.dst);
@@ -564,6 +616,7 @@ export class HDCanvas implements GraphicsContext {
       ctx.translate(x, y);
       this.translation.addXY(x, y);
     }
+
     this.hidden?.translate(x, y);
   }
 
@@ -582,11 +635,15 @@ export class HDCanvas implements GraphicsContext {
 
   public resetTransform(ratio = this.ratio) {
     this.transform.identity();
-    const ctx = this.curContext;
+    const ctx = this.canvas?.getContext('2d');
     if (ctx) {
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       this.scaleValue = 1;
       this.translation.setXY(0, 0);
+    }
+    const pixCtx = this.curContext;
+    if (pixCtx) {
+      pixCtx.resetTransform();
     }
     this.hidden?.resetTransform();
   }
@@ -596,9 +653,12 @@ export class HDCanvas implements GraphicsContext {
     this.transform.multiply(this.src, this.dst);
     this.transform.set(this.dst);
 
-    this.curContext?.scale(scale, scale);
-    this.scaleValue *= scale;
-    this.hidden?.scale(scale);
+    const ctx = this.canvas?.getContext('2d');
+    if (ctx) {
+      this.curContext?.scale(scale, scale);
+      this.scaleValue *= scale;
+      this.hidden?.scale(scale);
+    }
   }
 
   public line(
@@ -744,8 +804,68 @@ export class HDCanvas implements GraphicsContext {
       return;
     }
     ctx.save();
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+    // ctx.resetTransform();
+    // ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(
+      image,
+      Math.floor(sx),
+      Math.floor(sy),
+      Math.ceil(sw),
+      Math.ceil(sh),
+      Math.floor(dx),
+      Math.floor(dy),
+      Math.ceil(dw),
+      Math.ceil(dh)
+    );
     ctx.restore();
+  }
+
+  public sprite(sprite: Sprite): void {
+    const ctx = this.curContext;
+    if (!ctx) {
+      return;
+    }
+
+    sprite.render(ctx);
+  }
+
+  public drawPixelBuffer(): void {
+    // const ctx = this.canvas?.getContext('2d');
+    // if (!(this.canvas && ctx && this.pixelBuffer)) {
+    //   return;
+    // }
+
+    // const canvas = this.canvas;
+    // const buf = this.pixelBuffer;
+
+    // ctx.save();
+    // ctx.resetTransform();
+    // ctx.imageSmoothingEnabled = false;
+
+    // const scale = (this.canvas.width * this.ratio) / buf.width;
+    // const offsetX = Math.floor((canvas.width - buf.width * scale));
+    // const offsetY = Math.floor((canvas.height - buf.height * scale));
+    // CameraManager.transform = {
+    //   scale,
+    //   tx: -(canvas.width - buf.width) * this.ratio / 2,
+    //   ty: -(canvas.width - buf.width) * this.ratio / 2,
+    // };
+
+    // ctx.drawImage(
+    //   buf,
+    //   0,
+    //   0,
+    //   buf.width,
+    //   buf.height,
+    //   0,
+    //   0,
+    //   canvas.width,
+    //   canvas.height,
+    //   // offsetX,
+    //   // offsetY,
+    //   // buf.width * scale,
+    //   // buf.height * scale
+    // );
+    // ctx.restore();
   }
 }

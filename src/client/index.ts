@@ -9,6 +9,7 @@ import {
   ClientLogger,
   loadFile,
   loadDirectory,
+  GLOBAL_FONTS,
 } from 'client/util';
 import {CameraManager} from 'core/graphics';
 import {InputManager} from 'client/input';
@@ -52,6 +53,12 @@ async function main(): Promise<void> {
     const canvas = HDCanvas.create();
     canvas.attachTo(game);
     canvas.setSize(window.innerWidth, window.innerHeight);
+
+    AssetManager.loadFont('fonts/pixels.json').then((font) => {
+      GLOBAL_FONTS['pixels'] = font;
+      canvas.setFont('pixels');
+    });
+
     CameraManager.setTargetXY(0, 0);
 
     InputManager.initialize(game);
@@ -67,6 +74,7 @@ async function main(): Promise<void> {
       await EventManager.step(dt);
       CameraManager.update();
       WorldManager.render(canvas);
+      // canvas.renderPixelBuffer();
     });
 
     timer.start();

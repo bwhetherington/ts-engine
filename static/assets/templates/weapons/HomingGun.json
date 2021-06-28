@@ -3,7 +3,7 @@
   "extends": "BaseHomingGun",
   "projectileType": "HomingProjectile",
   "shotInaccuracy": 0.1,
-  "projectileSpeed": 500,
+  "projectileSpeed": 30,
   "pierce": 1,
   "projectileDuration": 1.5,
   "damage": 5,

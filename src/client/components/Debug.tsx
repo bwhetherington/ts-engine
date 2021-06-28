@@ -6,6 +6,8 @@ import {WorldManager} from 'core/entity';
 import {MetricsEvent} from 'core/metrics';
 import {PlayerManager} from 'core/player';
 import {UUIDManager} from 'core/uuid';
+import { VectorLike } from 'core/geometry';
+import { MouseEvent } from 'core/input';
 
 interface LineProps {
   label: string;
@@ -28,6 +30,21 @@ interface DebugState {
   serverListeners: number;
   ping: number;
   serverUuids: number;
+  mouse: VectorLike;
+}
+
+function convertVector(vec: VectorLike): string {
+  const {x, y} = vec;
+  return `${Math.floor(x)}, ${Math.floor(y)}`;
+}
+
+function getCurrentPosition(): string {
+  const position = PlayerManager.getActivePlayer()?.hero?.position;
+  if (!position) {
+    return 'N/A';
+  }
+
+  return convertVector(position);
 }
 
 export class Debug extends Component<{}, DebugState> {
@@ -42,6 +59,7 @@ export class Debug extends Component<{}, DebugState> {
       serverListeners: 0,
       ping: 0,
       serverUuids: 0,
+      mouse: {x: 0, y: 0},
     });
   }
 
@@ -55,7 +73,7 @@ export class Debug extends Component<{}, DebugState> {
       });
     });
 
-    this.streamEvents<MetricsEvent>('MetricsEvent').forEach(async (event) => {
+    this.streamEvents<MetricsEvent>('MetricsEvent').forEach((event) => {
       // Calculate client ping
       const partialState: Partial<DebugState> = {
         tps: event.data.tps,
@@ -68,8 +86,19 @@ export class Debug extends Component<{}, DebugState> {
         const ping = event.data.pings[player.id];
         partialState.ping = ping;
       }
-      await this.updateState(partialState);
+      this.updateState(partialState);
     });
+
+    this.streamEvents<MouseEvent>('MouseEvent')
+      .forEach((event) => {
+        const pos = {
+          x: event.data.x,
+          y: event.data.y,
+        };
+        this.updateState({
+          mouse: pos,
+        });
+      });
   }
 
   public render(): JSX.Element {
@@ -83,6 +112,8 @@ export class Debug extends Component<{}, DebugState> {
           <Line label="Entities" value={this.state.clientEntities} />
           <Line label="Listeners" value={this.state.clientListeners} />
           <Line label="UUIDs" value={this.state.clientUuids} />
+          <Line label="Position" value={getCurrentPosition()} />
+          <Line label="Mouse" value={convertVector(this.state.mouse)} />
         </div>
         <PanelHeader>
           <b>Server</b>

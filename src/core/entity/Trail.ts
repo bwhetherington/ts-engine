@@ -5,7 +5,7 @@ import {BLACK, GraphicsContext} from 'core/graphics';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {Vector, VectorLike} from 'core/geometry';
 
-const DURATION = 0.1;
+const DURATION = 1;
 
 interface PositionSnapshot {
   time: number;
@@ -98,7 +98,7 @@ export class Trail extends Entity {
         .options({
           lineWidth: (this.parent?.boundingBox.width ?? 20) * 0.75,
         })
-        .translate(-this.position.x, -this.position.y)
+        .translate(-Math.round(this.position.x), -Math.round(this.position.y))
         .run(ctx, (ctx) => {
           const points = this.snapshots
             .iterator()
