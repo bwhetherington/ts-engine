@@ -6,8 +6,8 @@ import {WorldManager} from 'core/entity';
 import {MetricsEvent} from 'core/metrics';
 import {PlayerManager} from 'core/player';
 import {UUIDManager} from 'core/uuid';
-import { VectorLike } from 'core/geometry';
-import { MouseEvent } from 'core/input';
+import {VectorLike} from 'core/geometry';
+import {MouseEvent} from 'core/input';
 
 interface LineProps {
   label: string;
@@ -89,16 +89,15 @@ export class Debug extends Component<{}, DebugState> {
       this.updateState(partialState);
     });
 
-    this.streamEvents<MouseEvent>('MouseEvent')
-      .forEach((event) => {
-        const pos = {
-          x: event.data.x,
-          y: event.data.y,
-        };
-        this.updateState({
-          mouse: pos,
-        });
+    this.streamEvents<MouseEvent>('MouseEvent').forEach((event) => {
+      const pos = {
+        x: event.data.x,
+        y: event.data.y,
+      };
+      this.updateState({
+        mouse: pos,
       });
+    });
   }
 
   public render(): JSX.Element {

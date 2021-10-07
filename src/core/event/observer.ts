@@ -5,13 +5,11 @@ import {
   StepEvent,
   Event,
   Priority,
-  PlayerEvent,
 } from 'core/event';
 import {AsyncIterator} from 'core/iterator';
-import {PlayerManager} from 'core/player';
 import {UUID} from 'core/uuid';
 
-export abstract class Observer {
+export class Observer {
   private handlers: Record<string, Set<UUID>> = {};
 
   private getHandlers(type: string): Set<UUID> {

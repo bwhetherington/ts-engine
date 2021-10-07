@@ -89,10 +89,7 @@ export class AssetManager {
     }
   }
 
-  public loadImage(
-    path: string,
-    timeout: number = 5
-  ): Promise<GameImage> {
+  public loadImage(path: string, timeout: number = 5): Promise<GameImage> {
     return this.imageCache.getOrInsertAsync(path, async () => {
       const src = await this.loadImageSrc(path);
       const img = new Image();

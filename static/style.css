@@ -40,11 +40,8 @@ body,
   height: 100%;
   margin: 0px;
   overflow: hidden;
-  font-family: 'Pixels', monospace;
-  font-size: 25px !important;
+  font-family: 'Roboto mono', monospace;
   image-rendering: pixelated;
-  font-smooth: never;
-  -webkit-font-smoothing: none;
 }
 
 .top {

@@ -10,12 +10,13 @@ import {
   Sprite,
   PIXEL_SIZE,
   Font,
+  FONTS,
 } from 'core/graphics';
 import {BLACK, COLOR_MAPPING, WHITE} from 'core/graphics/color';
 import {GraphicsProc, ShadowStyle} from 'core/graphics/context';
 import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
 import {TextColor, TextComponent, TextComponents} from 'core/chat';
-import { threadId } from 'worker_threads';
+import {threadId} from 'worker_threads';
 
 interface Options {
   width: number;
@@ -41,13 +42,25 @@ function isSmall(component: string | TextComponent | null): boolean {
   );
 }
 
-export const GLOBAL_FONTS: Record<string, Font> = {};
+type FontColor = 'white' | 'yellow' | 'red' | 'grey';
 
-const COLOR_FILTERS = {
-  white: 'none',
-  yellow: 'sepia() saturate(100000%)',
-  red: 'sepia() saturate(100000%) invert(100%) hue-rotate(120deg) brightness(95%) saturate(65%)',
-}
+type CanvasOperation = (ctx: CanvasRenderingContext2D) => void;
+
+const COLOR_FILTERS: Record<FontColor, CanvasOperation> = {
+  white(ctx: CanvasRenderingContext2D) {
+    ctx.filter = 'none';
+  },
+  yellow(ctx: CanvasRenderingContext2D) {
+    ctx.filter = 'sepia() saturate(100000%)';
+  },
+  red(ctx: CanvasRenderingContext2D) {
+    ctx.filter =
+      'sepia() saturate(100000%) invert(100%) hue-rotate(120deg) brightness(95%) saturate(65%)';
+  },
+  grey(ctx: CanvasRenderingContext2D) {
+    ctx.globalAlpha = 0.5;
+  },
+};
 
 export class HDCanvas implements GraphicsContext {
   private canvas?: HTMLCanvasElement;
@@ -109,7 +122,7 @@ export class HDCanvas implements GraphicsContext {
   }
 
   public setFont(font: string): void {
-    this.font = GLOBAL_FONTS[font];
+    this.font = FONTS.get(font);
   }
 
   public static create(
@@ -179,7 +192,7 @@ export class HDCanvas implements GraphicsContext {
       ratio = ratio ?? window.devicePixelRatio ?? 1;
       this.ratio = 1;
       const aspect = h / w;
-      const bufH = 180;
+      const bufH = 192;
       const bufW = Math.floor(bufH / aspect);
       element.width = bufW;
       element.height = bufH;
@@ -309,7 +322,12 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
-  public text(x: number, y: number, text: string, {fontColor = 'white'}: TextStyle) {
+  public text(
+    x: number,
+    y: number,
+    text: string,
+    {fontColor = 'white'}: TextStyle
+  ) {
     const ctx = this.curContext;
     if (!(ctx && this.font)) {
       return;
@@ -318,7 +336,7 @@ export class HDCanvas implements GraphicsContext {
     const filter = COLOR_FILTERS[fontColor];
 
     ctx.save();
-    ctx.filter = filter;
+    filter?.(ctx);
     this.font.render(this, text, x, y);
     ctx.restore();
   }
@@ -447,12 +465,23 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
-  public box(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-  ): void {
+  public rawRect(x: number, y: number, w: number, h: number, c: Color): void {
+    const ctx = this.curContext;
+    if (!ctx) {
+      return;
+    }
+
+    ctx.save();
+    ctx.fillStyle = toCss(c);
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.closePath();
+
+    ctx.restore();
+  }
+
+  public box(x: number, y: number, w: number, h: number): void {
     const ctx = this.curContext;
     if (!ctx) {
       return;
@@ -463,7 +492,7 @@ export class HDCanvas implements GraphicsContext {
     ctx.rect(x, y, w, h);
     ctx.fill();
     ctx.closePath();
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = '#122020';
     ctx.beginPath();
     ctx.rect(x + 1, y + 1, w - 2, h - 2);
     ctx.fill();
@@ -797,26 +826,42 @@ export class HDCanvas implements GraphicsContext {
     sx: number,
     sy: number,
     sw: number,
-    sh: number
+    sh: number,
+    shadowOffset?: VectorLike
   ): void {
     const ctx = this.curContext;
     if (!ctx) {
       return;
     }
+
+    (sx = Math.floor(sx)),
+      (sy = Math.floor(sy)),
+      (sw = Math.ceil(sw)),
+      (sh = Math.ceil(sh)),
+      (dx = Math.floor(dx)),
+      (dy = Math.floor(dy)),
+      (dw = Math.ceil(dw)),
+      (dh = Math.ceil(dh));
+
+    if (sw === 0 || sh === 0 || dw === 0 || dh === 0) {
+      return;
+    }
+
+    // Draw shadow
+    if (shadowOffset) {
+      const {x: ox, y: oy} = shadowOffset;
+      ctx.save();
+      ctx.translate(ox, oy);
+      ctx.filter = 'brightness(0%)';
+      ctx.globalAlpha = 0.5;
+      ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+      ctx.restore();
+    }
+
     ctx.save();
     // ctx.resetTransform();
     // ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(
-      image,
-      Math.floor(sx),
-      Math.floor(sy),
-      Math.ceil(sw),
-      Math.ceil(sh),
-      Math.floor(dx),
-      Math.floor(dy),
-      Math.ceil(dw),
-      Math.ceil(dh)
-    );
+    ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
     ctx.restore();
   }
 
@@ -834,14 +879,11 @@ export class HDCanvas implements GraphicsContext {
     // if (!(this.canvas && ctx && this.pixelBuffer)) {
     //   return;
     // }
-
     // const canvas = this.canvas;
     // const buf = this.pixelBuffer;
-
     // ctx.save();
     // ctx.resetTransform();
     // ctx.imageSmoothingEnabled = false;
-
     // const scale = (this.canvas.width * this.ratio) / buf.width;
     // const offsetX = Math.floor((canvas.width - buf.width * scale));
     // const offsetY = Math.floor((canvas.height - buf.height * scale));
@@ -850,7 +892,6 @@ export class HDCanvas implements GraphicsContext {
     //   tx: -(canvas.width - buf.width) * this.ratio / 2,
     //   ty: -(canvas.width - buf.width) * this.ratio / 2,
     // };
-
     // ctx.drawImage(
     //   buf,
     //   0,
@@ -867,5 +908,20 @@ export class HDCanvas implements GraphicsContext {
     //   // buf.height * scale
     // );
     // ctx.restore();
+  }
+
+  public measureText(text: string): number {
+    return this.font?.measureString(text) ?? 0;
+  }
+
+  public withFrame(proc: GraphicsProc): void {
+    const ctx = this.curContext;
+    if (!ctx) {
+      return;
+    }
+
+    ctx.save();
+    proc(this);
+    ctx.restore();
   }
 }

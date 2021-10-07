@@ -266,7 +266,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       },
     });
 
-    await WorldManager.setLevel('arena');
+    await WorldManager.setLevel('geometry');
 
     await this.transition(GameAction.Start);
   }

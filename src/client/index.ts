@@ -9,9 +9,8 @@ import {
   ClientLogger,
   loadFile,
   loadDirectory,
-  GLOBAL_FONTS,
 } from 'client/util';
-import {CameraManager} from 'core/graphics';
+import {CameraManager, FONTS} from 'core/graphics';
 import {InputManager} from 'client/input';
 import {PlayerManager} from 'core/player';
 import {FormManager} from 'core/form';
@@ -55,7 +54,7 @@ async function main(): Promise<void> {
     canvas.setSize(window.innerWidth, window.innerHeight);
 
     AssetManager.loadFont('fonts/pixels.json').then((font) => {
-      GLOBAL_FONTS['pixels'] = font;
+      FONTS.set('pixels', font);
       canvas.setFont('pixels');
     });
 

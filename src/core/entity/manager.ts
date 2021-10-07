@@ -57,8 +57,15 @@ import {UUID, UUIDManager} from 'core/uuid';
 import {DataBuffer} from 'core/buf';
 import {Trail} from './Trail';
 import {ShatterProjectile} from './ShatterProjectile';
+import {DebugWidget, Frame, StatusWidget} from 'core/ui';
 
 const log = LogManager.forFile(__filename);
+
+const FRAME = new Frame({
+  padding: 2,
+  topLeft: new DebugWidget({}),
+  topRight: new StatusWidget({}),
+});
 
 export class WorldManager extends LoadingManager<Entity>
   implements Bounded, Serializable, Renderable {
@@ -73,6 +80,9 @@ export class WorldManager extends LoadingManager<Entity>
   private entityCounts: Record<string, number> = {};
   private backgroundOffset: Vector = new Vector(0, 0);
   private background?: GameImage;
+
+  private nonGeometryEntities: Set<UUID> = new Set();
+
   public friction: number = 1;
 
   private graph?: Graph;
@@ -191,15 +201,23 @@ export class WorldManager extends LoadingManager<Entity>
         }
 
         this.getEntitiesLayerOrdered()
+          .filter((entity) => entity.collisionLayer !== CollisionLayer.Geometry)
           .filter((entity) => entity.boundingBox.intersects(camBounds))
           .forEach((entity) => {
             GraphicsPipeline.pipe()
               .translate(entity.position.x, entity.position.y, true)
               .run(ctx, entity.renderInternal.bind(entity));
           });
-
-        ctx.box(5, 5, 20, 10);
       });
+
+    FRAME.render(ctx);
+
+    // const x = 2;
+    // const y = 2;
+    // const w = 52;
+    // const h = 9;
+    // ctx.box(x, y, w, h);
+    // ctx.text((w - 4) / 2 + 2 + x, y + 2, 'Hello world', {});
 
     // ctx.translate(-camBounds.x, -camBounds.y);
 
@@ -242,7 +260,7 @@ export class WorldManager extends LoadingManager<Entity>
 
   private populateGraph(): void {
     if (this.shouldPopulateGraph) {
-      this.graph = Graph.sample(50);
+      this.graph = Graph.sample(8);
       this.shouldPopulateGraph = false;
     }
   }
@@ -261,6 +279,11 @@ export class WorldManager extends LoadingManager<Entity>
 
   public add(entity: Entity): void {
     this.entities[entity.id] = entity;
+
+    if (entity.collisionLayer !== CollisionLayer.Geometry) {
+      this.nonGeometryEntities.add(entity.id);
+    }
+
     entity.load();
     log.trace('add ' + entity.toString());
     this.entityCount += 1;
@@ -285,12 +308,19 @@ export class WorldManager extends LoadingManager<Entity>
     if (actual) {
       log.trace('remove ' + actual.toString());
       delete this.entities[actual.id];
+      this.nonGeometryEntities.delete(actual.id);
       this.entityCount -= 1;
       if (actual instanceof Unit) {
         this.unitCount -= 1;
       }
       this.removeEntityCount(actual);
     }
+  }
+
+  public getNonGeometryEntities(): Iterator<Entity> {
+    return Iterator.set(this.nonGeometryEntities).filterMap((id) =>
+      this.getEntity(id)
+    );
   }
 
   public getEntities(): Iterator<Entity> {
@@ -341,7 +371,7 @@ export class WorldManager extends LoadingManager<Entity>
     const isClient = NetworkManager.isClient();
     const shouldProcessLocalEntity = (entity: Entity) =>
       isClient ? CameraManager.isInFrame(entity) : true;
-    this.getEntities().forEach((entity) => {
+    this.getNonGeometryEntities().forEach((entity) => {
       if (entity.markedForDelete) {
         this.toDelete.push(entity.id);
       }
@@ -592,7 +622,7 @@ export class WorldManager extends LoadingManager<Entity>
       // Erase previous geometry
       this.getEntities()
         .filter((entity) => entity.collisionLayer === CollisionLayer.Geometry)
-        .forEach((entity) => entity.markForDelete());
+        .forEach((entity) => this.remove(entity));
 
       this.boundingBox.deserialize(boundingBox);
       this.boundingBox.centerX = 0;

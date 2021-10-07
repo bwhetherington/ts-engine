@@ -1,13 +1,13 @@
 import {Bounded, Rectangle, Vector} from 'core/geometry';
 import {
-  GraphicsContext,
   Color,
+  GraphicsContext,
+  PIXEL_SIZE,
   Renderable,
   Sprite,
-  PIXEL_SIZE,
 } from 'core/graphics';
-import {WHITE, isColor} from 'core/graphics/color';
-import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
+import {isColor, WHITE} from 'core/graphics/color';
+import {CollisionEvent, CollisionLayer, WorldManager} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
 import {isCollisionLayer, shuntOutOf} from './util';
 import {EventManager, Observer} from 'core/event';
@@ -18,6 +18,22 @@ import {clamp} from 'core/util';
 import {NetworkManager} from 'core/net';
 import {AssetManager} from 'core/assets';
 import {GraphicsPipeline} from 'core/graphics/pipe';
+
+const PREVIOUS_POSITION = new Vector();
+
+enum ShuntMode {
+  X,
+  Y,
+}
+
+function getOtherShuntMode(mode: ShuntMode): ShuntMode {
+  switch (mode) {
+    case ShuntMode.X:
+      return ShuntMode.Y;
+    case ShuntMode.Y:
+      return ShuntMode.X;
+  }
+}
 
 export class Entity extends Observer
   implements Bounded, DataSerializable, Serializable, Renderable {
@@ -50,6 +66,7 @@ export class Entity extends Observer
   private spritePath: string = '';
   private isExternal: boolean = false;
   private smoothTarget: Vector = new Vector();
+  private previousPosition: Vector = new Vector();
 
   constructor() {
     super();
@@ -116,8 +133,8 @@ export class Entity extends Observer
   }
 
   private updateBoundingBox(): void {
-    this.boundingBox.centerX = this.position.x;
-    this.boundingBox.centerY = this.position.y;
+    this.boundingBox.centerX = Math.floor(this.position.x);
+    this.boundingBox.centerY = Math.floor(this.position.y);
   }
 
   protected getTotalFriction(): number {
@@ -140,12 +157,64 @@ export class Entity extends Observer
     this.angle = movement.angle;
   }
 
+  private shuntOutOf(box: Rectangle): void {
+    // Determine which quadrant we're on
+    const mtv = Rectangle.testCollision(this.boundingBox, box);
+    if (!mtv) {
+      return;
+    }
+
+    this.addPositionXY(mtv.x, mtv.y);
+  }
+
+  private validatePosition(collisions?: Set<UUID>): Set<UUID> {
+    if (!collisions) {
+      collisions = new Set();
+    }
+    // Query for entities that may collide with this entity
+    WorldManager.query(this.boundingBox)
+      .filter((candidate) => candidate.isCollidable && candidate !== this)
+      .forEach((candidate) => {
+        // Collision
+        if (
+          (this.collisionLayer === CollisionLayer.Unit ||
+            this.collisionLayer === CollisionLayer.Projectile) &&
+          candidate.collisionLayer === CollisionLayer.Geometry
+        ) {
+          // If we have a collision, then undo this move
+          this.setPosition(this.previousPosition);
+        }
+
+        if (!collisions?.has(candidate.id)) {
+          this.collide(candidate);
+
+          EventManager.emit<CollisionEvent>({
+            type: 'CollisionEvent',
+            data: {
+              collider: this,
+              collided: candidate,
+            },
+          });
+        }
+
+        collisions?.add(candidate.id);
+      });
+    return collisions;
+  }
+
   private updatePosition(dt: number): void {
+    this.previousPosition.set(this.position);
+
+    let dx = 0;
+    let dy = 0;
+
     if (this.isAlive()) {
       if (this.attachedTo?.isAlive()) {
         this.setPosition(this.attachedTo.position);
       } else {
-        this.addPosition(this.velocity, dt);
+        dx = this.velocity.x * dt;
+        dy = this.velocity.y * dt;
+        // this.addPosition(this.velocity, dt);
       }
     }
 
@@ -160,42 +229,27 @@ export class Entity extends Observer
           this.smoothTarget.y
         ) <= snapDistance
       ) {
-        this.setPosition(this.smoothTarget);
+        dx = this.smoothTarget.x - this.position.x;
+        dy = this.smoothTarget.y - this.position.y;
         this.onSnappedToTarget();
         return;
       }
 
-      this.vectorBuffer.set(this.smoothTarget);
-      this.vectorBuffer.add(this.position, -1);
       this.onSmoothPosition(this.vectorBuffer);
       const increment = clamp(10 * dt, 0, 1);
-      this.addPosition(this.vectorBuffer, increment);
+      dx = this.smoothTarget.x - this.position.x * increment;
+      dy = this.smoothTarget.y - this.position.y * increment;
+      // this.addPosition(this.vectorBuffer, increment);
     }
 
     if (this.isCollidable) {
-      // Query for entities that may collide with this entity
-      WorldManager.query(this.boundingBox)
-        .filter((candidate) => candidate.isCollidable && candidate !== this)
-        .forEach((candidate) => {
-          // Collision
-          if (
-            (this.collisionLayer === CollisionLayer.Unit ||
-              this.collisionLayer === CollisionLayer.Projectile) &&
-            candidate.collisionLayer === CollisionLayer.Geometry
-          ) {
-            shuntOutOf(this, candidate.boundingBox);
-          }
-
-          this.collide(candidate);
-
-          EventManager.emit<CollisionEvent>({
-            type: 'CollisionEvent',
-            data: {
-              collider: this,
-              collided: candidate,
-            },
-          });
-        });
+      this.addPositionXY(dx, 0);
+      const collided = this.validatePosition();
+      this.previousPosition.set(this.position);
+      this.addPositionXY(0, dy);
+      this.validatePosition(collided);
+    } else {
+      this.addPositionXY(dx, dy);
     }
 
     // Apply friction
@@ -217,6 +271,7 @@ export class Entity extends Observer
 
   public step(dt: number): void {
     this.updatePosition(dt);
+    this.sprite?.step(dt);
   }
 
   public isAlive(): boolean {
@@ -452,6 +507,7 @@ export class Entity extends Observer
   }
 
   public shouldSmooth(): boolean {
-    return NetworkManager.isClient() && this.isExternal;
+    return false;
+    // return NetworkManager.isClient() && this.isExternal;
   }
 }

@@ -2,7 +2,8 @@ import {Serializable, Data} from 'core/serialize';
 import {GameImage, Renderable, GraphicsContext} from 'core/graphics';
 import {AssetManager} from 'core/assets';
 import {Iterator} from 'core/iterator';
-import { Cache } from 'core/util';
+import {Cache} from 'core/util';
+import {Vector} from 'core/geometry';
 
 type AtlasRef = [number, number, number, number];
 
@@ -10,14 +11,27 @@ type CharacterMap = Record<string, AtlasRef>;
 
 const STRING_CACHE_SIZE = 30;
 
+export const SPACE_WIDTH = 3;
+
+const SHADOW_OFFSET = new Vector(1, 0);
+
 export class Font implements Serializable {
   private atlas?: GameImage;
   private characterMap: CharacterMap = {};
   private stringCache: Cache<GameImage> = new Cache(STRING_CACHE_SIZE);
   private height: number = 0;
+  private static activeFont_?: Font;
 
   public serialize(): Data {
     return {};
+  }
+
+  public static setActiveFont(font: Font): void {
+    Font.activeFont_ = font;
+  }
+
+  public static getActiveFont(): Font | undefined {
+    return Font.activeFont_;
   }
 
   public measureString(input: string): number {
@@ -25,7 +39,7 @@ export class Font implements Serializable {
 
     for (const char of input) {
       if (char === ' ') {
-        length += 2;
+        length += SPACE_WIDTH;
       } else {
         const entry = this.characterMap[char.toLowerCase()];
         if (!entry) {
@@ -66,7 +80,7 @@ export class Font implements Serializable {
     let xOffset = 0;
     for (const char of input) {
       if (char === ' ') {
-        xOffset += 2;
+        xOffset += SPACE_WIDTH;
       } else {
         const entry = this.characterMap[char.toLowerCase()];
         if (!entry) {
@@ -132,6 +146,9 @@ export class Font implements Serializable {
       0,
       image.width,
       image.height
+      // SHADOW_OFFSET
     );
   }
 }
+
+export const FONTS: Map<string, Font> = new Map();

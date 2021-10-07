@@ -1,6 +1,6 @@
 import {Text, WorldManager, Echo} from 'core/entity';
 import {EventManager} from 'core/event';
-import { EchoVariant } from './Echo';
+import {EchoVariant} from './Echo';
 
 export class TimedText extends Text {
   public static typeName: string = 'TimedText';

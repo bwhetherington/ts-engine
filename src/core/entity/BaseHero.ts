@@ -135,7 +135,7 @@ export class BaseHero extends Tank {
           text.setPositionXY(target.boundingBox.x, target.boundingBox.y);
           text.addPositionXY(
             RNGManager.nextInt(0, target.boundingBox.width + 1),
-            RNGManager.nextInt(0, target.boundingBox.height + 1),
+            RNGManager.nextInt(0, target.boundingBox.height + 1)
           );
           const color = this === target ? 'red' : 'yellow';
           text.textColor = color;
@@ -407,7 +407,6 @@ export class BaseHero extends Tank {
 
   public step(dt: number): void {
     this.computeMovementInput();
-    this.sprite?.step(dt);
     this.weaponSprite?.step(dt);
     super.step(dt);
 

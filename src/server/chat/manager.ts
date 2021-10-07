@@ -189,10 +189,15 @@ export class ServerChatManager {
 
     this.registerCommand(
       'rename',
-      async (player) => {
-        if (!(await FormManager.sendForm(player, 'RenameForm'))) {
-          this.error('Error handling form', player);
+      async (player, name) => {
+        if (name) {
+          player.name = name;
+        } else {
+          this.error('Invalid name: ' + name, player);
         }
+        // if (!(await FormManager.sendForm(player, 'RenameForm'))) {
+        //   this.error('Error handling form', player);
+        // }
       },
       "Sets the player's name",
       0,

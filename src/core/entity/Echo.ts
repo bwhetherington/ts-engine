@@ -3,6 +3,7 @@ import {sleep, clamp, smoothStep} from 'core/util';
 import {StepEvent} from 'core/event';
 import {GraphicsContext} from 'core/graphics';
 import {GraphicsPipeline} from 'core/graphics/pipe';
+import {NetworkManager} from 'core/net';
 
 const DURATION = 0.5;
 
@@ -27,14 +28,34 @@ export class Echo extends Entity {
     this.doSync = false;
     this.isCollidable = false;
     this.isVisible = true;
+
+    if (NetworkManager.isClient()) {
+      this.setSprite('sprites/poof.json').then(() => {
+        const self = this;
+        this.sprite?.playAnimation({
+          animation: 'standFront',
+          repeat: false,
+          next() {
+            console.log('next anim');
+            self.markForDelete();
+            return {
+              animation: 'standFront',
+            };
+          },
+        });
+      });
+    }
+
+    this.markForDelete();
   }
 
   public step(dt: number): void {
     super.step(dt);
-    this.timeRemaining -= dt;
-    if (this.timeRemaining <= 0) {
-      this.markForDelete();
-    }
+    // console.log('step');
+    // this.timeRemaining -= dt;
+    // if (this.timeRemaining <= 0) {
+    //   this.markForDelete();
+    // }
   }
 
   private getParameter(): number {
@@ -42,9 +63,9 @@ export class Echo extends Entity {
     return smoothStep(t);
   }
 
-  public renderInternal(ctx: GraphicsContext): void {
-    this.render(ctx);
-  }
+  // public renderInternal(ctx: GraphicsContext): void {
+  //   this.render(ctx);
+  // }
 
   public initialize(
     entity: Entity,
@@ -52,35 +73,35 @@ export class Echo extends Entity {
     duration: number = DURATION,
     variant: EchoVariant = EchoVariant.Grow
   ): void {
-    this.parent = entity;
-    this.velocity.set(this.parent.velocity);
-    this.mass = this.parent.mass;
-    this.angle = this.parent.angle;
-    this.friction = 0;
-    this.timeRemaining = duration;
-    this.duration = duration;
-    this.isFancy = isFancy;
-    this.variant = variant;
+    // this.parent = entity;
+    // this.velocity.set(this.parent.velocity);
+    // this.mass = this.parent.mass;
+    // this.angle = this.parent.angle;
+    // this.friction = 0;
+    // this.timeRemaining = duration;
+    // this.duration = duration;
+    // this.isFancy = isFancy;
+    // this.variant = variant;
   }
 
-  public render(ctx: GraphicsContext): void {
-    if (this.parent) {
-      const t = this.getParameter();
-      let u;
-      switch (this.variant) {
-        case EchoVariant.Grow:
-          u = 2 - t;
-          break;
-        case EchoVariant.Shrink:
-          u = t / 2 + 0.5;
-          break;
-      }
-      GraphicsPipeline.pipe()
-        .alpha(t, this.isFancy)
-        .scale(u)
-        .run(ctx, this.parent.render.bind(this.parent));
-    }
-  }
+  // public render(ctx: GraphicsContext): void {
+  //   // if (this.parent) {
+  //   //   const t = this.getParameter();
+  //   //   let u;
+  //   //   switch (this.variant) {
+  //   //     case EchoVariant.Grow:
+  //   //       u = 2 - t;
+  //   //       break;
+  //   //     case EchoVariant.Shrink:
+  //   //       u = t / 2 + 0.5;
+  //   //       break;
+  //   //   }
+  //   //   GraphicsPipeline.pipe()
+  //   //     .alpha(t, this.isFancy)
+  //   //     .scale(u)
+  //   //     .run(ctx, this.parent.render.bind(this.parent));
+  //   // }
+  // }
 
   public shouldDeleteIfOffscreen(): boolean {
     return true;

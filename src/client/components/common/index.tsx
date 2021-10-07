@@ -31,6 +31,7 @@ export const PanelHeader = styled.div`
   margin-left: 10px;
   margin-right: 10px;
   border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(3px);
 `;
 
 export enum PanelDirection {
@@ -73,7 +74,6 @@ export const Button = styled.button`
   font-family: inherit;
   margin: 2px;
   cursor: pointer;
-  font-size: 20px;
   /* white-space: nowrap; */
 
   &:disabled {

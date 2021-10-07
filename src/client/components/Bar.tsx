@@ -41,7 +41,7 @@ const barStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   position: 'absolute',
-  top: '20%',
+  top: '10%',
   bottom: '20%',
   width: '100%',
   textAlign: 'center',

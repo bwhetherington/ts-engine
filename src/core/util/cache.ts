@@ -37,7 +37,10 @@ export class Cache<T> {
     return value;
   }
 
-  public async getOrInsertAsync(key: string, gen: () => Promise<T>): Promise<T> {
+  public async getOrInsertAsync(
+    key: string,
+    gen: () => Promise<T>
+  ): Promise<T> {
     let value = this.get(key);
     if (value === undefined) {
       value = await gen();

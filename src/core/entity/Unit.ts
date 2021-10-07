@@ -30,7 +30,7 @@ export class Unit extends Entity {
   private life: number = 10;
   private isImmune: boolean = false;
   protected lifeRegen: number = 0;
-  protected speed: number = 35;
+  protected speed: number = 50;
   private xpWorth: number = 1;
 
   public label?: Text;
@@ -179,12 +179,13 @@ export class Unit extends Entity {
 
     // Handle movement
     if (this.thrusting > 0) {
-      this.vectorBuffer.setXY(1, 0);
-      this.vectorBuffer.angle = this.angle;
-      this.vectorBuffer.x = Math.round(this.vectorBuffer.x * 1000) / 1000;
-      this.vectorBuffer.y = Math.round(this.vectorBuffer.y * 1000) / 1000;
-      this.vectorBuffer.scale(this.speed * dt);
-      this.addPosition(this.vectorBuffer);
+      this.velocity.setXY(1, 0);
+      this.velocity.angle = this.angle;
+      this.velocity.x = Math.round(this.velocity.x * 1000) / 1000;
+      this.velocity.y = Math.round(this.velocity.y * 1000) / 1000;
+      this.velocity.scale(this.speed);
+      // this.velocity
+      // this.addPosition(this.vectorBuffer);
     }
 
     super.step(dt);
@@ -201,7 +202,7 @@ export class Unit extends Entity {
 
       if (this.hpBar) {
         this.hpBar.position.set(this.position);
-        this.hpBar.position.addXY(0, this.boundingBox.height - 2);
+        this.hpBar.position.addXY(0, this.boundingBox.height);
         this.hpBar.velocity.set(this.velocity);
         this.hpBar.progress = this.getLife() / this.getMaxLife();
       }

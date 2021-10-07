@@ -7,7 +7,7 @@ export interface TextStyle {
   font?: string;
   size?: number;
   color?: Color;
-  fontColor?: 'red' | 'yellow' | 'white';
+  fontColor?: 'red' | 'yellow' | 'white' | 'grey';
 }
 
 export interface GraphicsOptions {
@@ -52,12 +52,7 @@ export interface GraphicsContext {
     color: Color,
     fullW?: number
   ): void;
-  box(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-  ): void;
+  box(x: number, y: number, w: number, h: number): void;
   roundRect(
     x: number,
     y: number,
@@ -106,8 +101,12 @@ export interface GraphicsContext {
     sx: number,
     sy: number,
     sw: number,
-    sh: number
+    sh: number,
+    shadowOffset?: VectorLike
   ): void;
   sprite(sprite: Sprite): void;
   drawPixelBuffer(): void;
+  measureText(text: string): number;
+  withFrame(proc: GraphicsProc): void;
+  rawRect(x: number, y: number, w: number, h: number, c: Color): void;
 }

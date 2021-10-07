@@ -1,0 +1,13 @@
+{
+  "image": "images/poof.png",
+  "frameSize": {
+    "x": 4,
+    "y": 4
+  },
+  "animations": {
+    "standFront": {
+      "frames": [0, 1, 2]
+    }
+  },
+  "animation": "standFront"
+}

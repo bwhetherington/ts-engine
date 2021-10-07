@@ -26,9 +26,9 @@ const UIContainer = styled.div`
 
 export const App: React.FunctionComponent<{}> = () => (
   <UIContainer>
-    <div className="top left">
+    {/* <div className="top left">
       <Debug />
-    </div>
+    </div> */}
     <div className="bottom left">
       <Row>
         <Column>
@@ -47,11 +47,11 @@ export const App: React.FunctionComponent<{}> = () => (
         <Radar />
       </Column>
     </div> */}
-    <div className="top right">
+    {/* <div className="top right">
       <Column>
         <Scoreboard />
       </Column>
-    </div>
+    </div> */}
     <div className="bottom center-horizontal">
       <UpgradeContainer />
     </div>

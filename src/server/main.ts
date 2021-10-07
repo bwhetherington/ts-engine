@@ -7,9 +7,9 @@ import {isEmpty} from 'core/util/object';
 import {RNGManager} from 'core/random';
 import {BasicAuth} from 'core/net/http';
 import {AssetManager} from 'core/assets';
-import {NetworkManager, SyncEvent} from 'core/net';
+import {ConnectEvent, NetworkManager, SyncEvent} from 'core/net';
 import {WorldManager} from 'core/entity';
-import {PlayerManager} from 'core/player';
+import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {FormManager} from 'core/form';
 import {registerJoinForm} from 'core/form';
 import {WeaponManager} from 'core/weapon';
@@ -113,19 +113,6 @@ async function main(): Promise<void> {
     UtilsPlugin,
     UpgradePlugin,
   ]);
-
-  const cache = new Cache<number>(5);
-  cache.insert('foo', 1);
-  cache.insert('bar', 2);
-  cache.insert('baz', 3);
-  cache.insert('quux', 4);
-  cache.get('foo');
-  cache.get('foo');
-  cache.get('foo');
-  cache.insert('five', 5);
-  cache.insert('six', 6);
-  cache.insert('seven', 7);
-  // console.log(cache);
 }
 
 main().catch((ex) => {

@@ -217,7 +217,6 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
         player,
       },
     });
-    await handleSubmit(player, response, data);
   },
   onReject(player: Player): void {
     player.disconnect();

@@ -20,10 +20,20 @@ export class Sprite implements Serializable {
   private animations: AnimationMap = new AnimationMap();
   private animDelay: number = 0;
   private currentAnimation?: Animation;
-  private animateOptions: AnimateOptions = {
+  private animateOptions_: AnimateOptions = {
     animation: 'stand',
     repeat: true,
   };
+
+  private get animateOptions(): AnimateOptions {
+    return this.animateOptions_;
+  }
+
+  private set animateOptions(options) {
+    if (options !== this.animateOptions_) {
+      this.animateOptions_ = options;
+    }
+  }
 
   public async setSource(source: string): Promise<void> {
     this.source = source;
@@ -36,11 +46,13 @@ export class Sprite implements Serializable {
   }
 
   private get animateRepeat(): boolean {
-    const doRepeat = this.animateOptions.repeat;
-    if (typeof doRepeat === 'function') {
-      return doRepeat();
+    const {repeat, next} = this.animateOptions;
+    if (next) {
+      return false;
+    } else if (typeof repeat === 'function') {
+      return repeat();
     } else {
-      return !!doRepeat;
+      return !!repeat;
     }
   }
 
@@ -120,8 +132,8 @@ export class Sprite implements Serializable {
     const {width} = this.image;
     const {x: frameWidth, y: frameHeight} = this.frameSize;
     // const {x: dw, y: dh} = this.size;
-    const dw = Math.floor(frameWidth);
-    const dh = Math.floor(frameHeight);
+    const dw = Math.ceil(frameWidth);
+    const dh = Math.ceil(frameHeight);
 
     const cols = width / frameWidth;
     const frameIndex = this.getAnimationFrame();
@@ -132,6 +144,26 @@ export class Sprite implements Serializable {
     const frameRow = Math.floor(frameIndex / cols);
     const frameX = Math.floor(frameCol * dw);
     const frameY = Math.floor(frameRow * dh);
+
+    // ctx.save();
+    // ctx.translate(0, 1);
+    // ctx.filter = 'brightness(0%)';
+    // ctx.globalAlpha = 0.5;
+
+    // ctx.drawImage(
+    //   this.image,
+    //   frameX,
+    //   frameY,
+    //   dw,
+    //   dh,
+    //   Math.floor(-dw / 2),
+    //   Math.floor(-dh / 2),
+    //   dw,
+    //   dh
+    // );
+
+    // ctx.restore();
+
     ctx.save();
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(

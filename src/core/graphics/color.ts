@@ -169,6 +169,24 @@ export function rgb(red: number, green: number, blue: number): Color {
   return {red, green, blue, alpha: 1};
 }
 
+const HEX_REGEX = /([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?/;
+
+export function hex(hex: string): Color {
+  const res = HEX_REGEX.exec(hex);
+  if (!res) {
+    throw new TypeError('input is not a valid hex color');
+  }
+
+  const r = parseInt(res[1], 16) / 255;
+  const g = parseInt(res[2], 16) / 255;
+  const b = parseInt(res[3], 16) / 255;
+  let a = 1;
+  if (res[4]) {
+    a = parseInt(res[4], 16) / 255;
+  }
+  return {red: r, green: g, blue: b, alpha: a};
+}
+
 export function rgba(
   red: number,
   green: number,

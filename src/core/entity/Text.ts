@@ -55,9 +55,8 @@ export class Text extends Entity {
   }
 
   public render(ctx: GraphicsContext): void {
-    GraphicsPipeline.pipe()
-      .run(ctx, (ctx) => {
-        ctx.text(0, 0, this.text, {});
-      });
+    GraphicsPipeline.pipe().run(ctx, (ctx) => {
+      ctx.text(0, 0, this.text, {});
+    });
   }
 }

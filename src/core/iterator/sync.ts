@@ -156,7 +156,11 @@ async function* toAsync<T>(gen: Iterable<T>): AsyncIterable<T> {
   yield* gen;
 }
 
-function* zip<T, U>(a: Iterable<T>, b: Iterable<U>): Iterable<[T, U]> {
+function* zipWith<T, U, V>(
+  a: Iterable<T>,
+  b: Iterable<U>,
+  zipper: (a: T, b: U) => V
+): Iterable<V> {
   const aGen = a[Symbol.iterator]();
   const bGen = b[Symbol.iterator]();
 
@@ -165,7 +169,7 @@ function* zip<T, U>(a: Iterable<T>, b: Iterable<U>): Iterable<[T, U]> {
     const bVal = bGen.next();
 
     if (!(aVal.done || bVal.done)) {
-      yield [aVal.value, bVal.value];
+      yield zipper(aVal.value, bVal.value);
     } else {
       break;
     }
@@ -368,7 +372,11 @@ export class Iterator<T> implements Iterable<T> {
   }
 
   public zip<U>(b: Iterable<U>): Iterator<[T, U]> {
-    return Iterator.from(zip(this.generator, b));
+    return this.zipWith(b, (a, b) => [a, b]);
+  }
+
+  public zipWith<U, V>(b: Iterable<U>, zipper: (a: T, b: U) => V): Iterator<V> {
+    return Iterator.from(zipWith(this.generator, b, zipper));
   }
 
   public toAsync(): AsyncIterator<T> {

@@ -41,8 +41,8 @@ export class CameraManager implements Bounded {
   }
 
   public setTargetXY(x: number, y: number): void {
-    this.boundingBox.centerX = (x);
-    this.boundingBox.centerY = (y);
+    this.boundingBox.centerX = x;
+    this.boundingBox.centerY = y;
   }
 
   public setTarget(v: Vector): void {
@@ -68,8 +68,8 @@ export class CameraManager implements Bounded {
 
   public toWorldSpace(x: number, y: number): Vector {
     const vec = new Vector(
-      (x / this.scale) + (this.boundingBox.x),
-      (y / this.scale) + (this.boundingBox.y)
+      x / this.scale + this.boundingBox.x,
+      y / this.scale + this.boundingBox.y
     );
     return vec;
   }

@@ -76,8 +76,8 @@ export class Tank extends Unit {
     this.bounce = 0.3;
     this.setSprite('sprites/male.json');
 
-    this.boundingBox.width = 8;
-    this.boundingBox.height = 8;
+    this.boundingBox.width = 7;
+    this.boundingBox.height = 7;
 
     this.setMaxLife(50);
     this.setLife(50);

@@ -84,6 +84,7 @@ export class Enemy extends Tank {
         entity,
         entity.position.distanceTo(this.position),
       ])
+      .filter(([_, dist]) => dist < 100)
       .fold(
         [<Unit | undefined>undefined, Number.POSITIVE_INFINITY],
         (min, cur) => {
@@ -107,7 +108,7 @@ export class Enemy extends Tank {
       this.position.x,
       this.position.y
     );
-    if (distanceToTarget !== undefined && distanceToTarget <= 100 * 100) {
+    if (distanceToTarget !== undefined && distanceToTarget <= 20 * 20) {
       this.moveQueue = new Queue();
       this.setThrusting(0);
       return;

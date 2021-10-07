@@ -10,6 +10,8 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
   public x: number = 0;
   public y: number = 0;
 
+  public static CONSTANT: Vector = new Vector();
+
   constructor(x: number = 0, y: number = 0) {
     this.setXY(x, y);
   }
@@ -129,6 +131,28 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
 
   public clone(): Vector {
     return new Vector(this.x, this.y);
+  }
+
+  public perp(): Vector {
+    return new Vector(-this.y, this.x);
+  }
+
+  public dot(other: Vector): number {
+    return this.x * other.x + this.y * other.y;
+  }
+
+  public getOverlap(other: Vector): number {
+    const min = Math.max(this.x, other.x);
+    const max = Math.min(this.y, other.y);
+    return max - min;
+  }
+
+  public overlap(other: Vector): boolean {
+    return this.getOverlap(other) > 0;
+  }
+
+  public contains(other: Vector): boolean {
+    return this.x < other.x && other.y < this.y;
   }
 }
 
