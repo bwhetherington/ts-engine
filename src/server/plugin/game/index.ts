@@ -1,6 +1,7 @@
 import {
   BaseHero,
-  Enemy,
+  DamageEvent,
+  BaseEnemy,
   Feed,
   FeedVariant,
   KillEvent,
@@ -30,6 +31,8 @@ export enum GameAction {
 }
 
 export type GameStateMachine = StateMachine<GameState, GameAction>;
+
+const NPC_DAMAGE_MULTIPLIER = 0.5;
 
 export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   public static typeName: string = 'GamePlugin';
@@ -231,7 +234,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
           const color = {...COLORS[i]};
           const posX = x + indent + spacing * i;
           const posY = y + indent;
-          const tank = WorldManager.spawn(Enemy, new Vector(posX, posY));
+          const tank = WorldManager.spawn(BaseEnemy, new Vector(posX, posY));
           if (!tank) {
             continue;
           }

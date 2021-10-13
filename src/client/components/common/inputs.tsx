@@ -7,6 +7,7 @@ const StyledInput = styled.input`
   flex-grow: 1;
   font-family: inherit;
   border: none;
+  backdrop-filter: blur(10px);
   background: rgba(0, 0, 0, 0.67);
   height: 1.5em;
   color: white;

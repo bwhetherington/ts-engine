@@ -18,7 +18,7 @@ import {
   Explosion,
   CollisionEvent,
   Tank,
-  Enemy,
+  BaseEnemy,
   CollisionLayer,
   Bar,
   Echo,
@@ -91,7 +91,7 @@ export class WorldManager extends LoadingManager<Entity>
     this.registerAssetType(Ray);
     this.registerAssetType(Projectile);
     this.registerAssetType(Tank);
-    this.registerAssetType(Enemy);
+    this.registerAssetType(BaseEnemy);
     this.registerAssetType(HomingProjectile);
     this.registerAssetType(ShatterProjectile);
     this.registerAssetType(Feed);

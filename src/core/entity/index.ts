@@ -2,7 +2,7 @@ export * from 'core/entity/Entity';
 export * from 'core/entity/Unit';
 export * from 'core/entity/Tank';
 export * from 'core/entity/BaseHero';
-export * from 'core/entity/Enemy';
+export * from 'core/entity/BaseEnemy';
 export * from 'core/entity/Geometry';
 export * from 'core/entity/Projectile';
 export * from 'core/entity/HomingProjectile';

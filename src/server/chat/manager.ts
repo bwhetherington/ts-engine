@@ -13,7 +13,7 @@ import {
 } from 'core/chat';
 import {LogManager} from 'core/log';
 import {PlayerManager, Player} from 'core/player';
-import {WorldManager, Enemy, Unit, Feed, FeedVariant} from 'core/entity';
+import {WorldManager, Unit, Feed, FeedVariant} from 'core/entity';
 import {TimerManager} from 'server/util';
 import {randomColor} from 'core/graphics/color';
 import {FormManager} from 'core/form';

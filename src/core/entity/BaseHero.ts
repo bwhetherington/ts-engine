@@ -1,35 +1,35 @@
 import {
-  WorldManager,
   DamageEvent,
-  Tank,
-  KillEvent,
-  Unit,
-  TimedText,
   Entity,
-} from 'core/entity';
+  KillEvent,
+  Tank,
+  TimedText,
+  Unit,
+  WorldManager,
+} from "core/entity";
 import {
-  KeyEvent,
-  KeyAction,
-  MouseEvent,
-  MouseAction,
   Key,
+  KeyAction,
+  KeyEvent,
+  MouseAction,
   MouseButton,
+  MouseEvent,
   MovementDirection,
-} from 'core/input';
-import {EventData, Event, EventManager, Priority} from 'core/event';
-import {Data} from 'core/serialize';
-import {Player, PlayerManager} from 'core/player';
-import {LogManager} from 'core/log';
-import {NetworkManager, SyncEvent} from 'core/net';
-import {CameraManager} from 'core/graphics';
-import {BarUpdateEvent, clamp, sleep} from 'core/util';
-import {RNGManager} from 'core/random';
-import {TextColor} from 'core/chat';
-import {UUID} from 'core/uuid';
-import {HeroModifier} from 'core/upgrade/modifier';
-import {Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
-import {Iterator} from 'core/iterator';
-import {Follow} from './Follow';
+} from "core/input";
+import { Event, EventData, EventManager, Priority } from "core/event";
+import { Data } from "core/serialize";
+import { Player, PlayerManager } from "core/player";
+import { LogManager } from "core/log";
+import { NetworkManager, SyncEvent } from "core/net";
+import { CameraManager } from "core/graphics";
+import { BarUpdateEvent, clamp, sleep } from "core/util";
+import { RNGManager } from "core/random";
+import { TextColor } from "core/chat";
+import { UUID } from "core/uuid";
+import { HeroModifier } from "core/upgrade/modifier";
+import { Upgrade, UpgradeEvent, UpgradeManager } from "core/upgrade";
+import { Iterator } from "core/iterator";
+import { Follow } from "./Follow";
 
 const log = LogManager.forFile(__filename);
 
@@ -44,7 +44,7 @@ export interface SyncHeroEvent {
 }
 
 export class BaseHero extends Tank {
-  public static typeName: string = 'BaseHero';
+  public static typeName: string = "BaseHero";
 
   private player?: Player;
   private mouseDown: boolean = false;
@@ -65,13 +65,13 @@ export class BaseHero extends Tank {
 
     this.type = BaseHero.typeName;
 
-    this.setWeapon('Gun');
+    this.setWeapon("Gun");
     this.setExperience(0);
     this.setLevelInternal(1);
 
-    this.streamEvents<MouseEvent>('MouseEvent', Priority.Normal, true)
+    this.streamEvents<MouseEvent>("MouseEvent", Priority.Normal, true)
       .filter((event) => this.isEventSubject(event))
-      .forEach(({data: {action, x, y, button}}) => {
+      .forEach(({ data: { action, x, y, button } }) => {
         if (action === MouseAction.Move) {
           // Subtract our position from mouse position
           this.vectorBuffer.setXY(x, y);
@@ -89,9 +89,9 @@ export class BaseHero extends Tank {
         }
       });
 
-    this.streamEvents<KeyEvent>('KeyEvent', Priority.Normal, true)
+    this.streamEvents<KeyEvent>("KeyEvent", Priority.Normal, true)
       .filter((event) => this.isEventSubject(event))
-      .forEach(({data: {action, key}}) => {
+      .forEach(({ data: { action, key } }) => {
         const state = action === KeyAction.KeyDown;
         switch (key) {
           case Key.W:
@@ -110,32 +110,32 @@ export class BaseHero extends Tank {
       });
 
     if (NetworkManager.isClient()) {
-      this.streamEvents<DamageEvent>('DamageEvent')
-        .map(({data: {targetID, sourceID, amount}}) => ({
+      this.streamEvents<DamageEvent>("DamageEvent")
+        .map(({ data: { targetID, sourceID, amount } }) => ({
           amount,
           target: WorldManager.getEntity(targetID),
           source: WorldManager.getEntity(sourceID),
         }))
-        .filterMap(({amount, target, source}) =>
+        .filterMap(({ amount, target, source }) =>
           !!target &&
-          amount > 0 &&
-          (this.getPlayer()?.isActivePlayer?.() ?? false) &&
-          (this === target || this === source)
-            ? {amount, target}
+            amount > 0 &&
+            (this.getPlayer()?.isActivePlayer?.() ?? false) &&
+            (this === target || this === source)
+            ? { amount, target }
             : undefined
         )
-        .forEach(({amount, target}) => {
+        .forEach(({ amount, target }) => {
           const label = Math.round(amount).toLocaleString();
           const text = WorldManager.spawn(TimedText, target.position);
           if (!text) {
             return;
           }
-          const color = this === target ? 'red' : 'yellow';
+          const color = this === target ? "red" : "yellow";
           text.textColor = color;
           text.isStatic = false;
           text.position.addXY(
             RNGManager.nextFloat(-25, 25),
-            RNGManager.nextFloat(-25, 25)
+            RNGManager.nextFloat(-25, 25),
           );
           text.text = label;
           text.velocity.setXY(0, -60);
@@ -146,14 +146,14 @@ export class BaseHero extends Tank {
     }
 
     if (NetworkManager.isServer()) {
-      this.streamEvents<KillEvent>('KillEvent')
+      this.streamEvents<KillEvent>("KillEvent")
         .map((event) => {
-          const {targetID, sourceID} = event.data;
+          const { targetID, sourceID } = event.data;
           const target = WorldManager.getEntity(targetID);
           const source = WorldManager.getEntity(sourceID);
-          return {target, source};
+          return { target, source };
         })
-        .filterMap(({target, source}) =>
+        .filterMap(({ target, source }) =>
           target instanceof Unit && this === source ? target : undefined
         )
         .forEach((target) => this.addExperience(target.getXPWorth()));
@@ -161,10 +161,9 @@ export class BaseHero extends Tank {
   }
 
   public static initializeType(): void {
-    EventManager.streamEvents<SyncHeroEvent>('SyncHeroEvent')
+    EventManager.streamEvents<SyncHeroEvent>("SyncHeroEvent")
       // .debounce(1 / 30)
       .forEach((event) => {
-        // console.log('sync hero event');
         NetworkManager.sendEvent(event);
       });
   }
@@ -174,7 +173,7 @@ export class BaseHero extends Tank {
     this.upgrades.push(upgrade.type);
     if (isNew) {
       EventManager.emit<UpgradeEvent>({
-        type: 'UpgradeEvent',
+        type: "UpgradeEvent",
         data: {
           hero: this,
           upgrade: upgrade,
@@ -190,7 +189,7 @@ export class BaseHero extends Tank {
   }
 
   public getLifeRegen(): number {
-    return this.modifiers.get('lifeRegen').multiplyPoint(super.getLifeRegen());
+    return this.modifiers.get("lifeRegen").multiplyPoint(super.getLifeRegen());
   }
 
   protected getNameColor(): TextColor {
@@ -240,7 +239,7 @@ export class BaseHero extends Tank {
       this.setLevelInternal(this.level + 1);
       if (NetworkManager.isServer() && allowLevels) {
         EventManager.emit<LevelUpEvent>({
-          type: 'LevelUpEvent',
+          type: "LevelUpEvent",
           data: {
             id: this.id,
             from: oldLevel,
@@ -260,9 +259,9 @@ export class BaseHero extends Tank {
     if (this.getPlayer()?.isActivePlayer?.()) {
       const prevXp = this.experienceForLevel(this.level - 1);
       EventManager.emit({
-        type: 'BarUpdateEvent',
-        data: <BarUpdateEvent>{
-          id: 'xp-bar',
+        type: "BarUpdateEvent",
+        data: <BarUpdateEvent> {
+          id: "xp-bar",
           value: this.xp - prevXp,
           maxValue: this.experienceForLevel(this.level) - prevXp,
         },
@@ -293,7 +292,7 @@ export class BaseHero extends Tank {
   public setPlayer(player: UUID | Player): void {
     const oldPlayer = this.player;
     let newPlayer;
-    if (typeof player === 'number') {
+    if (typeof player === "number") {
       newPlayer = PlayerManager.getPlayer(player);
     } else {
       newPlayer = player;
@@ -319,14 +318,14 @@ export class BaseHero extends Tank {
   public setMaxLife(maxLife: number): void {
     let life = maxLife;
     if (NetworkManager.isServer() && this.modifiers) {
-      life = Math.round(this.modifiers.get('life').multiplyPoint(life));
+      life = Math.round(this.modifiers.get("life").multiplyPoint(life));
     }
     super.setMaxLife(life);
     if (this.getPlayer()?.isActivePlayer?.()) {
       EventManager.emit({
-        type: 'BarUpdateEvent',
-        data: <BarUpdateEvent>{
-          id: 'life-bar',
+        type: "BarUpdateEvent",
+        data: <BarUpdateEvent> {
+          id: "life-bar",
           value: this.getLife(),
           maxValue: this.getMaxLife(),
         },
@@ -338,9 +337,9 @@ export class BaseHero extends Tank {
     super.setLife(life, source);
     if (this.getPlayer()?.isActivePlayer?.()) {
       EventManager.emit({
-        type: 'BarUpdateEvent',
-        data: <BarUpdateEvent>{
-          id: 'life-bar',
+        type: "BarUpdateEvent",
+        data: <BarUpdateEvent> {
+          id: "life-bar",
           value: this.getLife(),
           maxValue: this.getMaxLife(),
         },
@@ -383,7 +382,7 @@ export class BaseHero extends Tank {
     const player = this.getPlayer();
     if (player) {
       if (player.isActivePlayer() && this.cameraTarget) {
-        const {x, y} = this.cameraTarget.position;
+        const { x, y } = this.cameraTarget.position;
         CameraManager.setTargetXY(x, y);
       }
 
@@ -406,16 +405,16 @@ export class BaseHero extends Tank {
   }
 
   public deserialize(data: Data, setInitialized?: boolean): void {
-    const {x: oldX, y: oldY} = this.position;
-    const {x: oldVX, y: oldVY} = this.velocity;
+    const { x: oldX, y: oldY } = this.position;
+    const { x: oldVX, y: oldVY } = this.velocity;
     const {
       angle: oldAngle,
       weaponAngle: oldWeaponAngle,
       targetAngle: oldTargetAngle,
     } = this;
-    const {playerID, xp, modifiers} = data;
+    const { playerID, xp, modifiers } = data;
 
-    if (typeof xp === 'number') {
+    if (typeof xp === "number") {
       this.setExperience(xp);
     }
 
@@ -439,7 +438,7 @@ export class BaseHero extends Tank {
       this.setPositionXY(oldX, oldY);
       this.velocity.setXY(oldVX, oldVY);
       EventManager.emit<SyncHeroEvent>({
-        type: 'SyncHeroEvent',
+        type: "SyncHeroEvent",
         data: {
           hero: this.serialize(),
         },
@@ -448,12 +447,12 @@ export class BaseHero extends Tank {
   }
 
   public calculateDamageIn(amount: number): number {
-    const armor = this.modifiers.get('armor').multiplyPoint(this.armor);
+    const armor = this.modifiers.get("armor").multiplyPoint(this.armor);
     return Math.max(1, amount - armor);
   }
 
   public isEventSubject<E extends EventData>(event: Event<E>): boolean {
-    const {socket} = event;
+    const { socket } = event;
     const player = this.getPlayer();
     const isLocal = socket === undefined && player?.isActivePlayer();
     return isLocal || socket === player?.socket;
@@ -476,9 +475,9 @@ export class BaseHero extends Tank {
   public cleanup(): void {
     if (this.getPlayer()?.isActivePlayer()) {
       EventManager.emit({
-        type: 'BarUpdateEvent',
-        data: <BarUpdateEvent>{
-          id: 'life-bar',
+        type: "BarUpdateEvent",
+        data: <BarUpdateEvent> {
+          id: "life-bar",
           value: 0,
           maxValue: this.getMaxLife(),
         },

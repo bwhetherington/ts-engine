@@ -1,20 +1,16 @@
-import {WorldManager, Unit, Tank, KillEvent} from 'core/entity';
-import {clamp, Queue} from 'core/util';
-import {MovementDirection} from 'core/input';
-import {NetworkManager} from 'core/net';
-import {LogManager} from 'core/log';
-import {RNGManager} from 'core/random';
-import {Data} from 'core/serialize';
-import {Vector, VectorLike} from 'core/geometry';
-import {BLACK, GraphicsContext, rgb} from 'core/graphics';
-import {Iterator} from 'core/iterator';
-import {GraphicsPipeline} from 'core/graphics/pipe';
-import {Entity} from './Entity';
+import { Entity, KillEvent, Tank, Unit, WorldManager } from "core/entity";
+import { Queue } from "core/util";
+import { NetworkManager } from "core/net";
+import { LogManager } from "core/log";
+import { Data } from "core/serialize";
+import { Vector, VectorLike } from "core/geometry";
+import { GraphicsContext, rgb } from "core/graphics";
+import { GraphicsPipeline } from "core/graphics/pipe";
 
 const log = LogManager.forFile(__filename);
 
-export class Enemy extends Tank {
-  public static typeName: string = 'Enemy';
+export class BaseEnemy extends Tank {
+  public static typeName: string = "BaseEnemy";
 
   private target?: Unit;
   private moveQueue: Queue<Vector> = new Queue();
@@ -23,14 +19,14 @@ export class Enemy extends Tank {
 
   public constructor() {
     super();
-    this.type = Enemy.typeName;
+    this.type = BaseEnemy.typeName;
     this.turnSpeed = Math.PI * 4;
 
-    this.setName('Gunner');
-    this.setWeapon('Gun');
+    this.setName("Gunner");
+    this.setWeapon("Gun");
 
     if (this.label) {
-      this.label.tag = ' [AI]';
+      this.label.tag = " [AI]";
     }
 
     this.setMaxLife(40);
@@ -42,7 +38,7 @@ export class Enemy extends Tank {
       this.streamInterval(1).forEach(() => {
         this.selectTarget();
       });
-      this.streamEvents<KillEvent>('KillEvent')
+      this.streamEvents<KillEvent>("KillEvent")
         .filter((event) => this.target?.id === event.data.targetID)
         .forEach(() => this.selectTarget());
     }
@@ -64,12 +60,12 @@ export class Enemy extends Tank {
   }
 
   private canSeeTarget(target: Entity): boolean {
-    const {hit} = WorldManager.castRay(
+    const { hit } = WorldManager.castRay(
       this.position,
       this.position.angleTo(target.position),
       this.position.distanceTo(target.position),
       1,
-      (entity: Entity) => entity.id === target.id
+      (entity: Entity) => entity.id === target.id,
     );
     return hit.size > 0;
   }
@@ -85,17 +81,17 @@ export class Enemy extends Tank {
         entity.position.distanceTo(this.position),
       ])
       .fold(
-        [<Unit | undefined>undefined, Number.POSITIVE_INFINITY],
+        [<Unit | undefined> undefined, Number.POSITIVE_INFINITY],
         (min, cur) => {
           if (cur[1] < min[1]) {
             return cur;
           } else {
             return min;
           }
-        }
+        },
       );
     if (target) {
-      log.trace('select target ' + target.toString());
+      log.trace("select target " + target.toString());
       this.target = target;
       this.moveTo(target.position);
     }
@@ -105,7 +101,7 @@ export class Enemy extends Tank {
     // Check if we're within range of the target unit
     const distanceToTarget = this.target?.position?.distanceToXYSquared(
       this.position.x,
-      this.position.y
+      this.position.y,
     );
     if (distanceToTarget !== undefined && distanceToTarget <= 100 * 100) {
       this.moveQueue = new Queue();
@@ -119,7 +115,7 @@ export class Enemy extends Tank {
     if (targetPoint) {
       if (
         this.position.distanceToXYSquared(targetPoint.x, targetPoint.y) <
-        closeEnough * closeEnough
+          closeEnough * closeEnough
       ) {
         // Close enough
         this.moveQueue.dequeue();
@@ -146,7 +142,7 @@ export class Enemy extends Tank {
       this.moveToTarget();
 
       if (this.isActive) {
-        const {target} = this;
+        const { target } = this;
         if (target && target.isAlive) {
           // Point cannon at target
           const angle = this.position.angleTo(target.position);
@@ -173,9 +169,9 @@ export class Enemy extends Tank {
 
   public deserialize(data: Data, isInitialized?: boolean): void {
     super.deserialize(data, isInitialized);
-    const {isActive} = data;
+    const { isActive } = data;
 
-    if (typeof isActive === 'boolean') {
+    if (typeof isActive === "boolean") {
       this.isActive = isActive;
     }
   }

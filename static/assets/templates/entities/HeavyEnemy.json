@@ -1,6 +1,6 @@
 {
   "type": "HeavyEnemy",
-  "extends": "Enemy",
+  "extends": "BaseEnemy",
   "mass": 5,
   "maxLife": 100,
   "life": 100,
@@ -19,6 +19,9 @@
       }
     }
   ],
+  "modifiers": {
+    "damage": [0.5, 0, 0, 1]
+  },
   "weapon": "HeavyGun",
   "xpWorth": 25,
   "name": "Tank"

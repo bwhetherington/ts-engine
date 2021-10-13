@@ -1,16 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export const UI_MARGIN = '5px';
+export const UI_MARGIN = '7px';
 
 export const PanelContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.75);
   padding: ${UI_MARGIN};
-  border-radius: 4px;
+  border-radius: ${UI_MARGIN};
   pointer-events: auto;
   font-size: 0.9em;
   user-select: none;
   color: white;
+  backdrop-filter: blur(20px);
 `;
 
 interface ColumnProps {
@@ -64,10 +65,11 @@ export const Row = styled.div`
 
 export const Button = styled.button`
   border: 1px solid;
-  border-color: rgba(255, 255, 255, 0.33);
+  border-color: rgba(255, 255, 255, 0);
   padding: 5px 10px 5px 10px;
   border-radius: 4px;
   background-color: rgba(255, 255, 255, 0);
+  /* backdrop-filter: blur(10px); */
   outline: none;
   color: white;
   font-family: inherit;
@@ -81,7 +83,7 @@ export const Button = styled.button`
   }
 
   &:hover:not(:disabled) {
-    border-color: rgba(255, 255, 255, 0.67);
+    border-color: rgba(255, 255, 255, 0.1);
     background-color: rgba(255, 255, 255, 0.1);
   }
 `;

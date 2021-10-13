@@ -1,6 +1,6 @@
 {
   "type": "HomingEnemy",
-  "extends": "Enemy",
+  "extends": "BaseEnemy",
   "mass": 5,
   "maxLife": 50,
   "life": 50,

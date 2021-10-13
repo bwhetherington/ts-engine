@@ -139,6 +139,7 @@ interface ChatContainerProps {
 }
 
 const ChatPanelContainer = styled(PanelContainer)<ChatContainerProps>`
+  backdrop-filter: ${(props) => props.isHidden ? 'none' : 'auto'};
   pointer-events: ${(props) => (props.isHidden ? 'none' : 'auto')};
   background: ${(props) => (props.isHidden ? 'transparent' : 'auto')};
 `;
