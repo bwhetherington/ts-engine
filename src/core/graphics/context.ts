@@ -58,7 +58,7 @@ export interface GraphicsContext {
     h: number,
     r: number,
     color: Color,
-    fullW?: number,
+    fullW?: number
   ): void;
   trapezoid(
     centerX: number,

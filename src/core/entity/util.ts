@@ -6,6 +6,10 @@ import {Color} from 'core/graphics';
 
 const log = LogManager.forFile(__filename);
 
+export interface SpawnEntityEvent {
+  entity: Entity;
+}
+
 export enum CollisionLayer {
   BaseEffect,
   Geometry,

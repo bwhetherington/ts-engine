@@ -1,0 +1,15 @@
+{
+  "type": "Dark",
+  "extends": "Theme",
+  "isDarkMode": true,
+  "foregroundColor": {
+    "red": 0.25,
+    "green": 0.25,
+    "blue": 0.25
+  },
+  "backgroundColor": {
+    "red": 0.1,
+    "green": 0.1,
+    "blue": 0.1
+  }
+}

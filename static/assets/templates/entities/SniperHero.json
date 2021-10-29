@@ -2,6 +2,10 @@
   "type": "SniperHero",
   "extends": "BaseHero",
   "weapon": "Raygun",
+  "modifiers": {
+    "damage": [2, 0, 0, 1],
+    "rate": [1.5, 0, 0, 1]
+  },
   "cannons": [
     {
       "key": 0,

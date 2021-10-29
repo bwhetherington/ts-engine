@@ -35,7 +35,6 @@ import {Serializable, Data} from 'core/serialize';
 import {Iterator, iterator} from 'core/iterator';
 import {diff} from 'core/util';
 import {NetworkManager, SyncEvent} from 'core/net';
-import {WALL_COLOR} from 'core/entity/Geometry';
 import {WHITE, reshade, BLACK} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
@@ -50,6 +49,8 @@ import {UUID, UUIDManager} from 'core/uuid';
 import {DataBuffer} from 'core/buf';
 import {Trail} from './Trail';
 import {ShatterProjectile} from './ShatterProjectile';
+import {ThemeManager} from 'core/theme';
+import { SpawnEntityEvent } from './util';
 
 const log = LogManager.forFile(__filename);
 
@@ -147,8 +148,9 @@ export class WorldManager extends LoadingManager<Entity>
   }
 
   public render(ctx: GraphicsContext): void {
-    ctx.clear(WALL_COLOR);
-    const GRID_COLOR = reshade(WALL_COLOR, 0.05);
+    const wallColor = ThemeManager.current.foregroundColor;
+    ctx.clear(wallColor);
+    const GRID_COLOR = reshade(wallColor, 0.05);
     ctx.begin();
     ctx.resetTransform();
 
@@ -166,7 +168,7 @@ export class WorldManager extends LoadingManager<Entity>
       this.boundingBox.y,
       this.boundingBox.width,
       this.boundingBox.height,
-      WHITE
+      ThemeManager.current.backgroundColor
     );
     ctx.popOptions();
 
@@ -212,7 +214,7 @@ export class WorldManager extends LoadingManager<Entity>
           this.boundingBox.y,
           this.boundingBox.width,
           this.boundingBox.height,
-          WALL_COLOR
+          ThemeManager.current.foregroundColor
         );
       });
 
@@ -289,6 +291,13 @@ export class WorldManager extends LoadingManager<Entity>
     if (entity.collisionLayer === CollisionLayer.Geometry) {
       this.shouldPopulateGraph = true;
     }
+
+    EventManager.emit<SpawnEntityEvent>({
+      type: 'SpawnEntityEvent',
+      data: {
+        entity,
+      },
+    });
   }
 
   public remove(entity: Entity | UUID): void {

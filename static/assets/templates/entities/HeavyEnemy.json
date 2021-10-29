@@ -19,9 +19,6 @@
       }
     }
   ],
-  "modifiers": {
-    "damage": [0.5, 0, 0, 1]
-  },
   "weapon": "HeavyGun",
   "xpWorth": 25,
   "name": "Tank"

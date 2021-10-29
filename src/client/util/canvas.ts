@@ -11,6 +11,7 @@ import {COLOR_MAPPING, WHITE} from 'core/graphics/color';
 import {GraphicsProc, ShadowStyle} from 'core/graphics/context';
 import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
 import {TextColor, TextComponent, TextComponents} from 'core/chat';
+import {ThemeManager} from 'core/theme';
 
 interface Options {
   width: number;
@@ -195,6 +196,9 @@ export class HDCanvas implements GraphicsContext {
   }
 
   private getStrokeColor(color: Color, amount: number = -0.5): string {
+    if (ThemeManager.current.isDarkMode) {
+      amount *= 0.75;
+    }
     return this.options.uniformColor
       ? toCss(color)
       : toCss(reshade(color, amount));
@@ -329,7 +333,15 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
-  public roundRect(x: number, y: number, w: number, h: number, r: number, color: Color, fullW?: number): void {
+  public roundRect(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    r: number,
+    color: Color,
+    fullW?: number
+  ): void {
     const ctx = this.curContext;
     if (!ctx) {
       return;
@@ -359,11 +371,11 @@ export class HDCanvas implements GraphicsContext {
     }
 
     ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.arcTo(x+w, y,   x+w, y+h, r);
-    ctx.arcTo(x+w, y+h, x,   y+h, r);
-    ctx.arcTo(x,   y+h, x,   y,   r);
-    ctx.arcTo(x,   y,   x+w, y,   r);
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
 
     if (this.options.doFill) {

@@ -8,10 +8,11 @@ import {
   Projectile,
   Unit,
   WorldManager,
+  SpawnEntityEvent,
 } from 'core/entity';
 import {EventManager, Priority} from 'core/event';
 import {StateMachine} from 'core/fsm';
-import {Vector} from 'core/geometry';
+import {Matrix2, Vector} from 'core/geometry';
 import {COLORS, randomColor} from 'core/graphics';
 import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {RNGManager} from 'core/random';
@@ -74,7 +75,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
   private startGame(): void {
     ChatManager.info('Starting the game');
-    
+
     // Spawn feed units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
       .filter(
@@ -209,10 +210,20 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   public async initialize(server: Server): Promise<void> {
     await super.initialize(server);
 
+    // Weaken enemies as they spawn
+    this.streamEvents<SpawnEntityEvent>('SpawnEntityEvent', Priority.Highest)
+      .filterMap(({data: {entity}}) => entity instanceof BaseEnemy ? entity : undefined)
+      .forEach((enemy) => {
+        enemy.modifiers.multiplyModifiers({
+          rate: Matrix2.from([2, 0, 0, 1]),
+          damage: Matrix2.from([0.5, 0, 0, 1]),
+        });
+      });
+
     const stopHandler = async () => {
       await this.transition(GameAction.Stop);
     };
-  
+
     this.registerCommand({
       name: 'stopGame',
       help: 'Stops the current game',

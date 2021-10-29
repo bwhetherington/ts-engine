@@ -152,6 +152,16 @@ export class Matrix2 implements Serializable {
   private b0: number = 0;
   private b1: number = 0;
 
+  public static from(data: [number, number, number, number]): Matrix2 {
+    const m = new Matrix2();
+    const [a0, b0, a1, b1] = data;
+    m.a0 = a0;
+    m.b0 = b0;
+    m.a1 = a1;
+    m.b1 = b1;
+    return m;
+  }
+
   public identity(): Matrix2 {
     this.a0 = 1;
     this.a1 = 0;

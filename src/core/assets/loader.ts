@@ -1,7 +1,7 @@
-import { Data, Serializable } from "core/serialize";
-import { AssetManager } from "core/assets";
-import { Iterator } from "core/iterator";
-import { LogManager } from "core/log";
+import {Data, Serializable} from 'core/serialize';
+import {AssetManager} from 'core/assets';
+import {Iterator} from 'core/iterator';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 
@@ -40,7 +40,7 @@ export class LoadingManager<T extends Asset> {
   }
 
   public registerAssetTemplate(template: AssetTemplate): void {
-    const { type, extends: base } = template;
+    const {type, extends: base} = template;
 
     const baseInitializer = this.initializers[base];
 
@@ -63,7 +63,7 @@ export class LoadingManager<T extends Asset> {
     const templates = await AssetManager.loadAllJSON(paths);
 
     Iterator.from(templates)
-      .filter((template) => typeof template.type === "string")
+      .filter((template) => typeof template.type === 'string')
       .map((template) => template as AssetTemplate)
       .forEach((template) => {
         this.registerAssetTemplate(template);
@@ -72,7 +72,7 @@ export class LoadingManager<T extends Asset> {
 
   public registerAssetInitializer(
     type: string,
-    initializer: AssetInitializer<T>,
+    initializer: AssetInitializer<T>
   ): void {
     this.initializers[type] = initializer;
     log.debug(`${this.name} registered asset: ${type}`);

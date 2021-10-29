@@ -65,9 +65,9 @@ export class AssetManager {
     encoding: BufferEncoding = 'utf-8'
   ): Promise<Data> {
     try {
-    const str = await this.load(path, encoding);
-    const obj = JSON.parse(str);
-    return obj;
+      const str = await this.load(path, encoding);
+      const obj = JSON.parse(str);
+      return obj;
     } catch (ex) {
       log.error('Error reading JSON asset: ' + path);
       throw ex;

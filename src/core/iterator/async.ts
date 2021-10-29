@@ -170,6 +170,60 @@ interface IteratorFunctions<T> {
   $return(): Promise<void>;
 }
 
+class IteratorBuilder<T> {
+  private yieldQueue: T[] = [];
+  private resolver = (_?: void) => {};
+  private yieldResolver = (_?: void) => {};
+  private guard = new Promise<void>((resolve) => {
+    this.resolver = resolve;
+  });
+  private yieldGuard = new Promise<void>((resolve) => {
+    this.yieldResolver = resolve;
+  });
+  private isRunning: boolean = true;
+
+  constructor(body: (_: IteratorFunctions<T>) => void) {
+    body({
+      $yield: this.$yield.bind(this),
+      $yieldAll: this.$yieldAll.bind(this),
+      $return: this.$return.bind(this),
+    });
+  }
+
+  private async $yield(arg: T): Promise<void> {
+    this.yieldQueue.push(arg);
+    this.resolver();
+    this.guard = new Promise<void>((resolve) => {
+      this.resolver = resolve;
+    });
+    await this.yieldGuard;
+  }
+
+  private async $return(): Promise<void> {
+    this.resolver();
+    this.isRunning = false;
+    await this.yieldGuard;
+  }
+
+  private async $yieldAll(args: Iterable<T>): Promise<void> {
+    for (const x of args) {
+      await this.$yield(x);
+    }
+  }
+
+  public async *iterate(): AsyncIterable<T> {
+    while (this.isRunning) {
+      yield* this.yieldQueue;
+      this.yieldQueue = [];
+      this.yieldResolver();
+      this.yieldGuard = new Promise((resolve) => {
+        this.yieldResolver = resolve;
+      });
+      await this.guard;
+    }
+  }
+}
+
 function buildIterator<T>(
   body: (fns: IteratorFunctions<T>) => void
 ): AsyncIterable<T> {
@@ -244,7 +298,9 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     body: (fns: IteratorFunctions<T>) => void,
     onComplete?: () => void
   ): AsyncIterator<T> {
-    return AsyncIterator.generator(buildIterator(body), onComplete);
+    const builder = new IteratorBuilder<T>(body);
+    return AsyncIterator.generator(builder.iterate(), onComplete);
+    // return AsyncIterator.generator(buildIterator(body), onComplete);
   }
 
   public async *[Symbol.asyncIterator](): AsyncGenerator<T> {
