@@ -50,7 +50,7 @@ import {DataBuffer} from 'core/buf';
 import {Trail} from './Trail';
 import {ShatterProjectile} from './ShatterProjectile';
 import {ThemeManager} from 'core/theme';
-import { SpawnEntityEvent } from './util';
+import {SpawnEntityEvent} from './util';
 
 const log = LogManager.forFile(__filename);
 

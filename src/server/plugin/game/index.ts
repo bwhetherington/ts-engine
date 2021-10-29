@@ -212,7 +212,9 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     // Weaken enemies as they spawn
     this.streamEvents<SpawnEntityEvent>('SpawnEntityEvent', Priority.Highest)
-      .filterMap(({data: {entity}}) => entity instanceof BaseEnemy ? entity : undefined)
+      .filterMap(({data: {entity}}) =>
+        entity instanceof BaseEnemy ? entity : undefined
+      )
       .forEach((enemy) => {
         enemy.modifiers.multiplyModifiers({
           rate: Matrix2.from([2, 0, 0, 1]),
