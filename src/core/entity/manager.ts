@@ -294,9 +294,7 @@ export class WorldManager extends LoadingManager<Entity>
 
     EventManager.emit<SpawnEntityEvent>({
       type: 'SpawnEntityEvent',
-      data: {
-        entity,
-      },
+      data: {entity},
     });
   }
 
