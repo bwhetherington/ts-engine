@@ -526,10 +526,30 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
-  public path(points: Iterable<VectorLike>, color: Color): void {
+  public path(points: Iterable<VectorLike>, color: Color, fade?: boolean): void {
     const ctx = this.curContext;
     if (ctx) {
-      this.setStyles(ctx, color);
+      const pts = [...points];
+      if (pts.length <= 0) {
+        return;
+      }
+  
+      const start = pts[0];
+      const end = pts[pts.length - 1];
+      if (fade) {
+        const gradient = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
+        gradient.addColorStop(1, toCss({
+          ...color
+        }));
+        gradient.addColorStop(0, toCss({
+          ...color,
+          alpha: 0,
+        }));
+        ctx.strokeStyle = gradient;
+        ctx.fillStyle = gradient;
+      } else {
+        // this.setStyles(ctx, color);
+      }
       ctx.lineWidth = this.options.lineWidth;
       this.setRound(ctx);
       ctx.beginPath();
@@ -538,7 +558,7 @@ export class HDCanvas implements GraphicsContext {
       let hasStarted = false;
       let lastX = 0;
       let lastY = 0;
-      for (const {x, y} of points) {
+      for (const {x, y} of pts) {
         if (hasStarted) {
           const cpx = (x + lastX) / 2;
           const cpy = (y + lastY) / 2;

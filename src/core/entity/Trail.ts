@@ -92,7 +92,7 @@ export class Trail extends Entity {
     if (this.parent) {
       const color = {
         ...this.parent.getColor(),
-        alpha: 0.25,
+        alpha: 0.75,
       };
       GraphicsPipeline.pipe()
         .options({
@@ -103,7 +103,7 @@ export class Trail extends Entity {
           const points = this.snapshots
             .iterator()
             .map(({position}) => position);
-          ctx.path(points, color);
+          ctx.path(points, color, true);
         });
     }
   }
