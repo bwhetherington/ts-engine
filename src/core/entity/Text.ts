@@ -61,7 +61,7 @@ export class Text extends Entity {
       tag: this.tag,
     });
     GraphicsPipeline.pipe()
-      .options({lineWidth: 6})
+      .options({lineWidth: 6, doStroke: true, doFill: true})
       .run(ctx, (ctx) => {
         ctx.textComponents(0, 0, components, {
           size: this.textSize,

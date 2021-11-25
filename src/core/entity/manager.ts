@@ -51,6 +51,8 @@ import {Trail} from './Trail';
 import {ShatterProjectile} from './ShatterProjectile';
 import {ThemeManager} from 'core/theme';
 import {SpawnEntityEvent} from './util';
+import {Pickup} from './Pickup';
+import {UpgradePickup} from './UpgradePickup';
 
 const log = LogManager.forFile(__filename);
 
@@ -96,6 +98,8 @@ export class WorldManager extends LoadingManager<Entity>
     this.registerAssetType(HomingProjectile);
     this.registerAssetType(ShatterProjectile);
     this.registerAssetType(Feed);
+    this.registerAssetType(Pickup);
+    this.registerAssetType(UpgradePickup);
 
     // Effect entities
     this.registerAssetType(Text);
@@ -493,6 +497,8 @@ export class WorldManager extends LoadingManager<Entity>
       const idNum = UUIDManager.from(id);
       let entity = this.getEntity(idNum);
       let createdEntity = false;
+
+      // If the entity doesn't exist, try to create a new one
       if (!entity && typeof type === 'string') {
         entity = this.instantiate(type);
         if (entity) {

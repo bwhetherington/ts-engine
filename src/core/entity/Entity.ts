@@ -1,6 +1,6 @@
 import {Bounded, Rectangle, Vector} from 'core/geometry';
 import {GraphicsContext, Color, Renderable, CameraManager} from 'core/graphics';
-import {WHITE, isColor} from 'core/graphics/color';
+import {WHITE, isColor, tryColor} from 'core/graphics/color';
 import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
 import {isCollisionLayer, shuntOutOf} from './util';
@@ -320,8 +320,13 @@ export class Entity extends Observer
     if (typeof doSync === 'boolean') {
       this.doSync = true;
     }
-    if (color) {
-      this.deserializeColor(color);
+    if (color !== undefined) {
+      const validated = tryColor(color);
+      if (validated) {
+        this.setColor(validated);
+      } else {
+        this.deserializeColor(color);
+      }
     }
     if (isCollisionLayer(collisionLayer)) {
       this.collisionLayer = collisionLayer;

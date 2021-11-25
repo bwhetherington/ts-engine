@@ -65,7 +65,7 @@ export class HDCanvas implements GraphicsContext {
     options: Options = DEFAULT_OPTIONS,
     isParent: boolean = true
   ) {
-    const {width, height, isFullScreen} = options;
+    const {width, height} = options;
 
     this.canvas = element;
     if (this.canvas) {
@@ -296,8 +296,12 @@ export class HDCanvas implements GraphicsContext {
       ctx.textAlign = 'center';
       ctx.font = createFontString(font, size, scaleValue);
       this.setRound(ctx);
-      ctx.strokeText(text, x, y);
-      ctx.fillText(text, x, y);
+      if (this.options.doStroke) {
+        ctx.strokeText(text, x, y);
+      }
+      if (this.options.doFill) {
+        ctx.fillText(text, x, y);
+      }
 
       // Add text to bounds
       if (this.bounds) {
@@ -526,25 +530,40 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
-  public path(points: Iterable<VectorLike>, color: Color, fade?: boolean): void {
+  public path(
+    points: Iterable<VectorLike>,
+    color: Color,
+    fade?: boolean
+  ): void {
     const ctx = this.curContext;
     if (ctx) {
       const pts = [...points];
       if (pts.length <= 0) {
         return;
       }
-  
+
       const start = pts[0];
       const end = pts[pts.length - 1];
       if (fade) {
-        const gradient = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
-        gradient.addColorStop(1, toCss({
-          ...color
-        }));
-        gradient.addColorStop(0, toCss({
-          ...color,
-          alpha: 0,
-        }));
+        const gradient = ctx.createLinearGradient(
+          start.x,
+          start.y,
+          end.x,
+          end.y
+        );
+        gradient.addColorStop(
+          1,
+          toCss({
+            ...color,
+          })
+        );
+        gradient.addColorStop(
+          0,
+          toCss({
+            ...color,
+            alpha: 0,
+          })
+        );
         ctx.strokeStyle = gradient;
         ctx.fillStyle = gradient;
       } else {

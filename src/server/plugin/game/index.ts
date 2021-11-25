@@ -78,6 +78,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     // Spawn feed units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
+      .filter(() => false)
       .filter(
         () =>
           WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 2.5)
@@ -88,6 +89,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     // Spawn enemy units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
+      .filter(() => false)
       .filter(
         () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
       )

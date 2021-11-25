@@ -4,7 +4,7 @@ import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
 import {Data} from 'core/serialize';
 import {Vector, VectorLike} from 'core/geometry';
-import {GraphicsContext, rgb} from 'core/graphics';
+import {GraphicsContext, randomColor, rgb} from 'core/graphics';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 
 const log = LogManager.forFile(__filename);
@@ -34,6 +34,7 @@ export class BaseEnemy extends Tank {
 
     if (NetworkManager.isServer()) {
       // Select target
+      this.setColor(randomColor());
       this.selectTarget();
       this.streamInterval(1).forEach(() => {
         this.selectTarget();

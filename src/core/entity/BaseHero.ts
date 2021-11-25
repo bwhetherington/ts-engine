@@ -20,16 +20,14 @@ import {Event, EventData, EventManager, Priority} from 'core/event';
 import {Data} from 'core/serialize';
 import {Player, PlayerManager} from 'core/player';
 import {LogManager} from 'core/log';
-import {NetworkManager, SyncEvent} from 'core/net';
+import {NetworkManager} from 'core/net';
 import {CameraManager} from 'core/graphics';
-import {BarUpdateEvent, clamp, sleep} from 'core/util';
+import {BarUpdateEvent, clamp} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
-import {UUID} from 'core/uuid';
-import {HeroModifier} from 'core/upgrade/modifier';
+import {isUUID, UUID} from 'core/uuid';
 import {Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
 import {Iterator} from 'core/iterator';
-import {Follow} from './Follow';
 
 const log = LogManager.forFile(__filename);
 
@@ -48,7 +46,7 @@ export class BaseHero extends Tank {
 
   private player?: Player;
   private mouseDown: boolean = false;
-  private turning = {
+  private turning: Record<MovementDirection, boolean> = {
     [MovementDirection.Up]: false,
     [MovementDirection.Down]: false,
     [MovementDirection.Left]: false,
@@ -59,6 +57,9 @@ export class BaseHero extends Tank {
   private xp: number = 0;
   private level: number = 1;
   private cameraTarget?: Entity;
+
+  public replacementId?: UUID;
+  private hasReplaced: boolean = false;
 
   public constructor() {
     super();
@@ -208,7 +209,7 @@ export class BaseHero extends Tank {
     if (level < 1) {
       return 0;
     }
-    return 5 * (3 + Math.ceil(level * level * 3));
+    return level * 20 + Math.ceil(level * level * 3);
   }
 
   protected lifeForLevel(level: number): number {
@@ -351,6 +352,13 @@ export class BaseHero extends Tank {
     return this.getPlayer()?.name ?? super.getName();
   }
 
+  public copyMovement(hero: BaseHero): void {
+    this.turning = {
+      ...hero.turning,
+    };
+    this.computeMovementInput();
+  }
+
   private computeMovementInput(): void {
     this.vectorBuffer.setXY(0, 0);
     if (this.turning[MovementDirection.Up]) {
@@ -394,12 +402,18 @@ export class BaseHero extends Tank {
     if (this.mouseDown && NetworkManager.isServer()) {
       this.fire(this.weaponAngle);
     }
+
+    if (this.isInitialized) {
+      delete this.replacementId;
+    }
   }
 
   public serialize(): Data {
     return {
       ...super.serialize(),
+      turning: this.turning,
       playerID: this.player?.id,
+      replacementId: this.replacementId,
       xp: this.xp,
     };
   }
@@ -420,6 +434,23 @@ export class BaseHero extends Tank {
 
     const wasInitialized = this.isInitialized;
     super.deserialize(data, setInitialized);
+
+    if (!wasInitialized) {
+      const {turning} = data;
+      if (turning) {
+        for (const key in this.turning) {
+          const keyDirection = parseInt(key) as MovementDirection;
+          if (Number.isNaN(keyDirection)) {
+            continue;
+          }
+          const newValue = turning[keyDirection];
+          if (typeof newValue === 'boolean') {
+            this.turning[keyDirection] = newValue;
+          }
+        }
+        this.computeMovementInput();
+      }
+    }
 
     if (playerID !== undefined) {
       this.setPlayer(playerID);
@@ -443,6 +474,16 @@ export class BaseHero extends Tank {
           hero: this.serialize(),
         },
       });
+    }
+
+    if (!this.hasReplaced && isUUID(data.replacementId)) {
+      const oldHero = WorldManager.getEntity(data.replacementId);
+      if (oldHero instanceof BaseHero) {
+        this.hasReplaced = true;
+        console.log('replace', data.replacementId);
+        this.setPosition(oldHero.position);
+        this.copyMovement(oldHero);
+      }
     }
   }
 

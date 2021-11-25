@@ -49,6 +49,17 @@ export const COLORS: Color[] = [
   fromHSV({hue: 340, value: 0.85, saturation: 0.55}),
 ];
 
+const COLOR_NAMES: Record<string, Color> = {
+  red: COLORS[0],
+  yellow: COLORS[60],
+  green: COLORS[120],
+  cyan: COLORS[180],
+  blue: COLORS[240],
+  magenta: COLORS[300],
+};
+
+type ColorKey = string | number | Color;
+
 export function randomColor(): Color {
   const i = RNGManager.nextInt(0, COLORS.length);
   return {...COLORS[i]};
@@ -176,6 +187,30 @@ export function rgba(
   alpha: number
 ): Color {
   return {red, green, blue, alpha};
+}
+
+export function tryColor(input: any): Color | undefined {
+  if (typeof input === 'number') {
+    return COLORS[input];
+  }
+
+  if (typeof input === 'string') {
+    return COLOR_NAMES[input];
+  }
+
+  if (isColor(input)) {
+    return input;
+  }
+
+  const {hue, saturation, value, alpha} = input;
+  if (
+    typeof hue === 'number' &&
+    typeof saturation === 'number' &&
+    typeof value === 'number' &&
+    (alpha === undefined || typeof alpha === 'number')
+  ) {
+    return hsva(hue, saturation, value, alpha ?? 1);
+  }
 }
 
 export function isColor(input: any): input is Color {

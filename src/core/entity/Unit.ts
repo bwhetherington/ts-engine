@@ -249,7 +249,7 @@ export class Unit extends Entity {
     if (typeof xpWorth === 'number') {
       this.xpWorth = xpWorth;
     }
-    if (typeof name === 'string') {
+    if (typeof name === 'string' && name.length > 0) {
       this.setName(name);
     }
     if (typeof thrusting === 'number') {

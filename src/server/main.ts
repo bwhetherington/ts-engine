@@ -24,15 +24,15 @@ import {
   Timer,
   ServerLogger,
   TimerManager,
-  loadWorld,
   loadFile,
   loadDirectory,
 } from 'server/util';
 import {ChatLogPlugin} from 'server/plugin/chatLog';
 import {GamePlugin} from 'server/plugin/game';
 import {UpgradeManager} from 'core/upgrade';
-import {UpgradePlugin} from './plugin/upgrade';
-import {DelayServer} from './net/delay';
+import {UpgradePlugin} from 'server/plugin/upgrade';
+import {Config} from 'server/config';
+import {SpawnPlugin} from 'server/plugin/spawn';
 
 const log = LogManager.forFile(__filename);
 
@@ -75,8 +75,8 @@ async function main(): Promise<void> {
     const event: Event<SyncEvent> = {
       type: 'SyncEvent',
       data: {
-        worldData: WorldManager.diffState(),
-        playerData: PlayerManager.diffState(),
+        worldData: WorldManager.serialize(),
+        playerData: PlayerManager.serialize(),
       },
     };
 
@@ -85,10 +85,12 @@ async function main(): Promise<void> {
     }
   }
 
+  const config = await Config.load('config/server.json');
+
   const timer = new Timer(async (dt) => {
     await EventManager.step(dt);
     sync();
-  }, 1 / 60);
+  }, 1 / config.tickRate);
   TimerManager.initialize(timer);
 
   async function cleanup(): Promise<never> {
@@ -110,6 +112,7 @@ async function main(): Promise<void> {
     GamePlugin,
     UtilsPlugin,
     UpgradePlugin,
+    SpawnPlugin,
   ]);
 }
 
