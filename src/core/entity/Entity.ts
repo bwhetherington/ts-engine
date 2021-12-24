@@ -1,6 +1,6 @@
 import {Bounded, Rectangle, Vector} from 'core/geometry';
-import {GraphicsContext, Color, Renderable, CameraManager} from 'core/graphics';
-import {WHITE, isColor, tryColor} from 'core/graphics/color';
+import {GraphicsContext, Color, Renderable} from 'core/graphics';
+import {WHITE, tryColor} from 'core/graphics/color';
 import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
 import {Data, Serializable} from 'core/serialize';
 import {isCollisionLayer, shuntOutOf} from './util';
@@ -11,7 +11,6 @@ import {DataBuffer, DataSerializable} from 'core/buf';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {clamp} from 'core/util';
 import {NetworkManager} from 'core/net';
-import {PlayerManager} from 'core/player';
 
 export class Entity
   extends Observer

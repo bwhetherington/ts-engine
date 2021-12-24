@@ -1,4 +1,4 @@
-import {Entity, Unit} from 'core/entity';
+import {Unit} from 'core/entity';
 import {EventManager} from 'core/event';
 import {GraphicsContext, rgb} from 'core/graphics';
 import {GraphicsPipeline} from 'core/graphics/pipe';
@@ -20,6 +20,7 @@ export class Feed extends Unit {
   public static typeName: string = 'Feed';
 
   private variant: FeedVariant = FeedVariant.Small;
+  private isSet: boolean = false;
 
   public constructor() {
     super();
@@ -29,6 +30,10 @@ export class Feed extends Unit {
   }
 
   public setVariant(variant: FeedVariant): void {
+    if (this.isSet && variant === this.variant) {
+      return;
+    }
+    this.isSet = true;
     this.variant = variant;
     switch (variant) {
       case FeedVariant.Small:

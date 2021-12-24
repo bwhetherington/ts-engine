@@ -33,6 +33,7 @@ import {UpgradeManager} from 'core/upgrade';
 import {UpgradePlugin} from 'server/plugin/upgrade';
 import {Config} from 'server/config';
 import {SpawnPlugin} from 'server/plugin/spawn';
+import {SyncManager} from './syncManager';
 
 const log = LogManager.forFile(__filename);
 
@@ -71,25 +72,27 @@ async function main(): Promise<void> {
   MetricsManager.initialize();
   await PluginManager.initialize(server);
 
-  function sync() {
-    const event: Event<SyncEvent> = {
-      type: 'SyncEvent',
-      data: {
-        worldData: WorldManager.serialize(),
-        playerData: PlayerManager.serialize(),
-      },
-    };
+  const syncManager = new SyncManager();
+  syncManager.initialize();
 
-    if (!(isEmpty(event.data.worldData) && isEmpty(event.data.playerData))) {
-      NetworkManager.sendEvent<SyncEvent>(event);
-    }
+  function sync() {
+    // const event: Event<SyncEvent> = {
+    //   type: 'SyncEvent',
+    //   data: {
+    //     worldData: WorldManager.diffState(),
+    //     playerData: PlayerManager.diffState(),
+    //   },
+    // };
+    // if (!(isEmpty(event.data.worldData) && isEmpty(event.data.playerData))) {
+    //   NetworkManager.sendEvent<SyncEvent>(event);
+    // }
   }
 
   const config = await Config.load('config/server.yml');
 
   const timer = new Timer(async (dt) => {
     await EventManager.step(dt);
-    sync();
+    // sync();
   }, 1 / config.tickRate);
   TimerManager.initialize(timer);
 
