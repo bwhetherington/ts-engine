@@ -73,7 +73,7 @@ class AlphaPipeline extends GraphicsPipeline {
     this.alphaInternal = alpha;
   }
 
-  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+  protected override runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
     ctx.withAlpha(this.alphaInternal, proc);
   }
 }
@@ -89,7 +89,7 @@ class OptionsPipeline extends GraphicsPipeline {
     this.optionsInternal = options;
   }
 
-  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+  protected override runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
     ctx.withOptions(this.optionsInternal, proc);
   }
 }
@@ -102,7 +102,7 @@ class ScalePipeline extends GraphicsPipeline {
     this.scaleInternal = scale;
   }
 
-  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+  protected override runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
     ctx.scale(this.scaleInternal);
     proc(ctx);
     ctx.scale(1 / this.scaleInternal);
@@ -119,7 +119,7 @@ class TranslatePipeline extends GraphicsPipeline {
     this.ty = ty;
   }
 
-  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+  protected override runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
     ctx.translate(this.tx, this.ty);
     proc(ctx);
     ctx.translate(-this.tx, -this.ty);
@@ -134,7 +134,7 @@ class RotatePipeline extends GraphicsPipeline {
     this.angle = angle;
   }
 
-  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+  protected override runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
     ctx.rotate(this.angle);
     proc(ctx);
     ctx.rotate(-this.angle);
@@ -149,7 +149,7 @@ class ShadowPipeline extends GraphicsPipeline {
     this.style = style;
   }
 
-  protected runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
+  protected override runInternal(ctx: GraphicsContext, proc: GraphicsProc): void {
     ctx.withShadow(this.style, proc);
   }
 }

@@ -76,7 +76,7 @@ export class Unit extends Entity {
     return this.isImmune;
   }
 
-  public cleanup(): void {
+  public override cleanup(): void {
     this.label?.markForDelete();
     this.hpBar?.markForDelete();
     if (NetworkManager.isClient() && !this.hasExploded) {
@@ -86,7 +86,7 @@ export class Unit extends Entity {
     this.isAliveInternal = false;
   }
 
-  public isAlive(): boolean {
+  public override isAlive(): boolean {
     return this.isAliveInternal && super.isAlive();
   }
 
@@ -173,7 +173,7 @@ export class Unit extends Entity {
     return this.lifeRegen;
   }
 
-  public step(dt: number): void {
+  public override step(dt: number): void {
     // Regenerate life
     this.setLife(this.life + this.getLifeRegen() * this.maxLife * dt);
 
@@ -198,7 +198,7 @@ export class Unit extends Entity {
     super.step(dt);
   }
 
-  public afterStep(): void {
+  public override afterStep(): void {
     if (NetworkManager.isClient()) {
       if (this.label) {
         this.label.position.set(this.position);
@@ -220,7 +220,7 @@ export class Unit extends Entity {
     this.thrusting = thrusting;
   }
 
-  public serialize(): Data {
+  public override serialize(): Data {
     return {
       ...super.serialize(),
       life: this.life,
@@ -234,7 +234,7 @@ export class Unit extends Entity {
     };
   }
 
-  public deserialize(data: Data, setInitialized?: boolean): void {
+  public override deserialize(data: Data, setInitialized?: boolean): void {
     super.deserialize(data, setInitialized);
     const {life, maxLife, thrusting, isImmune, xpWorth, speed, name} = data;
     if (typeof maxLife === 'number') {
@@ -312,7 +312,7 @@ export class Unit extends Entity {
     return this.color;
   }
 
-  public getColor(): Color {
+  public override getColor(): Color {
     const color =
       EventManager.timeElapsed - this.lastFlash < FLASH_DURATION &&
       this.isAlive()
@@ -321,12 +321,12 @@ export class Unit extends Entity {
     return color;
   }
 
-  public setColor(color: Color): void {
+  public override setColor(color: Color): void {
     super.setColor(color);
     this.flashColor = reshade(this.color, 0.5);
   }
 
-  public collide(other?: Entity): void {
+  public override collide(other?: Entity): void {
     if (other && other.collisionLayer === CollisionLayer.Unit) {
       this.vectorBuffer.set(other.position);
       this.vectorBuffer.add(this.position, -1);

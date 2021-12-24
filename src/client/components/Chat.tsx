@@ -206,10 +206,20 @@ export class Chat extends Component<ChatProps, ChatState> {
 
     this.streamEvents<KeyEvent>('KeyEvent')
       .filter(
-        ({data: {action, key}}) =>
-          action === KeyAction.KeyDown && key === Key.Enter
+        ({data: {action, key}}) => action === KeyAction.KeyDown
       )
-      .forEach(() => this.inputRef?.current?.focus());
+      .forEach(({data: {key}}) => {
+        if (key === Key.Enter) {
+          this.inputRef?.current?.focus();
+        } else if (key === Key.Slash) {
+          if (this.inputRef?.current) {
+            this.updateState({
+              message: '/',
+            });
+            this.inputRef.current.focus();
+          }
+        }
+      });
   }
 
   private renderLines(): JSX.Element[] {

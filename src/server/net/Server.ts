@@ -92,7 +92,7 @@ export class Server extends Node {
   }
 
   private initializeConnection(connection: Connection, index: Socket) {
-    connection.on('message', (data) => {
+    connection.on('message', (data: Message) => {
       const {type, utf8Data} = data;
       if (utf8Data && type === 'utf8') {
         this.receiveRaw(utf8Data, index);

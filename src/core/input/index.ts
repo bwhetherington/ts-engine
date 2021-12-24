@@ -52,6 +52,7 @@ export enum Key {
   Down,
   Left,
   Right,
+  Slash,
 }
 
 export const KEY_MAP: Record<string, Key> = {
@@ -107,6 +108,7 @@ export const KEY_MAP: Record<string, Key> = {
   ArrowDown: Key.Down,
   ArrowLeft: Key.Left,
   ArrowRight: Key.Right,
+  Slash: Key.Slash,
 };
 
 export interface KeyEvent {

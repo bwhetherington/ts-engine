@@ -1,9 +1,11 @@
 import {LogManager} from 'core/log';
 import {Data} from 'core/serialize';
+import { BufferData } from 'core/util';
+import yaml from 'js-yaml';
 
 const log = LogManager.forFile(__filename);
 
-type AssetLoader = (path: string) => Promise<Buffer>;
+type AssetLoader = (path: string) => Promise<BufferData>;
 
 type DirectoryLoader = (path: string) => Promise<string[]>;
 
@@ -30,7 +32,7 @@ export class AssetManager {
     }
   }
 
-  public async loadBuffer(path: string): Promise<Buffer> {
+  public async loadBuffer(path: string): Promise<BufferData> {
     if (this.loader) {
       const data = await this.loader(path);
       log.debug('load asset: ' + path);
@@ -41,7 +43,7 @@ export class AssetManager {
     }
   }
 
-  public async loadAllBuffers(paths: string[]): Promise<Buffer[]> {
+  public async loadAllBuffers(paths: string[]): Promise<BufferData[]> {
     return Promise.all(paths.map((path) => this.loadBuffer(path)));
   }
 
@@ -60,13 +62,22 @@ export class AssetManager {
     return Promise.all(paths.map((path) => this.load(path, encoding)));
   }
 
+  private parseFile(path: string, content: string): Data {
+    const sections = path.split('.');
+    let parse = (str: string) => JSON.parse(str);
+    if (sections[1] === 'yml' || sections[1] === 'yaml') {
+      parse = (str: string) => yaml.load(str);
+    }
+    return parse(content);
+  }
+
   public async loadJSON(
     path: string,
     encoding: BufferEncoding = 'utf-8'
   ): Promise<Data> {
     try {
       const str = await this.load(path, encoding);
-      const obj = JSON.parse(str);
+      const obj = this.parseFile(path, str);
       return obj;
     } catch (ex) {
       log.error('Error reading JSON asset: ' + path);

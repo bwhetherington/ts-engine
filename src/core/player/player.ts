@@ -98,7 +98,7 @@ export class Player extends Observer implements Serializable {
     }
   }
 
-  public async cleanup(): Promise<void> {
+  public override async cleanup(): Promise<void> {
     super.cleanup();
     this.hero?.markForDelete();
     UUIDManager.free(this.id);
@@ -217,7 +217,7 @@ export class Player extends Observer implements Serializable {
     return this.isAdmin() ? 'blue' : 'none';
   }
 
-  public toString(): string {
+  public override toString(): string {
     return `${this.name}(${this.id})`;
   }
 }

@@ -63,7 +63,7 @@ export const saveAll: CommandEntry = {
       await PlayerManager.saveAll();
       const time = Date.now() - start;
       ChatManager.info(`All players saved (${time} ms)`, player);
-    } catch (ex) {
+    } catch (ex: any) {
       ChatManager.error('Error saving players', player);
       log.error(ex.message ?? 'Could not load file');
     }

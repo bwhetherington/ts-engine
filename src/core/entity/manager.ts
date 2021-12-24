@@ -35,13 +35,12 @@ import {Serializable, Data} from 'core/serialize';
 import {Iterator, iterator} from 'core/iterator';
 import {diff} from 'core/util';
 import {NetworkManager, SyncEvent} from 'core/net';
-import {WHITE, reshade, BLACK} from 'core/graphics/color';
+import {reshade} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
 import {
   AssetManager,
-  AssetTemplate,
   AssetType,
   LoadingManager,
 } from 'core/assets';
@@ -74,7 +73,6 @@ export class WorldManager extends LoadingManager<Entity>
 
   constructor(boundingBox: Rectangle) {
     super('WorldManager');
-    // this.space = new Cell(boundingBox, 150, 150);
     this.space = new QuadTree(boundingBox);
     this.boundingBox = boundingBox;
   }

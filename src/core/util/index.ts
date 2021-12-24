@@ -48,4 +48,8 @@ export {
 export * from 'core/util/heap';
 export * from 'core/metrics';
 
+export interface BufferData {
+  toString(encoding?: BufferEncoding): string;
+}
+
 // export * from 'core/util/map';

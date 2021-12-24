@@ -140,7 +140,7 @@ export class DirectionVector extends Vector {
     this.setXY(x, y);
   }
 
-  public setXY(x: number, y: number): void {
+  public override setXY(x: number, y: number): void {
     super.setXY(x, y);
     if (!(x === 0 && y === 0)) {
       this.curAngle = Math.atan2(y, x);
@@ -151,7 +151,7 @@ export class DirectionVector extends Vector {
     return this.curAngle;
   }
 
-  public clone(): Vector {
+  public override clone(): Vector {
     const clone = new DirectionVector(this.x, this.y);
     clone.curAngle = this.curAngle;
     return clone;

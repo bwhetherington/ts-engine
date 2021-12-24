@@ -68,7 +68,10 @@ export function registerJoinForm(): void {
   FormManager.registerForm(JoinFormEntry);
 }
 
-const LOGIN_SERVER = process.env.GAME_LOGIN_SERVER ?? '';
+let LOGIN_SERVER = '';
+try {
+  LOGIN_SERVER = process.env.GAME_LOGIN_SERVER ?? '';
+} catch (ex: any) {}
 
 async function validateSubmit(input: JoinForm): Promise<FormResult> {
   const {username, password} = input;
@@ -89,7 +92,7 @@ async function validateSubmit(input: JoinForm): Promise<FormResult> {
       }
     }
     return {isValid: false, message: 'Invalid credentials.'};
-  } catch (ex) {
+  } catch (ex: any) {
     log.error('error connecting to player server: ' + ex.message);
     return {isValid: false, message: 'Could not connect to login server.'};
   }

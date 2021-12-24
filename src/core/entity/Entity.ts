@@ -379,7 +379,7 @@ export class Entity extends Observer
     this.markedForDelete = true;
   }
 
-  public toString(): string {
+  public override toString(): string {
     return `${this.type}(${this.id})`;
   }
 
@@ -395,7 +395,7 @@ export class Entity extends Observer
 
   public load(): void {}
 
-  public cleanup(): void {
+  public override cleanup(): void {
     super.cleanup();
     UUIDManager.free(this.id);
   }

@@ -22,14 +22,14 @@ export class Bar extends Entity {
     this.friction = 0;
   }
 
-  public serialize(): Data {
+  public override serialize(): Data {
     return {
       ...super.serialize(),
       progress: this.progress,
     };
   }
 
-  public deserialize(data: Data): void {
+  public override deserialize(data: Data): void {
     super.deserialize(data);
 
     const {progress} = data;
@@ -38,7 +38,7 @@ export class Bar extends Entity {
     }
   }
 
-  public render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext): void {
     if (0 < this.progress && this.progress < 1) {
       const lineWidth = 4;
       const progress = clamp(this.progress, 0, 1);

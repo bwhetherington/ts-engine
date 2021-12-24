@@ -23,7 +23,7 @@ export class Follow extends Entity {
     this.isVisible = false;
   }
 
-  public step(dt: number): void {
+  public override step(dt: number): void {
     super.step(dt);
 
     if (!(this.parent?.isAlive() || this.isPersistent)) {
@@ -62,7 +62,7 @@ export class Follow extends Entity {
     this.parent = undefined;
   }
 
-  public shouldUpdateLocally(): boolean {
+  public override shouldUpdateLocally(): boolean {
     return true;
     // return !!this.parent?.shouldUpdateLocally();
   }

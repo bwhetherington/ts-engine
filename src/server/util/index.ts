@@ -4,6 +4,7 @@ import {now, Timer} from 'server/util/Timer';
 import {ServerLogger} from 'server/util/ServerLogger';
 import {TimerManager} from 'server/util/TimerManager';
 import {Iterator} from 'core/iterator';
+import { BufferData } from 'core/util';
 export * from 'server/util/world';
 
 function transformPath(url: string): string {
@@ -11,9 +12,9 @@ function transformPath(url: string): string {
   return transformed;
 }
 
-export async function loadFile(url: string): Promise<Buffer> {
+export function loadFile(url: string): Promise<BufferData> {
   const actualPath = transformPath(url);
-  return await readFile(actualPath);
+  return readFile(actualPath);
 }
 
 export async function loadDirectory(url: string): Promise<string[]> {

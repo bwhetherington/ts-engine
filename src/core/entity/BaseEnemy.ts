@@ -45,7 +45,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public damage(amount: number, source?: Unit): void {
+  public override damage(amount: number, source?: Unit): void {
     super.damage(amount, source);
     if (NetworkManager.isServer() && source) {
       this.target = source;
@@ -134,7 +134,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public step(dt: number): void {
+  public override step(dt: number): void {
     super.step(dt);
 
     if (NetworkManager.isServer()) {
@@ -154,7 +154,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public serialize(): Data {
+  public override serialize(): Data {
     return {
       ...super.serialize(),
       isActive: this.isActive,
@@ -168,7 +168,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public deserialize(data: Data, isInitialized?: boolean): void {
+  public override deserialize(data: Data, isInitialized?: boolean): void {
     super.deserialize(data, isInitialized);
     const {isActive} = data;
 
@@ -177,7 +177,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext): void {
     super.render(ctx);
 
     // Draw path

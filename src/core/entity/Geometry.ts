@@ -24,7 +24,7 @@ export class Geometry extends Entity {
     this.isSpatial = true;
   }
 
-  public getColor(): Color {
+  public override getColor(): Color {
     return ThemeManager.current.foregroundColor;
   }
 }

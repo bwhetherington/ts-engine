@@ -189,15 +189,15 @@ export class BaseHero extends Tank {
       .forEach((upgrade) => this.applyUpgrade(upgrade, false));
   }
 
-  public getLifeRegen(): number {
+  public override getLifeRegen(): number {
     return this.modifiers.get('lifeRegen').multiplyPoint(super.getLifeRegen());
   }
 
-  protected getNameColor(): TextColor {
+  protected override getNameColor(): TextColor {
     return this.getPlayer()?.getNameColor() ?? super.getNameColor();
   }
 
-  public getXPWorth(): number {
+  public override getXPWorth(): number {
     return Math.max(1, this.getExperience() / 2);
   }
 
@@ -316,7 +316,7 @@ export class BaseHero extends Tank {
     this.setMaxLife(life);
   }
 
-  public setMaxLife(maxLife: number): void {
+  public override setMaxLife(maxLife: number): void {
     let life = maxLife;
     if (NetworkManager.isServer() && this.modifiers) {
       life = Math.round(this.modifiers.get('life').multiplyPoint(life));
@@ -334,7 +334,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public setLife(life: number, source?: Unit): void {
+  public override setLife(life: number, source?: Unit): void {
     super.setLife(life, source);
     if (this.getPlayer()?.isActivePlayer?.()) {
       EventManager.emit({
@@ -348,7 +348,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public getName(): string {
+  public override getName(): string {
     return this.getPlayer()?.name ?? super.getName();
   }
 
@@ -383,7 +383,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public step(dt: number): void {
+  public override step(dt: number): void {
     this.computeMovementInput();
     super.step(dt);
 
@@ -408,7 +408,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public serialize(): Data {
+  public override serialize(): Data {
     return {
       ...super.serialize(),
       turning: this.turning,
@@ -418,7 +418,7 @@ export class BaseHero extends Tank {
     };
   }
 
-  public deserialize(data: Data, setInitialized?: boolean): void {
+  public override deserialize(data: Data, setInitialized?: boolean): void {
     const {x: oldX, y: oldY} = this.position;
     const {x: oldVX, y: oldVY} = this.velocity;
     const {
@@ -487,7 +487,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public calculateDamageIn(amount: number): number {
+  public override calculateDamageIn(amount: number): number {
     const armor = this.modifiers.get('armor').multiplyPoint(this.armor);
     return Math.max(1, amount - armor);
   }
@@ -499,21 +499,21 @@ export class BaseHero extends Tank {
     return isLocal || socket === player?.socket;
   }
 
-  protected calculateDamageOut(amount: number): number {
+  protected override calculateDamageOut(amount: number): number {
     return amount;
   }
 
-  public shouldUpdateLocally(): boolean {
+  public override shouldUpdateLocally(): boolean {
     // Always update the current player's character
     // return this.getPlayer()?.isActivePlayer?.() ?? false;
     return true;
   }
 
-  public shouldSmooth(): boolean {
+  public override shouldSmooth(): boolean {
     return NetworkManager.isClient() && !this.getPlayer()?.isActivePlayer();
   }
 
-  public cleanup(): void {
+  public override cleanup(): void {
     if (this.getPlayer()?.isActivePlayer()) {
       EventManager.emit({
         type: 'BarUpdateEvent',

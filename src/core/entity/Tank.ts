@@ -91,7 +91,7 @@ export class Tank extends Unit {
     }
   }
 
-  public step(dt: number) {
+  public override step(dt: number) {
     // Rotate towards targetAngle
     const tau = 2 * Math.PI;
     this.targetAngle = (this.targetAngle + tau) % tau;
@@ -112,11 +112,11 @@ export class Tank extends Unit {
     this.fireTimer = Math.max(0, this.fireTimer - dt);
   }
 
-  public calculateDamageIn(amount: number): number {
+  public override calculateDamageIn(amount: number): number {
     return Math.max(1, amount - this.armor);
   }
 
-  public setThrusting(thrusting: number): void {
+  public override setThrusting(thrusting: number): void {
     if (thrusting !== this.thrusting) {
       super.setThrusting(thrusting);
       this.thrustTime = EventManager.timeElapsed;
@@ -252,14 +252,14 @@ export class Tank extends Unit {
       });
   }
 
-  public render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext): void {
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       this.renderCannon(ctx);
       this.renderBody(ctx);
     });
   }
 
-  public serialize(): Data {
+  public override serialize(): Data {
     return {
       ...super.serialize(),
       cannons: this.cannons.map(({lastFired, shape, key}) => ({
@@ -274,7 +274,7 @@ export class Tank extends Unit {
     };
   }
 
-  public deserialize(data: Data, setInitialized?: boolean): void {
+  public override deserialize(data: Data, setInitialized?: boolean): void {
     const {angle: oldAngle} = this;
     super.deserialize(data, setInitialized);
     const {
@@ -346,7 +346,7 @@ export class Tank extends Unit {
     }
   }
 
-  public cleanup(): void {
+  public override cleanup(): void {
     this.weapon?.cleanup();
     super.cleanup();
   }

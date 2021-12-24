@@ -10,7 +10,11 @@ import {Plugin} from 'server/plugin';
 export class SpawnPlugin extends Plugin {
   public static typeName: string = 'SpawnPlugin';
 
-  private spawn(_player: Player, type: string, count: number): void {
+  private spawn(player: Player, type: string, count: number): void {
+    if (!WorldManager.canInstantiate(type)) {
+      ChatManager.error(`Cannot spawn type '${type}'`, player);
+      return;
+    }
     const loc = new Vector(0, 0);
     Iterator.range(0, count ?? 1).forEach(() => {
       WorldManager.spawnEntity(type, loc);

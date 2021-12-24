@@ -2,7 +2,6 @@ import {FormManager} from 'core/form/manager';
 import {Data} from 'core/serialize';
 import {Player} from 'core/player';
 import {registerJoinForm} from 'core/form/join';
-import {Socket} from 'dgram';
 import {UUID} from 'core/uuid';
 
 export interface Form {

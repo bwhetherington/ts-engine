@@ -85,7 +85,7 @@ async function main(): Promise<void> {
     }
   }
 
-  const config = await Config.load('config/server.json');
+  const config = await Config.load('config/server.yml');
 
   const timer = new Timer(async (dt) => {
     await EventManager.step(dt);

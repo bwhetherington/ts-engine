@@ -23,7 +23,7 @@ export class TimedText extends Text {
     }
   }
 
-  public shouldDeleteIfOffscreen(): boolean {
+  public override shouldDeleteIfOffscreen(): boolean {
     return true;
   }
 }

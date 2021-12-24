@@ -78,6 +78,10 @@ export class LoadingManager<T extends Asset> {
     log.debug(`${this.name} registered asset: ${type}`);
   }
 
+  public canInstantiate(type: string): boolean {
+    return this.initializers.hasOwnProperty(type);
+  }
+
   public instantiate(type: string): T | undefined {
     const initializer = this.initializers[type];
 
