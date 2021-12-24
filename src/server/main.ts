@@ -72,8 +72,10 @@ async function main(): Promise<void> {
   MetricsManager.initialize();
   await PluginManager.initialize(server);
 
+  const config = await Config.load('config/server.yml');
+
   const syncManager = new SyncManager();
-  syncManager.initialize();
+  syncManager.initialize(config);
 
   function sync() {
     // const event: Event<SyncEvent> = {
@@ -87,8 +89,6 @@ async function main(): Promise<void> {
     //   NetworkManager.sendEvent<SyncEvent>(event);
     // }
   }
-
-  const config = await Config.load('config/server.yml');
 
   const timer = new Timer(async (dt) => {
     await EventManager.step(dt);

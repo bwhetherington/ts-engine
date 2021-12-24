@@ -3,6 +3,7 @@ import {Data, Serializable} from 'core/serialize';
 
 export class Config implements Serializable {
   public tickRate: number = 30;
+  public fullSyncInterval: number = 5;
 
   public static async load(file: string): Promise<Config> {
     const config = new Config();
@@ -18,9 +19,12 @@ export class Config implements Serializable {
   }
 
   public deserialize(data: Data): void {
-    const {tickRate} = data;
+    const {tickRate, fullSyncInterval} = data;
     if (typeof tickRate === 'number') {
       this.tickRate = tickRate;
+    }
+    if (typeof fullSyncInterval === 'number') {
+      this.fullSyncInterval = fullSyncInterval;
     }
   }
 }
