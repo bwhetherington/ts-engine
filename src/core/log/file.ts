@@ -17,7 +17,7 @@ export class FileLogger extends LoggerWrapper {
 
   public constructor(fileName: string) {
     super();
-    this.addTag((fileName));
+    this.addTag(fileName);
   }
 
   public override logRaw(content: string) {

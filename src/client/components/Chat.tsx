@@ -205,9 +205,7 @@ export class Chat extends Component<ChatProps, ChatState> {
       .forEach(() => this.updateState({isFresh: false}));
 
     this.streamEvents<KeyEvent>('KeyEvent')
-      .filter(
-        ({data: {action, key}}) => action === KeyAction.KeyDown
-      )
+      .filter(({data: {action, key}}) => action === KeyAction.KeyDown)
       .forEach(({data: {key}}) => {
         if (key === Key.Enter) {
           this.inputRef?.current?.focus();

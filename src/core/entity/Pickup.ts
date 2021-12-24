@@ -1,8 +1,15 @@
-import { CollisionLayer, Entity, BaseHero } from "core/entity";
-import { BLACK, Color, GraphicsContext, randomColor, reshade, WHITE } from "core/graphics";
-import { GraphicsPipeline } from "core/graphics/pipe";
-import { LogManager } from "core/log";
-import { NetworkManager } from "core/net";
+import {CollisionLayer, Entity, BaseHero} from 'core/entity';
+import {
+  BLACK,
+  Color,
+  GraphicsContext,
+  randomColor,
+  reshade,
+  WHITE,
+} from 'core/graphics';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {LogManager} from 'core/log';
+import {NetworkManager} from 'core/net';
 
 const log = LogManager.forFile(__filename);
 
@@ -22,7 +29,7 @@ export class Pickup extends Entity {
 
   public override render(ctx: GraphicsContext): void {
     super.render(ctx);
-    
+
     GraphicsPipeline.pipe()
       .options({
         doStroke: false,
@@ -34,7 +41,11 @@ export class Pickup extends Entity {
   }
 
   public override collide(other: Entity): void {
-    if (NetworkManager.isServer() && other instanceof BaseHero && this.canPickUp(other)) {
+    if (
+      NetworkManager.isServer() &&
+      other instanceof BaseHero &&
+      this.canPickUp(other)
+    ) {
       this.onPickup(other);
     }
   }

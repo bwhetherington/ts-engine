@@ -2,7 +2,8 @@ import {Bounded, Rectangle, VectorLike} from 'core/geometry';
 import {GraphicsContext, Renderable} from 'core/graphics';
 
 export abstract class Partioner<T extends Bounded>
-  implements Bounded, Renderable {
+  implements Bounded, Renderable
+{
   public constructor(public boundingBox: Rectangle) {}
 
   public abstract render(ctx: GraphicsContext): void;

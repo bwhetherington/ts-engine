@@ -10,7 +10,8 @@ export interface RectangleLike {
 }
 
 export class Rectangle
-  implements DataSerializable, Serializable, RectangleLike {
+  implements DataSerializable, Serializable, RectangleLike
+{
   constructor(
     public width: number = 0,
     public height: number = 0,

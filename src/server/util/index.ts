@@ -4,7 +4,7 @@ import {now, Timer} from 'server/util/Timer';
 import {ServerLogger} from 'server/util/ServerLogger';
 import {TimerManager} from 'server/util/TimerManager';
 import {Iterator} from 'core/iterator';
-import { BufferData } from 'core/util';
+import {BufferData} from 'core/util';
 export * from 'server/util/world';
 
 function transformPath(url: string): string {

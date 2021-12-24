@@ -39,11 +39,7 @@ import {reshade} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
-import {
-  AssetManager,
-  AssetType,
-  LoadingManager,
-} from 'core/assets';
+import {AssetManager, AssetType, LoadingManager} from 'core/assets';
 import {UUID, UUIDManager} from 'core/uuid';
 import {DataBuffer} from 'core/buf';
 import {Trail} from './Trail';
@@ -55,8 +51,10 @@ import {UpgradePickup} from './UpgradePickup';
 
 const log = LogManager.forFile(__filename);
 
-export class WorldManager extends LoadingManager<Entity>
-  implements Bounded, Serializable, Renderable {
+export class WorldManager
+  extends LoadingManager<Entity>
+  implements Bounded, Serializable, Renderable
+{
   public space: Partioner<Entity>;
   private entities: Record<UUID, Entity> = {};
   public boundingBox: Rectangle;
@@ -143,10 +141,9 @@ export class WorldManager extends LoadingManager<Entity>
         });
     }
 
-    EventManager.streamEvents<StepEvent>(
-      'StepEvent',
-      Priority.High
-    ).forEach(({data: {dt}}) => this.step(dt));
+    EventManager.streamEvents<StepEvent>('StepEvent', Priority.High).forEach(
+      ({data: {dt}}) => this.step(dt)
+    );
   }
 
   public render(ctx: GraphicsContext): void {

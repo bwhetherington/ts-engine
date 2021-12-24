@@ -54,7 +54,8 @@ interface FormatNode {
 
 const VARIABLE_REGEX = /[a-zA-Z]+/;
 
-const FORMAT_NODE_REGEX = /((style|color)=([a-z-A-Z$]+),)*((style|color)=([a-z-A-Z$]+),?)\|[^\{\}]*/;
+const FORMAT_NODE_REGEX =
+  /((style|color)=([a-z-A-Z$]+),)*((style|color)=([a-z-A-Z$]+),?)\|[^\{\}]*/;
 
 export class FormatParser {
   private input: string;

@@ -277,14 +277,8 @@ export class Tank extends Unit {
   public override deserialize(data: Data, setInitialized?: boolean): void {
     const {angle: oldAngle} = this;
     super.deserialize(data, setInitialized);
-    const {
-      cannons,
-      bodyShape,
-      weapon,
-      weaponAngle,
-      targetAngle,
-      modifiers,
-    } = data;
+    const {cannons, bodyShape, weapon, weaponAngle, targetAngle, modifiers} =
+      data;
 
     if (modifiers) {
       this.modifiers.deserialize(modifiers);

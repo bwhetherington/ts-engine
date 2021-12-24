@@ -13,8 +13,10 @@ import {clamp} from 'core/util';
 import {NetworkManager} from 'core/net';
 import {PlayerManager} from 'core/player';
 
-export class Entity extends Observer
-  implements Bounded, DataSerializable, Serializable, Renderable {
+export class Entity
+  extends Observer
+  implements Bounded, DataSerializable, Serializable, Renderable
+{
   public static typeName: string = 'Entity';
   public static typeNum: number = 0;
   public static isTypeInitialized: boolean = false;
