@@ -6,7 +6,7 @@ import fetch from 'node-fetch';
 
 const log = LogManager.forFile(__filename);
 
-function addBasicAuth(auth: BasicAuth, headers: Data): void {
+function addBasicAuth(auth: BasicAuth, headers: Data) {
   const field = auth.username + ':' + auth.password;
   const buf = Buffer.from(field, 'utf-8');
   const base64 = buf.toString('base64');

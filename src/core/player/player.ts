@@ -63,7 +63,7 @@ export class Player extends Observer implements Serializable {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {name, id, socket, heroID, score, hasJoined} = data;
     if (typeof id === 'number') {
       this.id = id;
@@ -88,7 +88,7 @@ export class Player extends Observer implements Serializable {
     }
   }
 
-  public setHero(hero?: BaseHero): void {
+  public setHero(hero?: BaseHero) {
     if (hero !== this.hero) {
       this.hero?.markForDelete();
       this.hero = hero;
@@ -107,7 +107,7 @@ export class Player extends Observer implements Serializable {
     await this.save();
   }
 
-  public setAuth(auth: BasicAuth): void {
+  public setAuth(auth: BasicAuth) {
     this.auth = auth;
   }
 
@@ -129,7 +129,7 @@ export class Player extends Observer implements Serializable {
     return hero;
   }
 
-  public reset(): void {
+  public reset() {
     const blankAccount = {
       ...DEFAULT_ACCOUNT,
       username: this.account.username,
@@ -138,7 +138,7 @@ export class Player extends Observer implements Serializable {
     this.load(blankAccount);
   }
 
-  public load(account: Account): void {
+  public load(account: Account) {
     this.account = account;
     this.name = capitalize(account.username ?? 'Player');
     this.hasJoined = true;
@@ -170,17 +170,17 @@ export class Player extends Observer implements Serializable {
     return PlayerManager.isActivePlayer(this);
   }
 
-  public send(packet: Data): void {
+  public send(packet: Data) {
     if (this.socket > -1) {
       NetworkManager.send(packet, this.socket);
     }
   }
 
-  public sendEvent<T extends EventData>(event: Event<T>): void {
+  public sendEvent<T extends EventData>(event: Event<T>) {
     this.send(event);
   }
 
-  public disconnect(): void {
+  public disconnect() {
     NetworkManager.disconnect(this.socket);
   }
 

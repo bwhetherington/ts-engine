@@ -171,7 +171,7 @@ export class Server extends Node {
     log.info(`listening on port ${port}`);
   }
 
-  public onConnect(socket: Socket): void {
+  public onConnect(socket: Socket) {
     super.onConnect(socket);
 
     // Initialize player
@@ -183,7 +183,7 @@ export class Server extends Node {
     TimerManager.wake();
   }
 
-  public initialSync(socket: Socket): void {
+  public initialSync(socket: Socket) {
     const event: Event<InitialSyncEvent> = {
       type: 'InitialSyncEvent',
       data: {
@@ -197,7 +197,7 @@ export class Server extends Node {
     this.send(event, socket);
   }
 
-  public onDisconnect(socket: Socket): void {
+  public onDisconnect(socket: Socket) {
     super.onDisconnect(socket);
 
     const player = PlayerManager.getSocket(socket);
@@ -216,12 +216,12 @@ export class Server extends Node {
     return false;
   }
 
-  protected receiveRaw(data: string, socket: Socket): void {
+  protected receiveRaw(data: string, socket: Socket) {
     const parsed: Data = SerializeManager.deserialize(data);
     this.onMessage(parsed, socket);
   }
 
-  public onMessage(message: Message, socket: Socket): void {
+  public onMessage(message: Message, socket: Socket) {
     if (message.type === 'PingEvent' && typeof message.data?.id === 'number') {
       const id = message.data.id as number;
       const entry = this.pingResolvers[id];

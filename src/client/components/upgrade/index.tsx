@@ -32,7 +32,7 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
     });
   }
 
-  public componentDidMount(): void {
+  public componentDidMount() {
     this.streamEvents<OfferUpgradeEvent>('OfferUpgradeEvent')
       .map<Offer>(({data: {id, upgrades}}) => ({id, upgrades}))
       .forEach((offer) => {

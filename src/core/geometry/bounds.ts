@@ -18,7 +18,7 @@ export class Bounds implements Bounded {
   private isEmptyInternal: boolean = true;
   private dst: Vector = new Vector();
 
-  public insertPointTransformed(x: number, y: number, matrix: Matrix3): void {
+  public insertPointTransformed(x: number, y: number, matrix: Matrix3) {
     const {x: x0, y: y0} = matrix.multiplyPointXY(x, y);
     this.insertRaw(x0, y0, 0, 0);
   }
@@ -30,7 +30,7 @@ export class Bounds implements Bounded {
     height: number,
     matrix: Matrix3,
     verbose: boolean = false
-  ): void {
+  ) {
     // Transform rectangle
     const {x: x0, y: y0} = matrix.multiplyPointXY(x, y, this.dst);
     const {x: x1, y: y1} = matrix.multiplyPointXY(x + width, y, this.dst);
@@ -55,7 +55,7 @@ export class Bounds implements Bounded {
     width: number,
     height: number,
     verbose: boolean = false
-  ): void {
+  ) {
     if (this.isEmptyInternal) {
       this.boundingBox.x = x;
       this.boundingBox.y = y;
@@ -93,12 +93,12 @@ export class Bounds implements Bounded {
     }
   }
 
-  public insert(box: Rectangle): void {
+  public insert(box: Rectangle) {
     const {x, y, width, height} = box;
     this.insertRaw(x, y, width, height);
   }
 
-  public clear(): void {
+  public clear() {
     this.boundingBox.x = 0;
     this.boundingBox.y = 0;
     this.boundingBox.width = 0;

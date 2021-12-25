@@ -23,7 +23,7 @@ export class Follow extends Entity {
     this.isVisible = false;
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     super.step(dt);
 
     if (!(this.parent?.isAlive() || this.isPersistent)) {
@@ -52,13 +52,13 @@ export class Follow extends Entity {
     this.addPosition(this.vectorBuffer, increment);
   }
 
-  public follow(entity: Entity, speed: number = FOLLOW_SPEED): void {
+  public follow(entity: Entity, speed: number = FOLLOW_SPEED) {
     this.parent = entity;
     this.setPosition(entity.position);
     this.followSpeed = speed;
   }
 
-  public unfollow(): void {
+  public unfollow() {
     this.parent = undefined;
   }
 

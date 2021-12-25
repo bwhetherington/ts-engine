@@ -7,12 +7,12 @@ export class TimerManager {
   private timer?: Timer;
   private isRunning: boolean = false;
 
-  public initialize(timer: Timer): void {
+  public initialize(timer: Timer) {
     this.timer = timer;
     log.debug('TimerManager initialized');
   }
 
-  public wake(): void {
+  public wake() {
     if (!this.isRunning) {
       log.debug('waking timer');
       this.timer?.start();
@@ -20,13 +20,13 @@ export class TimerManager {
     }
   }
 
-  public setInterval(interval: number): void {
+  public setInterval(interval: number) {
     if (this.timer) {
       this.timer.interval = interval;
     }
   }
 
-  public sleep(): void {
+  public sleep() {
     if (this.isRunning) {
       log.debug('sleeping timer');
       this.timer?.stop();

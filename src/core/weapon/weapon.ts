@@ -31,7 +31,7 @@ export abstract class Weapon implements Serializable {
     });
   }
 
-  public cleanup(): void {
+  public cleanup() {
     if (this.id !== undefined) {
       EventManager.removeListener('StepEvent', this.id);
     }
@@ -140,7 +140,7 @@ export abstract class Weapon implements Serializable {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {
       type,
       rate,

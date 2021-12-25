@@ -111,17 +111,17 @@ export class HDCanvas implements GraphicsContext {
     return this.height;
   }
 
-  private setRound(ctx: CanvasRenderingContext2D): void {
+  private setRound(ctx: CanvasRenderingContext2D) {
     ctx.lineCap = 'square';
     ctx.lineJoin = 'round';
   }
 
-  private setSquare(ctx: CanvasRenderingContext2D): void {
+  private setSquare(ctx: CanvasRenderingContext2D) {
     ctx.lineCap = 'square';
     ctx.lineJoin = 'miter';
   }
 
-  public setOptions(options: Partial<GraphicsOptions>): void {
+  public setOptions(options: Partial<GraphicsOptions>) {
     if (options.lineWidth !== undefined) {
       this.options.lineWidth = options.lineWidth;
     }
@@ -137,7 +137,7 @@ export class HDCanvas implements GraphicsContext {
     // this.hidden?.setOptions(options);
   }
 
-  public pushOptions(options: Partial<GraphicsOptions>): void {
+  public pushOptions(options: Partial<GraphicsOptions>) {
     this.optionsStack.push(options);
     this.setOptions(options);
     this.hidden?.pushOptions(options);
@@ -208,7 +208,7 @@ export class HDCanvas implements GraphicsContext {
     ctx: CanvasRenderingContext2D,
     color: Color,
     amount: number = -0.2
-  ): void {
+  ) {
     ctx.fillStyle = this.getFillColor(color);
     ctx.strokeStyle = this.getStrokeColor(color, amount);
   }
@@ -232,7 +232,7 @@ export class HDCanvas implements GraphicsContext {
     y: number,
     components: TextComponents,
     style: TextStyle
-  ): void {
+  ) {
     const ctx = this.curContext;
     if (ctx) {
       const scaleValue = this.scaleValue;
@@ -345,7 +345,7 @@ export class HDCanvas implements GraphicsContext {
     r: number,
     color: Color,
     fullW?: number
-  ): void {
+  ) {
     const ctx = this.curContext;
     if (!ctx) {
       return;
@@ -435,7 +435,7 @@ export class HDCanvas implements GraphicsContext {
     topWidth: number,
     height: number,
     color: Color
-  ): void {
+  ) {
     const ctx = this.curContext;
     if (ctx) {
       // Compute vertices of trapezoid
@@ -480,7 +480,7 @@ export class HDCanvas implements GraphicsContext {
     radius: number,
     color: Color,
     angleOffset?: number
-  ): void {
+  ) {
     if (angleOffset === undefined) {
       angleOffset = 0;
     }
@@ -501,7 +501,7 @@ export class HDCanvas implements GraphicsContext {
     );
   }
 
-  public polygon(vertices: VectorLike[], color: Color): void {
+  public polygon(vertices: VectorLike[], color: Color) {
     const ctx = this.curContext;
     if (ctx) {
       this.setStyles(ctx, color);
@@ -530,11 +530,7 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
-  public path(
-    points: Iterable<VectorLike>,
-    color: Color,
-    fade?: boolean
-  ): void {
+  public path(points: Iterable<VectorLike>, color: Color, fade?: boolean) {
     const ctx = this.curContext;
     if (ctx) {
       const pts = [...points];
@@ -633,7 +629,7 @@ export class HDCanvas implements GraphicsContext {
     this.hidden?.resetTransform();
   }
 
-  public scale(scale: number): void {
+  public scale(scale: number) {
     this.src.scale(scale, scale);
     this.transform.multiply(this.src, this.dst);
     this.transform.set(this.dst);
@@ -643,13 +639,7 @@ export class HDCanvas implements GraphicsContext {
     this.hidden?.scale(scale);
   }
 
-  public line(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    color: Color
-  ): void {
+  public line(x1: number, y1: number, x2: number, y2: number, color: Color) {
     const ctx = this.curContext;
     if (ctx) {
       ctx.strokeStyle = toCss(color);

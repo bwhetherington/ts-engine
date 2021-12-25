@@ -48,15 +48,15 @@ export abstract class AbstractLogger {
     return getLevelPriority(logLevel) <= levelToMeet;
   }
 
-  public addTag(tag: string): void {
+  public addTag(tag: string) {
     this.tags.push(tag);
   }
 
-  public setTags(tags: string[]): void {
+  public setTags(tags: string[]) {
     this.tags = [];
   }
 
-  public setLogLevel(level: LogLevel): void {
+  public setLogLevel(level: LogLevel) {
     const priority = getLevelPriority(level);
     this.priotityInternal = priority;
     this.levelInternal = level;
@@ -88,7 +88,7 @@ export abstract class AbstractLogger {
     level: LogLevel,
     message: string,
     method = this.logRaw.bind(this)
-  ): void {
+  ) {
     // Check level
     if (this.meetsLogLevel(level)) {
       // Only log if
@@ -108,23 +108,23 @@ export abstract class AbstractLogger {
     this.logRaw(...text);
   }
 
-  public error(message: string): void {
+  public error(message: string) {
     this.log('error', message, this.logRawError.bind(this));
   }
 
-  public warn(message: string): void {
+  public warn(message: string) {
     this.log('warn', message, this.logRawWarn.bind(this));
   }
 
-  public info(message: string): void {
+  public info(message: string) {
     this.log('info', message);
   }
 
-  public debug(message: string): void {
+  public debug(message: string) {
     this.log('debug', message);
   }
 
-  public trace(message: string): void {
+  public trace(message: string) {
     this.log('trace', message);
   }
 

@@ -45,7 +45,7 @@ export class ChatLogPlugin extends Plugin {
 
   private handle?: fs.WriteStream;
 
-  private writeLine(line: string): void {
+  private writeLine(line: string) {
     this.handle?.write(line + '\n');
   }
 

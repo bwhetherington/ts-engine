@@ -45,7 +45,7 @@ export class InputManager {
 
   public constructor() {}
 
-  public initialize(element: HTMLElement): void {
+  public initialize(element: HTMLElement) {
     this.element = element;
     this.element?.addEventListener('blur', () => {
       this.reset();
@@ -83,13 +83,13 @@ export class InputManager {
     log.debug('InputManager initialized');
   }
 
-  public updateMousePosition(event: globalThis.MouseEvent): void {
+  public updateMousePosition(event: globalThis.MouseEvent) {
     const {clientX, clientY} = event;
     const {x, y} = CameraManager.toWorldSpace(clientX, clientY);
     this.mousePosition.setXY(x, y);
   }
 
-  public keyDown(code: string): void {
+  public keyDown(code: string) {
     const key = KEY_MAP[code];
     if (key !== undefined) {
       if (!this.keyStates[key]) {
@@ -109,7 +109,7 @@ export class InputManager {
     }
   }
 
-  public keyUp(code: string): void {
+  public keyUp(code: string) {
     const key = KEY_MAP[code];
     if (key !== undefined) {
       if (this.keyStates[key]) {
@@ -129,7 +129,7 @@ export class InputManager {
     }
   }
 
-  public buttonUp(code: number): void {
+  public buttonUp(code: number) {
     const button = BUTTON_MAP[code];
     if (button !== undefined) {
       if (this.mouseButtonStates[button]) {
@@ -151,7 +151,7 @@ export class InputManager {
     }
   }
 
-  public buttonDown(code: number): void {
+  public buttonDown(code: number) {
     const button = BUTTON_MAP[code];
     if (button !== undefined) {
       if (!this.mouseButtonStates[button]) {
@@ -173,7 +173,7 @@ export class InputManager {
     }
   }
 
-  public reset(): void {
+  public reset() {
     const keyUpEvents: GameEvent[] = Iterator.array(this.keyStates)
       .enumerate()
       .map(([_state, key]) => key)

@@ -35,7 +35,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
     });
   }
 
-  private showForm(form: ClientForm): void {
+  private showForm(form: ClientForm) {
     let didModify = false;
     let newState = Iterator.from(this.state.forms)
       .map((oldForm) => {
@@ -86,7 +86,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
     }
   };
 
-  public componentDidMount(): void {
+  public componentDidMount() {
     this.streamEvents<FormShowEvent>('FormShowEvent').forEach((event) => {
       this.showForm(event.data);
     });

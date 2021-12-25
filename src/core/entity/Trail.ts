@@ -28,7 +28,7 @@ export class Trail extends Entity {
     this.isVisible = true;
   }
 
-  private drain(): void {
+  private drain() {
     while (!this.snapshots.isEmpty()) {
       // We know it's not undefined since we already checked that the list is not empty
       const lastPosition = this.snapshots.peek() as PositionSnapshot;
@@ -41,7 +41,7 @@ export class Trail extends Entity {
     }
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     super.step(dt);
     if (this.parent?.isAlive()) {
       this.snapshots.enqueue({
@@ -79,16 +79,16 @@ export class Trail extends Entity {
     }
   }
 
-  public override renderInternal(ctx: GraphicsContext): void {
+  public override renderInternal(ctx: GraphicsContext) {
     this.render(ctx);
   }
 
-  public initialize(entity: Entity, duration: number = DURATION): void {
+  public initialize(entity: Entity, duration: number = DURATION) {
     this.parent = entity;
     this.duration = duration;
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     if (this.parent) {
       const color = {
         ...this.parent.getColor(),

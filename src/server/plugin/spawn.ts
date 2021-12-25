@@ -10,7 +10,7 @@ import {Plugin} from 'server/plugin';
 export class SpawnPlugin extends Plugin {
   public static typeName: string = 'SpawnPlugin';
 
-  private spawn(player: Player, type: string, count: number): void {
+  private spawn(player: Player, type: string, count: number) {
     if (!WorldManager.canInstantiate(type)) {
       ChatManager.error(`Cannot spawn type '${type}'`, player);
       return;

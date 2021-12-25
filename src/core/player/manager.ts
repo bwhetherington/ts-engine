@@ -18,7 +18,7 @@ export class PlayerManager implements Serializable {
   private activePlayer: number = -1;
   private removed: UUID[] = [];
 
-  public initialize(): void {
+  public initialize() {
     log.debug('PlayerManager initialized');
 
     EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
@@ -46,7 +46,7 @@ export class PlayerManager implements Serializable {
     }
   }
 
-  public setActivePlayer(socket: number): void {
+  public setActivePlayer(socket: number) {
     this.activePlayer = socket;
   }
 
@@ -58,7 +58,7 @@ export class PlayerManager implements Serializable {
     return this.activePlayer > -1 && player.socket === this.activePlayer;
   }
 
-  public add(player: Player): void {
+  public add(player: Player) {
     const {id} = player;
     this.players[id] = player;
     if (player.socket !== undefined) {
@@ -66,7 +66,7 @@ export class PlayerManager implements Serializable {
     }
   }
 
-  public remove(player: Player | UUID): void {
+  public remove(player: Player | UUID) {
     let id;
     if (typeof player === 'number') {
       id = player;
@@ -128,7 +128,7 @@ export class PlayerManager implements Serializable {
     return obj;
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {players, removed} = data;
     if (players) {
       for (const index in players) {

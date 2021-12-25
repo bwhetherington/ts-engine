@@ -58,7 +58,7 @@ export class Projectile extends Entity {
     }
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     super.step(dt);
     if (
       NetworkManager.isServer() &&
@@ -89,14 +89,14 @@ export class Projectile extends Entity {
     }
   }
 
-  private explodeInternal(): void {
+  private explodeInternal() {
     if (NetworkManager.isClient()) {
       this.explode();
       this.hasExploded = true;
     }
   }
 
-  protected explode(): void {
+  protected explode() {
     const echo = WorldManager.spawn(Echo, this.position);
     if (!echo) {
       return;
@@ -105,7 +105,7 @@ export class Projectile extends Entity {
     echo.velocity.zero();
   }
 
-  public remove(showExplosion: boolean = true): void {
+  public remove(showExplosion: boolean = true) {
     if (NetworkManager.isServer()) {
       this.markForDelete();
     } else {
@@ -122,7 +122,7 @@ export class Projectile extends Entity {
     return super.isAlive() && !this.hasExploded;
   }
 
-  protected onHitInternal(target?: Unit): void {}
+  protected onHitInternal(target?: Unit) {}
 
   public hit(unit?: Unit): boolean {
     if (unit) {
@@ -148,7 +148,7 @@ export class Projectile extends Entity {
     return true;
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     const {width, height} = this.boundingBox;
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       switch (this.shape) {
@@ -182,7 +182,7 @@ export class Projectile extends Entity {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public override deserialize(data: Data) {
     super.deserialize(data);
 
     const {
@@ -233,7 +233,7 @@ export class Projectile extends Entity {
     }
   }
 
-  public override cleanup(): void {
+  public override cleanup() {
     if (!this.hasExploded) {
       this.explodeInternal();
     }

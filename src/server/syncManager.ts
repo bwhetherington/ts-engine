@@ -8,7 +8,7 @@ import {Config} from 'server/config';
 export class SyncManager extends Observer {
   private isFlaggedForFullSync: boolean = false;
 
-  public initialize(config: Config): void {
+  public initialize(config: Config) {
     // Flag for full sync ever 5 seconds
     this.streamInterval(config.fullSyncInterval, Priority.Highest).forEach(
       () => {

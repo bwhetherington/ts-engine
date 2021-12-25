@@ -58,7 +58,7 @@ export class Radar extends Component<{}, RadarState> {
     }
   };
 
-  public componentDidMount(): void {
+  public componentDidMount() {
     this.streamEvents<StepEvent>('StepEvent').forEach(() => {
       this.renderRadar();
       this.updateState({

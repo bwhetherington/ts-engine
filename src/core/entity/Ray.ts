@@ -37,7 +37,7 @@ export class Ray extends Entity {
     this.isVisible = true;
   }
 
-  public static initializeType(): void {
+  public static initializeType() {
     Entity.initializeType();
     if (!Ray.isTypeInitialized) {
       Ray.isTypeInitialized = true;
@@ -78,12 +78,12 @@ export class Ray extends Entity {
     }
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     super.step(dt);
     this.timeElapsed += dt;
   }
 
-  public initialize(from: VectorLike, to: VectorLike): void {
+  public initialize(from: VectorLike, to: VectorLike) {
     this.start.set(from);
     this.stop.set(to);
 
@@ -107,11 +107,11 @@ export class Ray extends Entity {
     this.markForDelete();
   }
 
-  public override load(): void {
+  public override load() {
     this.loadInternal().catch((why) => log.error(why));
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     const t = this.getParameter();
     GraphicsPipeline.pipe()
       .alpha((t * 2) / 3)

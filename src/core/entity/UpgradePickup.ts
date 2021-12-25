@@ -6,7 +6,7 @@ export class UpgradePickup extends Pickup {
   public static typeName: string = 'UpgradePickup';
   public upgrade?: string;
 
-  protected override onPickup(unit: BaseHero): void {
+  protected override onPickup(unit: BaseHero) {
     if (!this.upgrade) {
       return;
     }
@@ -27,7 +27,7 @@ export class UpgradePickup extends Pickup {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public override deserialize(data: Data) {
     super.deserialize(data);
     const {upgrade} = data;
     if (typeof upgrade === 'string') {

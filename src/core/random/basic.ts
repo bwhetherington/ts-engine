@@ -12,7 +12,7 @@ export class BasicRNG extends AbstractRNG {
     this.seed(0);
   }
 
-  public seed(seed: number): void {
+  public seed(seed: number) {
     this.current = seed;
   }
 

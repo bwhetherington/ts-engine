@@ -27,7 +27,7 @@ export class CameraManager implements Bounded {
     return this.boundingBox.intersects(bounded.boundingBox);
   }
 
-  public setSize(width: number, height: number): void {
+  public setSize(width: number, height: number) {
     const {centerX, centerY} = this.boundingBox;
 
     this.scale = height / TARGET_HEIGHT;
@@ -37,12 +37,12 @@ export class CameraManager implements Bounded {
     this.setTargetXY(centerX, centerY);
   }
 
-  public setTargetXY(x: number, y: number): void {
+  public setTargetXY(x: number, y: number) {
     this.boundingBox.centerX = x;
     this.boundingBox.centerY = y;
   }
 
-  public setTarget(v: Vector): void {
+  public setTarget(v: Vector) {
     this.setTargetXY(v.x, v.y);
   }
 
@@ -52,11 +52,11 @@ export class CameraManager implements Bounded {
     }
   }
 
-  public follow(entity: Entity): void {
+  public follow(entity: Entity) {
     this.followEntity?.follow(entity, 10);
   }
 
-  public unfollow(): void {
+  public unfollow() {
     this.followEntity?.unfollow();
   }
 

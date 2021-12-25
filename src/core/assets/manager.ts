@@ -13,10 +13,7 @@ export class AssetManager {
   private loader?: AssetLoader;
   private directoryLoader?: DirectoryLoader;
 
-  public initialize(
-    loader: AssetLoader,
-    directoryLoader: DirectoryLoader
-  ): void {
+  public initialize(loader: AssetLoader, directoryLoader: DirectoryLoader) {
     this.loader = loader;
     this.directoryLoader = directoryLoader;
   }

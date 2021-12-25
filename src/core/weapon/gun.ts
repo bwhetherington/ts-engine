@@ -63,7 +63,7 @@ export class BaseGun extends Weapon {
     return projectile;
   }
 
-  public fire(source: Tank, angle: number, modifier?: HeroModifier): void {
+  public fire(source: Tank, angle: number, modifier?: HeroModifier) {
     const projectile = this.createProjectile(source, angle, modifier);
     source.applyForce(projectile.velocity, -projectile.mass / 20);
   }
@@ -79,7 +79,7 @@ export class BaseGun extends Weapon {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     super.deserialize(data);
     const {
       projectileType,

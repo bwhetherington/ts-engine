@@ -17,14 +17,14 @@ export abstract class ChatManager {
     socket?: number
   ): void;
 
-  public initialize(): void {
+  public initialize() {
     log.debug('ChatManager initialized');
   }
 
   public sendComponents(
     components: (string | null | TextComponent)[],
     target: number | Player = -1
-  ): void {
+  ) {
     const outEvent = {
       type: 'TextMessageOutEvent',
       data: <TextMessageOutEvent>{
@@ -35,19 +35,19 @@ export abstract class ChatManager {
     this.dispatch(outEvent, socket);
   }
 
-  public info(message: string, target: number | Player = -1): void {
+  public info(message: string, target: number | Player = -1) {
     const components = renderInfo(message);
     this.sendComponents(components, target);
     log.info('[' + message + ']');
   }
 
-  public warn(message: string, target: number | Player = -1): void {
+  public warn(message: string, target: number | Player = -1) {
     const components = renderWarn(message);
     this.sendComponents(components, target);
     log.warn('[' + message + ']');
   }
 
-  public error(message: string, target: number | Player = -1): void {
+  public error(message: string, target: number | Player = -1) {
     const components = renderError(message);
     this.sendComponents(components, target);
     log.error('[' + message + ']');

@@ -34,7 +34,7 @@ export class EventManager {
 
   private isPropagationCanceled: boolean = false;
 
-  public initialize(): void {
+  public initialize() {
     // Handle all events in batch events
     this.streamEvents<BatchEvent>('BatchEvent', Priority.Highest, true)
       .flatMap((event) => {
@@ -46,7 +46,7 @@ export class EventManager {
       .forEach((event) => this.emit(event));
   }
 
-  public emit<E extends EventData>(event: Event<E>): void {
+  public emit<E extends EventData>(event: Event<E>) {
     this.events.enqueue(event);
   }
 
@@ -64,7 +64,7 @@ export class EventManager {
     return handlers;
   }
 
-  public stopPropagation(): void {
+  public stopPropagation() {
     this.isPropagationCanceled = true;
   }
 

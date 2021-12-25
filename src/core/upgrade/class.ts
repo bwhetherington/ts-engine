@@ -14,7 +14,7 @@ export class ClassUpgrade extends Upgrade {
     }
   }
 
-  public applyTo(hero: BaseHero): void {
+  public applyTo(hero: BaseHero) {
     hero.getPlayer()?.setClass?.(this.className);
   }
 
@@ -25,7 +25,7 @@ export class ClassUpgrade extends Upgrade {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     super.deserialize(data);
     const {className} = data;
     if (typeof className === 'string') {

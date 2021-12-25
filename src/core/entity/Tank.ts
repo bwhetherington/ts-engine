@@ -116,7 +116,7 @@ export class Tank extends Unit {
     return Math.max(1, amount - this.armor);
   }
 
-  public override setThrusting(thrusting: number): void {
+  public override setThrusting(thrusting: number) {
     if (thrusting !== this.thrusting) {
       super.setThrusting(thrusting);
       this.thrustTime = EventManager.timeElapsed;
@@ -140,7 +140,7 @@ export class Tank extends Unit {
     return t;
   }
 
-  protected renderThruster(ctx: GraphicsContext): void {
+  protected renderThruster(ctx: GraphicsContext) {
     const {width} = this.boundingBox;
     const radius = width / 2;
 
@@ -162,7 +162,7 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderBody(ctx: GraphicsContext): void {
+  protected renderBody(ctx: GraphicsContext) {
     let {width} = this.boundingBox;
     width *= 1.1;
     const radius = width / 2;
@@ -197,7 +197,7 @@ export class Tank extends Unit {
       });
   }
 
-  protected renderCannonShape(ctx: GraphicsContext, cannon: TankCannon): void {
+  protected renderCannonShape(ctx: GraphicsContext, cannon: TankCannon) {
     const color = this.getColor();
 
     const {shape, lastFired} = cannon;
@@ -238,11 +238,11 @@ export class Tank extends Unit {
     return this.cannonIndex;
   }
 
-  public incrementCannonIndex(): void {
+  public incrementCannonIndex() {
     this.cannonIndex = (this.cannonIndex + 1) % this.cannons.length;
   }
 
-  protected renderCannon(ctx: GraphicsContext): void {
+  protected renderCannon(ctx: GraphicsContext) {
     GraphicsPipeline.pipe()
       .rotate(this.weaponAngle - this.angle)
       .run(ctx, (ctx) => {
@@ -252,7 +252,7 @@ export class Tank extends Unit {
       });
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       this.renderCannon(ctx);
       this.renderBody(ctx);
@@ -274,7 +274,7 @@ export class Tank extends Unit {
     };
   }
 
-  public override deserialize(data: Data, setInitialized?: boolean): void {
+  public override deserialize(data: Data, setInitialized?: boolean) {
     const {angle: oldAngle} = this;
     super.deserialize(data, setInitialized);
     const {cannons, bodyShape, weapon, weaponAngle, targetAngle, modifiers} =
@@ -340,7 +340,7 @@ export class Tank extends Unit {
     }
   }
 
-  public override cleanup(): void {
+  public override cleanup() {
     this.weapon?.cleanup();
     super.cleanup();
   }
@@ -360,11 +360,11 @@ export class Tank extends Unit {
     return this.cannons[this.cannonIndex]?.shape?.angle ?? 0;
   }
 
-  public fire(angle: number): void {
+  public fire(angle: number) {
     this.weapon?.fireInternal(this, angle, this.modifiers);
   }
 
-  public setWeapon(weapon?: Weapon | string): void {
+  public setWeapon(weapon?: Weapon | string) {
     let actualWeapon: Weapon | undefined;
     if (typeof weapon === 'string') {
       actualWeapon = WeaponManager.instantiate(weapon);

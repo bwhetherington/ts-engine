@@ -81,7 +81,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       });
   }
 
-  private cleanupOffer(id: UUID, then: (offer: OfferEntry) => void): void {
+  private cleanupOffer(id: UUID, then: (offer: OfferEntry) => void) {
     const offer = this.offers[id];
     if (offer) {
       delete this.offers[id];
@@ -90,7 +90,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
     }
   }
 
-  private acceptOffer(id: UUID, choice: Upgrade): void {
+  private acceptOffer(id: UUID, choice: Upgrade) {
     this.cleanupOffer(id, (offer) =>
       offer.resolve({
         hero: offer.hero,
@@ -99,7 +99,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
     );
   }
 
-  private rejectOffer(id: UUID): void {
+  private rejectOffer(id: UUID) {
     this.cleanupOffer(id, (offer) => offer.reject());
   }
 

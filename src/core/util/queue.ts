@@ -110,7 +110,7 @@ export class ScrollableQueue<T> extends Queue<T> {
     return this.cursor?.value;
   }
 
-  public beginScroll(): void {
+  public beginScroll() {
     this.cursor = this.tail;
   }
 

@@ -33,7 +33,7 @@ export class HeroModifier implements Serializable {
     );
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     Iterator.array(MODIFIER_KEYS)
       .map((key) => [key, data[key]])
       .filter(([_, value]) => value !== undefined)
@@ -60,7 +60,7 @@ export class HeroModifier implements Serializable {
     return mod;
   }
 
-  private multiplyKey(key: string, other: Modifiers): void {
+  private multiplyKey(key: string, other: Modifiers) {
     let existing = this.modifiers[key];
     if (!existing) {
       existing = new Matrix2().identity();
@@ -72,11 +72,11 @@ export class HeroModifier implements Serializable {
     this.modifiers[key] = existing;
   }
 
-  public multiply(other: HeroModifier): void {
+  public multiply(other: HeroModifier) {
     this.multiplyModifiers(other.modifiers);
   }
 
-  public multiplyModifiers(other: Modifiers): void {
+  public multiplyModifiers(other: Modifiers) {
     Iterator.array(MODIFIER_KEYS)
       .filter(
         (key) => this.modifiers.hasOwnProperty(key) || other.hasOwnProperty(key)
@@ -99,7 +99,7 @@ export class ModifierUpgrade extends Upgrade {
     }
   }
 
-  public applyTo(hero: BaseHero): void {
+  public applyTo(hero: BaseHero) {
     hero.modifiers.multiply(this.modifiers);
     if (this.modifiers.has('life')) {
       hero.updateMaxLife();
@@ -113,7 +113,7 @@ export class ModifierUpgrade extends Upgrade {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     super.deserialize(data);
     const {modifiers} = data;
     this.modifiers.deserialize(modifiers);

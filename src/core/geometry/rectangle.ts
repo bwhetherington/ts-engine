@@ -64,12 +64,12 @@ export class Rectangle
     return Math.sqrt(this.width * this.width + this.height * this.height);
   }
 
-  public setCenterXY(x: number, y: number): void {
+  public setCenterXY(x: number, y: number) {
     this.centerX = x;
     this.centerY = y;
   }
 
-  public setCenter(v: VectorLike): void {
+  public setCenter(v: VectorLike) {
     this.setCenterXY(v.x, v.y);
   }
 
@@ -110,7 +110,7 @@ export class Rectangle
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {x, y, width, height} = data;
     if (typeof x === 'number') {
       this.x = x;
@@ -130,14 +130,14 @@ export class Rectangle
     return 16;
   }
 
-  public dataSerialize(buf: DataBuffer): void {
+  public dataSerialize(buf: DataBuffer) {
     buf.writeFloat(this.x);
     buf.writeFloat(this.y);
     buf.writeFloat(this.width);
     buf.writeFloat(this.height);
   }
 
-  public dataDeserialize(buf: DataBuffer): void {
+  public dataDeserialize(buf: DataBuffer) {
     const x = buf.readFloat();
     const y = buf.readFloat();
     const w = buf.readFloat();

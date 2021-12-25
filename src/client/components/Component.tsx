@@ -30,7 +30,7 @@ export class Component<P = {}, S = {}> extends React.Component<
     handlers: {},
   };
 
-  private initializeState(state: S): void {
+  private initializeState(state: S) {
     this.state = {
       ...state,
       handlers: {},
@@ -95,7 +95,7 @@ export class Component<P = {}, S = {}> extends React.Component<
     return iter;
   }
 
-  public componentWillUnmount(): void {
+  public componentWillUnmount() {
     // Unregister all listeners
     iterateKeys(this.state.handlers).forEach((type) => {
       for (const index of this.state.handlers[type]) {

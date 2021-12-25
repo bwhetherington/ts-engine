@@ -29,7 +29,7 @@ export class Echo extends Entity {
     this.isVisible = true;
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     super.step(dt);
     this.timeRemaining -= dt;
     if (this.timeRemaining <= 0) {
@@ -42,7 +42,7 @@ export class Echo extends Entity {
     return smoothStep(t);
   }
 
-  public override renderInternal(ctx: GraphicsContext): void {
+  public override renderInternal(ctx: GraphicsContext) {
     this.render(ctx);
   }
 
@@ -51,7 +51,7 @@ export class Echo extends Entity {
     isFancy: boolean = false,
     duration: number = DURATION,
     variant: EchoVariant = EchoVariant.Grow
-  ): void {
+  ) {
     this.parent = entity;
     this.velocity.set(this.parent.velocity);
     this.mass = this.parent.mass;
@@ -63,7 +63,7 @@ export class Echo extends Entity {
     this.variant = variant;
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     if (this.parent) {
       const t = this.getParameter();
       let u;

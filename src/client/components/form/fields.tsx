@@ -147,7 +147,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     name: string,
     type: T['type'],
     value: T['value']
-  ): void {
+  ) {
     const newData = {
       entries: {
         ...this.state.entries,
@@ -157,7 +157,7 @@ export class FormComponent extends Component<FormProps, FormState> {
     this.updateState(newData);
   }
 
-  public componentDidUpdate(nextProps: Props<FormProps>): void {
+  public componentDidUpdate(nextProps: Props<FormProps>) {
     if (nextProps.form.messages?.length !== this.props.form.messages?.length) {
       this.updateState({
         isSubmitted: false,

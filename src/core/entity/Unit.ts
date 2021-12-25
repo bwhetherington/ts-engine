@@ -17,7 +17,7 @@ import {NetworkManager} from 'core/net';
 import {Color, reshade} from 'core/graphics';
 import {TextColor} from 'core/chat';
 import {Effect} from 'core/effect';
-import { UUID } from 'core/uuid';
+import {UUID} from 'core/uuid';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -58,7 +58,7 @@ export class Unit extends Entity {
     this.isSpatial = true;
   }
 
-  public static initializeType(): void {
+  public static initializeType() {
     Entity.initializeType();
     if (!Unit.isTypeInitialized) {
       Unit.isTypeInitialized = true;
@@ -72,10 +72,11 @@ export class Unit extends Entity {
   }
 
   public addEffect(effect: Effect) {
-    
+    this.effects.set(effect.id, effect);
+    effect.target = this;
   }
 
-  public setIsImmune(isImmune: boolean): void {
+  public setIsImmune(isImmune: boolean) {
     this.isImmune = isImmune;
   }
 
@@ -83,7 +84,7 @@ export class Unit extends Entity {
     return this.isImmune;
   }
 
-  public override cleanup(): void {
+  public override cleanup() {
     this.label?.markForDelete();
     this.hpBar?.markForDelete();
     if (NetworkManager.isClient() && !this.hasExploded) {
@@ -101,7 +102,7 @@ export class Unit extends Entity {
     return this.life;
   }
 
-  public setLife(life: number, source?: Unit): void {
+  public setLife(life: number, source?: Unit) {
     this.life = clamp(life, 0, this.maxLife);
     if (this.life <= 0) {
       this.kill(source);
@@ -116,7 +117,7 @@ export class Unit extends Entity {
     return amount;
   }
 
-  public damage(amount: number, source?: Unit): void {
+  public damage(amount: number, source?: Unit) {
     if (this.isImmune) {
       return;
     }
@@ -144,7 +145,7 @@ export class Unit extends Entity {
     return this.xpWorth;
   }
 
-  public setXPWorth(amount: number): void {
+  public setXPWorth(amount: number) {
     this.xpWorth = amount;
   }
 
@@ -152,7 +153,7 @@ export class Unit extends Entity {
     return this.maxLife;
   }
 
-  public setName(name: string): void {
+  public setName(name: string) {
     this.name = name;
     if (this.label) {
       this.label.text = name;
@@ -163,7 +164,7 @@ export class Unit extends Entity {
     return this.name;
   }
 
-  public setMaxLife(life: number, reset?: boolean): void {
+  public setMaxLife(life: number, reset?: boolean) {
     this.maxLife = life;
     if (reset) {
       this.setLife(life);
@@ -180,7 +181,7 @@ export class Unit extends Entity {
     return this.lifeRegen;
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     // Regenerate life
     this.setLife(this.life + this.getLifeRegen() * this.maxLife * dt);
 
@@ -205,7 +206,7 @@ export class Unit extends Entity {
     super.step(dt);
   }
 
-  public override afterStep(): void {
+  public override afterStep() {
     if (NetworkManager.isClient()) {
       if (this.label) {
         this.label.position.set(this.position);
@@ -223,7 +224,7 @@ export class Unit extends Entity {
     }
   }
 
-  public setThrusting(thrusting: number): void {
+  public setThrusting(thrusting: number) {
     this.thrusting = thrusting;
   }
 
@@ -241,7 +242,7 @@ export class Unit extends Entity {
     };
   }
 
-  public override deserialize(data: Data, setInitialized?: boolean): void {
+  public override deserialize(data: Data, setInitialized?: boolean) {
     super.deserialize(data, setInitialized);
     const {life, maxLife, thrusting, isImmune, xpWorth, speed, name} = data;
     if (typeof maxLife === 'number') {
@@ -267,7 +268,7 @@ export class Unit extends Entity {
     }
   }
 
-  public cleanupLocal(): void {
+  public cleanupLocal() {
     this.label?.markForDelete();
     this.hpBar?.markForDelete();
     if (!this.hasExploded) {
@@ -275,7 +276,7 @@ export class Unit extends Entity {
     }
   }
 
-  protected explode(): void {
+  protected explode() {
     const echo = WorldManager.spawn(Echo, this.position);
     echo?.initialize(this, true);
 
@@ -293,7 +294,7 @@ export class Unit extends Entity {
     this.hasExploded = true;
   }
 
-  public kill(source?: Unit): void {
+  public kill(source?: Unit) {
     if (NetworkManager.isServer()) {
       this.markForDelete();
       if (this.isAliveInternal) {
@@ -311,7 +312,7 @@ export class Unit extends Entity {
     }
   }
 
-  public flash(): void {
+  public flash() {
     this.lastFlash = EventManager.timeElapsed;
   }
 
@@ -328,12 +329,12 @@ export class Unit extends Entity {
     return color;
   }
 
-  public override setColor(color: Color): void {
+  public override setColor(color: Color) {
     super.setColor(color);
     this.flashColor = reshade(this.color, 0.5);
   }
 
-  public override collide(other?: Entity): void {
+  public override collide(other?: Entity) {
     if (other && other.collisionLayer === CollisionLayer.Unit) {
       this.vectorBuffer.set(other.position);
       this.vectorBuffer.add(this.position, -1);

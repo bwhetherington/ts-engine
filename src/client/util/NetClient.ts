@@ -68,7 +68,7 @@ export class Client extends Node {
     };
   }
 
-  public disconnect(_: Socket): void {
+  public disconnect(_: Socket) {
     this.socket.close();
   }
 

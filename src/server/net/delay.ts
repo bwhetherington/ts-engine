@@ -5,12 +5,12 @@ import {Server} from './Server';
 export class DelayServer extends Server {
   private delays: Record<Socket, number> = {};
 
-  public onConnect(socket: Socket): void {
+  public onConnect(socket: Socket) {
     this.delays[socket] = RNGManager.nextFloat(0.1, 0.2);
     super.onConnect(socket);
   }
 
-  public onDisconnect(socket: Socket): void {
+  public onDisconnect(socket: Socket) {
     delete this.delays[socket];
     super.onDisconnect(socket);
   }
@@ -20,7 +20,7 @@ export class DelayServer extends Server {
     // return (this.delays[socket] ?? 0) * 1000;
   }
 
-  private delayAction(socket: Socket, then: () => void): void {
+  private delayAction(socket: Socket, then: () => void) {
     const delay = this.getDelay(socket);
     if (delay > 0) {
       setTimeout(() => {
@@ -31,11 +31,11 @@ export class DelayServer extends Server {
     }
   }
 
-  protected sendRaw(data: string, socket: Socket): void {
+  protected sendRaw(data: string, socket: Socket) {
     this.delayAction(socket, () => super.sendRaw(data, socket));
   }
 
-  protected receiveRaw(data: string, socket: Socket): void {
+  protected receiveRaw(data: string, socket: Socket) {
     this.delayAction(socket, () => super.receiveRaw(data, socket));
   }
 }

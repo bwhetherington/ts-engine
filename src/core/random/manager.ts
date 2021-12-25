@@ -11,11 +11,11 @@ export class RNGManager extends AbstractRNG {
     return num;
   }
 
-  public seed(seed: number): void {
+  public seed(seed: number) {
     this.rng.seed(seed);
   }
 
-  public setRNG(rng: RNG): void {
+  public setRNG(rng: RNG) {
     this.rng = rng;
   }
 }

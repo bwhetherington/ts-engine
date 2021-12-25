@@ -4,15 +4,15 @@ import {NetworkManager} from 'core/net';
 export class ClientLogger extends AbstractLogger {
   private alertServerLevel: LogLevel = 'warn';
 
-  public logRaw(...text: string[]): void {
+  public logRaw(...text: string[]) {
     console.log(...text);
   }
 
-  public logRawError(...text: string[]): void {
+  public logRawError(...text: string[]) {
     console.error(...text);
   }
 
-  public logRawWarn(...text: string[]): void {
+  public logRawWarn(...text: string[]) {
     console.warn(...text);
   }
 
@@ -20,7 +20,7 @@ export class ClientLogger extends AbstractLogger {
     level: LogLevel,
     message: string,
     method: (content: string) => void
-  ): void {
+  ) {
     super.log(level, message, method);
     if (this.meetsLogLevel(level, this.alertServerLevel)) {
       NetworkManager.sendEvent<ClientLogEvent>({

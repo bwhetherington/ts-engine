@@ -10,7 +10,7 @@ export class PluginManager {
   private plugins: Record<string, Plugin> = {};
   private server?: Server;
 
-  public registerPlugin(ToRegister: PluginType): void {
+  public registerPlugin(ToRegister: PluginType) {
     this.registeredPlugins[ToRegister.typeName] = ToRegister;
   }
 

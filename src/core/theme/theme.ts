@@ -33,7 +33,7 @@ export class Theme implements Serializable {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {isDarkMode, foregroundColor, backgroundColor} = data;
     if (typeof isDarkMode === 'boolean') {
       this.isDarkMode = isDarkMode;

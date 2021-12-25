@@ -50,7 +50,7 @@ export class HashMap<K extends Key, V> {
     return buckets;
   }
 
-  private expand(newCapacity: number): void {
+  private expand(newCapacity: number) {
     const newBuckets = this.allocateBuckets(newCapacity);
     this.entries().forEach((entry) => this.insertEntry(entry, newBuckets));
     this.buckets = newBuckets;
@@ -72,7 +72,7 @@ export class HashMap<K extends Key, V> {
     return true;
   }
 
-  public insert(key: K, value: V): void {
+  public insert(key: K, value: V) {
     const entry = {key, value};
     const addedNewEntry = this.insertEntry(entry, this.buckets);
     if (addedNewEntry) {

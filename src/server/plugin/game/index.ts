@@ -38,7 +38,7 @@ const NPC_DAMAGE_MULTIPLIER = 0.5;
 export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   public static typeName: string = 'GamePlugin';
 
-  private spawnFeed(): void {
+  private spawnFeed() {
     const num = RNGManager.nextFloat(0, 1);
     const position = WorldManager.getRandomPosition();
     let size;
@@ -54,7 +54,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     entity?.setVariant(size);
   }
 
-  private spawnEnemy(): void {
+  private spawnEnemy() {
     // Create enemy
     const position = WorldManager.getRandomPosition();
 
@@ -73,7 +73,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     enemy?.setColor(randomColor());
   }
 
-  private startGame(): void {
+  private startGame() {
     ChatManager.info('Starting the game');
 
     // Spawn feed units
@@ -154,7 +154,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     });
   }
 
-  private stopGame(): void {
+  private stopGame() {
     ChatManager.info('Stopping the game');
 
     WorldManager.getEntities()

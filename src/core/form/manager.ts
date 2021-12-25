@@ -25,7 +25,7 @@ export class FormManager {
   private submitHandlers: Record<string, FormSubmitHandler> = {};
   private rejectHandlers: Record<string, FormRejectHandler> = {};
 
-  public initialize(): void {
+  public initialize() {
     log.debug('FormManager initialized');
 
     if (NetworkManager.isServer()) {
@@ -129,7 +129,7 @@ export class FormManager {
     return false;
   }
 
-  public registerForm<T extends Data>(formEntry: FormEntry<T>): void {
+  public registerForm<T extends Data>(formEntry: FormEntry<T>) {
     log.debug(`form ${formEntry.name} registered`);
     const {name, form, checkType, validate, onSubmit, onReject} = formEntry;
     this.forms[name] = form;

@@ -161,7 +161,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public static initializeType(): void {
+  public static initializeType() {
     EventManager.streamEvents<SyncHeroEvent>('SyncHeroEvent')
       // .debounce(1 / 30)
       .forEach((event) => {
@@ -169,7 +169,7 @@ export class BaseHero extends Tank {
       });
   }
 
-  public applyUpgrade(upgrade: Upgrade, isNew: boolean = true): void {
+  public applyUpgrade(upgrade: Upgrade, isNew: boolean = true) {
     upgrade.applyTo(this);
     this.upgrades.push(upgrade.type);
     if (isNew) {
@@ -183,7 +183,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public copyUpgrades(other: BaseHero): void {
+  public copyUpgrades(other: BaseHero) {
     Iterator.array(other.upgrades)
       .filterMap((type) => UpgradeManager.instantiate(type))
       .forEach((upgrade) => this.applyUpgrade(upgrade, false));
@@ -228,11 +228,11 @@ export class BaseHero extends Tank {
     return this.xp;
   }
 
-  public addExperience(amount: number): void {
+  public addExperience(amount: number) {
     this.setExperience(this.getExperience() + amount);
   }
 
-  public setExperience(amount: number, allowLevels: boolean = true): void {
+  public setExperience(amount: number, allowLevels: boolean = true) {
     this.xp = amount;
 
     while (this.xp >= this.experienceForLevel(this.level) && this.level < 40) {
@@ -270,7 +270,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public setLevel(level: number): void {
+  public setLevel(level: number) {
     this.setLevelInternal(level);
     this.setExperience(this.experienceForLevel(level - 1));
   }
@@ -279,7 +279,7 @@ export class BaseHero extends Tank {
     return this.level;
   }
 
-  private setLevelInternal(level: number): void {
+  private setLevelInternal(level: number) {
     level = clamp(level, 1, 40);
     if (level !== this.level) {
       this.level = level;
@@ -290,7 +290,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public setPlayer(player: UUID | Player): void {
+  public setPlayer(player: UUID | Player) {
     const oldPlayer = this.player;
     let newPlayer;
     if (typeof player === 'number') {
@@ -311,12 +311,12 @@ export class BaseHero extends Tank {
     return this.player;
   }
 
-  public updateMaxLife(): void {
+  public updateMaxLife() {
     const life = this.lifeForLevel(this.level);
     this.setMaxLife(life);
   }
 
-  public override setMaxLife(maxLife: number): void {
+  public override setMaxLife(maxLife: number) {
     let life = maxLife;
     if (NetworkManager.isServer() && this.modifiers) {
       life = Math.round(this.modifiers.get('life').multiplyPoint(life));
@@ -334,7 +334,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public override setLife(life: number, source?: Unit): void {
+  public override setLife(life: number, source?: Unit) {
     super.setLife(life, source);
     if (this.getPlayer()?.isActivePlayer?.()) {
       EventManager.emit({
@@ -352,14 +352,14 @@ export class BaseHero extends Tank {
     return this.getPlayer()?.name ?? super.getName();
   }
 
-  public copyMovement(hero: BaseHero): void {
+  public copyMovement(hero: BaseHero) {
     this.turning = {
       ...hero.turning,
     };
     this.computeMovementInput();
   }
 
-  private computeMovementInput(): void {
+  private computeMovementInput() {
     this.vectorBuffer.setXY(0, 0);
     if (this.turning[MovementDirection.Up]) {
       this.vectorBuffer.addXY(0, -1);
@@ -383,7 +383,7 @@ export class BaseHero extends Tank {
     }
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     this.computeMovementInput();
     super.step(dt);
 
@@ -418,7 +418,7 @@ export class BaseHero extends Tank {
     };
   }
 
-  public override deserialize(data: Data, setInitialized?: boolean): void {
+  public override deserialize(data: Data, setInitialized?: boolean) {
     const {x: oldX, y: oldY} = this.position;
     const {x: oldVX, y: oldVY} = this.velocity;
     const {
@@ -513,7 +513,7 @@ export class BaseHero extends Tank {
     return NetworkManager.isClient() && !this.getPlayer()?.isActivePlayer();
   }
 
-  public override cleanup(): void {
+  public override cleanup() {
     if (this.getPlayer()?.isActivePlayer()) {
       EventManager.emit({
         type: 'BarUpdateEvent',

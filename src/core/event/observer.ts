@@ -77,7 +77,7 @@ export abstract class Observer {
       .debounce(period);
   }
 
-  public cleanup(): void {
+  public cleanup() {
     for (const type in this.handlers) {
       const handlerSet = this.handlers[type];
       for (const id of handlerSet) {

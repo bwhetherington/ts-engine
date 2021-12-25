@@ -112,7 +112,7 @@ export class Matrix3 implements Serializable {
     ];
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     if (data instanceof Array) {
       const [a0, a1, a2, b0, b1, b2, c0, c1, c2] = data;
       if (typeof a0 === 'number') {
@@ -224,7 +224,7 @@ export class Matrix2 implements Serializable {
     return [this.a0, this.a1, this.b0, this.b1];
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     if (data instanceof Array) {
       const [a0, a1, b0, b1] = data;
       if (typeof a0 === 'number') {

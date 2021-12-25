@@ -8,7 +8,7 @@ export class GameWorker {
     this.worker = worker;
   }
 
-  private setHandler(handler: (arg: any) => void): void {
+  private setHandler(handler: (arg: any) => void) {
     if (this.worker.on) {
       this.worker.on('message', handler);
     }

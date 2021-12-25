@@ -75,7 +75,7 @@ export class WorldManager
     this.boundingBox = boundingBox;
   }
 
-  public resize(bounds: Rectangle): void {
+  public resize(bounds: Rectangle) {
     this.boundingBox.deserialize(bounds);
     this.space.resize(bounds);
   }
@@ -146,7 +146,7 @@ export class WorldManager
     );
   }
 
-  public render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext) {
     const wallColor = ThemeManager.current.foregroundColor;
     ctx.clear(wallColor);
     const GRID_COLOR = reshade(wallColor, 0.05);
@@ -258,26 +258,26 @@ export class WorldManager
     return position;
   }
 
-  private populateGraph(): void {
+  private populateGraph() {
     if (this.shouldPopulateGraph) {
       this.graph = Graph.sample(50);
       this.shouldPopulateGraph = false;
     }
   }
 
-  private addEntityCount(entity: Entity): void {
+  private addEntityCount(entity: Entity) {
     if (this.entityCounts.hasOwnProperty(entity.type)) {
       this.entityCounts[entity.type] += 1;
     }
   }
 
-  private removeEntityCount(entity: Entity): void {
+  private removeEntityCount(entity: Entity) {
     if (this.entityCounts.hasOwnProperty(entity.type)) {
       this.entityCounts[entity.type] -= 1;
     }
   }
 
-  public add(entity: Entity): void {
+  public add(entity: Entity) {
     this.entities[entity.id] = entity;
     entity.load();
     log.trace('add ' + entity.toString());
@@ -297,7 +297,7 @@ export class WorldManager
     });
   }
 
-  public remove(entity: Entity | UUID): void {
+  public remove(entity: Entity | UUID) {
     let actual: Entity | undefined = undefined;
     if (typeof entity === 'number') {
       actual = this.getEntity(entity);
@@ -348,7 +348,7 @@ export class WorldManager
     return this.graph?.findPath(from, to);
   }
 
-  public deleteEntities(): void {
+  public deleteEntities() {
     // Delete marked entities
     for (const entity of this.toDelete) {
       this.remove(entity);
@@ -358,7 +358,7 @@ export class WorldManager
     this.toDelete = [];
   }
 
-  public step(dt: number): void {
+  public step(dt: number) {
     this.deleteEntities();
     // Step each entity
     const isClient = NetworkManager.isClient();
@@ -481,7 +481,7 @@ export class WorldManager
     return out;
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {entities, deleted, boundingBox, friction} = data;
     for (const id in entities) {
       const entry = entities[id];
@@ -611,7 +611,7 @@ export class WorldManager
     };
   }
 
-  public loadLevel(level: Data): void {
+  public loadLevel(level: Data) {
     const {boundingBox, geometry, friction = 1} = level;
     if (boundingBox && geometry) {
       // Erase previous geometry

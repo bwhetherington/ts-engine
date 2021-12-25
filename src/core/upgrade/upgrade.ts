@@ -8,7 +8,7 @@ export class Upgrade implements Serializable {
   public name: string = '';
   public description: string = '';
 
-  public applyTo(_hero: BaseHero): void {}
+  public applyTo(_hero: BaseHero) {}
 
   public serialize(): Data {
     return {
@@ -18,7 +18,7 @@ export class Upgrade implements Serializable {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {type, name, description} = data;
     if (typeof type === 'string') {
       this.type = type;

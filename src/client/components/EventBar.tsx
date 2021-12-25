@@ -22,7 +22,7 @@ export class EventBar extends Component<EventBarProps, EventBarState> {
     });
   }
 
-  public componentDidMount(): void {
+  public componentDidMount() {
     this.streamEvents<BarUpdateEvent>('BarUpdateEvent')
       .map(({data}) => data)
       .filter(({id}) => id === this.props.id)

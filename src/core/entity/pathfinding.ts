@@ -233,7 +233,7 @@ export class Graph {
     return graph;
   }
 
-  private populateNeighbors(): void {
+  private populateNeighbors() {
     // Populate graph with neighbors
     for (let i = 0; i < this.cols; i++) {
       for (let j = 0; j < this.rows; j++) {
@@ -252,7 +252,7 @@ export class Graph {
     }
   }
 
-  public render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext) {
     for (const node of this.nodes) {
       const {x, y, neighborIndices} = node;
 

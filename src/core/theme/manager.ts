@@ -21,7 +21,7 @@ export class ThemeManager extends LoadingManager<Theme> {
     await this.loadAssetTemplates('templates/themes');
   }
 
-  public setTheme(theme: string | Theme): void {
+  public setTheme(theme: string | Theme) {
     if (typeof theme === 'string') {
       const loaded = this.instantiate(theme);
       if (loaded) {

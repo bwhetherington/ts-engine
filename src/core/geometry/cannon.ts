@@ -24,7 +24,7 @@ export class CannonShape implements Serializable {
     return obj;
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {length, height, farHeight, offset, angle} = data;
     if (typeof length === 'number') {
       this.length = length;

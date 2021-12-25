@@ -39,7 +39,7 @@ export class BaseRaygun extends Weapon {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     super.deserialize(data);
     const {rayDistance} = data;
     if (typeof rayDistance === 'number') {
@@ -47,7 +47,7 @@ export class BaseRaygun extends Weapon {
     }
   }
 
-  public fire(source: Tank, angle: number, modifier?: HeroModifier): void {
+  public fire(source: Tank, angle: number, modifier?: HeroModifier) {
     const start = source.getCannonTip();
     const set: Set<Entity> = new Set();
     set.add(source);

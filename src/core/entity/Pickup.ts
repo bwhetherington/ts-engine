@@ -22,12 +22,12 @@ export class Pickup extends Entity {
     this.collisionLayer = CollisionLayer.Unit;
   }
 
-  public override setColor(color: Color): void {
+  public override setColor(color: Color) {
     super.setColor(color);
     this.innerColor = reshade(color, -0.15);
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     super.render(ctx);
 
     GraphicsPipeline.pipe()
@@ -40,7 +40,7 @@ export class Pickup extends Entity {
       });
   }
 
-  public override collide(other: Entity): void {
+  public override collide(other: Entity) {
     if (
       NetworkManager.isServer() &&
       other instanceof BaseHero &&
@@ -54,7 +54,7 @@ export class Pickup extends Entity {
     return true;
   }
 
-  protected onPickup(_unit: BaseHero): void {
+  protected onPickup(_unit: BaseHero) {
     log.info('pickup');
     this.markForDelete();
   }

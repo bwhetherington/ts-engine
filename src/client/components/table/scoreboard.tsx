@@ -28,7 +28,7 @@ const SCOREBOARD_COLUMNS = [
 ];
 
 export class Scoreboard extends Component<{}, {}> {
-  public componentDidMount(): void {
+  public componentDidMount() {
     this.streamInterval(1).forEach(() => {
       const rows = PlayerManager.getPlayers()
         .filter(

@@ -34,7 +34,7 @@ class QuadNode<T extends Bounded> {
     this.maxChildren = maxChildren;
   }
 
-  public render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext) {
     const {x, y, width, height} = this.boundingBox;
     ctx.rect(x, y, width, height, BLACK);
     for (const childNode of this.nodes) {
@@ -42,7 +42,7 @@ class QuadNode<T extends Bounded> {
     }
   }
 
-  public clear(): void {
+  public clear() {
     this.children = [];
     for (const childNode of this.nodes) {
       childNode.clear();
@@ -85,7 +85,7 @@ class QuadNode<T extends Bounded> {
     }
   }
 
-  private subdivide(): void {
+  private subdivide() {
     const {depth, boundingBox, maxDepth, maxChildren} = this;
     const nextDepth = depth + 1;
 
@@ -197,7 +197,7 @@ export class QuadTree<T extends Bounded> extends Partioner<T> {
     this.root = new QuadNode(bounds, 0, 4);
   }
 
-  public resize(bounds: Rectangle): void {
+  public resize(bounds: Rectangle) {
     const elements = this.root.getAll();
     this.boundingBox = bounds;
     this.root = new QuadNode(this.boundingBox, 0, 4);
@@ -206,13 +206,13 @@ export class QuadTree<T extends Bounded> extends Partioner<T> {
     }
   }
 
-  public render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext) {
     GraphicsPipeline.pipe()
       .options({lineWidth: 2, doFill: false, doStroke: true})
       .run(ctx, (ctx) => this.root.render(ctx));
   }
 
-  public insert(element: T): void {
+  public insert(element: T) {
     this.root.insert(element);
     this.size += 1;
   }
@@ -225,7 +225,7 @@ export class QuadTree<T extends Bounded> extends Partioner<T> {
     return new Set(this.root.retrievePointXY(x, y));
   }
 
-  public clear(): void {
+  public clear() {
     this.root.clear();
     this.size = 0;
   }

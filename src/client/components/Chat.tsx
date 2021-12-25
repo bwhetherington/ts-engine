@@ -180,11 +180,11 @@ export class Chat extends Component<ChatProps, ChatState> {
     return isFocused || isFresh;
   }
 
-  private scrollToBottom(): void {
+  private scrollToBottom() {
     this.endRef.current?.scrollIntoView({behavior: 'auto'});
   }
 
-  public componentDidMount(): void {
+  public componentDidMount() {
     this.streamEvents<TextMessageOutEvent>('TextMessageOutEvent').forEach(
       ({data: {components}}) => {
         const lines = concatLine(
@@ -336,7 +336,7 @@ export class Chat extends Component<ChatProps, ChatState> {
     });
   }
 
-  private fixCursor(): void {
+  private fixCursor() {
     const input = this.inputRef?.current;
     if (input) {
       const len = input.value.length;

@@ -50,48 +50,48 @@ export class Entity
     this.type = Entity.typeName;
   }
 
-  public static initializeType(): void {
+  public static initializeType() {
     if (!Entity.isTypeInitialized) {
       Entity.isTypeInitialized = true;
     }
   }
 
-  public applyForce(force: Vector, scalar: number = 1): void {
+  public applyForce(force: Vector, scalar: number = 1) {
     this.velocity.add(force, scalar / this.mass);
   }
 
-  public setPosition(point: Vector): void {
+  public setPosition(point: Vector) {
     this.setPositionXY(point.x, point.y);
   }
 
-  public setPositionXY(x: number, y: number): void {
+  public setPositionXY(x: number, y: number) {
     this.position.setXY(x, y);
     this.updateBoundingBox();
   }
 
-  public addPosition(diff: Vector, scale: number = 1): void {
+  public addPosition(diff: Vector, scale: number = 1) {
     this.addPositionXY(diff.x, diff.y, scale);
   }
 
-  public addPositionXY(dx: number, dy: number, scale: number = 1): void {
+  public addPositionXY(dx: number, dy: number, scale: number = 1) {
     this.position.addXY(dx, dy, scale);
     this.updateBoundingBox();
   }
 
-  public renderInternal(ctx: GraphicsContext): void {
+  public renderInternal(ctx: GraphicsContext) {
     if (this.isVisible) {
       this.render(ctx);
     }
   }
 
-  public render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext) {
     const {width, height} = this.boundingBox;
     GraphicsPipeline.pipe().run(ctx, (ctx) => {
       ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
     });
   }
 
-  private updateBoundingBox(): void {
+  private updateBoundingBox() {
     this.boundingBox.centerX = this.position.x;
     this.boundingBox.centerY = this.position.y;
   }
@@ -106,11 +106,11 @@ export class Entity
     }
   }
 
-  public attachTo(entity: Entity): void {
+  public attachTo(entity: Entity) {
     this.attachedTo = entity;
   }
 
-  private updatePosition(dt: number): void {
+  private updatePosition(dt: number) {
     if (this.isAlive()) {
       if (this.attachedTo?.isAlive()) {
         this.setPosition(this.attachedTo.position);
@@ -183,7 +183,7 @@ export class Entity
     }
   }
 
-  public step(dt: number): void {
+  public step(dt: number) {
     this.updatePosition(dt);
   }
 
@@ -217,7 +217,7 @@ export class Entity
     return 84;
   }
 
-  public dataSerialize(buf: DataBuffer): void {
+  public dataSerialize(buf: DataBuffer) {
     buf.writeString(this.type, 20); // 24 - 24
     buf.writeUInt32(this.id); // 4  - 28
     this.position.dataSerialize(buf); // 8  - 36
@@ -234,7 +234,7 @@ export class Entity
     buf.writeColor(this.getColor()); // 4  - 84
   }
 
-  public dataDeserialize(buf: DataBuffer): void {
+  public dataDeserialize(buf: DataBuffer) {
     this.type = buf.readString();
     this.id = buf.readUInt32();
     this.position.dataDeserialize(buf);
@@ -251,7 +251,7 @@ export class Entity
     this.deserializeColor(buf.readColor());
   }
 
-  protected deserializeColor(data: Data): void {
+  protected deserializeColor(data: Data) {
     const {red, green, blue, alpha} = data;
     const newColor = {...this.color};
     if (typeof red === 'number') {
@@ -269,7 +269,7 @@ export class Entity
     this.setColor(newColor);
   }
 
-  public deserialize(data: Data, setInitialized: boolean = false): void {
+  public deserialize(data: Data, setInitialized: boolean = false) {
     const {
       id,
       type,
@@ -368,7 +368,7 @@ export class Entity
     }
   }
 
-  public setColor(color: Color): void {
+  public setColor(color: Color) {
     this.color = color;
   }
 
@@ -376,7 +376,7 @@ export class Entity
     return this.color;
   }
 
-  public markForDelete(): void {
+  public markForDelete() {
     this.markedForDelete = true;
   }
 
@@ -384,7 +384,7 @@ export class Entity
     return `${this.type}(${this.id})`;
   }
 
-  public collide(other?: Entity): void {}
+  public collide(other?: Entity) {}
 
   public streamCollisions(): AsyncIterator<CollisionEvent> {
     return this.streamEvents<CollisionEvent>('CollisionEvent')
@@ -392,11 +392,11 @@ export class Entity
       .filter(({collider}) => collider.id === this.id);
   }
 
-  public afterStep(): void {}
+  public afterStep() {}
 
-  public load(): void {}
+  public load() {}
 
-  public override cleanup(): void {
+  public override cleanup() {
     super.cleanup();
     UUIDManager.free(this.id);
   }

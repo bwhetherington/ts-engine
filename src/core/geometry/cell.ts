@@ -19,13 +19,13 @@ export class Cell<T extends Bounded> extends Partioner<T> {
     this.initializeSize(bounds);
   }
 
-  private initializeSize(bounds: Rectangle): void {
+  private initializeSize(bounds: Rectangle) {
     this.boundingBox = bounds;
     this.width = Math.ceil(bounds.width / this.cellWidth) + 1;
     this.height = Math.ceil(bounds.height / this.cellHeight) + 1;
   }
 
-  public resize(bounds: Rectangle): void {
+  public resize(bounds: Rectangle) {
     const elements = this.getAll();
     this.cells = [];
     this.initializeSize(bounds);
@@ -63,7 +63,7 @@ export class Cell<T extends Bounded> extends Partioner<T> {
     return Math.floor((x - this.boundingBox.x) / this.cellWidth);
   }
 
-  public insert(element: T): void {
+  public insert(element: T) {
     // Insert element into each cell it occupies
     const {x, y, farX, farY} = element.boundingBox;
 
@@ -106,7 +106,7 @@ export class Cell<T extends Bounded> extends Partioner<T> {
     return new Set(this.getCell(row * this.width + col));
   }
 
-  public render(ctx: GraphicsContext): void {
+  public render(ctx: GraphicsContext) {
     ctx.pushOptions({
       lineWidth: 1,
       doFill: false,
@@ -137,7 +137,7 @@ export class Cell<T extends Bounded> extends Partioner<T> {
     ctx.popOptions();
   }
 
-  public clear(): void {
+  public clear() {
     this.cells = [];
     this.size = 0;
   }

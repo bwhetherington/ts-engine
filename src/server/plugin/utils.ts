@@ -6,7 +6,7 @@ import {Plugin} from 'server/plugin';
 export class UtilsPlugin extends Plugin {
   public static typeName: string = 'UtilsPlugin';
 
-  private getPing(player: Player): void {
+  private getPing(player: Player) {
     const pingMs = Math.round(player.ping * 100000) / 100;
     ChatManager.info(`Ping: ${pingMs} ms`, player);
   }

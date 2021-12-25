@@ -32,7 +32,7 @@ export const RENAME_FORM: Form = {
 export const RenameFormEntry: FormEntry<RenameForm> = {
   name: 'RenameForm',
   form: RENAME_FORM,
-  onSubmit(player: Player, response: RenameForm): void {
+  onSubmit(player: Player, response: RenameForm) {
     player.name = response.name.value;
   },
   checkType(x: Data): x is RenameForm {
@@ -75,6 +75,6 @@ export const RenameFormEntry: FormEntry<RenameForm> = {
   },
 };
 
-export function registerRenameForm(): void {
+export function registerRenameForm() {
   FormManager.registerForm(RenameFormEntry);
 }

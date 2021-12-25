@@ -30,7 +30,7 @@ export class LoadingManager<T extends Asset> {
     this.name = name;
   }
 
-  public registerAssetType(Type: AssetType<T>): void {
+  public registerAssetType(Type: AssetType<T>) {
     this.registerAssetInitializer(Type.typeName, () => new Type());
     const typeInitializer = Type.initializeType?.bind(Type);
 
@@ -39,7 +39,7 @@ export class LoadingManager<T extends Asset> {
     }
   }
 
-  public registerAssetTemplate(template: AssetTemplate): void {
+  public registerAssetTemplate(template: AssetTemplate) {
     const {type, extends: base} = template;
 
     const baseInitializer = this.initializers[base];
@@ -73,7 +73,7 @@ export class LoadingManager<T extends Asset> {
   public registerAssetInitializer(
     type: string,
     initializer: AssetInitializer<T>
-  ): void {
+  ) {
     this.initializers[type] = initializer;
     log.debug(`${this.name} registered asset: ${type}`);
   }

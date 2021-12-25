@@ -75,7 +75,7 @@ export class FormatParser {
     return ch;
   }
 
-  private backChar(): void {
+  private backChar() {
     this.index -= 1;
   }
 

@@ -310,7 +310,7 @@ export class Iterator<T> implements Iterable<T> {
    * Executes the specified function once on each element of this iterator.
    * @param fn A function
    */
-  public forEach(fn: (x: T) => void): void {
+  public forEach(fn: (x: T) => void) {
     for (const x of this.generator) {
       fn(x);
     }

@@ -494,7 +494,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return count;
   }
 
-  public removeSubscriber(id: UUID): void {
+  public removeSubscriber(id: UUID) {
     delete this.subscribers[id];
     UUIDManager.free(id);
   }
@@ -518,7 +518,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
     return AsyncIterator.generator(zip(this.generator, b));
   }
 
-  private cleanup(): void {
+  private cleanup() {
     this.onComplete?.();
     Iterator.entries(this.subscribers).forEach(async ([id, {$return}]) => {
       this.removeSubscriber(parseInt(id));
@@ -541,7 +541,7 @@ export class IteratorSubscriber<T> extends AsyncIterator<T> {
     this.id = id;
   }
 
-  public unsubscribe(): void {
+  public unsubscribe() {
     this.parent.removeSubscriber(this.id);
     UUIDManager.free(this.id);
   }

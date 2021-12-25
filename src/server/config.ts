@@ -18,7 +18,7 @@ export class Config implements Serializable {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {tickRate, fullSyncInterval} = data;
     if (typeof tickRate === 'number') {
       this.tickRate = tickRate;

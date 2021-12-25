@@ -75,7 +75,7 @@ export const roll: CommandEntry = {
   help: 'rolls dice',
   permissionLevel: 0,
   async handler(player, ...args) {
-    function roll(die: number): void {
+    function roll(die: number) {
       const res = RNGManager.nextInt(1, die + 1);
       ChatManager.info(`${player.name} rolls d${die} => ${res}`);
     }

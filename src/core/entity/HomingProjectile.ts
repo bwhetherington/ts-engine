@@ -60,7 +60,7 @@ export class HomingProjectile extends Projectile {
     }
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     if (NetworkManager.isServer() && this.isHoming) {
       const target = this.selectTarget();
       if (target) {
@@ -88,7 +88,7 @@ export class HomingProjectile extends Projectile {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public override deserialize(data: Data) {
     super.deserialize(data);
 
     const {maxSpeed, turnSpeed, targetID} = data;

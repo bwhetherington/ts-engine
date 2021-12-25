@@ -19,7 +19,7 @@ export class EventTable extends Component<EventTableProps, EventTableState> {
     });
   }
 
-  public componentDidMount(): void {
+  public componentDidMount() {
     this.streamEvents<TableEvent>('TableEvent')
       .map(({data}) => data)
       .filter(({id}) => id === this.props.id)

@@ -23,7 +23,7 @@ export abstract class Plugin extends Observer {
     log.debug(`plugin ${this.name} cleaned up`);
   }
 
-  public registerCommand(command: CommandEntry): void {
+  public registerCommand(command: CommandEntry) {
     this.registeredCommands.add(command.name);
     ChatManager.registerCommandEntry(command);
   }

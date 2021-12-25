@@ -45,7 +45,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public override damage(amount: number, source?: Unit): void {
+  public override damage(amount: number, source?: Unit) {
     super.damage(amount, source);
     if (NetworkManager.isServer() && source) {
       this.target = source;
@@ -53,7 +53,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public moveTo(targetPoint: Vector): void {
+  public moveTo(targetPoint: Vector) {
     const path = WorldManager.findPath(this.position, targetPoint);
     if (path) {
       this.followPath(path);
@@ -71,7 +71,7 @@ export class BaseEnemy extends Tank {
     return hit.size > 0;
   }
 
-  private selectTarget(): void {
+  private selectTarget() {
     // Select the closest unit
     const [target] = WorldManager.getEntities()
       .filter((entity) => this !== entity)
@@ -98,7 +98,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  private moveToTarget(): void {
+  private moveToTarget() {
     // Check if we're within range of the target unit
     const distanceToTarget = this.target?.position?.distanceToXYSquared(
       this.position.x,
@@ -134,7 +134,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     super.step(dt);
 
     if (NetworkManager.isServer()) {
@@ -161,14 +161,14 @@ export class BaseEnemy extends Tank {
     };
   }
 
-  public followPath(path: Iterable<Vector>): void {
+  public followPath(path: Iterable<Vector>) {
     this.moveQueue = new Queue();
     for (const point of path) {
       this.moveQueue.enqueue(point);
     }
   }
 
-  public override deserialize(data: Data, isInitialized?: boolean): void {
+  public override deserialize(data: Data, isInitialized?: boolean) {
     super.deserialize(data, isInitialized);
     const {isActive} = data;
 
@@ -177,7 +177,7 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     super.render(ctx);
 
     // Draw path

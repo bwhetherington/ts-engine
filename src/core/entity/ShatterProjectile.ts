@@ -21,7 +21,7 @@ export class ShatterProjectile extends Projectile {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public override deserialize(data: Data) {
     super.deserialize(data);
 
     const {fragCount} = data;
@@ -31,7 +31,7 @@ export class ShatterProjectile extends Projectile {
     }
   }
 
-  public override step(dt: number): void {
+  public override step(dt: number) {
     super.step(dt);
 
     if (this.velocity.magnitudeSquared > 0) {
@@ -39,7 +39,7 @@ export class ShatterProjectile extends Projectile {
     }
   }
 
-  protected override onHitInternal(target?: Unit): void {
+  protected override onHitInternal(target?: Unit) {
     if (NetworkManager.isServer()) {
       const offset = RNGManager.nextFloat(0, 2 * Math.PI);
       for (let i = 0; i < this.fragCount; i++) {

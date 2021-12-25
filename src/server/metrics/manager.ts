@@ -19,16 +19,16 @@ export class MetricsManager {
   private timer: number = 0;
   private pings: Record<UUID, number> = {};
 
-  public recordPing(player: Player, ping: number): void {
+  public recordPing(player: Player, ping: number) {
     this.pings[player.id] = ping;
     player.ping = ping;
   }
 
-  public removePlayer(player: Player): void {
+  public removePlayer(player: Player) {
     delete this.pings[player.id];
   }
 
-  public initialize(): void {
+  public initialize() {
     log.debug('MetricsManager initialized');
 
     const frameTimes = new SizedQueue<number>(100);

@@ -5,7 +5,7 @@ import {ToString} from '.';
 export class StringBuffer implements ToString {
   private buffer: string[] = [];
 
-  public append(s: string | ToString): void {
+  public append(s: string | ToString) {
     if (typeof s === 'string') {
       for (let i = 0; i < s.length; i++) {
         this.buffer.push(s[i]);
@@ -23,7 +23,7 @@ export class StringBuffer implements ToString {
     return out;
   }
 
-  private formatArray<T>(array: T[]): void {
+  private formatArray<T>(array: T[]) {
     this.append('[');
     for (let i = 0; i < array.length - 1; i++) {
       this.formatInternal(array[i]);
@@ -35,7 +35,7 @@ export class StringBuffer implements ToString {
     this.append(']');
   }
 
-  private formatInternal(item: any): void {
+  private formatInternal(item: any) {
     if (item === null) {
       this.append('null');
     } else if (item === undefined) {

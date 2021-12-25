@@ -63,24 +63,24 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
     return angle;
   }
 
-  public set(v: VectorLike): void {
+  public set(v: VectorLike) {
     this.setXY(v.x, v.y);
   }
 
-  public setXY(x: number, y: number): void {
+  public setXY(x: number, y: number) {
     this.x = x;
     this.y = y;
   }
 
-  public add(v: VectorLike, scale: number = 1): void {
+  public add(v: VectorLike, scale: number = 1) {
     this.addXY(v.x, v.y, scale);
   }
 
-  public addXY(dx: number, dy: number, scale: number = 1): void {
+  public addXY(dx: number, dy: number, scale: number = 1) {
     this.setXY(this.x + dx * scale, this.y + dy * scale);
   }
 
-  public zero(): void {
+  public zero() {
     this.setXY(0, 0);
   }
 
@@ -91,7 +91,7 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
     };
   }
 
-  public deserialize(data: Data): void {
+  public deserialize(data: Data) {
     const {x, y} = data;
     let {x: newX, y: newY} = this;
     if (typeof x === 'number') {
@@ -107,23 +107,23 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
     return 8;
   }
 
-  public dataSerialize(buf: DataBuffer): void {
+  public dataSerialize(buf: DataBuffer) {
     buf.writeFloat(this.x);
     buf.writeFloat(this.y);
   }
 
-  public dataDeserialize(buf: DataBuffer): void {
+  public dataDeserialize(buf: DataBuffer) {
     const x = buf.readFloat();
     const y = buf.readFloat();
     this.setXY(x, y);
   }
 
-  public scale(amount: number): void {
+  public scale(amount: number) {
     this.x *= amount;
     this.y *= amount;
   }
 
-  public normalize(): void {
+  public normalize() {
     this.magnitude = 1;
   }
 
@@ -140,7 +140,7 @@ export class DirectionVector extends Vector {
     this.setXY(x, y);
   }
 
-  public override setXY(x: number, y: number): void {
+  public override setXY(x: number, y: number) {
     super.setXY(x, y);
     if (!(x === 0 && y === 0)) {
       this.curAngle = Math.atan2(y, x);

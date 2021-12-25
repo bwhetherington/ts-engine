@@ -21,7 +21,7 @@ export class DataBuffer {
     return new DataBuffer(Buffer.alloc(capacity));
   }
 
-  public reset(): void {
+  public reset() {
     this.offset = 0;
   }
 
@@ -31,7 +31,7 @@ export class DataBuffer {
     return num;
   }
 
-  public writeFloat(number: number): void {
+  public writeFloat(number: number) {
     this.buffer.writeFloatBE(number, this.offset);
     this.offset += 4;
   }
@@ -42,7 +42,7 @@ export class DataBuffer {
     return num;
   }
 
-  public writeDouble(number: number): void {
+  public writeDouble(number: number) {
     this.buffer.writeDoubleBE(number, this.offset);
     this.offset += 8;
   }
@@ -53,7 +53,7 @@ export class DataBuffer {
     return num;
   }
 
-  public writeUInt32(number: number): void {
+  public writeUInt32(number: number) {
     this.buffer.writeUInt32BE(number, this.offset);
     this.offset += 4;
   }
@@ -64,7 +64,7 @@ export class DataBuffer {
     return num;
   }
 
-  public writeInt32(number: number): void {
+  public writeInt32(number: number) {
     this.buffer.writeInt32BE(number, this.offset);
     this.offset += 4;
   }
@@ -75,7 +75,7 @@ export class DataBuffer {
     return byte !== 0;
   }
 
-  public writeBoolean(value: boolean): void {
+  public writeBoolean(value: boolean) {
     this.buffer.writeUInt8(value ? 1 : 0, this.offset);
     this.offset += 1;
   }
@@ -86,7 +86,7 @@ export class DataBuffer {
     return new Vector(x, y);
   }
 
-  public writeVector({x, y}: VectorLike): void {
+  public writeVector({x, y}: VectorLike) {
     this.writeDouble(x);
     this.writeDouble(y);
   }
@@ -99,7 +99,7 @@ export class DataBuffer {
     return new Rectangle(x, y, w, h);
   }
 
-  public writeRectangle({x, y, width, height}: RectangleLike): void {
+  public writeRectangle({x, y, width, height}: RectangleLike) {
     this.writeDouble(x);
     this.writeDouble(y);
     this.writeDouble(width);
@@ -113,7 +113,7 @@ export class DataBuffer {
     return sub.toString('utf-8');
   }
 
-  public writeString(s: string, length?: number): void {
+  public writeString(s: string, length?: number) {
     if (length === undefined) {
       this.writeUInt32(0);
       const len = this.buffer.write(s, this.offset, 'utf-8');
@@ -139,7 +139,7 @@ export class DataBuffer {
     return value;
   }
 
-  public writeUInt8(value: number): void {
+  public writeUInt8(value: number) {
     this.buffer.writeUInt8(value);
     this.offset += 1;
   }
@@ -152,7 +152,7 @@ export class DataBuffer {
     return {red, green, blue, alpha};
   }
 
-  public writeColor(color: Color): void {
+  public writeColor(color: Color) {
     const {red, green, blue, alpha = 1} = color;
     const ri = Math.floor(red * 255);
     const gi = Math.floor(green * 255);
@@ -164,7 +164,7 @@ export class DataBuffer {
     this.writeUInt8(ai);
   }
 
-  public writeList(list: DataSerializable[]): void {
+  public writeList(list: DataSerializable[]) {
     // Compute length
     this.writeUInt32(list.length);
     Iterator.from(list).forEach((x) => x.dataSerialize(this));

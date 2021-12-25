@@ -9,7 +9,7 @@ export class Heap<T> {
     this.queue = new PriorityQueue(compare);
   }
 
-  public push(val: T): void {
+  public push(val: T) {
     this.queue.enq(val);
   }
 

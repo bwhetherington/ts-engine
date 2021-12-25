@@ -67,23 +67,23 @@ export abstract class Node {
 }
 
 export class DefaultNode extends Node {
-  public override disconnect(socket: Socket): void {
+  public override disconnect(socket: Socket) {
     log.warn('default network node in use');
   }
 
-  public override send(msg: Message, socket: Socket): void {
+  public override send(msg: Message, socket: Socket) {
     log.warn('default network node in use');
   }
 
-  public override onMessage(msg: Message, socket: Socket): void {
+  public override onMessage(msg: Message, socket: Socket) {
     log.warn('default network node in use');
   }
 
-  public override onConnect(socket: Socket): void {
+  public override onConnect(socket: Socket) {
     log.warn('default network node in use');
   }
 
-  public override onDisconnect(socket: Socket): void {
+  public override onDisconnect(socket: Socket) {
     log.warn('default network node in use');
   }
 }

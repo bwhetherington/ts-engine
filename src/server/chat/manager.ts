@@ -45,15 +45,15 @@ interface Command {
 export class ServerChatManager {
   private commands: {[command: string]: Command} = {};
 
-  private loadCommands(): void {
+  private loadCommands() {
     Iterator.values(commands).forEach(this.registerCommandEntry.bind(this));
   }
 
-  public removeCommand(name: string): void {
+  public removeCommand(name: string) {
     delete this.commands[name];
   }
 
-  public registerCommandEntry(command: CommandEntry): void {
+  public registerCommandEntry(command: CommandEntry) {
     this.registerCommand(
       command.name,
       command.handler,
@@ -69,7 +69,7 @@ export class ServerChatManager {
     help: string,
     permissionLevel: number,
     ...aliases: string[]
-  ): void {
+  ) {
     const entry = {
       name: command,
       handler,
@@ -79,7 +79,7 @@ export class ServerChatManager {
     this.commands[command] = entry;
   }
 
-  private handleCommand(player: Player, command: string, args: string[]): void {
+  private handleCommand(player: Player, command: string, args: string[]) {
     if (command in this.commands) {
       const handler = this.commands[command];
 
@@ -108,7 +108,7 @@ export class ServerChatManager {
     });
   }
 
-  public initialize(): void {
+  public initialize() {
     log.debug('ChatManager initialized');
 
     EventManager.streamEventsForPlayer<SetNameEvent>('SetNameEvent').forEach(
@@ -445,7 +445,7 @@ export class ServerChatManager {
   public sendComponents(
     components: (string | null | TextComponent)[],
     target: number | Player = -1
-  ): void {
+  ) {
     const socket = target instanceof Player ? target.socket : target;
     const outEvent: Event<TextMessageOutEvent> = {
       type: 'TextMessageOutEvent',
@@ -458,19 +458,19 @@ export class ServerChatManager {
     NetworkManager.sendEvent(outEvent, socket);
   }
 
-  public info(message: string, target: number | Player = -1): void {
+  public info(message: string, target: number | Player = -1) {
     const components = renderInfo(message);
     this.sendComponents(components, target);
     log.info('[' + message + ']');
   }
 
-  public warn(message: string, target: number | Player = -1): void {
+  public warn(message: string, target: number | Player = -1) {
     const components = renderWarn(message);
     this.sendComponents(components, target);
     log.warn('[' + message + ']');
   }
 
-  public error(message: string, target: number | Player = -1): void {
+  public error(message: string, target: number | Player = -1) {
     const components = renderError(message);
     this.sendComponents(components, target);
     log.error('[' + message + ']');

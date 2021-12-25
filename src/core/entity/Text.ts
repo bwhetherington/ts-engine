@@ -36,7 +36,7 @@ export class Text extends Entity {
     };
   }
 
-  public override deserialize(data: Data): void {
+  public override deserialize(data: Data) {
     super.deserialize(data);
 
     const {text, tag, textColor, textSize} = data;
@@ -54,7 +54,7 @@ export class Text extends Entity {
     }
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     const components = TEXT_FORMATTER.format({
       color: this.textColor,
       text: this.text,

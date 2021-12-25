@@ -6,7 +6,7 @@ import {Player} from 'core/player';
 export class PlayerChatManager {
   public constructor(private player: Player) {}
 
-  public send(content: string, from?: string): void {
+  public send(content: string, from?: string) {
     const isServer = NetworkManager.isServer();
     const isActivePlayer = this.player.isActivePlayer();
     if (isServer || isActivePlayer) {

@@ -29,7 +29,7 @@ export class Feed extends Unit {
     this.friction = 100;
   }
 
-  public setVariant(variant: FeedVariant): void {
+  public setVariant(variant: FeedVariant) {
     if (this.isSet && variant === this.variant) {
       return;
     }
@@ -70,7 +70,7 @@ export class Feed extends Unit {
     };
   }
 
-  public override deserialize(obj: Data): void {
+  public override deserialize(obj: Data) {
     super.deserialize(obj);
 
     const {variant} = obj;
@@ -79,7 +79,7 @@ export class Feed extends Unit {
     }
   }
 
-  public override render(ctx: GraphicsContext): void {
+  public override render(ctx: GraphicsContext) {
     const {width} = this.boundingBox;
     GraphicsPipeline.pipe()
       .rotate(EventManager.timeElapsed / 10)

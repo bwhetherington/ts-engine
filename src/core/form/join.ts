@@ -59,7 +59,7 @@ export const JOIN_FORM: Form = {
   ],
 };
 
-export function registerJoinForm(): void {
+export function registerJoinForm() {
   EventManager.streamEvents<ConnectEvent>('ConnectEvent')
     .filterMap(({data: {socket}}) => PlayerManager.getSocket(socket))
     .forEach((player) => {
@@ -185,7 +185,7 @@ function validateNoAccount(res: JoinForm): FormResult {
   }
 }
 
-function handleNoAccount(player: Player, res: JoinForm): void {
+function handleNoAccount(player: Player, res: JoinForm) {
   player.load({
     username: res.username.value,
     xp: 0,
@@ -222,7 +222,7 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
     });
     await handleSubmit(player, response, data);
   },
-  onReject(player: Player): void {
+  onReject(player: Player) {
     player.disconnect();
   },
   checkType(x: Data): x is JoinForm {

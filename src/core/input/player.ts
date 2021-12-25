@@ -15,7 +15,7 @@ export class PlayerController extends Controller {
   private keyListenerID?: UUID;
   private mouseListenerID?: UUID;
 
-  public attach(hero: BaseHero): void {
+  public attach(hero: BaseHero) {
     super.attach(hero);
 
     this.mouseListenerID = hero.addListener<MouseEvent>(
@@ -49,7 +49,7 @@ export class PlayerController extends Controller {
     // });
   }
 
-  public detach(): void {
+  public detach() {
     if (this.mouseListenerID) {
       this.hero?.removeListener('MouseEvent', this.mouseListenerID);
     }
@@ -59,7 +59,7 @@ export class PlayerController extends Controller {
     super.detach();
   }
 
-  public step(_: number): void {
+  public step(_: number) {
     if (this.mouseDown && NetworkManager.isServer()) {
       this.hero?.fire(this.hero?.angle);
     }

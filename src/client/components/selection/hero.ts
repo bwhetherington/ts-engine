@@ -21,7 +21,7 @@ export class HeroPanel extends Component<HeroPanelProps, HeroPanelState> {
     });
   }
 
-  private renderCanvas(): void {
+  private renderCanvas() {
     const canvas = this.canvasRef.current;
     const {entity} = this.state;
     if (canvas && entity) {
@@ -33,7 +33,7 @@ export class HeroPanel extends Component<HeroPanelProps, HeroPanelState> {
     }
   }
 
-  public componentDidMount(): void {
+  public componentDidMount() {
     // Create hero
     const hero = WorldManager.spawnEntity(this.props.type);
   }

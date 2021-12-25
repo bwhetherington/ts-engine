@@ -3,13 +3,13 @@ import {Tank, BaseHero} from 'core/entity';
 export abstract class Controller {
   protected hero?: BaseHero;
 
-  public attach(tank: BaseHero): void {
+  public attach(tank: BaseHero) {
     this.hero = tank;
   }
 
-  public detach(): void {
+  public detach() {
     this.hero = undefined;
   }
 
-  public step(dt: number): void {}
+  public step(dt: number) {}
 }
