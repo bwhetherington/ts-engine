@@ -10,13 +10,14 @@ import {
   Trail,
 } from 'core/entity';
 import {Data} from 'core/serialize';
-import {MovementDirection} from 'core/input';
 import {Vector} from 'core/geometry';
 import {clamp} from 'core/util';
 import {Event, EventManager} from 'core/event';
 import {NetworkManager} from 'core/net';
 import {Color, reshade} from 'core/graphics';
 import {TextColor} from 'core/chat';
+import {Effect} from 'core/effect';
+import { UUID } from 'core/uuid';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -44,6 +45,8 @@ export class Unit extends Entity {
   private acceleration: Vector = new Vector(0, 0);
   private hasExploded: boolean = false;
 
+  private effects: Map<UUID, Effect> = new Map();
+
   public constructor() {
     super();
     this.type = Unit.typeName;
@@ -66,6 +69,10 @@ export class Unit extends Entity {
           .forEach((unit) => unit.flash());
       }
     }
+  }
+
+  public addEffect(effect: Effect) {
+    
   }
 
   public setIsImmune(isImmune: boolean): void {
