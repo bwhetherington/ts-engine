@@ -9,6 +9,7 @@ import {iterator} from 'core/iterator';
 import {Echo, EchoVariant} from './Echo';
 import {EventManager} from 'core/event';
 import {GraphicsPipeline} from 'core/graphics/pipe';
+import {DotEffect, EffectManager} from 'core/effect';
 
 const log = LogManager.forFile(__filename);
 
@@ -134,7 +135,9 @@ export class Projectile extends Entity {
         unit.damage(this.damage, this.parent);
         unit.applyForce(this.velocity, this.mass);
         this.onHitInternal(unit);
+        this.onHit?.(unit);
         this.hitEntities.add(unit.id);
+
         if (this.hitEntities.size >= this.pierce) {
           this.remove(true);
           return false;

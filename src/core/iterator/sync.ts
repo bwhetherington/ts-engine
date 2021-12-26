@@ -209,6 +209,10 @@ export class Iterator<T> implements Iterable<T> {
     return iterator(iterateSet(set));
   }
 
+  public static map<K, V>(map: Map<K, V>): Iterator<[K, V]> {
+    return iterator(map.entries());
+  }
+
   public static from<T>(gen: Iterable<T>): Iterator<T> {
     return iterator(gen);
   }

@@ -9,7 +9,7 @@ import {
   CollisionLayer,
   Trail,
 } from 'core/entity';
-import {Data} from 'core/serialize';
+import {Data, deserializeMapNumber, serialize} from 'core/serialize';
 import {Vector} from 'core/geometry';
 import {clamp} from 'core/util';
 import {Event, EventManager} from 'core/event';
@@ -38,6 +38,7 @@ export class Unit extends Entity {
   protected hpBar?: Bar;
   protected trail?: Trail;
   protected thrusting: number = 0;
+  protected effectCounts: Map<string, number> = new Map();
 
   private lastFlash: number = 0;
   private flashColor?: Color;
@@ -73,7 +74,28 @@ export class Unit extends Entity {
 
   public addEffect(effect: Effect) {
     this.effects.set(effect.id, effect);
+
+    const count = this.effectCounts.get(effect.type) ?? 0;
+    this.effectCounts.set(effect.type, count + 1);
+
     effect.target = this;
+  }
+
+  public removeEffect(effect: Effect) {
+    this.effects.delete(effect.id);
+    delete effect.target;
+
+
+    const count = this.effectCounts.get(effect.type);
+    if (count !== undefined) {
+      this.effectCounts.set(effect.type, count - 1);
+    }
+
+    effect.cleanup();
+  }
+
+  public hasEffect(type: string): boolean {
+    return (this.effectCounts.get(type) ?? 0) > 0;
   }
 
   public setIsImmune(isImmune: boolean) {
@@ -91,6 +113,9 @@ export class Unit extends Entity {
       this.explode();
     }
     super.cleanup();
+    for (const effect of this.effects.values()) {
+      effect.cleanup();
+    }
     this.isAliveInternal = false;
   }
 
@@ -203,6 +228,17 @@ export class Unit extends Entity {
       this.velocity.add(this.vectorBuffer);
     }
 
+    // Update effects
+    const toRemove = [];
+    for (const effect of this.effects.values()) {
+      effect.step(dt);
+      if (effect.isMarkedForDelete) {
+        toRemove.push(effect);
+      }
+    }
+
+    toRemove.forEach(this.removeEffect.bind(this));
+
     super.step(dt);
   }
 
@@ -239,12 +275,13 @@ export class Unit extends Entity {
       thrusting: this.thrusting,
       isImmune: this.isImmune,
       color: this.getBaseColor(),
+      effectCounts: serialize(this.effectCounts),
     };
   }
 
   public override deserialize(data: Data, setInitialized?: boolean) {
     super.deserialize(data, setInitialized);
-    const {life, maxLife, thrusting, isImmune, xpWorth, speed, name} = data;
+    const {life, maxLife, thrusting, isImmune, xpWorth, speed, name, effectCounts} = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }
@@ -265,6 +302,10 @@ export class Unit extends Entity {
     }
     if (typeof isImmune === 'boolean') {
       this.isImmune = isImmune;
+    }
+    if (typeof effectCounts === 'object') {
+      deserializeMapNumber(effectCounts, this.effectCounts);
+      console.log(this.effectCounts);
     }
   }
 

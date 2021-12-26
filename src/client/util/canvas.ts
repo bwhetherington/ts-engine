@@ -530,6 +530,21 @@ export class HDCanvas implements GraphicsContext {
     }
   }
 
+  public gradientCircle(x: number, y: number, r: number, from: Color, to: Color) {
+    const ctx = this.curContext;
+    if (!ctx) {
+      return;
+    }
+
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, r);
+    gradient.addColorStop(0, toCss(from));
+    gradient.addColorStop(1, toCss(to));
+
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+  }
+
   public path(points: Iterable<VectorLike>, color: Color, fade?: boolean) {
     const ctx = this.curContext;
     if (ctx) {

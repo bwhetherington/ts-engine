@@ -1,5 +1,5 @@
 import {Unit, Text, WorldManager, Trail} from 'core/entity';
-import {GraphicsContext, hsv} from 'core/graphics';
+import {BLACK, GraphicsContext, hsv, WHITE} from 'core/graphics';
 import {Data} from 'core/serialize';
 import {FireEvent, Weapon, WeaponManager} from 'core/weapon';
 import {NetworkManager} from 'core/net';
@@ -169,6 +169,16 @@ export class Tank extends Unit {
     const rotation = this.bodyShape.lockToWeapon
       ? this.weaponAngle - this.angle
       : 0;
+
+    // if (this.hasEffect('BurnEffect')) {
+    //   GraphicsPipeline.pipe()
+    //     .run(ctx, (ctx) => {
+    //       const from = {...this.getColor(), alpha: 0.75};
+    //       const to = {...from, alpha: 0}
+    //       ctx.gradientCircle(0, 0, radius * 3, from, to);
+    //     });
+    // }
+
     GraphicsPipeline.pipe()
       .options({
         doFill: true,
@@ -342,6 +352,7 @@ export class Tank extends Unit {
 
   public override cleanup() {
     this.weapon?.cleanup();
+    this.effectCounts.clear();
     super.cleanup();
   }
 

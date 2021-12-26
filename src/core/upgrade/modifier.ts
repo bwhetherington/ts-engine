@@ -60,29 +60,33 @@ export class HeroModifier implements Serializable {
     return mod;
   }
 
-  private multiplyKey(key: string, other: Modifiers) {
+  private multiplyKey(key: string, other: Modifiers, invert: boolean = false) {
     let existing = this.modifiers[key];
     if (!existing) {
       existing = new Matrix2().identity();
     }
     const target = other[key];
     if (target) {
-      existing = existing.multiply(target);
+      if (invert) {
+        existing = existing.multiplyInverse(target);
+      } else {
+        existing = existing.multiply(target);
+      }
     }
     this.modifiers[key] = existing;
   }
 
-  public multiply(other: HeroModifier) {
-    this.multiplyModifiers(other.modifiers);
+  public multiply(other: HeroModifier, invert: boolean = false) {
+    this.multiplyModifiers(other.modifiers, invert);
   }
 
-  public multiplyModifiers(other: Modifiers) {
+  public multiplyModifiers(other: Modifiers, invert: boolean = false) {
     Iterator.array(MODIFIER_KEYS)
       .filter(
         (key) => this.modifiers.hasOwnProperty(key) || other.hasOwnProperty(key)
       )
       .forEach((key) => {
-        this.multiplyKey(key, other);
+        this.multiplyKey(key, other, invert);
       });
   }
 }

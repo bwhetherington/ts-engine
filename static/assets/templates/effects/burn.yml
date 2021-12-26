@@ -1,0 +1,5 @@
+type: BurnEffect
+extends: DotEffect
+damage: 1
+interval: 0.5
+duration: 2

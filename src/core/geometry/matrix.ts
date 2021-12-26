@@ -176,15 +176,48 @@ export class Matrix2 implements Serializable {
     return x * this.a0 + this.a1;
   }
 
+  public getDeterminant(): number {
+    return this.a0 * this.b1 - this.a1 * this.b0;
+  }
+
   public multiply(src: Matrix2, dst?: Matrix2): Matrix2 {
     if (dst === undefined) {
       dst = new Matrix2();
     }
 
-    dst.a0 = this.a0 * src.a0 + this.a1 * src.b0;
-    dst.a1 = this.a0 * src.a1 + this.a1 * src.b1;
-    dst.b0 = this.b0 * src.a0 + this.b1 * src.b0;
-    dst.b1 = this.b0 * src.a1 + this.b1 * src.b1;
+    const a0 = this.a0 * src.a0 + this.a1 * src.b0;
+    const a1 = this.a0 * src.a1 + this.a1 * src.b1;
+    const b0 = this.b0 * src.a0 + this.b1 * src.b0;
+    const b1 = this.b0 * src.a1 + this.b1 * src.b1;
+
+    dst.a0 = a0;
+    dst.a1 = a1;
+    dst.b0 = b0;
+    dst.b1 = b1;
+
+    return dst;
+  }
+
+  public multiplyInverse(src: Matrix2, dst?: Matrix2): Matrix2 {
+    if (dst === undefined) {
+      dst = new Matrix2();
+    }
+
+    const factor = 1 / src.getDeterminant();
+    const srcA0 = factor * src.b1;
+    const srcA1 = factor * -src.a1;
+    const srcB0 = factor * -src.b0;
+    const srcB1 = factor * src.a0;
+
+    const a0 = this.a0 * srcA0 + this.a1 * srcB0;
+    const a1 = this.a0 * srcA1 + this.a1 * srcB1;
+    const b0 = this.b0 * srcA0 + this.b1 * srcB0;
+    const b1 = this.b0 * srcA1 + this.b1 * srcB1;
+
+    dst.a0 = a0;
+    dst.a1 = a1;
+    dst.b0 = b0;
+    dst.b1 = b1;
 
     return dst;
   }

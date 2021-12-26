@@ -34,6 +34,8 @@ import {UpgradePlugin} from 'server/plugin/upgrade';
 import {Config} from 'server/config';
 import {SpawnPlugin} from 'server/plugin/spawn';
 import {SyncManager} from './syncManager';
+import {Matrix2} from 'core/geometry';
+import {EffectManager} from 'core/effect';
 
 const log = LogManager.forFile(__filename);
 
@@ -62,6 +64,7 @@ async function main(): Promise<void> {
   await WeaponManager.initialize();
   await WorldManager.initialize();
   await UpgradeManager.initialize();
+  await EffectManager.initialize();
   // await WorldManager.setLevel('arena');
 
   PlayerManager.initialize();
@@ -106,6 +109,14 @@ async function main(): Promise<void> {
 
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);
+
+  const m1 = new Matrix2().identity();
+  m1.deserialize([3, 2, 5, 5]);
+
+  const identity = m1.multiplyInverse(m1);
+  console.log(identity);
+
+  console.log('f', identity.multiplyPoint(5));
 
   // Load plugins
   await PluginManager.loadPlugins([

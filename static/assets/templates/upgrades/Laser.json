@@ -2,6 +2,6 @@
   "type": "Laser",
   "extends": "ClassUpgrade",
   "name": "Laser",
-  "description": "Change to a laser tank, with an instantly-firing weapon.",
+  "description": "Change to a laser tank, with an instantly-firing weapon that leaves its targets burning.",
   "className": "SniperHero"
 }

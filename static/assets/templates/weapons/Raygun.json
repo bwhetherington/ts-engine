@@ -3,7 +3,8 @@
   "extends": "BaseRaygun",
   "shotInaccuracy": 0,
   "rayDistance": 1000,
-  "pierce": 1,
-  "damage": 5,
-  "rate": 0.35
+  "pierce": 3,
+  "damage": 10,
+  "rate": 0.7,
+  "hitEffect": "BurnEffect"
 }

@@ -62,7 +62,10 @@ export class BaseRaygun extends Weapon {
     const damage = this.rollDamage(modifier);
     Iterator.from(hit)
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
-      .forEach((unit) => unit.damage(damage, source));
+      .forEach((unit) => {
+        this.onHit(source, unit);
+        unit.damage(damage, source);
+      });
 
     const event = {
       type: 'DisplayRayEvent',

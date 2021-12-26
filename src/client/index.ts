@@ -20,6 +20,7 @@ import {MetricsManager} from 'client/metrics';
 import {AssetManager} from 'core/assets';
 import {UpgradeManager} from 'core/upgrade';
 import {ThemeManager} from 'core/theme';
+import {EffectManager} from 'core/effect';
 
 const log = LogManager.forFile(__filename);
 
@@ -39,6 +40,7 @@ async function main(): Promise<void> {
   await WorldManager.initialize();
   await UpgradeManager.initialize();
   await ThemeManager.initialize();
+  await EffectManager.initialize();
   PlayerManager.initialize();
   CameraManager.initialize();
   FormManager.initialize();

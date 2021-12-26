@@ -60,6 +60,7 @@ export class BaseGun extends Weapon {
     projectile.velocity.magnitude = projectileSpeed;
     projectile.shape = this.projectileShape;
     projectile.duration = projectileDuration;
+    projectile.onHit = this.onHit.bind(this, source);
     return projectile;
   }
 

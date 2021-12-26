@@ -1,11 +1,12 @@
 import {Serializable, Data} from 'core/serialize';
-import {Tank} from 'core/entity';
+import {Tank, Unit} from 'core/entity';
 import {EventManager, StepEvent, Event} from 'core/event';
 import {UUID} from 'core/uuid';
 import {FireEvent} from 'core/weapon';
 import {NetworkManager} from 'core/net';
 import {RNGManager} from 'core/random';
 import {HeroModifier} from 'core/upgrade';
+import { EffectManager } from 'core/effect';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';
@@ -19,6 +20,8 @@ export abstract class Weapon implements Serializable {
   public pierce: number = 1;
   public burstCount: number = 1;
   public burstInterval: number = 0;
+  public hitEffect?: string;
+
   private cooldown: number = 0;
   private id?: UUID;
 
@@ -137,6 +140,7 @@ export abstract class Weapon implements Serializable {
       pierce: this.pierce,
       burstCount: this.burstCount,
       burstInterval: this.burstInterval,
+      hitEffect: this.hitEffect,
     };
   }
 
@@ -152,6 +156,7 @@ export abstract class Weapon implements Serializable {
       pierce,
       burstCount,
       burstInterval,
+      hitEffect,
     } = data;
 
     if (typeof type === 'string') {
@@ -193,6 +198,10 @@ export abstract class Weapon implements Serializable {
     if (typeof burstInterval === 'number') {
       this.burstInterval = burstInterval;
     }
+
+    if (typeof hitEffect === 'string') {
+      this.hitEffect = hitEffect;
+    }
   }
 
   protected rollDamage(modifier?: HeroModifier): number {
@@ -202,5 +211,19 @@ export abstract class Weapon implements Serializable {
     }
     const roll = RNGManager.nextFloat(-damage / 5, damage / 5);
     return Math.max(1, damage + roll);
+  }
+
+  protected onHit(source: Unit, unit?: Unit) {
+    if (!(this.hitEffect && unit)) {
+      return;
+    }
+
+    const effect = EffectManager.instantiate(this.hitEffect);
+    if (!effect) {
+      return;
+    }
+
+    effect.source = source;
+    unit.addEffect(effect);
   }
 }
