@@ -110,14 +110,6 @@ async function main(): Promise<void> {
   process.once('SIGINT', cleanup);
   process.once('SIGTERM', cleanup);
 
-  const m1 = new Matrix2().identity();
-  m1.deserialize([3, 2, 5, 5]);
-
-  const identity = m1.multiplyInverse(m1);
-  console.log(identity);
-
-  console.log('f', identity.multiplyPoint(5));
-
   // Load plugins
   await PluginManager.loadPlugins([
     ChatLogPlugin,

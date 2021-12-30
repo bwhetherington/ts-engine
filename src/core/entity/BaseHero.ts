@@ -480,7 +480,6 @@ export class BaseHero extends Tank {
       const oldHero = WorldManager.getEntity(data.replacementId);
       if (oldHero instanceof BaseHero) {
         this.hasReplaced = true;
-        console.log('replace', data.replacementId);
         this.setPosition(oldHero.position);
         this.copyMovement(oldHero);
       }

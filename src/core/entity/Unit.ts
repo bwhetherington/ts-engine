@@ -305,7 +305,6 @@ export class Unit extends Entity {
     }
     if (typeof effectCounts === 'object') {
       deserializeMapNumber(effectCounts, this.effectCounts);
-      console.log(this.effectCounts);
     }
   }
 

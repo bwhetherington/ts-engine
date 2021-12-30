@@ -9,13 +9,10 @@ export class EffectManager extends LoadingManager<Effect> {
   }
 
   public async initialize(): Promise<void> {
-    console.log('foo');
     this.registerAssetType(Effect);
     this.registerAssetType(IntervalEffect);
     this.registerAssetType(DotEffect);
     this.registerAssetType(ModifierEffect);
     await this.loadAssetTemplates('templates/effects');
-    console.log(this);
-    console.log('EffectManager initialized');
   }
 }
