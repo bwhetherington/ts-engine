@@ -186,7 +186,7 @@ export const upgrade: CommandEntry = {
   permissionLevel: 1,
   async handler(player) {
     // ChatManager.error('No upgrade specified', player);
-    const upgrades = UpgradeManager.sampleUpgrades().take(3).toArray();
+    const upgrades = UpgradeManager.sampleUpgrades(player.hero).take(3).toArray();
     await UpgradeManager.offerUpgrades(player, upgrades);
     return;
   },

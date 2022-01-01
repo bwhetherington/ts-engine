@@ -7,6 +7,7 @@ export class Upgrade implements Serializable {
   public type: string = Upgrade.typeName;
   public name: string = '';
   public description: string = '';
+  public isUnique: boolean = false;
 
   public applyTo(_hero: BaseHero) {}
 
@@ -15,11 +16,12 @@ export class Upgrade implements Serializable {
       type: this.type,
       name: this.name,
       description: this.description,
+      isUnique: this.isUnique,
     };
   }
 
   public deserialize(data: Data) {
-    const {type, name, description} = data;
+    const {type, name, description, isUnique} = data;
     if (typeof type === 'string') {
       this.type = type;
     }
@@ -28,6 +30,9 @@ export class Upgrade implements Serializable {
     }
     if (typeof description === 'string') {
       this.description = description;
+    }
+    if (typeof isUnique === 'boolean') {
+      this.isUnique = isUnique;
     }
   }
 }

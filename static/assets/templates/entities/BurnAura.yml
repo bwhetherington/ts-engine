@@ -1,0 +1,4 @@
+type: BurnAura
+extends: Aura
+effect: BurnEffect
+radius: 150

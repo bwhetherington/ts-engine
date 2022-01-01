@@ -48,6 +48,7 @@ import {ThemeManager} from 'core/theme';
 import {SpawnEntityEvent} from './util';
 import {Pickup} from './Pickup';
 import {UpgradePickup} from './UpgradePickup';
+import {Aura} from './Aura';
 
 const log = LogManager.forFile(__filename);
 
@@ -58,7 +59,7 @@ export class WorldManager
   public space: Partioner<Entity>;
   private entities: Record<UUID, Entity> = {};
   public boundingBox: Rectangle;
-  private collisionLayers: Entity[][] = [[], []];
+  private collisionLayers: Entity[][] = [[], [], [], [], [], []];
   public previousState: Record<UUID, Data> = {};
   private toDelete: UUID[] = [];
   private entityCount: number = 0;
@@ -96,6 +97,7 @@ export class WorldManager
     this.registerAssetType(Feed);
     this.registerAssetType(Pickup);
     this.registerAssetType(UpgradePickup);
+    this.registerAssetType(Aura);
 
     // Effect entities
     this.registerAssetType(Text);
@@ -412,7 +414,7 @@ export class WorldManager
 
     // Reinsert each entity into the quad tree
     this.space.clear();
-    this.collisionLayers = [[], [], [], [], [], []];
+    this.collisionLayers = [[], [], [], [], [], [], []];
 
     this.getEntities().forEach((entity) => {
       entity.afterStep();

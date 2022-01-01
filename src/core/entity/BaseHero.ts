@@ -52,7 +52,7 @@ export class BaseHero extends Tank {
     [MovementDirection.Left]: false,
     [MovementDirection.Right]: false,
   };
-  private upgrades: string[] = [];
+  public upgrades: string[] = [];
 
   private xp: number = 0;
   private level: number = 1;

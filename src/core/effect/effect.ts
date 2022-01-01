@@ -1,7 +1,15 @@
 import {Data, Serializable} from 'core/serialize';
 import {Unit, WorldManager} from 'core/entity';
-import {Observer} from 'core/event';
+import {EventManager, Observer} from 'core/event';
 import {isUUID, UUID, UUIDManager} from 'core/uuid';
+
+export interface SpawnEffectEvent {
+  effect: Effect;
+}
+
+export interface DeleteEffectEvent {
+  effect: Effect;
+}
 
 export class Effect extends Observer implements Serializable {
   public static typeName: string = 'Effect';
@@ -16,12 +24,26 @@ export class Effect extends Observer implements Serializable {
   constructor() {
     super();
     this.id = UUIDManager.generate();
+
+    EventManager.emit<SpawnEffectEvent>({
+      type: 'SpawnEffectEvent',
+      data: {
+        effect: this,
+      },
+    });
   }
 
   public override cleanup() {
     this.onEnd();
     super.cleanup();
     UUIDManager.free(this.id);
+
+    EventManager.emit<DeleteEffectEvent>({
+      type: 'SpawnEffectEvent',
+      data: {
+        effect: this,
+      },
+    });
   }
 
   public kill() {

@@ -8,6 +8,7 @@ type Modifiers = Record<string, Matrix2>;
 
 const MODIFIER_KEYS = [
   'life',
+  'speed',
   'armor',
   'damage',
   'pierce',
@@ -19,6 +20,8 @@ const MODIFIER_KEYS = [
   'projectileDuration',
   'projectileSpread',
 ];
+
+const IDENTITY = new Matrix2().identity();
 
 export class HeroModifier implements Serializable {
   public modifiers: Modifiers = {};
@@ -52,10 +55,9 @@ export class HeroModifier implements Serializable {
   }
 
   public get(key: string): Matrix2 {
-    let mod = this.modifiers[key];
+    const mod = this.modifiers[key];
     if (!mod) {
-      mod = new Matrix2().identity();
-      this.modifiers[key] = mod;
+      return IDENTITY;
     }
     return mod;
   }

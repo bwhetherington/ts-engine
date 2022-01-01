@@ -11,8 +11,9 @@ export interface SpawnEntityEvent {
 }
 
 export enum CollisionLayer {
-  BaseEffect,
   Geometry,
+  Aura,
+  BaseEffect,
   Unit,
   Projectile,
   Effect,

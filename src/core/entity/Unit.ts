@@ -18,6 +18,7 @@ import {Color, reshade} from 'core/graphics';
 import {TextColor} from 'core/chat';
 import {Effect} from 'core/effect';
 import {UUID} from 'core/uuid';
+import {Aura} from './Aura';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -47,6 +48,7 @@ export class Unit extends Entity {
   private hasExploded: boolean = false;
 
   private effects: Map<UUID, Effect> = new Map();
+  private auras: Set<Aura> = new Set();
 
   public constructor() {
     super();
@@ -73,6 +75,11 @@ export class Unit extends Entity {
   }
 
   public addEffect(effect: Effect) {
+    if (!this.isAlive()) {
+      effect.cleanup();
+      return;
+    }
+
     this.effects.set(effect.id, effect);
 
     const count = this.effectCounts.get(effect.type) ?? 0;
@@ -81,10 +88,17 @@ export class Unit extends Entity {
     effect.target = this;
   }
 
+  public addAura(aura: Aura) {
+    if (!this.isAlive()) {
+      aura.markForDelete();
+      return;
+    }
+    this.auras.add(aura);
+  }
+
   public removeEffect(effect: Effect) {
     this.effects.delete(effect.id);
     delete effect.target;
-
 
     const count = this.effectCounts.get(effect.type);
     if (count !== undefined) {
@@ -92,6 +106,10 @@ export class Unit extends Entity {
     }
 
     effect.cleanup();
+  }
+
+  public removeAura(aura: Aura) {
+    this.auras.delete(aura);
   }
 
   public hasEffect(type: string): boolean {
@@ -107,15 +125,20 @@ export class Unit extends Entity {
   }
 
   public override cleanup() {
-    this.label?.markForDelete();
     this.hpBar?.markForDelete();
+    this.label?.markForDelete();
     if (NetworkManager.isClient() && !this.hasExploded) {
       this.explode();
     }
     super.cleanup();
+
     for (const effect of this.effects.values()) {
       effect.cleanup();
     }
+    for (const aura of this.auras) {
+      aura.markForDelete();
+    }
+
     this.isAliveInternal = false;
   }
 
@@ -230,10 +253,12 @@ export class Unit extends Entity {
 
     // Update effects
     const toRemove = [];
-    for (const effect of this.effects.values()) {
-      effect.step(dt);
-      if (effect.isMarkedForDelete) {
-        toRemove.push(effect);
+    if (this.effects) {
+      for (const effect of this.effects.values()) {
+        effect.step(dt);
+        if (effect.isMarkedForDelete) {
+          toRemove.push(effect);
+        }
       }
     }
 
@@ -281,7 +306,16 @@ export class Unit extends Entity {
 
   public override deserialize(data: Data, setInitialized?: boolean) {
     super.deserialize(data, setInitialized);
-    const {life, maxLife, thrusting, isImmune, xpWorth, speed, name, effectCounts} = data;
+    const {
+      life,
+      maxLife,
+      thrusting,
+      isImmune,
+      xpWorth,
+      speed,
+      name,
+      effectCounts,
+    } = data;
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }

@@ -6,10 +6,12 @@ import {
   ProjectileShape,
   isProjectileShape,
   Trail,
+  Aura,
 } from 'core/entity';
 import {Data} from 'core/serialize';
 import {RNGManager} from 'core/random';
 import {HeroModifier} from '../upgrade/modifier';
+import {DotEffect} from 'core/effect';
 
 export class BaseGun extends Weapon {
   public static typeName: string = 'BaseGun';
@@ -61,6 +63,7 @@ export class BaseGun extends Weapon {
     projectile.shape = this.projectileShape;
     projectile.duration = projectileDuration;
     projectile.onHit = this.onHit.bind(this, source);
+
     return projectile;
   }
 

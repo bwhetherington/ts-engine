@@ -90,5 +90,12 @@ export interface GraphicsContext {
     proc: (ctx: GraphicsContext) => void
   ): GraphicsContext;
   withShadow(shadow: ShadowStyle, proc: GraphicsProc): GraphicsContext;
-  gradientCircle(x: number, y: number, r: number, from: Color, to: Color): void;
+  gradientCircle(
+    x: number,
+    y: number,
+    r0: number,
+    r1: number,
+    from: Color,
+    to: Color
+  ): void;
 }

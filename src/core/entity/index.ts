@@ -18,6 +18,7 @@ export * from 'core/entity/Trail';
 export * from 'core/entity/Follow';
 export * from 'core/entity/Pickup';
 export * from 'core/entity/UpgradePickup';
+export * from 'core/entity/Aura';
 
 import {WorldManager} from 'core/entity/manager';
 import {Rectangle} from 'core/geometry';

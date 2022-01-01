@@ -6,7 +6,7 @@ import {FireEvent} from 'core/weapon';
 import {NetworkManager} from 'core/net';
 import {RNGManager} from 'core/random';
 import {HeroModifier} from 'core/upgrade';
-import { EffectManager } from 'core/effect';
+import {EffectManager} from 'core/effect';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';

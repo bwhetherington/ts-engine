@@ -1,0 +1,6 @@
+type: Burn
+extends: AuraUpgrade
+name: Burn
+description: Burn units around you.
+aura: BurnAura
+isUnique: true

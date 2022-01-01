@@ -3,6 +3,7 @@ import {EventManager} from 'core/event';
 import {Player} from 'core/player';
 import {RNGManager} from 'core/random';
 import {
+  AuraUpgrade,
   Offer,
   OfferUpgradeEvent,
   SelectUpgradeEvent,
@@ -13,6 +14,7 @@ import {
 import {sleep} from 'core/util';
 import {UUID, UUIDManager} from 'core/uuid';
 import {Iterator} from 'core/iterator';
+import { BaseHero } from 'core/entity';
 
 interface OfferEntry extends Offer {
   hero: UUID;
@@ -25,7 +27,7 @@ interface UpgradeSelection {
   hero: UUID;
 }
 
-const EXCLUDED_UPGRADES = new Set(['ModifierUpgrade', 'ClassUpgrade']);
+const EXCLUDED_UPGRADES = new Set(['ModifierUpgrade', 'ClassUpgrade', 'AuraUpgrade']);
 
 const CLASS_UPGRADES = new Set(['MachineGun', 'Homing', 'Railgun', 'Laser']);
 
@@ -41,6 +43,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
   public async initialize(): Promise<void> {
     this.registerAssetType(ModifierUpgrade);
     this.registerAssetType(ClassUpgrade);
+    this.registerAssetType(AuraUpgrade);
     await this.loadAssetTemplates('templates/upgrades');
 
     this.availableUpgrades = this.getAssetInitializers()
@@ -161,8 +164,25 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
     } catch (_ex) {}
   }
 
-  public sampleUpgrades(): Iterator<string> {
-    return RNGManager.sample(this.availableUpgrades);
+  public sampleUpgrades(hero?: BaseHero): Iterator<string> {
+    return RNGManager.sample(this.availableUpgrades).filter((type) => {
+      // Exclude upgrades which do not exist
+      const upgrade = this.instantiate(type);
+      if (!upgrade) {
+        return false;
+      }
+
+      console.log(upgrade.type, upgrade.isUnique);
+
+      // Exclude unique upgrades if the player already has them selected
+      if (upgrade.isUnique) {
+        if (hero && hero.upgrades.includes(upgrade.type)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
   }
 
   public sampleHeroUpgrades(): Iterator<string> {
