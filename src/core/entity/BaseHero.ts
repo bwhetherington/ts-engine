@@ -26,7 +26,7 @@ import {BarUpdateEvent, clamp} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
 import {isUUID, UUID} from 'core/uuid';
-import {Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
+import {ChangeStoredUpgradeCountEvent, Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
 import {Iterator} from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
@@ -53,6 +53,7 @@ export class BaseHero extends Tank {
     [MovementDirection.Right]: false,
   };
   public upgrades: string[] = [];
+  private _storedUpgrades: number = 0;
 
   private xp: number = 0;
   private level: number = 1;
@@ -60,6 +61,20 @@ export class BaseHero extends Tank {
 
   public replacementId?: UUID;
   private hasReplaced: boolean = false;
+
+  public get storedUpgrades(): number {
+    return this._storedUpgrades;
+  }
+
+  public set storedUpgrades(val) {
+    if (val !== this._storedUpgrades && this.getPlayer()?.isActivePlayer()) {
+      EventManager.emit<ChangeStoredUpgradeCountEvent>({
+        type: 'ChangeStoredUpgradeCountEvent',
+        data: {storedUpgrades: val},
+      });
+    }
+    this._storedUpgrades = val;
+  }
 
   public constructor() {
     super();
@@ -415,6 +430,7 @@ export class BaseHero extends Tank {
       playerID: this.player?.id,
       replacementId: this.replacementId,
       xp: this.xp,
+      storedUpgrades: this.storedUpgrades,
     };
   }
 
@@ -426,7 +442,11 @@ export class BaseHero extends Tank {
       weaponAngle: oldWeaponAngle,
       targetAngle: oldTargetAngle,
     } = this;
-    const {playerID, xp, modifiers} = data;
+    const {playerID, xp, storedUpgrades} = data;
+
+    if (typeof storedUpgrades === 'number') {
+      this.storedUpgrades = storedUpgrades;
+    }
 
     if (typeof xp === 'number') {
       this.setExperience(xp);

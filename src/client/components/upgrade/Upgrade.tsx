@@ -32,10 +32,18 @@ export const UpgradeComponent: React.FunctionComponent<UpgradeProps> = ({
 }) => {
   const onClick = () => onSelect?.(id, upgrade);
   const description = sanitize(upgrade.description);
+
+  let header;
+  if (upgrade.isUnique) {
+    header = <PanelHeader><strong>*</strong>{upgrade.name}<strong>*</strong></PanelHeader>;
+  } else {
+    header = <PanelHeader>{upgrade.name}</PanelHeader>;
+  }
+
   return (
     <Panel>
       <Container>
-        <PanelHeader>{upgrade.name}</PanelHeader>
+        {header}
         <Content dangerouslySetInnerHTML={{__html: description}} />
         <Button onClick={onClick}>Select</Button>
       </Container>

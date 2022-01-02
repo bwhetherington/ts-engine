@@ -6,9 +6,17 @@ import {Upgrade} from 'core/upgrade/upgrade';
 import {BaseHero} from 'core/entity';
 import {UUID} from 'core/uuid';
 
+export interface ChangeStoredUpgradeCountEvent {
+  storedUpgrades: number;
+}
+
+export interface RequestUpgradeEvent {
+  hero: UUID;
+}
+
 export interface OfferUpgradeEvent {
-  upgrades: string[];
   id: UUID;
+  upgrades: string[];
 }
 
 export interface SelectUpgradeEvent {
@@ -17,7 +25,7 @@ export interface SelectUpgradeEvent {
   id: UUID;
 }
 
-export interface RevokeOfferEvent {
+export interface CloseOfferEvent {
   id: UUID;
 }
 

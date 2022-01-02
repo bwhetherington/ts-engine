@@ -1,6 +1,6 @@
-import { Aura, BaseHero, WorldManager } from "core/entity";
-import { Data } from "core/serialize";
-import { Upgrade } from "core/upgrade";
+import {Aura, BaseHero, WorldManager} from 'core/entity';
+import {Data} from 'core/serialize';
+import {Upgrade} from 'core/upgrade';
 
 export class AuraUpgrade extends Upgrade {
   public static typeName: string = 'AuraUpgrade';
@@ -9,7 +9,6 @@ export class AuraUpgrade extends Upgrade {
 
   public applyTo(hero: BaseHero) {
     const aura = WorldManager.spawnEntity(this.aura);
-    console.log('spawn aura', aura);
     if (!aura) {
       return;
     }
@@ -35,6 +34,5 @@ export class AuraUpgrade extends Upgrade {
     if (typeof aura === 'string') {
       this.aura = aura;
     }
-    console.log('new aura upgrade', this);
   }
 }

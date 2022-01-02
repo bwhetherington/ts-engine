@@ -25,17 +25,21 @@ export class UpgradePlugin extends Plugin {
           return;
         }
 
-        return {from, to, player};
+        const hero = entity;
+
+        return {from, to, player, hero};
       })
-      .forEach(({to, player}) => {
-        let upgrades;
-        if (to === 5) {
-          // Offer a hero upgrade at level 5
-          upgrades = UpgradeManager.sampleHeroUpgrades().take(2).toArray();
-        } else {
-          upgrades = UpgradeManager.sampleUpgrades().take(3).toArray();
-        }
-        UpgradeManager.offerUpgrades(player, upgrades);
+      .forEach(({hero}) => {
+        hero.storedUpgrades += 1;
+
+        // let upgrades;
+        // if (to === 5) {
+        //   // Offer a hero upgrade at level 5
+        //   upgrades = UpgradeManager.sampleHeroUpgrades().take(2).toArray();
+        // } else {
+        //   upgrades = UpgradeManager.sampleUpgrades().take(3).toArray();
+        // }
+        // UpgradeManager.offerUpgrades(player, upgrades);
       });
 
     this.streamEvents<UpgradeEvent>('UpgradeEvent').forEach(

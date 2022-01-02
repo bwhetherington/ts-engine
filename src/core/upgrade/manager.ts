@@ -10,11 +10,17 @@ import {
   Upgrade,
   ModifierUpgrade,
   ClassUpgrade,
+  CloseOfferEvent,
+  RequestUpgradeEvent,
 } from 'core/upgrade';
 import {sleep} from 'core/util';
 import {UUID, UUIDManager} from 'core/uuid';
 import {Iterator} from 'core/iterator';
-import { BaseHero } from 'core/entity';
+import {BaseHero, WorldManager} from 'core/entity';
+import {NetworkManager} from 'core/net';
+import { LogManager } from 'core/log';
+
+const log = LogManager.forFile(__filename);
 
 interface OfferEntry extends Offer {
   hero: UUID;
@@ -27,12 +33,16 @@ interface UpgradeSelection {
   hero: UUID;
 }
 
-const EXCLUDED_UPGRADES = new Set(['ModifierUpgrade', 'ClassUpgrade', 'AuraUpgrade']);
+const EXCLUDED_UPGRADES = new Set([
+  'ModifierUpgrade',
+  'ClassUpgrade',
+  'AuraUpgrade',
+]);
 
 const CLASS_UPGRADES = new Set(['MachineGun', 'Homing', 'Railgun', 'Laser']);
 
 export class UpgradeManager extends LoadingManager<Upgrade> {
-  private offers: Record<UUID, OfferEntry> = {};
+  private offers: Map<UUID, Offer> = new Map();
   private availableUpgrades: string[] = [];
   private availableHeroUpgrades: string[] = [...CLASS_UPGRADES];
 
@@ -64,104 +74,75 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       .map(([type, _initializer]) => type)
       .toArray();
 
-    EventManager.streamEventsForPlayer<SelectUpgradeEvent>('SelectUpgradeEvent')
-      .filterMap(({data}) => {
-        const offer = this.offers[data.id];
-        if (offer) {
-          return {offer, choice: data.upgrade};
-        }
-      })
-      // Validate that they were offered the upgrade that they chose
-      .filter(({offer, choice}) => offer.upgrades.includes(choice))
-      .filterMap(({offer, choice}) => {
-        const upgrade = this.instantiate(choice);
-        if (upgrade) {
-          return {offer, upgrade};
-        }
-      })
-      .forEach(({offer, upgrade}) => {
-        this.acceptOffer(offer.id, upgrade);
-      });
-  }
+    if (NetworkManager.isServer()) {
+      EventManager.streamEventsForPlayer<RequestUpgradeEvent>('RequestUpgradeEvent')
+        .filterMap(({player, data: {hero}}) => {
+          const entity = WorldManager.getEntity(hero);
+          if (entity instanceof BaseHero) {
+            return {player, hero: entity};
+          }
+        })
+        .filter(({hero}) => hero.storedUpgrades > 0)
+        .forEach(({player, hero}) => {
+          hero.storedUpgrades -= 1;
+          const id = UUIDManager.generate();
+          const upgrades = this.sampleUpgrades(hero).take(3).toArray();
+          this.offers.set(id, {
+            id, upgrades,
+          });
+          NetworkManager.sendEvent<OfferUpgradeEvent>({
+            type: 'OfferUpgradeEvent',
+            data: {
+              id,
+              upgrades,
+            },
+          }, player.socket);
+        });
 
-  private cleanupOffer(id: UUID, then: (offer: OfferEntry) => void) {
-    const offer = this.offers[id];
-    if (offer) {
-      delete this.offers[id];
-      UUIDManager.free(id);
-      then(offer);
+      EventManager.streamEventsForPlayer<SelectUpgradeEvent>(
+        'SelectUpgradeEvent'
+      ).forEach(({data: {id, upgrade, hero}}) => {
+        const offer = this.offers.get(id);
+        if (!offer) {
+          log.error('offer not found: ' + id);
+          this.closeOffer(id);
+          return;
+        }
+
+        if (!offer.upgrades.includes(upgrade)) {
+          log.error('selected upgrade was not valid for offer');
+          this.closeOffer(id);
+          return;
+        }
+
+        const heroEntity = WorldManager.getEntity(hero);
+        if (!(heroEntity instanceof BaseHero)) {
+          log.error('hero not found');
+          this.closeOffer(id);
+          return;
+        }
+
+        const instantiated = this.instantiate(upgrade);
+        if (!instantiated) {
+          log.error('failed to instantiate upgrade: ' + upgrade);
+          this.closeOffer(id);
+          return;
+        }
+
+        heroEntity.applyUpgrade(instantiated);
+        this.closeOffer(id);
+      });
     }
   }
 
-  private acceptOffer(id: UUID, choice: Upgrade) {
-    this.cleanupOffer(id, (offer) =>
-      offer.resolve({
-        hero: offer.hero,
-        upgrade: choice,
-      })
-    );
-  }
-
-  private rejectOffer(id: UUID) {
-    this.cleanupOffer(id, (offer) => offer.reject());
-  }
-
-  private sendUpgrades(
-    player: Player,
-    upgrades: string[]
-  ): Promise<UpgradeSelection> {
-    return new Promise(async (resolve, reject) => {
-      if (upgrades.length === 0) {
-        reject();
-        return;
-      }
-
-      const id = UUIDManager.generate();
-      const hero = player.hero?.id;
-      if (!hero) {
-        reject();
-        return;
-      }
-      this.offers[id] = {
-        id,
-        hero,
-        upgrades,
-        reject,
-        resolve,
-      };
-      player.sendEvent<OfferUpgradeEvent>({
-        type: 'OfferUpgradeEvent',
-        data: {
-          upgrades,
-          id,
-        },
+  private closeOffer(id: UUID) {
+    UUIDManager.free(id);
+    if (this.offers.delete(id)) {
+      NetworkManager.sendEvent<CloseOfferEvent>({
+        type: 'CloseOfferEvent',
+        data: {id},
       });
-
-      // Timeout
-      await sleep(60);
-      if (this.offers.hasOwnProperty(id)) {
-        this.rejectOffer(id);
-      }
-    });
-  }
-
-  public async offerUpgrades(
-    player: Player,
-    upgrades: string[]
-  ): Promise<void> {
-    try {
-      const {hero: oldHero} = player;
-      const {hero, upgrade} = await this.sendUpgrades(player, upgrades);
-      const {hero: newHero} = player;
-      if (
-        oldHero &&
-        newHero &&
-        newHero.id === oldHero.id &&
-        oldHero.id === hero
-      ) {
-        newHero.applyUpgrade(upgrade);
-      }
-    } catch (_ex) {}
+    }
   }
 
   public sampleUpgrades(hero?: BaseHero): Iterator<string> {
@@ -172,10 +153,9 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
         return false;
       }
 
-      console.log(upgrade.type, upgrade.isUnique);
-
       // Exclude unique upgrades if the player already has them selected
       if (upgrade.isUnique) {
+        console.log(upgrade.type, 'existing', hero?.upgrades);
         if (hero && hero.upgrades.includes(upgrade.type)) {
           return false;
         }

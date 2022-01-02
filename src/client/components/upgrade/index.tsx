@@ -6,6 +6,8 @@ import {
   OfferUpgradeEvent,
   Offer,
   SelectUpgradeEvent,
+  RequestUpgradeEvent,
+  ChangeStoredUpgradeCountEvent,
 } from 'core/upgrade';
 import {UUID} from 'core/uuid';
 import {NetworkManager} from 'core/net';
@@ -21,18 +23,25 @@ import {Key, KeyAction, KeyEvent} from 'core/input';
 
 interface ContainerState {
   offers: Offer[];
-  shouldShow: boolean;
+  storedUpgrades: number;
 }
 
 export class UpgradeContainer extends Component<{}, ContainerState> {
   constructor(props: {}) {
     super(props, {
       offers: [],
-      shouldShow: false,
+      storedUpgrades: 0,
     });
   }
 
   public componentDidMount() {
+    this.streamEvents<ChangeStoredUpgradeCountEvent>('ChangeStoredUpgradeCountEvent')
+      .forEach(({data: {storedUpgrades}}) => {
+        this.updateState({
+          storedUpgrades,
+        });
+      });
+
     this.streamEvents<OfferUpgradeEvent>('OfferUpgradeEvent')
       .map<Offer>(({data: {id, upgrades}}) => ({id, upgrades}))
       .forEach((offer) => {
@@ -54,9 +63,9 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
       .filter(
         ({data}) => data.key === Key.Space && data.action === KeyAction.KeyDown
       )
-      .filter(() => this.state.offers.length > 0)
+      .filter(() => this.state.storedUpgrades > 0)
       .forEach(() => {
-        this.toggleSelection();
+        this.requestOffer();
       });
   }
 
@@ -69,7 +78,6 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
   private async removeOffers(): Promise<void> {
     await this.updateState({
       offers: [],
-      shouldShow: false,
     });
   }
 
@@ -78,7 +86,6 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
     const willBeEmpty = offers.length === 1;
     await this.updateState({
       offers: offers.slice(0, offers.length - 1),
-      shouldShow: !willBeEmpty,
     });
     if (willBeEmpty) {
       // Return focus to main screen
@@ -91,19 +98,27 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
     return offers[offers.length - 1];
   }
 
-  private async toggleSelection(): Promise<void> {
-    const shouldToggle = this.state.offers.length > 0;
-    if (shouldToggle) {
-      await this.updateState({
-        shouldShow: !this.state.shouldShow,
+  private requestOffer() {
+    if (this.state.offers.length > 0) {
+      return;
+    }
+    const hero = PlayerManager.getActivePlayer()?.hero;
+    if (hero) {
+      NetworkManager.sendEvent<RequestUpgradeEvent>({
+        type: 'RequestUpgradeEvent',
+        data: {hero: hero.id},
       });
     }
+  }
+
+  private get storedUpgrades(): number {
+    return this.state.storedUpgrades;
   }
 
   public render(): JSX.Element {
     const offer = this.getTopOffer();
     const onSelect = async (id: UUID, upgrade: Upgrade) => {
-      const hero = PlayerManager.getActivePlayer()?.hero?.id;
+      const hero = PlayerManager.getActivePlayer()?.hero;
       if (!hero) {
         return;
       }
@@ -111,39 +126,34 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
         type: 'SelectUpgradeEvent',
         data: {
           id,
-          hero,
+          hero: hero.id,
           upgrade: upgrade.type,
         },
       });
       await this.removeTopOffer();
     };
     if (offer) {
-      const {shouldShow} = this.state;
-      const className = shouldShow ? 'visible' : 'hidden';
       const container = (
-        <Background className={className}>
+        <Background className='visible'>
           <OfferComponent offer={offer} onSelect={onSelect} />
         </Background>
       );
-      if (shouldShow) {
-        return container;
-      } else {
-        const numOffers = this.state.offers.length;
+      return container;
+    } else {
+      const numOffers = this.storedUpgrades;
+      if (numOffers > 0) {
         const buttonText =
           numOffers > 1
             ? `Upgrades Available (${numOffers})`
             : 'Upgrade Available';
         return (
-          <div>
-            <BlueButton onClick={this.toggleSelection.bind(this)}>
-              <strong>[Space]</strong> {buttonText}
-            </BlueButton>
-            {container}
-          </div>
+          <BlueButton onClick={this.requestOffer.bind(this)}>
+            <strong>[Space]</strong> {buttonText}
+          </BlueButton>
         );
+      } else {
+        return <Background className="hidden" />;
       }
-    } else {
-      return <Background className="hidden" />;
     }
   }
 }
