@@ -13,7 +13,7 @@ import {TimerManager, now} from 'server/util';
 import {WorldManager} from 'core/entity';
 import {InitialSyncEvent, PlayerInitializedEvent} from 'core/net/util';
 import process from 'process';
-import {UUID, UUIDManager} from 'core/uuid';
+import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {MetricsManager} from 'server/metrics';
 import {Data, SerializeManager} from 'core/serialize';
 
@@ -222,8 +222,8 @@ export class Server extends Node {
   }
 
   public onMessage(message: Message, socket: Socket) {
-    if (message.type === 'PingEvent' && typeof message.data?.id === 'number') {
-      const id = message.data.id as number;
+    if (message.type === 'PingEvent' && isUUID(message.data?.id)) {
+      const id = message.data.id as UUID;
       const entry = this.pingResolvers[id];
       if (entry) {
         const {startTime, resolver} = entry;

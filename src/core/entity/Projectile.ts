@@ -4,7 +4,7 @@ import {LogManager} from 'core/log';
 import {CollisionLayer} from './util';
 import {Data} from 'core/serialize';
 import {NetworkManager} from 'core/net';
-import {UUID} from 'core/uuid';
+import {isUUID, UUID} from 'core/uuid';
 import {iterator} from 'core/iterator';
 import {Echo, EchoVariant} from './Echo';
 import {EventManager} from 'core/event';
@@ -211,7 +211,7 @@ export class Projectile extends Entity {
       this.pierce = pierce;
     }
 
-    if (typeof parentID === 'number') {
+    if (isUUID(parentID)) {
       const parent = WorldManager.getEntity(parentID);
       if (parent instanceof Unit) {
         this.parent = parent;

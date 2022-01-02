@@ -2,7 +2,7 @@ import {BaseHero, WorldManager} from 'core/entity';
 import {Serializable, Data} from 'core/serialize';
 import {Socket, NetworkManager} from 'core/net';
 import {PlayerManager, Account} from 'core/player';
-import {UUIDManager, UUID} from 'core/uuid';
+import {UUIDManager, UUID, isUUID} from 'core/uuid';
 import {EventData, Event, Observer} from 'core/event';
 import {capitalize} from 'core/util';
 import {LogManager} from 'core/log';
@@ -65,7 +65,7 @@ export class Player extends Observer implements Serializable {
 
   public deserialize(data: Data) {
     const {name, id, socket, heroID, score, hasJoined} = data;
-    if (typeof id === 'number') {
+    if (isUUID(id)) {
       this.id = id;
     }
     if (typeof name === 'string') {
@@ -74,7 +74,7 @@ export class Player extends Observer implements Serializable {
     if (typeof socket === 'number') {
       this.socket = socket;
     }
-    if (typeof heroID == 'number') {
+    if (isUUID(heroID)) {
       const entity = WorldManager.getEntity(heroID);
       if (entity instanceof BaseHero) {
         this.setHero(entity);

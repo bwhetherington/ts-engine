@@ -82,7 +82,6 @@ export class Debug extends Component<{}, DebugState> {
           <Line label="FPS" value={Math.round(this.state.fps)} />
           <Line label="Entities" value={this.state.clientEntities} />
           <Line label="Listeners" value={this.state.clientListeners} />
-          <Line label="UUIDs" value={this.state.clientUuids} />
         </div>
         <PanelHeader>
           <b>Server</b>
@@ -95,7 +94,6 @@ export class Debug extends Component<{}, DebugState> {
             label="Latency"
             value={Math.round(this.state.ping * 1000) + 'ms'}
           />
-          <Line label="UUIDs" value={this.state.serverUuids} />
         </div>
       </Panel>
     );

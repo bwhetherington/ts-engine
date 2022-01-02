@@ -5,7 +5,7 @@ import {SyncEvent, NetworkManager} from 'core/net';
 import {EventManager} from 'core/event';
 import {diff} from 'core/util';
 import {Iterator} from 'core/iterator';
-import {UUID, UUIDManager} from 'core/uuid';
+import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {isEmpty} from 'core/util/object';
 import {MetricsEvent} from 'core/metrics';
 
@@ -68,7 +68,7 @@ export class PlayerManager implements Serializable {
 
   public remove(player: Player | UUID) {
     let id;
-    if (typeof player === 'number') {
+    if (isUUID(player)) {
       id = player;
     } else {
       id = player.id;
@@ -94,7 +94,7 @@ export class PlayerManager implements Serializable {
     }
   }
 
-  public getPlayer(index?: number): Player | undefined {
+  public getPlayer(index?: UUID): Player | undefined {
     if (index !== undefined) {
       return this.players[index];
     } else {

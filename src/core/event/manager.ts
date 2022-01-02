@@ -173,7 +173,7 @@ export class EventManager {
     priority: Priority = Priority.Normal,
     allowExternal: boolean = false
   ): AsyncIterator<Event<E>> {
-    let id: number;
+    let id: UUID;
     const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
       id = this.addListener<E>(
         type,

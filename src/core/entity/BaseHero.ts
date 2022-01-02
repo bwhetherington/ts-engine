@@ -308,7 +308,7 @@ export class BaseHero extends Tank {
   public setPlayer(player: UUID | Player) {
     const oldPlayer = this.player;
     let newPlayer;
-    if (typeof player === 'number') {
+    if (isUUID(player)) {
       newPlayer = PlayerManager.getPlayer(player);
     } else {
       newPlayer = player;

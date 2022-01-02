@@ -40,7 +40,7 @@ import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
 import {AssetManager, AssetType, LoadingManager} from 'core/assets';
-import {UUID, UUIDManager} from 'core/uuid';
+import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {DataBuffer} from 'core/buf';
 import {Trail} from './Trail';
 import {ShatterProjectile} from './ShatterProjectile';
@@ -301,7 +301,7 @@ export class WorldManager
 
   public remove(entity: Entity | UUID) {
     let actual: Entity | undefined = undefined;
-    if (typeof entity === 'number') {
+    if (isUUID(entity)) {
       actual = this.getEntity(entity);
     } else {
       actual = entity;
@@ -640,18 +640,5 @@ export class WorldManager
         this.add(entity);
       }
     }
-  }
-
-  public dataSerializeAll(): DataBuffer {
-    // Compute size
-    const size = this.getEntities()
-      .filter((entity) => entity.doSync)
-      .map((entity) => entity.dataSize())
-      .fold(0, (sum, size) => sum + size);
-    const buf = DataBuffer.writer(size);
-    this.getEntities()
-      .filter((entity) => entity.doSync)
-      .forEach((entity) => entity.dataSerialize(buf));
-    return buf;
   }
 }

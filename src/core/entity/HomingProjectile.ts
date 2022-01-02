@@ -3,6 +3,7 @@ import {EventManager} from 'core/event';
 import {DirectionVector, Rectangle} from 'core/geometry';
 import {NetworkManager} from 'core/net';
 import {Data} from 'core/serialize';
+import { isUUID } from 'core/uuid';
 
 const SEARCH_RADIUS = 250;
 
@@ -101,7 +102,7 @@ export class HomingProjectile extends Projectile {
       this.turnSpeed = turnSpeed;
     }
 
-    if (typeof targetID === 'number') {
+    if (isUUID(targetID)) {
       this.target = WorldManager.getEntity(targetID);
     }
   }

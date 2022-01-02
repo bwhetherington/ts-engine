@@ -7,14 +7,13 @@ import {isCollisionLayer, shuntOutOf} from './util';
 import {EventManager, Observer} from 'core/event';
 import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {AsyncIterator} from 'core/iterator';
-import {DataBuffer, DataSerializable} from 'core/buf';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {clamp} from 'core/util';
 import {NetworkManager} from 'core/net';
 
 export class Entity
   extends Observer
-  implements Bounded, DataSerializable, Serializable, Renderable
+  implements Bounded, Serializable, Renderable
 {
   public static typeName: string = 'Entity';
   public static typeNum: number = 0;
@@ -213,44 +212,6 @@ export class Entity
     return data;
   }
 
-  public dataSize(): number {
-    return 84;
-  }
-
-  public dataSerialize(buf: DataBuffer) {
-    buf.writeString(this.type, 20); // 24 - 24
-    buf.writeUInt32(this.id); // 4  - 28
-    this.position.dataSerialize(buf); // 8  - 36
-    this.velocity.dataSerialize(buf); // 8  - 44
-    this.boundingBox.dataSerialize(buf); // 16 - 60
-    buf.writeFloat(this.mass); // 4  - 64
-    buf.writeFloat(this.friction); // 4  - 68
-    buf.writeFloat(this.bounce); // 4  - 72
-    buf.writeFloat(this.angle); // 4  - 76
-    buf.writeBoolean(this.isCollidable); // 1  - 77
-    buf.writeBoolean(this.doSync); // 1  - 78
-    buf.writeBoolean(this.isVisible); // 1  - 79
-    buf.writeUInt8(this.collisionLayer); // 1  - 80
-    buf.writeColor(this.getColor()); // 4  - 84
-  }
-
-  public dataDeserialize(buf: DataBuffer) {
-    this.type = buf.readString();
-    this.id = buf.readUInt32();
-    this.position.dataDeserialize(buf);
-    this.velocity.dataDeserialize(buf);
-    this.boundingBox.dataDeserialize(buf);
-    this.mass = buf.readFloat();
-    this.friction = buf.readFloat();
-    this.bounce = buf.readFloat();
-    this.angle = buf.readFloat();
-    this.isCollidable = buf.readBoolean();
-    this.doSync = buf.readBoolean();
-    this.isVisible = buf.readBoolean();
-    this.collisionLayer = buf.readUInt8();
-    this.deserializeColor(buf.readColor());
-  }
-
   protected deserializeColor(data: Data) {
     const {red, green, blue, alpha} = data;
     const newColor = {...this.color};
@@ -291,7 +252,7 @@ export class Entity
     if (setInitialized) {
       this.isExternal = true;
     }
-    if (typeof id === 'number') {
+    if (isUUID(id)) {
       this.id = id;
     }
     if (typeof type === 'string') {

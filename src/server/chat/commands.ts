@@ -167,19 +167,6 @@ export const showUser: CommandEntry = {
   },
 };
 
-export const checkSize: CommandEntry = {
-  name: 'checksize',
-  help: 'Shows the size of the current entity pool in bytes',
-  permissionLevel: 1,
-  async handler(player) {
-    const jsonSize = Buffer.from(
-      JSON.stringify(WorldManager.serialize())
-    ).byteLength;
-    const binSize = WorldManager.dataSerializeAll().toRaw().byteLength;
-    ChatManager.info(`json: ${jsonSize}, binary: ${binSize}`, player);
-  },
-};
-
 export const upgrade: CommandEntry = {
   name: 'upgrade',
   help: 'Adds the specified upgrade',

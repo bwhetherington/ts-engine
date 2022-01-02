@@ -1,9 +1,9 @@
 import {UUIDManager} from 'core/uuid/manager';
 
-export type UUID = number;
+export type UUID = string;
 
 export function isUUID(x: unknown): x is UUID {
-  return typeof x === 'number';
+  return typeof x === 'string';
 }
 
 const UM = new UUIDManager();

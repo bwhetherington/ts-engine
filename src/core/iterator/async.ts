@@ -521,7 +521,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   private cleanup() {
     this.onComplete?.();
     Iterator.entries(this.subscribers).forEach(async ([id, {$return}]) => {
-      this.removeSubscriber(parseInt(id));
+      this.removeSubscriber(id);
       await $return();
     });
   }
