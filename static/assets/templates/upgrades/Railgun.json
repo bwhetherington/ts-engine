@@ -1,7 +1,0 @@
-{
-  "type": "Railgun",
-  "extends": "ClassUpgrade",
-  "name": "Railgun",
-  "description": "Change to a railgun tank, with a fast, shattering projectile.",
-  "className": "RailgunHero"
-}

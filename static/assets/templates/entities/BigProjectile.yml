@@ -1,0 +1,8 @@
+type: BigProjectile
+extends: Projectile
+boundingBox:
+  width: 30
+  height: 30
+pierce: 3
+mass: 1
+friction: 50

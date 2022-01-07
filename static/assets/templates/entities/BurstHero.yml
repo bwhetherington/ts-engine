@@ -1,0 +1,9 @@
+type: BurstHero
+extends: BaseHero
+weapon: BurstGun
+cannons:
+  - key: 0
+    shape:
+      length: 30
+      height: 10
+      farHeight: 17.5

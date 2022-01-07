@@ -1,6 +1,0 @@
-{
-  "type": "LaserPickup",
-  "extends": "UpgradePickup",
-  "color": 0,
-  "upgrade": "Laser"
-}

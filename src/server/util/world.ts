@@ -8,6 +8,6 @@ export async function loadWorldFile(file: string): Promise<void> {
 }
 
 export function loadWorld(worldName: string): Promise<void> {
-  const fileName = path.join('worlds', `${worldName}.json`);
+  const fileName = path.join('worlds', `${worldName}.yml`);
   return loadWorldFile(fileName);
 }

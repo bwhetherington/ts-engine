@@ -1,5 +1,4 @@
 import {Data} from 'core/serialize';
-import * as jsonpack from 'jsonpack';
 import {Encoder} from './encoder';
 
 const encoder = new Encoder();

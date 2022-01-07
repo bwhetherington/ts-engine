@@ -1,9 +1,0 @@
-{
-  "type": "Regeneration",
-  "extends": "ModifierUpgrade",
-  "name": "Regeneration",
-  "description": "Your life regeneration is increased by 20%.",
-  "modifiers": {
-    "lifeRegen": [1.2, 0, 0, 1]
-  }
-}

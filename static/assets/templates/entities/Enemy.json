@@ -1,5 +1,0 @@
-{
-  "type": "Enemy",
-  "extends": "BaseEnemy",
-  "name": "Gunner"
-}

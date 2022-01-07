@@ -1,0 +1,8 @@
+type: HeavyGun
+extends: BaseGun
+projectileType: BigProjectile
+pierce: 5
+projectileSpread: 0.1
+projectileSpeed: 300
+damage: 12
+rate: 0.65

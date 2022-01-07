@@ -78,6 +78,7 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
   private async removeOffers(): Promise<void> {
     await this.updateState({
       offers: [],
+      storedUpgrades: 0,
     });
   }
 

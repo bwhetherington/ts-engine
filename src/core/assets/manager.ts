@@ -5,6 +5,8 @@ import yaml from 'js-yaml';
 
 const log = LogManager.forFile(__filename);
 
+const SUPPORTED_TYPES = new Set(['yml', 'yaml', 'json']);
+
 type AssetLoader = (path: string) => Promise<BufferData>;
 
 type DirectoryLoader = (path: string) => Promise<string[]>;
@@ -18,9 +20,15 @@ export class AssetManager {
     this.directoryLoader = directoryLoader;
   }
 
+  private isValidFileType(path: string): boolean {
+    const sections = path.split('.');
+    const extension = sections[sections.length - 1].toLowerCase();
+    return SUPPORTED_TYPES.has(extension);
+  }
+
   public async loadDirectory(path: string): Promise<string[]> {
     if (this.directoryLoader) {
-      const data = await this.directoryLoader(path);
+      const data = await (await this.directoryLoader(path)).filter(this.isValidFileType.bind(this));
       log.debug('load directory: ' + path);
       return data;
     } else {

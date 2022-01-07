@@ -1,0 +1,11 @@
+type: PowerfulShots
+extends: ModifierUpgrade
+name: Powerful Shots
+description: Your bullets deal 20% more damage.
+modifiers: 
+  damage: 
+    cells: 
+      - 1.2
+      - 0
+      - 0
+      - 1

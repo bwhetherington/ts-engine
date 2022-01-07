@@ -1,0 +1,11 @@
+type: Multigun
+extends: BaseGun
+projectileType: Projectile
+shotInaccuracy: 0.1
+projectileSpeed: 750
+pierce: 1
+projectileDuration: 0.75
+shotCount: 5
+shotSpread: 60
+damage: 2
+rate: 0.5

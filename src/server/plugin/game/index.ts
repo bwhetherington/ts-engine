@@ -119,7 +119,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         return PlayerManager.getPlayers()
           .map((player) => {
             const {hero} = player;
-            if (hero && hero.id === event.data.targetID) {
+            if (hero?.id === event.data.targetID) {
               return hero;
             }
           })

@@ -1,0 +1,7 @@
+friction: 1
+boundingBox: 
+  x: 0
+  y: 0
+  width: 3120
+  height: 3120
+geometry: []

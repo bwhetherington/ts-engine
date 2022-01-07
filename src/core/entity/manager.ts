@@ -460,7 +460,7 @@ export class WorldManager
   }
 
   public async setLevel(name: string): Promise<void> {
-    const path = `worlds/${name}.json`;
+    const path = `worlds/${name}.yml`;
     const data = await AssetManager.loadJSON(path);
     this.loadLevel(data);
   }

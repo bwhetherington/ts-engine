@@ -300,22 +300,17 @@ export class Entity
       this.velocity.deserialize(velocity);
     }
     if (position !== undefined) {
-      // Extrapolate predicted position from velocity
-      this.vectorBuffer.set(this.position);
-      this.vectorBuffer.deserialize(position);
-      // let ping = PlayerManager.getActivePlayer()?.ping;
-      // if (ping) {
-      //   ping = clamp(ping, 0, 0.1);
-      //   this.vectorBuffer.add(this.velocity, ping);
-      // }
 
       if (this.shouldSmooth()) {
+        // Extrapolate predicted position from velocity
+        this.vectorBuffer.set(this.smoothTarget);
+        this.vectorBuffer.deserialize(position);
         this.smoothTarget.set(this.vectorBuffer);
-        if (!this.isInitialized) {
-          this.position.set(position);
+        if (!this.isInitialized && setInitialized) {
+          this.position.deserialize(position);
         }
       } else {
-        this.position.set(position);
+        this.position.deserialize(position);
       }
     }
     if (setInitialized) {

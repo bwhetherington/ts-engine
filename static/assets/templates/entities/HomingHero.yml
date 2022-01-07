@@ -1,0 +1,9 @@
+type: HomingHero
+extends: BaseHero
+weapon: HomingGun
+cannons:
+  - key: 0
+    shape:
+      length: 25
+      height: 17.5
+      farHeight: 12.5

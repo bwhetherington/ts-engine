@@ -1,0 +1,9 @@
+type: SniperHero
+extends: BaseHero
+weapon: RayGun
+cannons:
+  - key: 0
+    shape:
+      length: 30
+      height: 17.5
+      farHeight: 12.5

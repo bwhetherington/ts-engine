@@ -1,0 +1,11 @@
+type: Light
+extends: Theme
+isDarkMode: false
+foregroundColor:
+  red: 0.85
+  green: 0.85
+  blue: 0.85
+backgroundColor:
+  red: 1
+  green: 1
+  blue: 1

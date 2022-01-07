@@ -1,0 +1,9 @@
+type: MultigunHero
+extends: BaseHero
+weapon: Multigun
+cannons:
+  - key: 0
+    shape:
+      length: 25
+      height: 10
+      farHeight: 20
