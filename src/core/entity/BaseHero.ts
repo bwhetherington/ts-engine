@@ -202,6 +202,7 @@ export class BaseHero extends Tank {
     Iterator.array(other.upgrades)
       .filterMap((type) => UpgradeManager.instantiate(type))
       .forEach((upgrade) => this.applyUpgrade(upgrade, false));
+    this.upgrades = [...other.upgrades];
   }
 
   public override getLifeRegen(): number {
@@ -229,10 +230,6 @@ export class BaseHero extends Tank {
 
   protected lifeForLevel(level: number): number {
     return 50 + (level - 1) * 5;
-  }
-
-  protected regenForLevel(_level: number): number {
-    return 1 / 30;
   }
 
   protected armorForLevel(_level: number): number {
@@ -301,7 +298,6 @@ export class BaseHero extends Tank {
 
       this.setMaxLife(this.lifeForLevel(level));
       this.armor = this.armorForLevel(level);
-      this.lifeRegen = this.regenForLevel(level);
     }
   }
 

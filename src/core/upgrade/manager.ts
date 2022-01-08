@@ -39,12 +39,11 @@ const EXCLUDED_UPGRADES = new Set([
   'AuraUpgrade',
 ]);
 
-const CLASS_UPGRADES = new Set(['MachineGun', 'Homing', 'Railgun', 'Laser']);
+// const CLASS_UPGRADES = new Set(['MachineGun', 'Homing', 'Railgun', 'Laser']);
 
 export class UpgradeManager extends LoadingManager<Upgrade> {
   private offers: Map<UUID, Offer> = new Map();
   private availableUpgrades: string[] = [];
-  private availableHeroUpgrades: string[] = [...CLASS_UPGRADES];
 
   constructor() {
     super('UpgradeManager');
@@ -58,18 +57,10 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
 
     this.availableUpgrades = this.getAssetInitializers()
       .filter(
-        ([type, initializer]) =>
+        ([type]) =>
           !(
-            EXCLUDED_UPGRADES.has(type) || initializer() instanceof ClassUpgrade
+            EXCLUDED_UPGRADES.has(type)
           )
-      )
-      .map(([type, _initializer]) => type)
-      .toArray();
-
-    this.availableHeroUpgrades = this.getAssetInitializers()
-      .filter(
-        ([type, initializer]) =>
-          !EXCLUDED_UPGRADES.has(type) && initializer() instanceof ClassUpgrade
       )
       .map(([type, _initializer]) => type)
       .toArray();
@@ -145,17 +136,33 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
     }
   }
 
-  public sampleUpgrades(hero?: BaseHero): Iterator<string> {
+  public sampleUpgrades(hero: BaseHero): Iterator<string> {
+    console.log({
+      upgrades: [...hero.upgrades],
+    });
     return RNGManager.sample(this.availableUpgrades).filter((type) => {
+      console.log('consider: ' + type);
+
       // Exclude upgrades which do not exist
       const upgrade = this.instantiate(type);
       if (!upgrade) {
         return false;
       }
 
+      // Exclude upgrades for which we do not have the necessary upgrades
+      if (upgrade.requires.some((requirement) => !hero.upgrades.includes(requirement))) {
+        console.log(`reject ${type} for lack of requirements: ${[...upgrade.requires]}`);
+        return false;
+      }
+
+      // Exclude upgrades which are exclusive with upgrades we already have
+      if (upgrade.exclusiveWith.some((exclusive) => hero.upgrades.includes(exclusive))) {
+        console.log(`reject ${type} for conflict`);
+        return false;
+      }
+
       // Exclude unique upgrades if the player already has them selected
       if (upgrade.isUnique) {
-        console.log(upgrade.type, 'existing', hero?.upgrades);
         if (hero && hero.upgrades.includes(upgrade.type)) {
           return false;
         }
@@ -163,9 +170,5 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
 
       return true;
     });
-  }
-
-  public sampleHeroUpgrades(): Iterator<string> {
-    return RNGManager.sample(this.availableHeroUpgrades);
   }
 }

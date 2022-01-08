@@ -3,3 +3,11 @@ extends: ClassUpgrade
 name: Homing
 description: Change to a homing tank, with a seeking projectile.
 className: HomingHero
+requires:
+  - FocusFire
+  - Durable
+isUnique: true
+exclusiveWith:
+  - Laser
+  - Railgun
+  - MachineGun

@@ -8,6 +8,8 @@ export class Upgrade implements Serializable {
   public name: string = '';
   public description: string = '';
   public isUnique: boolean = false;
+  public requires: string[] = [];
+  public exclusiveWith: string[] = [];
 
   public applyTo(_hero: BaseHero) {}
 
@@ -17,11 +19,13 @@ export class Upgrade implements Serializable {
       name: this.name,
       description: this.description,
       isUnique: this.isUnique,
+      requires: this.requires,
+      exclusiveWith: this.exclusiveWith,
     };
   }
 
   public deserialize(data: Data) {
-    const {type, name, description, isUnique} = data;
+    const {type, name, description, isUnique, requires, exclusiveWith} = data;
     if (typeof type === 'string') {
       this.type = type;
     }
@@ -33,6 +37,12 @@ export class Upgrade implements Serializable {
     }
     if (typeof isUnique === 'boolean') {
       this.isUnique = isUnique;
+    }
+    if (requires instanceof Array) {
+      this.requires = requires;
+    }
+    if (exclusiveWith instanceof Array) {
+      this.exclusiveWith = exclusiveWith;
     }
   }
 }

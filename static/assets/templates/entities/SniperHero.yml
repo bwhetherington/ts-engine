@@ -1,6 +1,6 @@
 type: SniperHero
 extends: BaseHero
-weapon: RayGun
+weapon: Raygun
 cannons:
   - key: 0
     shape:

@@ -15,6 +15,7 @@ export class ClassUpgrade extends Upgrade {
   }
 
   public applyTo(hero: BaseHero) {
+    hero.upgrades.push(this.type);
     hero.getPlayer()?.setClass?.(this.className);
   }
 

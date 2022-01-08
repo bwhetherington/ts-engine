@@ -8,6 +8,7 @@ type Modifiers = Record<string, Matrix2>;
 
 const MODIFIER_KEYS = [
   'life',
+  'lifeRegen',
   'speed',
   'armor',
   'damage',

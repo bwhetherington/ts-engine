@@ -137,6 +137,7 @@ export class Entity
       this.vectorBuffer.add(this.position, -1);
       const increment = clamp(10 * dt, 0, 1);
       this.addPosition(this.vectorBuffer, increment);
+      return;
     }
 
     if (this.isCollidable) {
@@ -166,18 +167,16 @@ export class Entity
     }
 
     // Apply friction
-    if (!shouldSmooth) {
-      const normal = this.getTotalFriction();
-      if (normal > 0) {
-        const oldAngle = this.velocity.angle;
-        this.vectorBuffer.set(this.velocity);
-        this.vectorBuffer.normalize();
-        const scale = -dt * normal;
-        this.velocity.add(this.vectorBuffer, scale);
-        const newAngle = this.velocity.angle;
-        if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
-          this.velocity.setXY(0, 0);
-        }
+    const normal = this.getTotalFriction();
+    if (normal > 0) {
+      const oldAngle = this.velocity.angle;
+      this.vectorBuffer.set(this.velocity);
+      this.vectorBuffer.normalize();
+      const scale = -dt * normal;
+      this.velocity.add(this.vectorBuffer, scale);
+      const newAngle = this.velocity.angle;
+      if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
+        this.velocity.setXY(0, 0);
       }
     }
   }

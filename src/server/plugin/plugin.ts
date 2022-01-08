@@ -9,7 +9,12 @@ export abstract class Plugin extends Observer {
   public static typeName: string = 'Plugin';
 
   private registeredCommands: Set<string> = new Set();
-  public name: string = Plugin.typeName;
+  public name: string;
+
+  constructor() {
+    super();
+    this.name = (this.constructor as typeof Plugin).typeName;
+  }
 
   public async initialize(server: Server): Promise<void> {
     log.debug(`plugin ${this.name} initialized`);

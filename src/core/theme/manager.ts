@@ -1,6 +1,8 @@
 import {LoadingManager} from 'core/assets';
+import { EventManager } from 'core/event';
 import {rgb, WHITE} from 'core/graphics';
-import {Theme} from 'core/theme';
+import { NetworkManager } from 'core/net';
+import {SetThemeEvent, Theme} from 'core/theme';
 
 const DEFAULT_THEME = Theme.create({
   type: 'DefaultTheme',
@@ -19,6 +21,11 @@ export class ThemeManager extends LoadingManager<Theme> {
   public async initialize(): Promise<void> {
     this.registerAssetType(Theme);
     await this.loadAssetTemplates('templates/themes');
+
+    if (NetworkManager.isClient()) {
+      EventManager.streamEvents<SetThemeEvent>('SetThemeEvent')
+        .forEach((event) => this.setTheme(event.data.theme));
+    }
   }
 
   public setTheme(theme: string | Theme) {

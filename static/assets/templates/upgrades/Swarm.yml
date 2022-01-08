@@ -1,0 +1,10 @@
+type: Swarm
+extends: ClassUpgrade
+name: Swarm
+description: Change to a swarm keeper tank, releasing groups of slow, homing projectiles.
+className: SwarmHero
+isUnique: true
+requires:
+  - Homing
+  - Plated
+  - Regeneration

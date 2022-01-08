@@ -78,6 +78,8 @@ export class Tank extends Unit {
     this.boundingBox.width = 30;
     this.boundingBox.height = 30;
 
+    this.lifeRegen = 1 / 40;
+
     this.setMaxLife(50);
     this.setLife(50);
 
@@ -285,7 +287,6 @@ export class Tank extends Unit {
   }
 
   public override deserialize(data: Data, setInitialized?: boolean) {
-    const {angle: oldAngle} = this;
     super.deserialize(data, setInitialized);
     const {cannons, bodyShape, weapon, weaponAngle, targetAngle, modifiers} =
       data;

@@ -12,11 +12,12 @@ import {Data} from 'core/serialize';
 import {RNGManager} from 'core/random';
 import {HeroModifier} from '../upgrade/modifier';
 import {DotEffect} from 'core/effect';
+import { AssetIdentifier, isAssetIdentifier } from 'core/assets';
 
 export class BaseGun extends Weapon {
   public static typeName: string = 'BaseGun';
 
-  protected projectileType: string = 'Projectile';
+  protected projectileType: AssetIdentifier = 'Projectile';
   protected projectileShape: ProjectileShape = 'circle';
   protected projectileSpeed: number = 500;
   protected projectileSpread: number = 0.1;
@@ -93,7 +94,7 @@ export class BaseGun extends Weapon {
       projectileDuration,
     } = data;
 
-    if (typeof projectileType === 'string') {
+    if (isAssetIdentifier(projectileType)) {
       this.projectileType = projectileType;
     }
 

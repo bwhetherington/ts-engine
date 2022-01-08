@@ -27,6 +27,7 @@ export class Feed extends Unit {
     this.type = Feed.typeName;
     this.setVariant(FeedVariant.Small);
     this.friction = 100;
+    this.lifeRegen = 0.2;
   }
 
   public setVariant(variant: FeedVariant) {

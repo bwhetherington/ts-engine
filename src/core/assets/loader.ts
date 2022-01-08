@@ -21,6 +21,26 @@ export type AssetType<T extends Asset> = {
 
 type AssetInitializer<T extends Asset> = () => T;
 
+export type CustomAsset = {
+  type: string;
+} & Data;
+
+export type AssetIdentifier = string | CustomAsset;
+
+export function isAssetIdentifier(ident: any): ident is AssetIdentifier {
+  if (typeof ident === 'string') {
+    return true;
+  }
+
+  if (typeof ident === 'object') {
+    if (typeof ident.type === 'string') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export class LoadingManager<T extends Asset> {
   private initializers: Record<string, AssetInitializer<T>> = {};
   private usedTypeInitializers: Set<() => void> = new Set();
@@ -82,18 +102,25 @@ export class LoadingManager<T extends Asset> {
     return this.initializers.hasOwnProperty(type);
   }
 
-  public instantiate(type: string): T | undefined {
-    const initializer = this.initializers[type];
+  public instantiate(ident: string | CustomAsset): T | undefined {
+    if (typeof ident === 'string') {
+      const initializer = this.initializers[ident];
 
-    if (!initializer) {
-      log.warn(`${this.name} failed to instantiate type: ${type}`);
-      return undefined;
+      if (!initializer) {
+        log.warn(`${this.name} failed to instantiate type: ${ident}`);
+        return undefined;
+      }
+
+      const asset = initializer();
+      asset.type = ident;
+      log.trace(`${this.name} created instance of ${ident}`);
+      return asset;
+    } else {
+      const {type, ...data} = ident;
+      const asset = this.instantiate(type);
+      asset?.deserialize(data);
+      return asset;
     }
-
-    const asset = initializer();
-    asset.type = type;
-    log.trace(`${this.name} created instance of ${type}`);
-    return asset;
   }
 
   public instantiateType<U extends T>(Type: AssetType<U>): U | undefined {

@@ -3,6 +3,10 @@ import styled from 'styled-components';
 
 export const UI_MARGIN = '7px';
 
+export const Minor = styled.span`
+  color: rgba(255, 255, 255, 0.67);
+`;
+
 export const PanelContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.75);
   padding: ${UI_MARGIN};
@@ -65,10 +69,10 @@ export const Row = styled.div`
 
 export const Button = styled.button`
   border: 1px solid;
-  border-color: rgba(255, 255, 255, 0);
+  border-color: rgba(255, 255, 255, 0.1);
   padding: 5px 10px 5px 10px;
   border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0);
+  background-color: rgba(255, 255, 255, 0.1);
   /* backdrop-filter: blur(10px); */
   outline: none;
   color: white;
@@ -83,8 +87,8 @@ export const Button = styled.button`
   }
 
   &:hover:not(:disabled) {
-    border-color: rgba(255, 255, 255, 0.1);
-    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.2);
   }
 `;
 

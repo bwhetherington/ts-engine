@@ -33,6 +33,7 @@ export class Projectile extends Entity {
   public duration: number = DURATION;
   public shape: ProjectileShape = 'circle';
   public showExplosion: boolean = true;
+  public bounces: number = 0;
 
   private timeCreated: number;
 
@@ -76,8 +77,12 @@ export class Projectile extends Entity {
       other === undefined ||
       other.collisionLayer === CollisionLayer.Geometry
     ) {
-      this.hit();
-      this.remove(true);
+      // Bounce off of a wall
+      this.bounces -= 1;
+      if (this.bounces < 0) {
+        this.hit();
+        this.remove(true);
+      }
       return;
     }
 
@@ -182,6 +187,7 @@ export class Projectile extends Entity {
       duration: this.duration,
       shape: this.shape,
       showExplosion: this.showExplosion,
+      bounces: this.bounces,
     };
   }
 
@@ -197,7 +203,12 @@ export class Projectile extends Entity {
       duration,
       shape,
       showExplosion,
+      bounces,
     } = data;
+
+    if (typeof bounces === 'number') {
+      this.bounces = bounces;
+    }
 
     if (typeof duration === 'number') {
       this.duration = duration;

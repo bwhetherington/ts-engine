@@ -7,6 +7,7 @@ import {NetworkManager} from 'core/net';
 import {RNGManager} from 'core/random';
 import {HeroModifier} from 'core/upgrade';
 import {EffectManager} from 'core/effect';
+import { AssetIdentifier, isAssetIdentifier } from 'core/assets';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';
@@ -20,7 +21,7 @@ export abstract class Weapon implements Serializable {
   public pierce: number = 1;
   public burstCount: number = 1;
   public burstInterval: number = 0;
-  public hitEffect?: string;
+  public hitEffect?: AssetIdentifier;
 
   private cooldown: number = 0;
   private id?: UUID;
@@ -199,7 +200,7 @@ export abstract class Weapon implements Serializable {
       this.burstInterval = burstInterval;
     }
 
-    if (typeof hitEffect === 'string') {
+    if (isAssetIdentifier(hitEffect)) {
       this.hitEffect = hitEffect;
     }
   }

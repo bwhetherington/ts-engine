@@ -42,6 +42,7 @@ export class Unit extends Entity {
   protected effectCounts: Map<string, number> = new Map();
 
   private lastFlash: number = 0;
+  private lastDamage: number = 0;
   private flashColor?: Color;
   private isAliveInternal: boolean = true;
   private acceleration: Vector = new Vector(0, 0);
@@ -229,9 +230,20 @@ export class Unit extends Entity {
     return this.lifeRegen;
   }
 
+  protected getRegenForStep(dt: number): number {
+    const timeSinceDamage = EventManager.timeElapsed - this.lastFlash;
+    if (timeSinceDamage >= 5) {
+      return this.getLifeRegen() * this.getMaxLife() * dt;
+    }
+    return 0;
+  }
+
   public override step(dt: number) {
     // Regenerate life
-    this.setLife(this.life + this.getLifeRegen() * this.maxLife * dt);
+    this.setLife(this.life);
+    if (NetworkManager.isServer()) {
+      this.setLife(this.life + this.getRegenForStep(dt));
+    }
 
     // Handle movement
     this.acceleration.setXY(1, 0);
@@ -301,6 +313,7 @@ export class Unit extends Entity {
       isImmune: this.isImmune,
       color: this.getBaseColor(),
       effectCounts: serialize(this.effectCounts),
+      lifeRegen: this.lifeRegen,
     };
   }
 
@@ -315,7 +328,11 @@ export class Unit extends Entity {
       speed,
       name,
       effectCounts,
+      lifeRegen,
     } = data;
+    if (typeof lifeRegen === 'number') {
+      this.lifeRegen = lifeRegen;
+    }
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
     }

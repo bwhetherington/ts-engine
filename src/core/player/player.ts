@@ -199,6 +199,7 @@ export class Player extends Observer implements Serializable {
         newHero.weaponAngle = this.hero.weaponAngle;
         newHero.copyMovement(this.hero);
         newHero.replacementId = this.hero.id;
+        newHero.storedUpgrades = this.hero.storedUpgrades;
 
         // Copy upgrades
         newHero.copyUpgrades(this.hero);

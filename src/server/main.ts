@@ -17,7 +17,7 @@ import {WeaponManager} from 'core/weapon';
 import {Server, createServer, ServerHTTPClient} from 'server/net';
 import {ChatManager} from 'server/chat';
 import {MetricsManager} from 'server/metrics';
-import {PluginManager, UtilsPlugin} from 'server/plugin';
+import {PluginManager, ThemePlugin, UtilsPlugin} from 'server/plugin';
 import {FilterPlugin} from 'server/plugin/filter';
 import {LoaderPlugin} from 'server/plugin/loader';
 import {
@@ -119,6 +119,7 @@ async function main(): Promise<void> {
     UtilsPlugin,
     UpgradePlugin,
     SpawnPlugin,
+    ThemePlugin,
   ]);
 }
 

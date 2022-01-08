@@ -3,3 +3,10 @@ extends: ClassUpgrade
 name: Railgun
 description: Change to a railgun tank, with a fast, shattering projectile.
 className: RailgunHero
+requires:
+  - GlassCannon
+  - SteadyShot
+exclusiveWith:
+  - Laser
+  - MachineGun
+  - Homing
