@@ -82,6 +82,9 @@ export class LoadingManager<T extends Asset> {
     const paths = await AssetManager.walkDirectory(dir).toArray();
     const templates = await AssetManager.loadAllJSON(paths);
 
+    console.log(paths);
+    console.log(templates);
+
     Iterator.from(templates)
       .filter((template) => typeof template.type === 'string')
       .map((template) => template as AssetTemplate)

@@ -143,15 +143,15 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     PlayerManager.getPlayers().forEach((player) => player.spawnHero());
 
     // Start timer
-    this.countdown(
-      GameState.Running,
-      300,
-      [60, 30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-    ).then((shouldTransition) => {
-      if (shouldTransition) {
-        this.transition(GameAction.Stop);
-      }
-    });
+    // this.countdown(
+    //   GameState.Running,
+    //   300,
+    //   [60, 30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+    // ).then((shouldTransition) => {
+    //   if (shouldTransition) {
+    //     this.transition(GameAction.Stop);
+    //   }
+    // });
   }
 
   private stopGame() {
@@ -167,10 +167,9 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     PlayerManager.getPlayers().forEach((player) => player.reset());
 
-    (async () => {
-      await EventManager.sleep(5);
+    EventManager.sleep(5).then(() => {
       this.transition(GameAction.Start);
-    })();
+    });
   }
 
   protected createMachine(): GameStateMachine {

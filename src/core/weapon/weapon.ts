@@ -47,6 +47,10 @@ export abstract class Weapon implements Serializable {
     modifier?: HeroModifier
   ): void;
 
+  protected getShotInaccuracy(tank: Tank): number {
+    return Math.max(tank.modifiers.get('shotInaccuracy') * this.shotInaccuracy, 0);
+  }
+
   private async burstFire(
     source: Tank,
     angle: number,
@@ -62,7 +66,7 @@ export abstract class Weapon implements Serializable {
       for (let i = 0; i < shotCount; i++) {
         const angleOffset = i * deltaAngle - baseAngleOffset;
         const shotOffset =
-          this.shotInaccuracy * RNGManager.nextFloat(-0.5, 0.5);
+          this.getShotInaccuracy(source) * RNGManager.nextFloat(-0.5, 0.5);
         this.fire(
           source,
           angle + angleOffset + shotOffset + source.getCannonAngle(),
@@ -95,21 +99,21 @@ export abstract class Weapon implements Serializable {
     if (!modifier) {
       return this.shotCount;
     }
-    return modifier.get('shotCount') - 1 + this.shotCount;
+    return Math.max(modifier.get('shotCount') - 1 + this.shotCount, 0);
   }
 
   protected getShotSpread(modifier?: HeroModifier): number {
     if (!modifier) {
       return this.shotSpread;
     }
-    return modifier.get('shotSpread') * this.shotSpread;
+    return Math.max(modifier.get('shotSpread') * this.shotSpread, 0);
   }
 
   protected getBurstCount(modifier?: HeroModifier): number {
     if (!modifier) {
       return this.burstCount;
     }
-    return modifier.get('burstCount') - 1 + this.burstCount;
+    return Math.max(modifier.get('burstCount') - 1 + this.burstCount, 0);
   }
 
   public async fireInternal(
