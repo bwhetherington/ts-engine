@@ -1,3 +1,4 @@
+import { AsyncIterator } from 'core/iterator';
 import {LogManager} from 'core/log';
 import {Data} from 'core/serialize';
 import {BufferData} from 'core/util';
@@ -24,6 +25,26 @@ export class AssetManager {
     const sections = path.split('.');
     const extension = sections[sections.length - 1].toLowerCase();
     return SUPPORTED_TYPES.has(extension);
+  }
+
+  private async *walkDirectoryInternal(path: string): AsyncIterable<string> {
+    if (this.isValidFileType(path)) {
+      yield path;
+      return;
+    }
+    if (this.directoryLoader) {
+      const data = await this.directoryLoader(path);
+      for (const child of data) {
+        yield* this.walkDirectoryInternal(child);
+      }
+    } else {
+      log.error('directory loader not specified');
+      throw new Error('directory loader not specified');
+    }
+  }
+
+  public walkDirectory(path: string): AsyncIterator<string> {
+    return AsyncIterator.generator(this.walkDirectoryInternal(path));
   }
 
   public async loadDirectory(path: string): Promise<string[]> {

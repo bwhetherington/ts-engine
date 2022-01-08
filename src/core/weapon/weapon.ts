@@ -88,28 +88,28 @@ export abstract class Weapon implements Serializable {
     if (!modifier) {
       return this.rate;
     }
-    return modifier.get('rate').multiplyPoint(this.rate);
+    return this.rate / modifier.get('rate');
   }
 
   protected getShotCount(modifier?: HeroModifier): number {
     if (!modifier) {
       return this.shotCount;
     }
-    return modifier.get('shotCount').multiplyPoint(this.shotCount);
+    return modifier.get('shotCount') - 1 + this.shotCount;
   }
 
   protected getShotSpread(modifier?: HeroModifier): number {
     if (!modifier) {
       return this.shotSpread;
     }
-    return modifier.get('shotSpread').multiplyPoint(this.shotSpread);
+    return modifier.get('shotSpread') * this.shotSpread;
   }
 
   protected getBurstCount(modifier?: HeroModifier): number {
     if (!modifier) {
       return this.burstCount;
     }
-    return modifier.get('burstCount').multiplyPoint(this.burstCount);
+    return modifier.get('burstCount') - 1 + this.burstCount;
   }
 
   public async fireInternal(
@@ -208,7 +208,7 @@ export abstract class Weapon implements Serializable {
   protected rollDamage(modifier?: HeroModifier): number {
     let {damage} = this;
     if (modifier) {
-      damage = modifier.get('damage').multiplyPoint(damage);
+      damage = modifier.get('damage') * modifier.get('weaponDamage') * damage;
     }
     const roll = RNGManager.nextFloat(-damage / 5, damage / 5);
     return Math.max(1, damage + roll);

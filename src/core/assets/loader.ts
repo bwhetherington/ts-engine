@@ -79,7 +79,7 @@ export class LoadingManager<T extends Asset> {
   }
 
   public async loadAssetTemplates(dir: string): Promise<void> {
-    const paths = await AssetManager.loadDirectory(dir);
+    const paths = await AssetManager.walkDirectory(dir).toArray();
     const templates = await AssetManager.loadAllJSON(paths);
 
     Iterator.from(templates)

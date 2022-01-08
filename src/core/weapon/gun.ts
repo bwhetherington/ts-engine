@@ -37,16 +37,16 @@ export class BaseGun extends Weapon {
     let {pierce, projectileSpread, projectileSpeed, projectileDuration} = this;
 
     if (modifier) {
-      pierce = Math.round(modifier.get('pierce').multiplyPoint(pierce));
+      pierce = modifier.get('pierce') - 1 + pierce;
       projectileSpread = modifier
         .get('projectileSpread')
-        .multiplyPoint(projectileSpread);
+        * projectileSpread;
       projectileSpeed = modifier
         .get('projectileSpeed')
-        .multiplyPoint(projectileSpeed);
+        * projectileSpeed;
       projectileDuration = modifier
         .get('projectileDuration')
-        .multiplyPoint(projectileDuration);
+        * projectileDuration;
     }
 
     const projectile = WorldManager.spawnEntity(

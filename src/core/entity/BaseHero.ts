@@ -82,8 +82,8 @@ export class BaseHero extends Tank {
     this.type = BaseHero.typeName;
 
     this.setWeapon('Gun');
-    this.setExperience(0);
     this.setLevelInternal(1);
+    this.setExperience(0);
 
     this.streamEvents<MouseEvent>('MouseEvent', Priority.Normal, true)
       .filter((event) => this.isEventSubject(event))
@@ -206,7 +206,7 @@ export class BaseHero extends Tank {
   }
 
   public override getLifeRegen(): number {
-    return this.modifiers.get('lifeRegen').multiplyPoint(super.getLifeRegen());
+    return this.modifiers.get('lifeRegen') * super.getLifeRegen();
   }
 
   protected override getNameColor(): TextColor {
@@ -330,7 +330,7 @@ export class BaseHero extends Tank {
   public override setMaxLife(maxLife: number) {
     let life = maxLife;
     if (NetworkManager.isServer() && this.modifiers) {
-      life = Math.round(this.modifiers.get('life').multiplyPoint(life));
+      life = Math.round(this.modifiers.get('life') * life);
     }
     super.setMaxLife(life);
     if (this.getPlayer()?.isActivePlayer?.()) {
@@ -446,6 +446,8 @@ export class BaseHero extends Tank {
 
     if (typeof xp === 'number') {
       this.setExperience(xp);
+    } else if (setInitialized && !this.isInitialized) {
+      this.setExperience(0);
     }
 
     const wasInitialized = this.isInitialized;
@@ -503,7 +505,7 @@ export class BaseHero extends Tank {
   }
 
   public override calculateDamageIn(amount: number): number {
-    const armor = this.modifiers.get('armor').multiplyPoint(this.armor);
+    const armor = (this.modifiers.get('armor') - 1) + this.armor;
     return Math.max(1, amount - armor);
   }
 

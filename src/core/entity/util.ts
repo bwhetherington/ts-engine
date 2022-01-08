@@ -11,13 +11,13 @@ export interface SpawnEntityEvent {
 }
 
 export enum CollisionLayer {
-  Geometry,
-  Aura,
-  BaseEffect,
-  Unit,
-  Projectile,
-  Effect,
-  HUD,
+  Geometry = 0,
+  Aura = 1,
+  BaseEffect = 2,
+  Unit = 3,
+  Projectile = 4,
+  Effect = 5,
+  HUD = 6,
 }
 
 export function isCollisionLayer(input: any): input is CollisionLayer {

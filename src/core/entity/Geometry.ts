@@ -1,6 +1,7 @@
 import {Entity} from 'core/entity';
 import {Rectangle} from 'core/geometry';
-import {Color} from 'core/graphics';
+import {Color, GraphicsContext} from 'core/graphics';
+import { GraphicsPipeline } from 'core/graphics/pipe';
 import {ThemeManager} from 'core/theme';
 import {CollisionLayer} from './util';
 
@@ -26,5 +27,12 @@ export class Geometry extends Entity {
 
   public override getColor(): Color {
     return ThemeManager.current.foregroundColor;
+  }
+
+  public override render(ctx: GraphicsContext) {
+    const {width, height} = this.boundingBox;
+    GraphicsPipeline.pipe().run(ctx, (ctx) => {
+      ctx.rect(-width / 2, -height / 2, width, height, this.getColor());
+    });
   }
 }

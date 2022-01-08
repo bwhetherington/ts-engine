@@ -3,4 +3,4 @@ extends: ModifierUpgrade
 name: Durable
 description: Your life is increased by 20%.
 modifiers:
-  life: [1.2, 0, 0, 1]
+  life: 0.2

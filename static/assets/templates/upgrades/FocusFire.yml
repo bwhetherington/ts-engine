@@ -3,18 +3,6 @@ extends: ModifierUpgrade
 name: Focus Fire
 description: Your projectiles have 30% less spread, and deal 10% more damage.
 modifiers: 
-  damage: 
-    - 1.1
-    - 0
-    - 0
-    - 1
-  shotInaccuracy: 
-    - 0.7
-    - 0
-    - 0
-    - 1
-  shotSpread: 
-    - 0.7
-    - 0
-    - 0
-    - 1
+  damage: 0.1
+  shotInaccuracy: -0.3
+  shotSpread: -0.3

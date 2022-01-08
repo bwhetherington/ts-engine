@@ -42,7 +42,6 @@ export class Unit extends Entity {
   protected effectCounts: Map<string, number> = new Map();
 
   private lastFlash: number = 0;
-  private lastDamage: number = 0;
   private flashColor?: Color;
   private isAliveInternal: boolean = true;
   private acceleration: Vector = new Vector(0, 0);

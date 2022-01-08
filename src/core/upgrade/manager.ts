@@ -141,8 +141,6 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       upgrades: [...hero.upgrades],
     });
     return RNGManager.sample(this.availableUpgrades).filter((type) => {
-      console.log('consider: ' + type);
-
       // Exclude upgrades which do not exist
       const upgrade = this.instantiate(type);
       if (!upgrade) {
@@ -151,13 +149,11 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
 
       // Exclude upgrades for which we do not have the necessary upgrades
       if (upgrade.requires.some((requirement) => !hero.upgrades.includes(requirement))) {
-        console.log(`reject ${type} for lack of requirements: ${[...upgrade.requires]}`);
         return false;
       }
 
       // Exclude upgrades which are exclusive with upgrades we already have
       if (upgrade.exclusiveWith.some((exclusive) => hero.upgrades.includes(exclusive))) {
-        console.log(`reject ${type} for conflict`);
         return false;
       }
 

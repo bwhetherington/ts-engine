@@ -19,6 +19,9 @@ export async function loadFile(path: string): Promise<BufferData> {
 }
 
 export async function loadDirectory(path: string): Promise<string[]> {
+  if (path.includes('.')) {
+    return [];
+  }
   const res = await fetch(join('assets', path));
   const data = await res.json();
   const filePaths = Iterator.values(data)

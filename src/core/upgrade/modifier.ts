@@ -4,7 +4,7 @@ import {Upgrade} from 'core/upgrade';
 import {BaseHero} from 'core/entity';
 import {Iterator} from 'core/iterator';
 
-type Modifiers = Record<string, Matrix2>;
+type Modifiers = Record<string, number>;
 
 const MODIFIER_KEYS = [
   'life',
@@ -12,6 +12,7 @@ const MODIFIER_KEYS = [
   'speed',
   'armor',
   'damage',
+  'weaponDamage',
   'pierce',
   'rate',
   'shotCount',
@@ -31,7 +32,7 @@ export class HeroModifier implements Serializable {
     return Iterator.entries(this.modifiers).fold(
       {} as Data,
       (data, [key, value]) => {
-        data[key] = value.serialize();
+        data[key] = value;
         return data;
       }
     );
@@ -40,14 +41,9 @@ export class HeroModifier implements Serializable {
   public deserialize(data: Data) {
     Iterator.array(MODIFIER_KEYS)
       .map((key) => [key, data[key]])
-      .filter(([_, value]) => value !== undefined)
+      .filter(([_, value]) => typeof value === 'number')
       .forEach(([key, value]) => {
-        let mod = this.modifiers[key];
-        if (!mod) {
-          mod = new Matrix2().identity();
-          this.modifiers[key] = mod;
-        }
-        mod.deserialize(value);
+        this.modifiers[key] = value;
       });
   }
 
@@ -55,41 +51,41 @@ export class HeroModifier implements Serializable {
     return this.modifiers.hasOwnProperty(key);
   }
 
-  public get(key: string): Matrix2 {
+  public get(key: string): number {
     const mod = this.modifiers[key];
     if (!mod) {
-      return IDENTITY;
+      return 1;
     }
     return mod;
   }
 
-  private multiplyKey(key: string, other: Modifiers, invert: boolean = false) {
+  private composeKey(key: string, other: Modifiers, invert: boolean = false) {
     let existing = this.modifiers[key];
     if (!existing) {
-      existing = new Matrix2().identity();
+      existing = 1;
     }
     const target = other[key];
     if (target) {
       if (invert) {
-        existing = existing.multiplyInverse(target);
+        existing = existing - target;
       } else {
-        existing = existing.multiply(target);
+        existing = existing + target;
       }
     }
     this.modifiers[key] = existing;
   }
 
-  public multiply(other: HeroModifier, invert: boolean = false) {
-    this.multiplyModifiers(other.modifiers, invert);
+  public compose(other: HeroModifier, invert: boolean = false) {
+    this.composeModifiers(other.modifiers, invert);
   }
 
-  public multiplyModifiers(other: Modifiers, invert: boolean = false) {
+  public composeModifiers(other: Modifiers, invert: boolean = false) {
     Iterator.array(MODIFIER_KEYS)
       .filter(
         (key) => this.modifiers.hasOwnProperty(key) || other.hasOwnProperty(key)
       )
       .forEach((key) => {
-        this.multiplyKey(key, other, invert);
+        this.composeKey(key, other, invert);
       });
   }
 }
@@ -102,12 +98,12 @@ export class ModifierUpgrade extends Upgrade {
   constructor(modifiers?: Modifiers) {
     super();
     if (modifiers) {
-      this.modifiers.multiplyModifiers(modifiers);
+      this.modifiers.composeModifiers(modifiers);
     }
   }
 
   public applyTo(hero: BaseHero) {
-    hero.modifiers.multiply(this.modifiers);
+    hero.modifiers.compose(this.modifiers);
     if (this.modifiers.has('life')) {
       hero.updateMaxLife();
     }

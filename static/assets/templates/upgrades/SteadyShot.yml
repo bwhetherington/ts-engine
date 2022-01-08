@@ -1,18 +1,10 @@
 type: SteadyShot
 extends: ModifierUpgrade
 name: Steady Shot
-description: Your fire rate is 50% slower, but your damage is 50% greater.
+description: Your fire rate is 30% slower, but your weapon damage is 50% greater.
 requires:
   - FocusFire
 modifiers: 
-  rate: 
-    - 1.5
-    - 0
-    - 0
-    - 1
-  damage: 
-    - 1.5
-    - 0
-    - 0
-    - 1
+  rate: -0.3
+  weaponDamage: 0.5
 isUnique: true

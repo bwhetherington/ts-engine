@@ -1,0 +1,16 @@
+type: Ball
+extends: Unit
+collisionLayer: 3
+isCollidable: true
+isImmune: true
+friction: 50
+bounce: 0.9
+mass: 0.5
+speed: 5000
+color: 
+  red: 0.35
+  green: 0.35
+  blue: 0.35
+boundingBox:
+  width: 40
+  height: 40

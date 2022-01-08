@@ -18,6 +18,9 @@ export function loadFile(url: string): Promise<BufferData> {
 }
 
 export async function loadDirectory(url: string): Promise<string[]> {
+  if (url.includes('.')) {
+    return [];
+  }
   const actualPath = transformPath(url);
   const files = await readdir(actualPath);
   const prefix = path.join('static', 'assets') + path.sep;

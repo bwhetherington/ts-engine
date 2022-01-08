@@ -209,9 +209,9 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         entity instanceof BaseEnemy ? entity : undefined
       )
       .forEach((enemy) => {
-        enemy.modifiers.multiplyModifiers({
-          rate: Matrix2.from([2, 0, 0, 1]),
-          damage: Matrix2.from([0.5, 0, 0, 1]),
+        enemy.modifiers.composeModifiers({
+          rate: -0.5,
+          damage: -0.5,
         });
       });
 
