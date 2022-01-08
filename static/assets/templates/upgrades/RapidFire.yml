@@ -5,3 +5,4 @@ description: Your fire rate is 20% faster, and your projectiles are 30% less acc
 modifiers: 
   rate: 0.2
   shotInaccuracy: 0.3
+isRepeatable: true

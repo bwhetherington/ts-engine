@@ -35,12 +35,13 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
   }
 
   public componentDidMount() {
-    this.streamEvents<ChangeStoredUpgradeCountEvent>('ChangeStoredUpgradeCountEvent')
-      .forEach(({data: {storedUpgrades}}) => {
-        this.updateState({
-          storedUpgrades,
-        });
+    this.streamEvents<ChangeStoredUpgradeCountEvent>(
+      'ChangeStoredUpgradeCountEvent'
+    ).forEach(({data: {storedUpgrades}}) => {
+      this.updateState({
+        storedUpgrades,
       });
+    });
 
     this.streamEvents<OfferUpgradeEvent>('OfferUpgradeEvent')
       .map<Offer>(({data: {id, upgrades}}) => ({id, upgrades}))
@@ -135,7 +136,7 @@ export class UpgradeContainer extends Component<{}, ContainerState> {
     };
     if (offer) {
       const container = (
-        <Background className='visible'>
+        <Background className="visible">
           <OfferComponent offer={offer} onSelect={onSelect} />
         </Background>
       );

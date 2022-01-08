@@ -7,4 +7,3 @@ requires:
 modifiers: 
   damage: 0.5
   life: -0.5
-isUnique: true

@@ -4,3 +4,4 @@ name: Powerful Shots
 description: Your weapon deals 20% more damage.
 modifiers: 
   weaponDamage: 0.2
+isRepeatable: true

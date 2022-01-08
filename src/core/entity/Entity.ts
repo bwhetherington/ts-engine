@@ -299,7 +299,6 @@ export class Entity
       this.velocity.deserialize(velocity);
     }
     if (position !== undefined) {
-
       if (this.shouldSmooth()) {
         // Extrapolate predicted position from velocity
         this.vectorBuffer.set(this.smoothTarget);

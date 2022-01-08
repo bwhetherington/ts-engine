@@ -7,4 +7,3 @@ requires:
 modifiers: 
   rate: -0.3
   weaponDamage: 0.5
-isUnique: true

@@ -1,7 +1,7 @@
 import {Entity} from 'core/entity';
 import {Rectangle} from 'core/geometry';
 import {Color, GraphicsContext} from 'core/graphics';
-import { GraphicsPipeline } from 'core/graphics/pipe';
+import {GraphicsPipeline} from 'core/graphics/pipe';
 import {ThemeManager} from 'core/theme';
 import {CollisionLayer} from './util';
 

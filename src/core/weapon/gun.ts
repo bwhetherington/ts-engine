@@ -12,7 +12,7 @@ import {Data} from 'core/serialize';
 import {RNGManager} from 'core/random';
 import {HeroModifier} from '../upgrade/modifier';
 import {DotEffect} from 'core/effect';
-import { AssetIdentifier, isAssetIdentifier } from 'core/assets';
+import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
 
 export class BaseGun extends Weapon {
   public static typeName: string = 'BaseGun';
@@ -38,15 +38,10 @@ export class BaseGun extends Weapon {
 
     if (modifier) {
       pierce = modifier.get('pierce') - 1 + pierce;
-      projectileSpread = modifier
-        .get('projectileSpread')
-        * projectileSpread;
-      projectileSpeed = modifier
-        .get('projectileSpeed')
-        * projectileSpeed;
-      projectileDuration = modifier
-        .get('projectileDuration')
-        * projectileDuration;
+      projectileSpread = modifier.get('projectileSpread') * projectileSpread;
+      projectileSpeed = modifier.get('projectileSpeed') * projectileSpeed;
+      projectileDuration =
+        modifier.get('projectileDuration') * projectileDuration;
     }
 
     const projectile = WorldManager.spawnEntity(

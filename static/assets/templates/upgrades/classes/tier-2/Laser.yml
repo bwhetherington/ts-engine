@@ -6,9 +6,5 @@ className: SniperHero
 requires:
   - GlassCannon
   - SteadyShot
-isUnique: true
 exclusiveWith:
-  - Laser
-  - MachineGun
-  - Homing
-  - Heavy
+  - Swarm

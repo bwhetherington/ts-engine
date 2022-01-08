@@ -3,12 +3,10 @@ extends: ClassUpgrade
 name: Machine Gun
 description: Change to a machine gun tank, with a faster fire rate and lower damage.
 className: MachineGunHero
-isUnique: true
 requires:
   - RapidFire
   - MultiShot
 exclusiveWith:
-  - Laser
   - Railgun
   - Homing
   - Heavy

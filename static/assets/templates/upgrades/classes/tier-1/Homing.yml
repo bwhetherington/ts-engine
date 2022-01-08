@@ -6,9 +6,7 @@ className: HomingHero
 requires:
   - FocusFire
   - Durable
-isUnique: true
 exclusiveWith:
-  - Laser
   - Railgun
   - MachineGun
   - Heavy

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 import {UUID} from 'core/uuid';
 import {Upgrade, UpgradeManager, Offer, OfferUpgradeEvent} from 'core/upgrade';

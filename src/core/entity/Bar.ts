@@ -68,7 +68,7 @@ export class Bar extends Entity {
             -this.boundingBox.height / 2,
             this.boundingBox.width,
             this.boundingBox.height,
-            BORDER_COLOR,
+            BORDER_COLOR
           );
           const innerWidth = this.boundingBox.width - lineWidth;
           const innerHeight = this.boundingBox.height - lineWidth;

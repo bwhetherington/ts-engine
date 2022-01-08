@@ -6,8 +6,8 @@ import {ClassUpgrade, Upgrade} from 'core/upgrade';
 import {UUID} from 'core/uuid';
 
 import {Button, Column, Panel, PanelHeader} from 'client/components';
-import { BlueButton, Minor } from '../common';
-import { JsxEmit } from 'typescript';
+import {BlueButton, Minor} from '../common';
+import {JsxEmit} from 'typescript';
 
 interface UpgradeProps {
   id: UUID;
@@ -27,10 +27,10 @@ const Content = styled.div`
   flex-grow: 1;
 `;
 
-function getUpgradeCategory(upgrade: Upgrade ): JSX.Element {
+function getUpgradeCategory(upgrade: Upgrade): JSX.Element {
   if (upgrade instanceof ClassUpgrade) {
     return <>* Class *</>;
-  } else if (upgrade.isUnique) {
+  } else if (!upgrade.isRepeatable) {
     return <>* Unique *</>;
   }
   return <>Normal</>;
@@ -44,12 +44,18 @@ export const UpgradeComponent: React.FunctionComponent<UpgradeProps> = ({
   const onClick = () => onSelect?.(id, upgrade);
   const description = sanitize(upgrade.description);
 
-  const header = <PanelHeader><b>{upgrade.name}</b></PanelHeader>;
-  const subheader = <PanelHeader><Minor>{getUpgradeCategory(upgrade)}</Minor></PanelHeader>;
+  const header = (
+    <PanelHeader>
+      <b>{upgrade.name}</b>
+    </PanelHeader>
+  );
+  const subheader = (
+    <PanelHeader>
+      <Minor>{getUpgradeCategory(upgrade)}</Minor>
+    </PanelHeader>
+  );
 
-  const SelectButton = upgrade instanceof ClassUpgrade
-    ? BlueButton
-    : Button;
+  const SelectButton = upgrade instanceof ClassUpgrade ? BlueButton : Button;
 
   return (
     <Panel>

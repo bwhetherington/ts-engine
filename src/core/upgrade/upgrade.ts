@@ -7,7 +7,8 @@ export class Upgrade implements Serializable {
   public type: string = Upgrade.typeName;
   public name: string = '';
   public description: string = '';
-  public isUnique: boolean = false;
+  public isRepeatable: boolean = false;
+  public isRare: boolean = false;
   public requires: string[] = [];
   public exclusiveWith: string[] = [];
 
@@ -18,14 +19,23 @@ export class Upgrade implements Serializable {
       type: this.type,
       name: this.name,
       description: this.description,
-      isUnique: this.isUnique,
+      isRepeatable: this.isRepeatable,
+      isRare: this.isRare,
       requires: this.requires,
       exclusiveWith: this.exclusiveWith,
     };
   }
 
   public deserialize(data: Data) {
-    const {type, name, description, isUnique, requires, exclusiveWith} = data;
+    const {
+      type,
+      name,
+      description,
+      isRepeatable,
+      isRare,
+      requires,
+      exclusiveWith,
+    } = data;
     if (typeof type === 'string') {
       this.type = type;
     }
@@ -35,8 +45,11 @@ export class Upgrade implements Serializable {
     if (typeof description === 'string') {
       this.description = description;
     }
-    if (typeof isUnique === 'boolean') {
-      this.isUnique = isUnique;
+    if (typeof isRepeatable === 'boolean') {
+      this.isRepeatable = isRepeatable;
+    }
+    if (typeof isRare === 'boolean') {
+      this.isRare = isRare;
     }
     if (requires instanceof Array) {
       this.requires = requires;

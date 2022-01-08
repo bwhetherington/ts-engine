@@ -26,7 +26,12 @@ import {BarUpdateEvent, clamp} from 'core/util';
 import {RNGManager} from 'core/random';
 import {TextColor} from 'core/chat';
 import {isUUID, UUID} from 'core/uuid';
-import {ChangeStoredUpgradeCountEvent, Upgrade, UpgradeEvent, UpgradeManager} from 'core/upgrade';
+import {
+  ChangeStoredUpgradeCountEvent,
+  Upgrade,
+  UpgradeEvent,
+  UpgradeManager,
+} from 'core/upgrade';
 import {Iterator} from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
@@ -505,7 +510,7 @@ export class BaseHero extends Tank {
   }
 
   public override calculateDamageIn(amount: number): number {
-    const armor = (this.modifiers.get('armor') - 1) + this.armor;
+    const armor = this.modifiers.get('armor') - 1 + this.armor;
     return Math.max(1, amount - armor);
   }
 

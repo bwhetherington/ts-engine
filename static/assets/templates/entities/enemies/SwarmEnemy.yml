@@ -1,5 +1,5 @@
-type: SwarmHero
-extends: BaseHero
+type: SwarmEnemy
+extends: BaseEnemy
 boundingBox:
   width: 40
   height: 40
@@ -10,6 +10,10 @@ bodyShape:
   angle: 45
 mass: 5
 speed: 200
+maxLife: 150
+life: 150
+armor: 2
+xpWorth: 40
 cannons:
   - key: 0
     shape:
@@ -35,7 +39,4 @@ cannons:
       height: 10
       farHeight: 20
       angle: 270
-modifiers:
-  life: 0.5  # +50% life
-  armor: 0.5 # +0.5 armor
 weapon: SwarmGun

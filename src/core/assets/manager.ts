@@ -1,4 +1,4 @@
-import { AsyncIterator } from 'core/iterator';
+import {AsyncIterator} from 'core/iterator';
 import {LogManager} from 'core/log';
 import {Data} from 'core/serialize';
 import {BufferData} from 'core/util';
@@ -49,7 +49,9 @@ export class AssetManager {
 
   public async loadDirectory(path: string): Promise<string[]> {
     if (this.directoryLoader) {
-      const data = await (await this.directoryLoader(path)).filter(this.isValidFileType.bind(this));
+      const data = await (
+        await this.directoryLoader(path)
+      ).filter(this.isValidFileType.bind(this));
       log.debug('load directory: ' + path);
       return data;
     } else {

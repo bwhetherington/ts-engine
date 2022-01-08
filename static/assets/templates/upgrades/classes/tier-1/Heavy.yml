@@ -7,9 +7,7 @@ requires:
   - PowerfulShots
   - Plated
   - Durable
-isUnique: true
 exclusiveWith:
-  - Laser
   - MachineGun
   - Homing
   - Railgun

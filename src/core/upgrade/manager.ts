@@ -18,7 +18,7 @@ import {UUID, UUIDManager} from 'core/uuid';
 import {Iterator} from 'core/iterator';
 import {BaseHero, WorldManager} from 'core/entity';
 import {NetworkManager} from 'core/net';
-import { LogManager } from 'core/log';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 
@@ -56,17 +56,14 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
     await this.loadAssetTemplates('templates/upgrades');
 
     this.availableUpgrades = this.getAssetInitializers()
-      .filter(
-        ([type]) =>
-          !(
-            EXCLUDED_UPGRADES.has(type)
-          )
-      )
+      .filter(([type]) => !EXCLUDED_UPGRADES.has(type))
       .map(([type, _initializer]) => type)
       .toArray();
 
     if (NetworkManager.isServer()) {
-      EventManager.streamEventsForPlayer<RequestUpgradeEvent>('RequestUpgradeEvent')
+      EventManager.streamEventsForPlayer<RequestUpgradeEvent>(
+        'RequestUpgradeEvent'
+      )
         .filterMap(({player, data: {hero}}) => {
           const entity = WorldManager.getEntity(hero);
           if (entity instanceof BaseHero) {
@@ -79,15 +76,19 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
           const id = UUIDManager.generate();
           const upgrades = this.sampleUpgrades(hero).take(3).toArray();
           this.offers.set(id, {
-            id, upgrades,
+            id,
+            upgrades,
           });
-          NetworkManager.sendEvent<OfferUpgradeEvent>({
-            type: 'OfferUpgradeEvent',
-            data: {
-              id,
-              upgrades,
+          NetworkManager.sendEvent<OfferUpgradeEvent>(
+            {
+              type: 'OfferUpgradeEvent',
+              data: {
+                id,
+                upgrades,
+              },
             },
-          }, player.socket);
+            player.socket
+          );
         });
 
       EventManager.streamEventsForPlayer<SelectUpgradeEvent>(
@@ -137,9 +138,6 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
   }
 
   public sampleUpgrades(hero: BaseHero): Iterator<string> {
-    console.log({
-      upgrades: [...hero.upgrades],
-    });
     return RNGManager.sample(this.availableUpgrades).filter((type) => {
       // Exclude upgrades which do not exist
       const upgrade = this.instantiate(type);
@@ -148,17 +146,25 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       }
 
       // Exclude upgrades for which we do not have the necessary upgrades
-      if (upgrade.requires.some((requirement) => !hero.upgrades.includes(requirement))) {
+      if (
+        upgrade.requires.some(
+          (requirement) => !hero.upgrades.includes(requirement)
+        )
+      ) {
         return false;
       }
 
       // Exclude upgrades which are exclusive with upgrades we already have
-      if (upgrade.exclusiveWith.some((exclusive) => hero.upgrades.includes(exclusive))) {
+      if (
+        upgrade.exclusiveWith.some((exclusive) =>
+          hero.upgrades.includes(exclusive)
+        )
+      ) {
         return false;
       }
 
       // Exclude unique upgrades if the player already has them selected
-      if (upgrade.isUnique) {
+      if (!upgrade.isRepeatable) {
         if (hero && hero.upgrades.includes(upgrade.type)) {
           return false;
         }

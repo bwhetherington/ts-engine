@@ -4,10 +4,9 @@ name: Railgun
 description: Change to a railgun tank, with a fast, shattering projectile.
 className: RailgunHero
 requires:
-  - GlassCannon
-  - SteadyShot
+  - FocusFire
+  - PowerfulShots
 exclusiveWith:
-  - Laser
   - MachineGun
   - Homing
   - Heavy

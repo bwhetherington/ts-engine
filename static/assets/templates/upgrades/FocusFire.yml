@@ -6,3 +6,4 @@ modifiers:
   damage: 0.1
   shotInaccuracy: -0.3
   shotSpread: -0.3
+isRepeatable: true

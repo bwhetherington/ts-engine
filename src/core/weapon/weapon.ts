@@ -7,7 +7,7 @@ import {NetworkManager} from 'core/net';
 import {RNGManager} from 'core/random';
 import {HeroModifier} from 'core/upgrade';
 import {EffectManager} from 'core/effect';
-import { AssetIdentifier, isAssetIdentifier } from 'core/assets';
+import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';

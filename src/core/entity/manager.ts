@@ -39,7 +39,12 @@ import {reshade} from 'core/graphics/color';
 import {Graph} from 'core/entity/pathfinding';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {RNGManager} from 'core/random';
-import {AssetIdentifier, AssetManager, AssetType, LoadingManager} from 'core/assets';
+import {
+  AssetIdentifier,
+  AssetManager,
+  AssetType,
+  LoadingManager,
+} from 'core/assets';
 import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {DataBuffer} from 'core/buf';
 import {Trail} from './Trail';
@@ -447,7 +452,10 @@ export class WorldManager
     return entity;
   }
 
-  public spawnEntity(type: AssetIdentifier, position?: Vector): Entity | undefined {
+  public spawnEntity(
+    type: AssetIdentifier,
+    position?: Vector
+  ): Entity | undefined {
     const entity = this.instantiate(type);
     if (!entity) {
       return;
