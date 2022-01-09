@@ -1,0 +1,9 @@
+type: Shotgun
+extends: ClassUpgrade
+name: Shotgun
+description: Fire a barrage of lower-damage bullets.
+className: MultigunHero
+tier: 1
+requires:
+  - MultiShot
+  - Plated

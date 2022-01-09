@@ -42,6 +42,7 @@ export class Entity
 
   private isExternal: boolean = false;
   private smoothTarget: Vector = new Vector();
+  private smoothAngleTarget: number = 0;
 
   constructor() {
     super();
@@ -109,6 +110,28 @@ export class Entity
     this.attachedTo = entity;
   }
 
+  protected smoothAngle(from: number, to: number, dt: number): number {
+    let angle = from;
+    angle %= 2 * Math.PI;
+
+    let angleDiff = to - angle;
+    if (angleDiff > Math.PI) {
+      angleDiff -= 2 * Math.PI;
+    }
+
+    const angleIncrement = 10 * dt * angleDiff;
+    angle += angleIncrement;
+    angle %= 2 * Math.PI;
+
+    if (
+      Math.abs(angle - to) < Math.PI / 180
+    ) {
+      angle = to;
+    }
+
+    return angle;
+  }
+
   private updatePosition(dt: number) {
     if (this.isAlive()) {
       if (this.attachedTo?.isAlive()) {
@@ -130,13 +153,16 @@ export class Entity
         ) <= snapDistance
       ) {
         this.setPosition(this.smoothTarget);
-        return;
+      } else {
+        this.vectorBuffer.set(this.smoothTarget);
+        this.vectorBuffer.add(this.position, -1);
+        const increment = clamp(10 * dt, 0, 1);
+        this.addPosition(this.vectorBuffer, increment);
       }
 
-      this.vectorBuffer.set(this.smoothTarget);
-      this.vectorBuffer.add(this.position, -1);
-      const increment = clamp(10 * dt, 0, 1);
-      this.addPosition(this.vectorBuffer, increment);
+      // Smooth angle
+      this.angle = this.smoothAngle(this.angle, this.smoothAngleTarget, dt);
+
       return;
     }
 
@@ -272,7 +298,11 @@ export class Entity
       this.friction = friction;
     }
     if (typeof angle === 'number') {
-      this.angle = angle;
+      if (this.shouldSmooth()) {
+        this.smoothAngleTarget = angle;
+      } else {
+        this.angle = angle;
+      }
     }
     if (typeof bounce === 'number') {
       this.bounce = bounce;

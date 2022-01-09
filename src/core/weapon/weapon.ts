@@ -48,7 +48,9 @@ export abstract class Weapon implements Serializable {
   ): void;
 
   protected getShotInaccuracy(tank: Tank): number {
-    return this.shotInaccuracy / Math.max(tank.modifiers.get('shotInaccuracy'), 0.05);
+    return (
+      this.shotInaccuracy / Math.max(tank.modifiers.get('shotInaccuracy'), 0.05)
+    );
   }
 
   private async burstFire(

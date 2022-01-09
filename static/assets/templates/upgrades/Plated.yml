@@ -1,7 +1,7 @@
 type: Plated
 extends: ModifierUpgrade
 name: Plated
-description: Your armor is increased by 0.5.
-modifiers: 
+description: Your armor is greater.
+modifiers:
   armor: 0.5
 isRepeatable: true

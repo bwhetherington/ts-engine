@@ -163,4 +163,15 @@ export const Background = styled.div`
   }
 `;
 
+interface LineProps {
+  label: string;
+  value: string | number;
+}
+
+export const Line: React.FunctionComponent<LineProps> = ({label, value}) => (
+  <div>
+    <strong>{label}:</strong> {value.toLocaleString()}
+  </div>
+);
+
 export * from 'client/components/common/inputs';

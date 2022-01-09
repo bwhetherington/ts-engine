@@ -75,7 +75,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
         .forEach(({player, hero}) => {
           hero.storedUpgrades -= 1;
           const id = UUIDManager.generate();
-          const upgrades = this.sampleUpgrades(hero).take(4).toArray();
+          const upgrades = this.sampleUpgrades(hero).take(3).toArray();
           this.offers.set(id, {
             id,
             upgrades,
@@ -149,6 +149,13 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       // Exclude rare upgrades some of the time to make them occur less
       // frequently
       if (upgrade.isRare && RNGManager.nextBoolean(RARE_MODIFIER)) {
+        return false;
+      }
+
+      // Exclude class upgrades of a tier the player has already reached
+      if (
+        upgrade instanceof ClassUpgrade && upgrade.tier <= hero.classTier
+      ) {
         return false;
       }
 

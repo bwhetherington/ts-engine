@@ -5,9 +5,10 @@ boundingBox:
   height: 35
 innerBodyShape:
   tag: polygon
-  ignoreAngle: true
+  lockToWeapon: true
   sides: 6
   radius: 0.67
+  angle: 30
 cannons:
   - key: 0
     shape:

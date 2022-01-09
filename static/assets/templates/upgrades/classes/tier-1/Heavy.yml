@@ -6,8 +6,4 @@ className: SniperHero
 requires:
   - Bulky
   - PowerfulShots
-exclusiveWith:
-  - MachineGun
-  - Homing
-  - Railgun
-  - Omni
+tier: 1

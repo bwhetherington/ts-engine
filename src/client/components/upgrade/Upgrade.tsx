@@ -2,12 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import {sanitize} from 'dompurify';
 
-import {ClassUpgrade, Upgrade} from 'core/upgrade';
+import {ClassUpgrade, ModifierUpgrade, Upgrade} from 'core/upgrade';
 import {UUID} from 'core/uuid';
 
 import {Button, Column, Panel, PanelHeader} from 'client/components';
 import {BlueButton, Minor} from '../common';
 import {JsxEmit} from 'typescript';
+import {ModifiersComponent} from './Modifiers';
 
 interface UpgradeProps {
   id: UUID;
@@ -16,8 +17,8 @@ interface UpgradeProps {
 }
 
 const Container = styled.div`
-  width: 180px;
-  height: 240px;
+  width: 200px;
+  height: 280px;
   display: flex;
   flex-direction: column;
 `;
@@ -56,6 +57,24 @@ export const UpgradeComponent: React.FunctionComponent<UpgradeProps> = ({
   );
 
   const SelectButton = upgrade instanceof ClassUpgrade ? BlueButton : Button;
+
+  if (upgrade instanceof ModifierUpgrade) {
+    return (
+      <Panel>
+        <Container>
+          <Column>
+            {header}
+            {subheader}
+          </Column>
+          <Content>
+            {description}
+            <ModifiersComponent modifiers={upgrade.modifiers} />
+          </Content>
+          <SelectButton onClick={onClick}>Select</SelectButton>
+        </Container>
+      </Panel>
+    );
+  }
 
   return (
     <Panel>

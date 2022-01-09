@@ -1,22 +1,11 @@
 import React from 'react';
-import {Component, Panel, PanelHeader} from 'client/components';
+import {Component, Panel, PanelHeader, Line} from 'client/components';
 import {EventManager, StepEvent} from 'core/event';
 import {MetricsManager} from 'client/metrics';
 import {WorldManager} from 'core/entity';
 import {MetricsEvent} from 'core/metrics';
 import {PlayerManager} from 'core/player';
 import {UUIDManager} from 'core/uuid';
-
-interface LineProps {
-  label: string;
-  value: string | number;
-}
-
-const Line: React.FunctionComponent<LineProps> = ({label, value}) => (
-  <div>
-    <strong>{label}:</strong> {value.toLocaleString()}
-  </div>
-);
 
 interface DebugState {
   fps: number;

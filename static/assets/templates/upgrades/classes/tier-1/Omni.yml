@@ -4,6 +4,7 @@ name: Omni
 description: Change to a generalist tank, with better attributes across the board.
 className: OmniHero
 isRare: true
+tier: 1
 requires:
   - GlassCannon
   - SteadyShot
@@ -13,10 +14,3 @@ requires:
   - Regeneration
   - Bulky
   - Glide
-exclusiveWith:
-  - MachineGun
-  - Homing
-  - Railgun
-  - Heavy
-  - Laser
-  - Swarm

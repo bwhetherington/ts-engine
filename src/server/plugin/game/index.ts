@@ -12,7 +12,7 @@ import {
 } from 'core/entity';
 import {EventManager, Priority} from 'core/event';
 import {StateMachine} from 'core/fsm';
-import {Matrix2, Vector} from 'core/geometry';
+import {Vector} from 'core/geometry';
 import {COLORS, randomColor} from 'core/graphics';
 import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {RNGManager} from 'core/random';
@@ -62,9 +62,13 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       'Enemy',
       'Enemy',
       'Enemy',
+      'Enemy',
+      'HomingEnemy',
       'HomingEnemy',
       'HomingEnemy',
       'HeavyEnemy',
+      'HeavyEnemy',
+      'SwarmEnemy',
     ]);
     const enemy = WorldManager.spawnEntity(type);
     enemy?.setPosition(position);
@@ -78,7 +82,6 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     // Spawn feed units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
-      .filter(() => false)
       .filter(
         () =>
           WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 2.5)
@@ -89,7 +92,6 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     // Spawn enemy units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
-      .filter(() => false)
       .filter(
         () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
       )
@@ -143,15 +145,15 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     PlayerManager.getPlayers().forEach((player) => player.spawnHero());
 
     // Start timer
-    // this.countdown(
-    //   GameState.Running,
-    //   300,
-    //   [60, 30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-    // ).then((shouldTransition) => {
-    //   if (shouldTransition) {
-    //     this.transition(GameAction.Stop);
-    //   }
-    // });
+    this.countdown(
+      GameState.Running,
+      600,
+      [60, 30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+    ).then((shouldTransition) => {
+      if (shouldTransition) {
+        this.transition(GameAction.Stop);
+      }
+    });
   }
 
   private stopGame() {

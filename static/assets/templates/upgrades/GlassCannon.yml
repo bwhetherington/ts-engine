@@ -1,9 +1,9 @@
 type: GlassCannon
 extends: ModifierUpgrade
 name: Glass Cannon
-description: You deal 50% more damage, but have 50% less life.
+description: You deal significantly more global damage, but have less life.
 requires:
   - PowerfulShots
-modifiers: 
+modifiers:
   damage: 0.5
   life: -0.5

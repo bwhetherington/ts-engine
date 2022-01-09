@@ -1,8 +1,8 @@
 type: FocusFire
 extends: ModifierUpgrade
 name: Focus Fire
-description: Your projectiles have 15% less spread, and deal 5% more damage.
-modifiers: 
+description: Your projectiles have less spread, and deal slightly more damage.
+modifiers:
   damage: 0.05
   shotInaccuracy: 0.15
   shotSpread: 0.15

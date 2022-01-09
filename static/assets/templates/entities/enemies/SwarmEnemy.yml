@@ -1,5 +1,6 @@
 type: SwarmEnemy
 extends: BaseEnemy
+name: Host
 boundingBox:
   width: 40
   height: 40

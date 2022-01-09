@@ -58,6 +58,8 @@ export class BaseHero extends Tank {
     [MovementDirection.Right]: false,
   };
   public upgrades: string[] = [];
+  public classTier: number = 0;
+
   private _storedUpgrades: number = 0;
 
   private xp: number = 0;
@@ -429,14 +431,11 @@ export class BaseHero extends Tank {
       replacementId: this.replacementId,
       xp: this.xp,
       storedUpgrades: this.storedUpgrades,
+      classTier: this.classTier,
     };
   }
 
   public override deserialize(data: Data, setInitialized?: boolean) {
-    if (setInitialized) {
-      console.log('initialize', data);
-    }
-
     const {x: oldX, y: oldY} = this.position;
     const {x: oldVX, y: oldVY} = this.velocity;
     const {
@@ -444,7 +443,11 @@ export class BaseHero extends Tank {
       weaponAngle: oldWeaponAngle,
       targetAngle: oldTargetAngle,
     } = this;
-    const {playerID, xp, storedUpgrades} = data;
+    const {playerID, xp, storedUpgrades, classTier} = data;
+
+    if (typeof classTier === 'number') {
+      this.classTier = classTier;
+    }
 
     if (typeof storedUpgrades === 'number') {
       this.storedUpgrades = storedUpgrades;

@@ -6,7 +6,7 @@ import {Iterator} from 'core/iterator';
 
 type Modifiers = Record<string, number>;
 
-const MODIFIER_KEYS = [
+export const MODIFIER_KEYS = [
   'life',
   'lifeRegen',
   'speed',
@@ -95,7 +95,7 @@ export class HeroModifier implements Serializable {
 export class ModifierUpgrade extends Upgrade {
   public static typeName: string = 'ModifierUpgrade';
 
-  private modifiers: HeroModifier = new HeroModifier();
+  public modifiers: HeroModifier = new HeroModifier();
 
   constructor(modifiers?: Modifiers) {
     super();

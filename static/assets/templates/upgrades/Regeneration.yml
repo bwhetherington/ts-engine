@@ -1,7 +1,7 @@
 type: Regeneration
 extends: ModifierUpgrade
 name: Regeneration
-description: Your life regeneration is increased by 30%.
-modifiers: 
+description: Your life regeneration is greater.
+modifiers:
   lifeRegen: 0.3
 isRepeatable: true
