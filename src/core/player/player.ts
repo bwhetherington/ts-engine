@@ -193,7 +193,6 @@ export class Player extends Observer implements Serializable {
         newHero.velocity.set(this.hero.velocity);
         newHero.setColor(this.hero.getBaseColor());
         newHero.setExperience(this.hero.getExperience(), false);
-        newHero.setLife(this.hero.getLife());
         newHero.angle = this.hero.angle;
         newHero.targetAngle = this.hero.targetAngle;
         newHero.weaponAngle = this.hero.weaponAngle;
@@ -203,6 +202,7 @@ export class Player extends Observer implements Serializable {
 
         // Copy upgrades
         newHero.copyUpgrades(this.hero);
+        newHero.setLife(this.hero.getLife());
 
         this.hero.markForDelete();
       }

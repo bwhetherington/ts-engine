@@ -20,13 +20,17 @@ export type ShapeType = CircleType | PolygonType;
 export interface CircleType {
   tag: 'circle';
   lockToWeapon?: boolean;
+  ignoreAngle?: true;
+  radius?: number;
 }
 
 export interface PolygonType {
   tag: 'polygon';
   lockToWeapon?: boolean;
+  ignoreAngle?: boolean;
   sides: number;
   angle?: number;
+  radius?: number;
 }
 
 interface TankCannon {
@@ -65,6 +69,7 @@ export class Tank extends Unit {
     tag: 'circle',
     lockToWeapon: false,
   };
+  protected innerBodyShape?: ShapeType;
 
   private fireTimer: number = 0;
   protected weapon?: Weapon;
@@ -164,22 +169,17 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderBody(ctx: GraphicsContext) {
+  protected renderBodyShape(shape: ShapeType, ctx: GraphicsContext) {
     let {width} = this.boundingBox;
     width *= 1.1;
-    const radius = width / 2;
-    const rotation = this.bodyShape.lockToWeapon
-      ? this.weaponAngle - this.angle
-      : 0;
-
-    // if (this.hasEffect('BurnEffect')) {
-    //   GraphicsPipeline.pipe()
-    //     .run(ctx, (ctx) => {
-    //       const from = {...this.getColor(), alpha: 0.75};
-    //       const to = {...from, alpha: 0}
-    //       ctx.gradientCircle(0, 0, radius * 3, from, to);
-    //     });
-    // }
+    const radius = width / 2 * (shape.radius ?? 1);
+    let rotation = 0;
+    if (shape.lockToWeapon) {
+      rotation = this.weaponAngle - this.angle;
+    }
+    if (shape.ignoreAngle) {
+      rotation = this.angle;
+    }
 
     GraphicsPipeline.pipe()
       .options({
@@ -188,7 +188,7 @@ export class Tank extends Unit {
       })
       .rotate(rotation)
       .run(ctx, (ctx) => {
-        if (this.bodyShape.tag === 'circle') {
+        if (shape.tag === 'circle') {
           ctx.ellipse(
             -radius,
             -radius,
@@ -196,17 +196,24 @@ export class Tank extends Unit {
             radius * 2,
             this.getColor()
           );
-        } else if (this.bodyShape.tag === 'polygon') {
+        } else if (shape.tag === 'polygon') {
           ctx.regularPolygon(
             0,
             0,
-            this.bodyShape.sides,
+            shape.sides,
             radius,
             this.getColor(),
-            this.bodyShape.angle
+            shape.angle ?? 0
           );
         }
       });
+  }
+
+  protected renderBody(ctx: GraphicsContext) {
+    this.renderBodyShape(this.bodyShape, ctx);
+    if (this.innerBodyShape) {
+      this.renderBodyShape(this.innerBodyShape, ctx);
+    }
   }
 
   protected renderCannonShape(ctx: GraphicsContext, cannon: TankCannon) {
@@ -283,16 +290,22 @@ export class Tank extends Unit {
       weaponAngle: this.weaponAngle,
       weapon: this.weapon?.serialize(),
       modifiers: this.modifiers.serialize(),
+      // bodyShape: this.bodyShape,
+      // innerBodyShape: this.innerBodyShape,
     };
   }
 
   public override deserialize(data: Data, setInitialized?: boolean) {
     super.deserialize(data, setInitialized);
-    const {cannons, bodyShape, weapon, weaponAngle, targetAngle, modifiers} =
+    const {cannons, bodyShape, innerBodyShape, weapon, weaponAngle, targetAngle, modifiers} =
       data;
 
     if (modifiers) {
       this.modifiers.deserialize(modifiers);
+      this.setMaxLife(this.getMaxLife());
+      if (setInitialized) {
+        this.setLife(this.getMaxLife());
+      }
     }
 
     if (cannons instanceof Array) {
@@ -313,15 +326,33 @@ export class Tank extends Unit {
     if (bodyShape) {
       // TODO Add type checking
       if (bodyShape.tag === 'polygon') {
-        const {tag, sides, angle, lockToWeapon} = bodyShape;
+        const {tag, sides, angle, lockToWeapon, ignoreAngle, radius} = bodyShape;
         this.bodyShape = {
           tag,
           sides,
           lockToWeapon,
+          ignoreAngle,
+          radius,
           angle: angle !== undefined ? (angle * Math.PI) / 180 : undefined,
         };
       } else {
         this.bodyShape = bodyShape;
+      }
+    }
+    if (innerBodyShape) {
+      // TODO Add type checking
+      if (innerBodyShape.tag === 'polygon') {
+        const {tag, sides, angle, lockToWeapon, ignoreAngle, radius} = innerBodyShape;
+        this.innerBodyShape = {
+          tag,
+          sides,
+          lockToWeapon,
+          ignoreAngle,
+          radius,
+          angle: angle !== undefined ? (angle * Math.PI) / 180 : undefined,
+        };
+      } else {
+        this.innerBodyShape = innerBodyShape;
       }
     }
     if (weapon) {
@@ -389,5 +420,17 @@ export class Tank extends Unit {
     } else if (actualWeapon) {
       this.weapon = actualWeapon;
     }
+  }
+
+  public override getSpeed(): number {
+    return Math.max(super.getSpeed() * this.modifiers.get('speed'), 0);
+  }
+
+  public override getMass(): number {
+    return Math.max(super.getMass() * this.modifiers.get('mass'), 0);
+  }
+
+  public override getFriction(): number {
+    return Math.max(super.getFriction() * this.modifiers.get('friction'), 0);
   }
 }

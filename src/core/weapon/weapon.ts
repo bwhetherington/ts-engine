@@ -48,7 +48,7 @@ export abstract class Weapon implements Serializable {
   ): void;
 
   protected getShotInaccuracy(tank: Tank): number {
-    return Math.max(tank.modifiers.get('shotInaccuracy') * this.shotInaccuracy, 0);
+    return this.shotInaccuracy / Math.max(tank.modifiers.get('shotInaccuracy'), 0.05);
   }
 
   private async burstFire(
@@ -106,7 +106,7 @@ export abstract class Weapon implements Serializable {
     if (!modifier) {
       return this.shotSpread;
     }
-    return Math.max(modifier.get('shotSpread') * this.shotSpread, 0);
+    return this.shotSpread / Math.max(modifier.get('shotSpread'), 0.05);
   }
 
   protected getBurstCount(modifier?: HeroModifier): number {

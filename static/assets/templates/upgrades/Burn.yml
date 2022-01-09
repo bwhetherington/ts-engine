@@ -3,3 +3,7 @@ extends: AuraUpgrade
 name: Burn
 description: Burn units around you.
 aura: BurnAura
+requires:
+  - Glide
+  - Glass Cannon
+isRare: true

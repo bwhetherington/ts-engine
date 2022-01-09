@@ -237,6 +237,10 @@ export class Unit extends Entity {
     return 0;
   }
 
+  public getSpeed(): number {
+    return this.speed;
+  }
+
   public override step(dt: number) {
     // Regenerate life
     this.setLife(this.life);
@@ -249,13 +253,14 @@ export class Unit extends Entity {
     this.acceleration.angle = this.angle;
 
     this.acceleration.magnitude =
-      ACCELERATION * dt * this.thrusting * this.mass;
+      ACCELERATION * dt * this.thrusting * this.getMass();
     this.applyForce(this.acceleration);
 
     // Handle maximum speed
-    if (this.velocity.magnitude > this.speed) {
+    const speed = this.getSpeed();
+    if (this.velocity.magnitude > speed) {
       // If we've exceeded the maximum velocity, apply a scaling friction
-      const excess = this.velocity.magnitude - this.speed;
+      const excess = this.velocity.magnitude - speed;
       this.vectorBuffer.set(this.velocity);
       this.vectorBuffer.normalize();
       this.vectorBuffer.scale(-excess);
@@ -431,7 +436,7 @@ export class Unit extends Entity {
       this.vectorBuffer.normalize();
       other.applyForce(
         this.vectorBuffer,
-        this.mass * 300 * EventManager.lastStepDt
+        this.getMass() * 300 * EventManager.lastStepDt
       );
     }
   }

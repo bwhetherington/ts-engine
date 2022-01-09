@@ -1,0 +1,12 @@
+type: Bulky
+extends: ModifierUpgrade
+name: Bulky
+description: Gain life, armor, and mass, but lose 20% speed.
+modifiers:
+  life: 0.2
+  armor: 0.5
+  mass: 0.2
+  speed: -0.2
+requires:
+  - Durable
+  - Plated

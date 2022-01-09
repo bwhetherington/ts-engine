@@ -56,7 +56,7 @@ export class Entity
   }
 
   public applyForce(force: Vector, scalar: number = 1) {
-    this.velocity.add(force, scalar / this.mass);
+    this.velocity.add(force, scalar / this.getMass());
   }
 
   public setPosition(point: Vector) {
@@ -99,9 +99,9 @@ export class Entity
     switch (this.collisionLayer) {
       case CollisionLayer.Effect:
       case CollisionLayer.HUD:
-        return this.friction;
+        return this.getFriction();
       default:
-        return this.friction * WorldManager.friction;
+        return this.getFriction() * WorldManager.friction;
     }
   }
 
@@ -187,6 +187,14 @@ export class Entity
 
   public isAlive(): boolean {
     return !this.markedForDelete;
+  }
+
+  public getMass(): number {
+    return this.mass;
+  }
+
+  public getFriction(): number {
+    return this.friction;
   }
 
   public serialize(): Data {

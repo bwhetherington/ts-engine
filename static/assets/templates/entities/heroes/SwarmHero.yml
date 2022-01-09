@@ -36,6 +36,6 @@ cannons:
       farHeight: 20
       angle: 270
 modifiers:
-  life: 0.5  # +50% life
+  life: 1.5  # +50% life
   armor: 0.5 # +0.5 armor
 weapon: SwarmGun

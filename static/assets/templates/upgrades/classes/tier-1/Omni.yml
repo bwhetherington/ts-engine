@@ -11,6 +11,8 @@ requires:
   - Plated
   - Durable
   - Regeneration
+  - Bulky
+  - Glide
 exclusiveWith:
   - MachineGun
   - Homing

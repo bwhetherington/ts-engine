@@ -75,7 +75,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
         .forEach(({player, hero}) => {
           hero.storedUpgrades -= 1;
           const id = UUIDManager.generate();
-          const upgrades = this.sampleUpgrades(hero).take(3).toArray();
+          const upgrades = this.sampleUpgrades(hero).take(4).toArray();
           this.offers.set(id, {
             id,
             upgrades,

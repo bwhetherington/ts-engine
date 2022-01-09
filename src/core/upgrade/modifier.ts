@@ -10,6 +10,8 @@ const MODIFIER_KEYS = [
   'life',
   'lifeRegen',
   'speed',
+  'friction',
+  'mass',
   'armor',
   'damage',
   'weaponDamage',

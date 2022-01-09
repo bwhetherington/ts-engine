@@ -234,7 +234,7 @@ export class BaseHero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return 50 + (level - 1) * 5;
+    return 50;
   }
 
   protected armorForLevel(_level: number): number {
@@ -252,7 +252,7 @@ export class BaseHero extends Tank {
   public setExperience(amount: number, allowLevels: boolean = true) {
     this.xp = amount;
 
-    while (this.xp >= this.experienceForLevel(this.level) && this.level < 40) {
+    while (this.xp >= this.experienceForLevel(this.level) && this.level < 30) {
       const oldLevel = this.level;
       this.setLevelInternal(this.level + 1);
       if (NetworkManager.isServer() && allowLevels) {
@@ -274,7 +274,7 @@ export class BaseHero extends Tank {
       this.setLevelInternal(this.level - 1);
     }
 
-    if (this.getPlayer()?.isActivePlayer?.()) {
+    if (this.getPlayer()?.isActivePlayer()) {
       const prevXp = this.experienceForLevel(this.level - 1);
       EventManager.emit({
         type: 'BarUpdateEvent',
@@ -300,9 +300,6 @@ export class BaseHero extends Tank {
     level = clamp(level, 1, 40);
     if (level !== this.level) {
       this.level = level;
-
-      this.setMaxLife(this.lifeForLevel(level));
-      this.armor = this.armorForLevel(level);
     }
   }
 
@@ -436,6 +433,10 @@ export class BaseHero extends Tank {
   }
 
   public override deserialize(data: Data, setInitialized?: boolean) {
+    if (setInitialized) {
+      console.log('initialize', data);
+    }
+
     const {x: oldX, y: oldY} = this.position;
     const {x: oldVX, y: oldVY} = this.velocity;
     const {
@@ -451,7 +452,7 @@ export class BaseHero extends Tank {
 
     if (typeof xp === 'number') {
       this.setExperience(xp);
-    } else if (setInitialized && !this.isInitialized) {
+    } else if (setInitialized) {
       this.setExperience(0);
     }
 
@@ -481,6 +482,7 @@ export class BaseHero extends Tank {
       if (player && player.hero !== this) {
         player.setHero(this);
       }
+      this.setExperience(0);
     }
 
     if (this.getPlayer()?.isActivePlayer?.() && wasInitialized) {

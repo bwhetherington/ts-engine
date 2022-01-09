@@ -516,7 +516,7 @@ export class WorldManager
         }
       }
       if (entity && (createdEntity || entity.doSync)) {
-        entity.deserialize(entry, true);
+        entity.deserialize(entry, createdEntity);
       } else {
         log.warn(`failed to create entity from data: ${JSON.stringify(entry)}`);
       }

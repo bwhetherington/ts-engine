@@ -1,15 +1,19 @@
 type: OmniHero
 extends: BaseHero
-bodyShape:
+boundingBox:
+  width: 35
+  height: 35
+innerBodyShape:
   tag: polygon
-  lockToWeapon: true
+  ignoreAngle: true
   sides: 6
-  angle: 30
+  radius: 0.67
 cannons:
   - key: 0
     shape:
-      length: 25
-      height: 15
+      length: 27.5
+      height: 20
+      farHeight: 22.5
 modifiers:
   life: 1.5
   lifeRegen: 1.5
