@@ -1,9 +1,8 @@
-import {Entity} from 'core/entity';
+import {Entity, CollisionLayer} from 'core/entity';
 import {Rectangle} from 'core/geometry';
 import {Color, GraphicsContext} from 'core/graphics';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {ThemeManager} from 'core/theme';
-import {CollisionLayer} from './util';
 
 export const WALL_COLOR = {red: 0.85, green: 0.85, blue: 0.85};
 

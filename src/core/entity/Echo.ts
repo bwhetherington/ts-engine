@@ -1,6 +1,5 @@
 import {Entity, CollisionLayer} from 'core/entity';
-import {sleep, clamp, smoothStep} from 'core/util';
-import {StepEvent} from 'core/event';
+import {smoothStep} from 'core/util';
 import {GraphicsContext} from 'core/graphics';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 

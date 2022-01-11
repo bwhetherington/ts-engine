@@ -49,6 +49,10 @@ const KEY_INFO: Record<string, KeyInfo> = {
     name: 'Regen',
     type: KeyType.Multiplier,
   },
+  lifeRegenDelay: {
+    name: 'Regen Delay',
+    type: KeyType.Multiplier,
+  },
   speed: {
     name: 'Speed',
     type: KeyType.Multiplier,
@@ -87,6 +91,10 @@ const KEY_INFO: Record<string, KeyInfo> = {
   },
   shotSpread: {
     name: 'Spread',
+    type: KeyType.Multiplier,
+  },
+  shotInaccuracy: {
+    name: 'Accuracy',
     type: KeyType.Multiplier,
   },
   burstCount: {
@@ -138,9 +146,7 @@ export const ModifiersComponent: React.FunctionComponent<ModifiersProps> = ({
 
   return (
     <ModifiersContent>
-      <tbody>
-        {items}
-      </tbody>
+      <tbody>{items}</tbody>
     </ModifiersContent>
   );
 };

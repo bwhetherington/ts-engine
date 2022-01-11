@@ -14,6 +14,7 @@ import {
   Panel,
   Row,
 } from 'client/components';
+import {AlertContainer} from './alert';
 
 const UIContainer = styled.div`
   position: fixed;
@@ -54,6 +55,9 @@ export const App: React.FunctionComponent<{}> = () => (
     </div>
     <div className="bottom center-horizontal">
       <UpgradeContainer />
+    </div>
+    <div className="top center-horizontal">
+      <AlertContainer />
     </div>
     <FormContainer />
   </UIContainer>

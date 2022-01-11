@@ -153,9 +153,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       }
 
       // Exclude class upgrades of a tier the player has already reached
-      if (
-        upgrade instanceof ClassUpgrade && upgrade.tier <= hero.classTier
-      ) {
+      if (upgrade instanceof ClassUpgrade && upgrade.tier <= hero.classTier) {
         return false;
       }
 

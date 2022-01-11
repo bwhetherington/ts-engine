@@ -216,7 +216,7 @@ export abstract class Weapon implements Serializable {
     if (modifier) {
       damage = modifier.get('damage') * modifier.get('weaponDamage') * damage;
     }
-    const roll = RNGManager.nextFloat(-damage / 5, damage / 5);
+    const roll = RNGManager.nextFloat(-damage / 10, damage / 10);
     return Math.max(1, damage + roll);
   }
 

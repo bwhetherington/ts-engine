@@ -1,5 +1,4 @@
 import {Data, Serializable} from 'core/serialize';
-import {Matrix2} from 'core/geometry';
 import {Upgrade} from 'core/upgrade';
 import {BaseHero} from 'core/entity';
 import {Iterator} from 'core/iterator';
@@ -9,6 +8,7 @@ type Modifiers = Record<string, number>;
 export const MODIFIER_KEYS = [
   'life',
   'lifeRegen',
+  'lifeRegenDelay',
   'speed',
   'friction',
   'mass',
@@ -19,13 +19,12 @@ export const MODIFIER_KEYS = [
   'rate',
   'shotCount',
   'shotSpread',
+  'shotInaccuracy',
   'burstCount',
   'projectileSpeed',
   'projectileDuration',
   'projectileSpread',
 ];
-
-const IDENTITY = new Matrix2().identity();
 
 export class HeroModifier implements Serializable {
   public modifiers: Modifiers = {};
@@ -54,18 +53,11 @@ export class HeroModifier implements Serializable {
   }
 
   public get(key: string): number {
-    const mod = this.modifiers[key];
-    if (!mod) {
-      return 1;
-    }
-    return mod;
+    return this.modifiers[key] ?? 1;
   }
 
   private composeKey(key: string, other: Modifiers, invert: boolean = false) {
-    let existing = this.modifiers[key];
-    if (!existing) {
-      existing = 1;
-    }
+    let existing = this.modifiers[key] ?? 1;
     const target = other[key];
     if (target) {
       if (invert) {
@@ -114,7 +106,7 @@ export class ModifierUpgrade extends Upgrade {
   public serialize(): Data {
     return {
       ...super.serialize(),
-      modifiers: this.modifiers?.serialize?.(),
+      modifiers: this.modifiers?.serialize(),
     };
   }
 

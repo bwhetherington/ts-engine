@@ -1,0 +1,8 @@
+type: PestGun
+extends: BaseGun
+projectileType: SmallProjectile
+shotInaccuracy: 0.1
+projectileSpeed: 500
+pierce: 1
+damage: 10
+rate: 0.5

@@ -69,17 +69,16 @@ export const Row = styled.div`
 
 export const Button = styled.button`
   border: 1px solid;
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
   padding: 5px 10px 5px 10px;
   border-radius: 4px;
   background-color: rgba(255, 255, 255, 0.1);
-  /* backdrop-filter: blur(10px); */
+  backdrop-filter: blur(10px);
   outline: none;
   color: white;
   font-family: inherit;
   margin: 2px;
   cursor: pointer;
-  /* white-space: nowrap; */
 
   &:disabled {
     color: rgba(255, 255, 255, 0.5);
@@ -87,7 +86,7 @@ export const Button = styled.button`
   }
 
   &:hover:not(:disabled) {
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
     background-color: rgba(255, 255, 255, 0.2);
   }
 `;

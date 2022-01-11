@@ -41,7 +41,7 @@ export const COLORS: Color[] = [
   fromHSV({hue: 180, value: 0.85, saturation: 0.7}),
   fromHSV({hue: 200, value: 0.9, saturation: 0.5}),
   fromHSV({hue: 220, value: 0.9, saturation: 0.45}),
-  fromHSV({hue: 240, value: 0.9, saturation: 0.4}),
+  fromHSV({hue: 240, value: 0.9, saturation: 0.5}),
   fromHSV({hue: 260, value: 0.9, saturation: 0.45}),
   fromHSV({hue: 280, value: 0.9, saturation: 0.5}),
   fromHSV({hue: 300, value: 0.9, saturation: 0.5}),
@@ -49,13 +49,15 @@ export const COLORS: Color[] = [
   fromHSV({hue: 340, value: 0.85, saturation: 0.55}),
 ];
 
-const COLOR_NAMES: Record<string, Color> = {
+export const COLOR_NAMES: Record<string, Color> = {
   red: COLORS[0],
-  yellow: COLORS[60],
-  green: COLORS[120],
-  cyan: COLORS[180],
-  blue: COLORS[240],
-  magenta: COLORS[300],
+  yellow: COLORS[60 / 20],
+  green: COLORS[120 / 20],
+  cyan: COLORS[180 / 20],
+  blue: COLORS[240 / 20],
+  magenta: COLORS[300 / 20],
+  white: fromHSV({hue: 0, value: 0.95, saturation: 0}),
+  black: fromHSV({hue: 0, value: 0.25, saturation: 0}),
 };
 
 type ColorKey = string | number | Color;

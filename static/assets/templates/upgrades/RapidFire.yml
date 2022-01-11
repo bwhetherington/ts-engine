@@ -1,8 +1,8 @@
 type: RapidFire
 extends: ModifierUpgrade
 name: Rapid Fire
-description: Your fire rate is slightly faster, and your projectiles are less accurate.
-modifiers:
-  rate: 0.1
-  shotInaccuracy: 0.3
+description: Increase your fire rate at the cost of accuracy.
+modifiers: 
+  rate: 0.2
+  shotInaccuracy: -0.15
 isRepeatable: true

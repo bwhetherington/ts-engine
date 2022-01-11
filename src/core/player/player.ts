@@ -200,13 +200,17 @@ export class Player extends Observer implements Serializable {
         newHero.replacementId = this.hero.id;
         newHero.storedUpgrades = this.hero.storedUpgrades;
 
+        if (this.hero.team !== undefined) {
+          newHero.setTeam(this.hero.team);
+        }
+
         // Copy upgrades
         newHero.copyUpgrades(this.hero);
         newHero.setLife(this.hero.getLife());
 
         this.hero.markForDelete();
       }
-      WorldManager.add(newHero);
+      // WorldManager.add(newHero);
       this.setHero(newHero);
       return true;
     } else {

@@ -6,5 +6,5 @@ projectileSpeed: 750
 pierce: 1
 burstCount: 3
 burstInterval: 0.06
-damage: 5
+damage: 20
 rate: 1

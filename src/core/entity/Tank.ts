@@ -1,10 +1,10 @@
-import {Unit, Text, WorldManager, Trail} from 'core/entity';
-import {BLACK, GraphicsContext, hsv, WHITE} from 'core/graphics';
+import {Unit} from 'core/entity';
+import {GraphicsContext} from 'core/graphics';
 import {Data} from 'core/serialize';
 import {FireEvent, Weapon, WeaponManager} from 'core/weapon';
 import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
-import {CannonShape, Rectangle, Vector} from 'core/geometry';
+import {CannonShape, Vector} from 'core/geometry';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {Iterator} from 'core/iterator';
 import {EventManager} from 'core/event';
@@ -90,7 +90,6 @@ export class Tank extends Unit {
     this.setLife(50);
 
     if (NetworkManager.isClient()) {
-      this.label = WorldManager.spawn(Text, this.position);
       this.streamEvents<FireEvent>('FireEvent')
         .filter(({data: {sourceID}}) => sourceID === this.id)
         .forEach(({data: {cannonIndex}}) => {
@@ -119,7 +118,11 @@ export class Tank extends Unit {
     super.step(dt);
 
     if (this.shouldSmooth()) {
-      this.weaponAngle = this.smoothAngle(this.weaponAngle, this.smoothWeaponAngle, dt * 2);
+      this.weaponAngle = this.smoothAngle(
+        this.weaponAngle,
+        this.smoothWeaponAngle,
+        dt * 2
+      );
     }
 
     this.fireTimer = Math.max(0, this.fireTimer - dt);
@@ -151,6 +154,17 @@ export class Tank extends Unit {
     }
 
     return t;
+  }
+
+  public override getLifeRegen(): number {
+    return Math.max(super.getLifeRegen() * this.modifiers.get('lifeRegen'), 0);
+  }
+
+  public override getLifeRegenDelay(): number {
+    return Math.max(
+      super.getLifeRegenDelay() * this.modifiers.get('lifeRegenDelay'),
+      0
+    );
   }
 
   protected renderThruster(ctx: GraphicsContext) {

@@ -3,5 +3,5 @@ extends: ModifierUpgrade
 name: Durable
 description: Your life is greater.
 modifiers:
-  life: 0.1
+  life: 0.2
 isRepeatable: true

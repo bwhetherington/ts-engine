@@ -6,6 +6,7 @@ import {
   TimedText,
   Unit,
   WorldManager,
+  Text,
 } from 'core/entity';
 import {
   Key,
@@ -88,6 +89,9 @@ export class BaseHero extends Tank {
 
     this.type = BaseHero.typeName;
 
+    this.setMaxLife(200);
+    this.setLife(200);
+
     this.setWeapon('Gun');
     this.setLevelInternal(1);
     this.setExperience(0);
@@ -133,6 +137,8 @@ export class BaseHero extends Tank {
       });
 
     if (NetworkManager.isClient()) {
+      this.label = WorldManager.spawn(Text, this.position);
+
       this.streamEvents<DamageEvent>('DamageEvent')
         .map(({data: {targetID, sourceID, amount}}) => ({
           amount,
@@ -212,10 +218,6 @@ export class BaseHero extends Tank {
     this.upgrades = [...other.upgrades];
   }
 
-  public override getLifeRegen(): number {
-    return this.modifiers.get('lifeRegen') * super.getLifeRegen();
-  }
-
   protected override getNameColor(): TextColor {
     return this.getPlayer()?.getNameColor() ?? super.getNameColor();
   }
@@ -236,7 +238,7 @@ export class BaseHero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return 50;
+    return 200;
   }
 
   protected armorForLevel(_level: number): number {
@@ -254,7 +256,7 @@ export class BaseHero extends Tank {
   public setExperience(amount: number, allowLevels: boolean = true) {
     this.xp = amount;
 
-    while (this.xp >= this.experienceForLevel(this.level) && this.level < 30) {
+    while (this.xp >= this.experienceForLevel(this.level)) {
       const oldLevel = this.level;
       this.setLevelInternal(this.level + 1);
       if (NetworkManager.isServer() && allowLevels) {
@@ -327,8 +329,7 @@ export class BaseHero extends Tank {
   }
 
   public updateMaxLife() {
-    const life = this.lifeForLevel(this.level);
-    this.setMaxLife(life);
+    this.setMaxLife(200);
   }
 
   public override setMaxLife(maxLife: number) {
@@ -398,6 +399,10 @@ export class BaseHero extends Tank {
     }
   }
 
+  private updateExperience() {
+    this.setExperience(this.getExperience());
+  }
+
   public override step(dt: number) {
     this.computeMovementInput();
     super.step(dt);
@@ -455,8 +460,6 @@ export class BaseHero extends Tank {
 
     if (typeof xp === 'number') {
       this.setExperience(xp);
-    } else if (setInitialized) {
-      this.setExperience(0);
     }
 
     const wasInitialized = this.isInitialized;
@@ -485,7 +488,7 @@ export class BaseHero extends Tank {
       if (player && player.hero !== this) {
         player.setHero(this);
       }
-      this.setExperience(0);
+      this.updateExperience();
     }
 
     if (this.getPlayer()?.isActivePlayer?.() && wasInitialized) {

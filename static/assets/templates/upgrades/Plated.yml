@@ -3,5 +3,5 @@ extends: ModifierUpgrade
 name: Plated
 description: Your armor is greater.
 modifiers:
-  armor: 0.5
+  armor: 2
 isRepeatable: true

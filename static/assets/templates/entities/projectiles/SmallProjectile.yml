@@ -1,0 +1,6 @@
+type: SmallProjectile
+extends: Projectile
+boundingBox:
+  width: 15
+  height: 15
+mass: 0.01

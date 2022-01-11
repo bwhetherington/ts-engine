@@ -7,5 +7,5 @@ pierce: 1
 projectileDuration: 0.75
 shotCount: 5
 shotSpread: 60
-damage: 2
+damage: 15
 rate: 0.5

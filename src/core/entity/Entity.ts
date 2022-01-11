@@ -115,6 +115,11 @@ export class Entity
     angle %= 2 * Math.PI;
 
     let angleDiff = to - angle;
+
+    if (Math.abs(to - from + 2 * Math.PI) < Math.abs(angleDiff)) {
+      angleDiff = to - from + 2 * Math.PI;
+    }
+
     if (angleDiff > Math.PI) {
       angleDiff -= 2 * Math.PI;
     }
@@ -123,9 +128,7 @@ export class Entity
     angle += angleIncrement;
     angle %= 2 * Math.PI;
 
-    if (
-      Math.abs(angle - to) < Math.PI / 180
-    ) {
+    if (Math.abs(angle - to) < Math.PI / 180) {
       angle = to;
     }
 

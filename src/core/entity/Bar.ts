@@ -1,6 +1,6 @@
 import {Data} from 'core/serialize';
 import {GraphicsContext} from 'core/graphics';
-import {rgb, rgba} from 'core/graphics/color';
+import {rgb} from 'core/graphics/color';
 import {CollisionLayer, Entity} from 'core/entity';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {clamp} from 'core/util';

@@ -4,5 +4,5 @@ projectileType: Projectile
 shotInaccuracy: 0.1
 projectileSpeed: 750
 pierce: 1
-damage: 5
+damage: 20
 rate: 0.35

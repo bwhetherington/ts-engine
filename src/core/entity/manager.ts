@@ -54,6 +54,7 @@ import {SpawnEntityEvent} from './util';
 import {Pickup} from './Pickup';
 import {UpgradePickup} from './UpgradePickup';
 import {Aura} from './Aura';
+import {HeroModifier} from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -74,6 +75,11 @@ export class WorldManager
 
   private graph?: Graph;
   private shouldPopulateGraph: boolean = false;
+
+  public modifiers = {
+    hero: new HeroModifier(),
+    enemy: new HeroModifier(),
+  };
 
   constructor(boundingBox: Rectangle) {
     super('WorldManager');

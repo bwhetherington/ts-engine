@@ -91,6 +91,11 @@ export class Projectile extends Entity {
     }
 
     if (other instanceof Unit && NetworkManager.isServer()) {
+      if (this.parent && !this.parent.isHostileTo(other)) {
+        // Ignore allied units
+        return;
+      }
+
       this.hit(other);
     }
   }

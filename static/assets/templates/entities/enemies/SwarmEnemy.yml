@@ -11,10 +11,10 @@ bodyShape:
   angle: 45
 mass: 5
 speed: 200
-maxLife: 150
-life: 150
-armor: 2
-xpWorth: 40
+maxLife: 600
+life: 600
+armor: 8
+xpWorth: 60
 cannons:
   - key: 0
     shape:

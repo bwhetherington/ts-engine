@@ -34,8 +34,8 @@ import {UpgradePlugin} from 'server/plugin/upgrade';
 import {Config} from 'server/config';
 import {SpawnPlugin} from 'server/plugin/spawn';
 import {SyncManager} from './syncManager';
-import {Matrix2} from 'core/geometry';
 import {EffectManager} from 'core/effect';
+import {AlertEvent, AlertManager} from 'core/alert';
 
 const log = LogManager.forFile(__filename);
 
@@ -58,6 +58,15 @@ async function main(): Promise<void> {
   const server = new Server();
   server.initialize(httpServer);
   NetworkManager.initialize(server, new ServerHTTPClient(serverAuth));
+  AlertManager.initialize((event: AlertEvent, target: number) => {
+    NetworkManager.sendEvent<AlertEvent>(
+      {
+        type: 'AlertEvent',
+        data: event,
+      },
+      target
+    );
+  });
   ChatManager.initialize();
   server.start(parseInt(process.env.PORT ?? '0') || 8080);
 

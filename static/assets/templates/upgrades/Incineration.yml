@@ -4,6 +4,6 @@ name: Incineration
 description: Gain a burning aura around your tank.
 aura: BurnAura
 requires:
-  - Glide
-  - Glass Cannon
+  - WildRegeneration
+  - GlassCannon
 isRare: true

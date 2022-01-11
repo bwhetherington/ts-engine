@@ -3,9 +3,9 @@ extends: ModifierUpgrade
 name: Generalist
 description: Increase most of your attributes.
 modifiers:
-  life: 0.05
-  lifeRegen: 0.05
-  armor: 0.25
+  life: 0.1
+  lifeRegen: 0.1
+  armor: 1
   damage: 0.05
   rate: 0.05
   shotInaccuracy: 0.05

@@ -18,7 +18,7 @@ cannons:
 modifiers:
   life: 1.5
   lifeRegen: 1.5
-  armor: 1.5
+  armor: 3
   damage: 1.5
   weaponDamage: 1.5
   shotInaccuracy: 0.5

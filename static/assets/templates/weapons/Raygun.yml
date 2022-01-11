@@ -3,6 +3,6 @@ extends: BaseRaygun
 shotInaccuracy: 0
 rayDistance: 1000
 pierce: 3
-damage: 10
+damage: 50
 rate: 0.7
 hitEffect: BurnEffect
