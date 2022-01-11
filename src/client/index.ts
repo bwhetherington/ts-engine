@@ -21,6 +21,7 @@ import {AssetManager} from 'core/assets';
 import {UpgradeManager} from 'core/upgrade';
 import {ThemeManager} from 'core/theme';
 import {EffectManager} from 'core/effect';
+import {AlertEvent, AlertManager} from 'core/alert';
 
 const log = LogManager.forFile(__filename);
 
@@ -48,6 +49,12 @@ async function main(): Promise<void> {
   NetworkManager.sendEvent<PlayerInitializedEvent>({
     type: 'PlayerInitializedEvent',
     data: {},
+  });
+  AlertManager.initialize((alert) => {
+    EventManager.emit<AlertEvent>({
+      type: 'AlertEvent',
+      data: alert,
+    });
   });
 
   log.debug('all managers initialized');

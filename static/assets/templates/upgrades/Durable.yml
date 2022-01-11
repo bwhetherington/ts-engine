@@ -1,7 +1,7 @@
 type: Durable
 extends: ModifierUpgrade
 name: Durable
-description: Your life is increased by 20%.
+description: Your life is greater.
 modifiers:
   life: 0.2
 isRepeatable: true

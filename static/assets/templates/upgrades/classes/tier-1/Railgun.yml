@@ -3,10 +3,7 @@ extends: ClassUpgrade
 name: Railgun
 description: Change to a railgun tank, with a fast, shattering projectile.
 className: RailgunHero
+tier: 1
 requires:
   - FocusFire
   - PowerfulShots
-exclusiveWith:
-  - MachineGun
-  - Homing
-  - Heavy

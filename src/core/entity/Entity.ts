@@ -42,6 +42,7 @@ export class Entity
 
   private isExternal: boolean = false;
   private smoothTarget: Vector = new Vector();
+  private smoothAngleTarget: number = 0;
 
   constructor() {
     super();
@@ -56,7 +57,7 @@ export class Entity
   }
 
   public applyForce(force: Vector, scalar: number = 1) {
-    this.velocity.add(force, scalar / this.mass);
+    this.velocity.add(force, scalar / this.getMass());
   }
 
   public setPosition(point: Vector) {
@@ -99,14 +100,39 @@ export class Entity
     switch (this.collisionLayer) {
       case CollisionLayer.Effect:
       case CollisionLayer.HUD:
-        return this.friction;
+        return this.getFriction();
       default:
-        return this.friction * WorldManager.friction;
+        return this.getFriction() * WorldManager.friction;
     }
   }
 
   public attachTo(entity: Entity) {
     this.attachedTo = entity;
+  }
+
+  protected smoothAngle(from: number, to: number, dt: number): number {
+    let angle = from;
+    angle %= 2 * Math.PI;
+
+    let angleDiff = to - angle;
+
+    if (Math.abs(to - from + 2 * Math.PI) < Math.abs(angleDiff)) {
+      angleDiff = to - from + 2 * Math.PI;
+    }
+
+    if (angleDiff > Math.PI) {
+      angleDiff -= 2 * Math.PI;
+    }
+
+    const angleIncrement = 10 * dt * angleDiff;
+    angle += angleIncrement;
+    angle %= 2 * Math.PI;
+
+    if (Math.abs(angle - to) < Math.PI / 180) {
+      angle = to;
+    }
+
+    return angle;
   }
 
   private updatePosition(dt: number) {
@@ -130,13 +156,16 @@ export class Entity
         ) <= snapDistance
       ) {
         this.setPosition(this.smoothTarget);
-        return;
+      } else {
+        this.vectorBuffer.set(this.smoothTarget);
+        this.vectorBuffer.add(this.position, -1);
+        const increment = clamp(10 * dt, 0, 1);
+        this.addPosition(this.vectorBuffer, increment);
       }
 
-      this.vectorBuffer.set(this.smoothTarget);
-      this.vectorBuffer.add(this.position, -1);
-      const increment = clamp(10 * dt, 0, 1);
-      this.addPosition(this.vectorBuffer, increment);
+      // Smooth angle
+      this.angle = this.smoothAngle(this.angle, this.smoothAngleTarget, dt);
+
       return;
     }
 
@@ -187,6 +216,14 @@ export class Entity
 
   public isAlive(): boolean {
     return !this.markedForDelete;
+  }
+
+  public getMass(): number {
+    return this.mass;
+  }
+
+  public getFriction(): number {
+    return this.friction;
   }
 
   public serialize(): Data {
@@ -264,7 +301,11 @@ export class Entity
       this.friction = friction;
     }
     if (typeof angle === 'number') {
-      this.angle = angle;
+      if (this.shouldSmooth()) {
+        this.smoothAngleTarget = angle;
+      } else {
+        this.angle = angle;
+      }
     }
     if (typeof bounce === 'number') {
       this.bounce = bounce;

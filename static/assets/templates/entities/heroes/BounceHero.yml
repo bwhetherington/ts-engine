@@ -1,3 +1,0 @@
-type: BounceHero
-extends: BaseHero
-weapon: BounceGun

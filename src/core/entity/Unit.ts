@@ -1,4 +1,5 @@
 import {
+  Aura,
   Entity,
   DamageEvent,
   KillEvent,
@@ -14,24 +15,41 @@ import {Vector} from 'core/geometry';
 import {clamp} from 'core/util';
 import {Event, EventManager} from 'core/event';
 import {NetworkManager} from 'core/net';
-import {Color, reshade} from 'core/graphics';
+import {Color, COLORS, COLOR_NAMES, reshade} from 'core/graphics';
 import {TextColor} from 'core/chat';
 import {Effect} from 'core/effect';
 import {UUID} from 'core/uuid';
-import {Aura} from './Aura';
+import {PlayerManager} from 'core/player';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
 
+export enum Team {
+  Blue,
+  Red,
+  Green,
+  Yellow,
+}
+
+const TEAM_COLORS: Record<Team, Color> = {
+  [Team.Blue]: COLOR_NAMES['blue'],
+  [Team.Red]: COLOR_NAMES['red'],
+  [Team.Green]: COLOR_NAMES['green'],
+  [Team.Yellow]: COLOR_NAMES['yellow'],
+};
+
 export class Unit extends Entity {
   public static typeName: string = 'Unit';
   public static isTypeInitialized: boolean = false;
+
+  public team?: Team;
 
   private name: string = '';
   private maxLife: number = 10;
   private life: number = 10;
   private isImmune: boolean = false;
   protected lifeRegen: number = 0;
+  protected lifeRegenDelay: number = 3;
   protected speed: number = 250;
   private xpWorth: number = 1;
 
@@ -74,6 +92,18 @@ export class Unit extends Entity {
     }
   }
 
+  public setTeam(team: Team) {
+    this.team = team;
+    this.setColor(TEAM_COLORS[team]);
+  }
+
+  public isHostileTo(other: Unit): boolean {
+    if (this.team === undefined) {
+      return true;
+    }
+    return this.team !== other.team;
+  }
+
   public addEffect(effect: Effect) {
     if (!this.isAlive()) {
       effect.cleanup();
@@ -86,6 +116,10 @@ export class Unit extends Entity {
     this.effectCounts.set(effect.type, count + 1);
 
     effect.target = this;
+  }
+
+  public getLifeRegenDelay(): number {
+    return this.lifeRegenDelay;
   }
 
   public addAura(aura: Aura) {
@@ -181,8 +215,15 @@ export class Unit extends Entity {
       },
     };
     EventManager.emit<DamageEvent>(event);
+    const {targetID, sourceID} = event.data;
     if (NetworkManager.isServer()) {
-      NetworkManager.sendEvent(event);
+      PlayerManager.getPlayers()
+        .filter((player) => {
+          const id = player.hero?.id;
+          return id === targetID || id === sourceID;
+        })
+        .map((player) => player.socket)
+        .forEach((socket) => NetworkManager.sendEvent(event, socket));
     }
     if (amount > 0) {
       this.flash();
@@ -231,10 +272,14 @@ export class Unit extends Entity {
 
   protected getRegenForStep(dt: number): number {
     const timeSinceDamage = EventManager.timeElapsed - this.lastFlash;
-    if (timeSinceDamage >= 5) {
+    if (timeSinceDamage >= this.getLifeRegenDelay()) {
       return this.getLifeRegen() * this.getMaxLife() * dt;
     }
     return 0;
+  }
+
+  public getSpeed(): number {
+    return this.speed;
   }
 
   public override step(dt: number) {
@@ -249,13 +294,14 @@ export class Unit extends Entity {
     this.acceleration.angle = this.angle;
 
     this.acceleration.magnitude =
-      ACCELERATION * dt * this.thrusting * this.mass;
+      ACCELERATION * dt * this.thrusting * this.getMass();
     this.applyForce(this.acceleration);
 
     // Handle maximum speed
-    if (this.velocity.magnitude > this.speed) {
+    const speed = this.getSpeed();
+    if (this.velocity.magnitude > speed) {
       // If we've exceeded the maximum velocity, apply a scaling friction
-      const excess = this.velocity.magnitude - this.speed;
+      const excess = this.velocity.magnitude - speed;
       this.vectorBuffer.set(this.velocity);
       this.vectorBuffer.normalize();
       this.vectorBuffer.scale(-excess);
@@ -313,6 +359,7 @@ export class Unit extends Entity {
       color: this.getBaseColor(),
       effectCounts: serialize(this.effectCounts),
       lifeRegen: this.lifeRegen,
+      lifeRegenDelay: this.lifeRegenDelay,
     };
   }
 
@@ -328,9 +375,13 @@ export class Unit extends Entity {
       name,
       effectCounts,
       lifeRegen,
+      lifeRegenDelay,
     } = data;
     if (typeof lifeRegen === 'number') {
       this.lifeRegen = lifeRegen;
+    }
+    if (typeof lifeRegenDelay === 'number') {
+      this.lifeRegenDelay = lifeRegenDelay;
     }
     if (typeof maxLife === 'number') {
       this.setMaxLife(maxLife);
@@ -395,8 +446,10 @@ export class Unit extends Entity {
             sourceID: source?.id,
           },
         };
-        EventManager.emit(event);
         NetworkManager.sendEvent(event);
+        event.data.target = this;
+        event.data.source = source;
+        EventManager.emit(event);
         this.isAliveInternal = false;
       }
     }
@@ -431,7 +484,7 @@ export class Unit extends Entity {
       this.vectorBuffer.normalize();
       other.applyForce(
         this.vectorBuffer,
-        this.mass * 300 * EventManager.lastStepDt
+        this.getMass() * 300 * EventManager.lastStepDt
       );
     }
   }

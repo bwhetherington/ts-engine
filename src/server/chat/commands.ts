@@ -1,15 +1,11 @@
 import {CommandEntry, ChatManager} from 'server/chat';
-import {hsv} from 'core/graphics/color';
-import {Player, PlayerManager} from 'core/player';
+import {hsv, tryColor} from 'core/graphics/color';
+import {PlayerManager} from 'core/player';
 import {loadWorld} from 'server/util';
 import {LogManager} from 'core/log';
 import {RNGManager} from 'core/random';
 import {NetworkManager} from 'core/net';
 import {isOk} from 'core/net/http';
-import {WorldManager} from 'core/entity';
-import {Matrix2} from 'core/geometry';
-import {ModifierUpgrade, UpgradeManager} from 'core/upgrade';
-import {PluginManager} from 'server/plugin';
 
 const log = LogManager.forFile(__filename);
 
@@ -18,14 +14,10 @@ export const setColor: CommandEntry = {
   help: 'Sets the hue of the player color from 0 to 359',
   handler(player, ...args) {
     if (args.length === 1) {
-      const hue = parseInt(args[0]) % 360;
-      if (Number.isNaN(hue)) {
-        ChatManager.error('Hue choice is invalid', player);
-      }
+      const color = tryColor(args[0]);
 
-      const color = hsv(hue, 0.65, 0.9);
       const hero = player.hero;
-      if (hero) {
+      if (hero && color) {
         hero.setColor(color);
       }
     } else {
@@ -164,19 +156,6 @@ export const showUser: CommandEntry = {
       `${targetPlayer.toString()} ${targetPlayer.hero?.toString()}`,
       player
     );
-  },
-};
-
-export const upgrade: CommandEntry = {
-  name: 'upgrade',
-  help: 'Adds the specified upgrade',
-  permissionLevel: 1,
-  async handler(player) {
-    // ChatManager.error('No upgrade specified', player);
-    if (player.hero) {
-      player.hero.storedUpgrades += 1;
-    }
-    return;
   },
 };
 

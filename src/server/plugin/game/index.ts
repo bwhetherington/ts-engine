@@ -1,3 +1,5 @@
+import {AlertEvent} from 'core/alert';
+import {AlertManager} from 'core/alert';
 import {
   BaseHero,
   DamageEvent,
@@ -9,11 +11,14 @@ import {
   Unit,
   WorldManager,
   SpawnEntityEvent,
+  Team,
 } from 'core/entity';
 import {EventManager, Priority} from 'core/event';
 import {StateMachine} from 'core/fsm';
-import {Matrix2, Vector} from 'core/geometry';
+import {Vector} from 'core/geometry';
 import {COLORS, randomColor} from 'core/graphics';
+import {Iterator} from 'core/iterator';
+import {NetworkManager} from 'core/net';
 import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {RNGManager} from 'core/random';
 import {ChatManager} from 'server/chat';
@@ -31,12 +36,32 @@ export enum GameAction {
   Stop,
 }
 
+const ENEMY_COSTS: Record<string, number> = {
+  Enemy: 10,
+  HeavyEnemy: 20,
+  HomingEnemy: 15,
+  SwarmEnemy: 20,
+  SmallEnemy: 5,
+};
+
+const ENEMY_TYPES = Object.keys(ENEMY_COSTS);
+
+const MIN_BUDGET = Iterator.values(ENEMY_COSTS).fold(
+  Number.POSITIVE_INFINITY,
+  Math.min
+);
+
 export type GameStateMachine = StateMachine<GameState, GameAction>;
 
 const NPC_DAMAGE_MULTIPLIER = 0.5;
 
+const MAX_ATTEMPTS = 1000;
+
 export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   public static typeName: string = 'GamePlugin';
+
+  private wave: number = 35;
+  private isWaiting: boolean = false;
 
   private spawnFeed() {
     const num = RNGManager.nextFloat(0, 1);
@@ -54,47 +79,94 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     entity?.setVariant(size);
   }
 
-  private spawnEnemy() {
+  private getWaveBudget(): number {
+    return this.wave * 2.5 + 10;
+  }
+
+  public buildWave(budget: number): string[] {
+    const wave = [];
+    const sample = RNGManager.sample(ENEMY_TYPES, true)
+      .map((type) => [type, ENEMY_COSTS[type] ?? MIN_BUDGET] as const)
+      .takeWhile(() => budget >= MIN_BUDGET);
+    for (const [type, cost] of sample) {
+      if (cost <= budget) {
+        wave.push(type);
+        budget -= cost;
+      }
+    }
+    return wave;
+  }
+
+  private async spawnWave() {
+    this.isWaiting = true;
+    // await EventManager.sleep(3);
+    const numPlayers = this.getTeamCount(Team.Blue);
+    const budget = this.getWaveBudget() * numPlayers;
+    const wave = this.buildWave(budget);
+    for (const enemy of wave) {
+      this.spawnEnemy(enemy, Team.Red);
+    }
+    this.wave += 1;
+    this.isWaiting = false;
+  }
+
+  private spawnEnemy(type: string, team: Team) {
     // Create enemy
     const position = WorldManager.getRandomPosition();
-
-    const type = RNGManager.nextEntry([
-      'Enemy',
-      'Enemy',
-      'Enemy',
-      'HomingEnemy',
-      'HomingEnemy',
-      'HeavyEnemy',
-    ]);
     const enemy = WorldManager.spawnEntity(type);
     enemy?.setPosition(position);
 
-    // Pick color
-    enemy?.setColor(randomColor());
+    if (enemy instanceof Unit && team !== undefined) {
+      enemy.setTeam(team);
+    } else {
+      // Pick color
+      enemy?.setColor(randomColor());
+    }
+  }
+
+  private getTeamCount(team: Team): number {
+    return WorldManager.getEntities()
+      .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
+      .filter((unit) => unit.team === team)
+      .count();
   }
 
   private startGame() {
     ChatManager.info('Starting the game');
 
-    // Spawn feed units
-    this.takeDuringState(GameState.Running, this.streamInterval(1))
-      .filter(() => false)
-      .filter(
-        () =>
-          WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 2.5)
-      )
-      .forEach(() => {
-        this.spawnFeed();
-      });
+    this.takeDuringState(
+      GameState.Running,
+      this.streamEvents<KillEvent>('KillEvent')
+    ).forEach((event) => {
+      const {target, source} = event.data;
+      if (!(target instanceof BaseHero && source instanceof Unit)) {
+        return;
+      }
+      AlertManager.send(
+        `${target.getName()} was killed by ${source.getName()}`
+      );
+    });
 
     // Spawn enemy units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
-      .filter(() => false)
-      .filter(
-        () => WorldManager.getUnitCount() < 30 && RNGManager.nextBoolean(1 / 5)
-      )
+      .filter(() => !this.isWaiting)
+      // Only spawn when there are players
+      .filter(() => this.getTeamCount(Team.Blue) > 0)
+      // Only spawn a new wave when the previous wave is fully defeated
+      .filter(() => this.getTeamCount(Team.Red) === 0)
       .forEach(() => {
-        this.spawnEnemy();
+        this.spawnWave().then(() => {
+          AlertManager.send(`Spawning wave ${this.wave}...`);
+        });
+      });
+
+    // Reset if all players are dead
+    const onKillEvent = this.streamEvents<KillEvent>('KillEvent');
+    this.takeDuringState(GameState.Running, onKillEvent)
+      .filter(() => this.getTeamCount(Team.Blue) === 0)
+      .forEach(() => {
+        AlertManager.send('Resetting game...');
+        this.transition(GameAction.Stop);
       });
 
     const respawnHero = async (hero: BaseHero) => {
@@ -104,11 +176,10 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         await EventManager.sleep(3);
         if (this.getState() === GameState.Running) {
           player.spawnHero();
+          player.hero?.setTeam(Team.Blue);
         }
       }
     };
-
-    // this.streamEvents<KillEvent>('KillEvent')
 
     // Respawn players
     this.takeDuringState(
@@ -137,21 +208,25 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       .map((event) => event.data.player)
       .forEach((player) => {
         player.spawnHero();
+        player.hero?.setTeam(Team.Blue);
       });
 
     // Spawn units for existing players
-    PlayerManager.getPlayers().forEach((player) => player.spawnHero());
+    PlayerManager.getPlayers().forEach((player) => {
+      player.spawnHero();
+      player.hero?.setTeam(Team.Blue);
+    });
 
     // Start timer
-    this.countdown(
-      GameState.Running,
-      300,
-      [60, 30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-    ).then((shouldTransition) => {
-      if (shouldTransition) {
-        this.transition(GameAction.Stop);
-      }
-    });
+    // this.countdown(
+    //   GameState.Running,
+    //   600,
+    //   [60, 30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+    // ).then((shouldTransition) => {
+    //   if (shouldTransition) {
+    //     this.transition(GameAction.Stop);
+    //   }
+    // });
   }
 
   private stopGame() {
@@ -167,10 +242,12 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     PlayerManager.getPlayers().forEach((player) => player.reset());
 
-    (async () => {
-      await EventManager.sleep(5);
+    this.wave = 0;
+    this.isWaiting = false;
+
+    EventManager.sleep(5).then(() => {
       this.transition(GameAction.Start);
-    })();
+    });
   }
 
   protected createMachine(): GameStateMachine {
@@ -202,6 +279,28 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
   public async initialize(server: Server): Promise<void> {
     await super.initialize(server);
+
+    this.registerCommand({
+      name: 'level',
+      help: 'Level up',
+      handler(player, xp) {
+        if (xp === undefined) {
+          return;
+        }
+
+        const xpNum = parseInt(xp);
+        if (Number.isNaN(xpNum)) {
+          return;
+        }
+
+        const hero = player.hero;
+        if (!hero) {
+          return;
+        }
+
+        hero.setExperience(xpNum, true);
+      }
+    });
 
     // Weaken enemies as they spawn
     this.streamEvents<SpawnEntityEvent>('SpawnEntityEvent', Priority.Highest)

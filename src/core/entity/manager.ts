@@ -54,6 +54,7 @@ import {SpawnEntityEvent} from './util';
 import {Pickup} from './Pickup';
 import {UpgradePickup} from './UpgradePickup';
 import {Aura} from './Aura';
+import {HeroModifier} from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
@@ -74,6 +75,11 @@ export class WorldManager
 
   private graph?: Graph;
   private shouldPopulateGraph: boolean = false;
+
+  public modifiers = {
+    hero: new HeroModifier(),
+    enemy: new HeroModifier(),
+  };
 
   constructor(boundingBox: Rectangle) {
     super('WorldManager');
@@ -352,7 +358,8 @@ export class WorldManager
   }
 
   public findPath(from: Vector, to: Vector): Vector[] | undefined {
-    return this.graph?.findPath(from, to);
+    return [from, to];
+    // return this.graph?.findPath(from, to);
   }
 
   public deleteEntities() {
@@ -516,7 +523,7 @@ export class WorldManager
         }
       }
       if (entity && (createdEntity || entity.doSync)) {
-        entity.deserialize(entry, true);
+        entity.deserialize(entry, createdEntity);
       } else {
         log.warn(`failed to create entity from data: ${JSON.stringify(entry)}`);
       }

@@ -1,0 +1,9 @@
+type: WildRegeneration
+extends: ModifierUpgrade
+name: Wild Regeneration
+description: Remove the delay on life regeneration, but reduce your life.
+modifiers:
+  lifeRegenDelay: -1
+  life: -0.3
+requires:
+  - Regeneration

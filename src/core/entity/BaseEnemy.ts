@@ -1,4 +1,4 @@
-import {Entity, KillEvent, Tank, Unit, WorldManager} from 'core/entity';
+import {KillEvent, Tank, Unit, WorldManager} from 'core/entity';
 import {Queue} from 'core/util';
 import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
@@ -6,6 +6,8 @@ import {Data} from 'core/serialize';
 import {Vector, VectorLike} from 'core/geometry';
 import {GraphicsContext, randomColor, rgb} from 'core/graphics';
 import {GraphicsPipeline} from 'core/graphics/pipe';
+import {EventManager} from 'core/event';
+import {RNGManager} from 'core/random';
 
 const log = LogManager.forFile(__filename);
 
@@ -36,8 +38,10 @@ export class BaseEnemy extends Tank {
       // Select target
       this.setColor(randomColor());
       this.selectTarget();
-      this.streamInterval(1).forEach(() => {
-        this.selectTarget();
+      EventManager.sleep(RNGManager.nextFloat(0.5, 3)).then(() => {
+        this.streamInterval(3).forEach(() => {
+          this.selectTarget();
+        });
       });
       this.streamEvents<KillEvent>('KillEvent')
         .filter((event) => this.target?.id === event.data.targetID)
@@ -48,8 +52,8 @@ export class BaseEnemy extends Tank {
   public override damage(amount: number, source?: Unit) {
     super.damage(amount, source);
     if (NetworkManager.isServer() && source) {
-      this.target = source;
-      this.moveTo(source.position);
+      // this.target = source;
+      // this.moveTo(source.position);
     }
   }
 
@@ -60,22 +64,12 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  private canSeeTarget(target: Entity): boolean {
-    const {hit} = WorldManager.castRay(
-      this.position,
-      this.position.angleTo(target.position),
-      this.position.distanceTo(target.position),
-      1,
-      (entity: Entity) => entity.id === target.id
-    );
-    return hit.size > 0;
-  }
-
   private selectTarget() {
     // Select the closest unit
     const [target] = WorldManager.getEntities()
       .filter((entity) => this !== entity)
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
+      .filter((unit) => this.isHostileTo(unit))
       // .filter((entity) => this.canSeeTarget(entity))
       .map<[Unit | undefined, number]>((entity) => [
         entity,

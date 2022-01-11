@@ -1,5 +1,4 @@
 import {Entity, CollisionLayer} from 'core/entity';
-import {sleep} from 'core/util';
 import {StepEvent} from 'core/event';
 import {GraphicsContext} from 'core/graphics';
 

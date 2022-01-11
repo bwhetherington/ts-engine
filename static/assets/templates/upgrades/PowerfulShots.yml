@@ -1,7 +1,7 @@
 type: PowerfulShots
 extends: ModifierUpgrade
 name: Powerful Shots
-description: Your weapon deals 20% more damage.
-modifiers: 
-  weaponDamage: 0.2
+description: Your weapon deals slightly more damage.
+modifiers:
+  weaponDamage: 0.1
 isRepeatable: true

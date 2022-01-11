@@ -13,7 +13,6 @@ import {
   CloseOfferEvent,
   RequestUpgradeEvent,
 } from 'core/upgrade';
-import {sleep} from 'core/util';
 import {UUID, UUIDManager} from 'core/uuid';
 import {Iterator} from 'core/iterator';
 import {BaseHero, WorldManager} from 'core/entity';
@@ -40,6 +39,8 @@ const EXCLUDED_UPGRADES = new Set([
 ]);
 
 // const CLASS_UPGRADES = new Set(['MachineGun', 'Homing', 'Railgun', 'Laser']);
+
+const RARE_MODIFIER = 0.5;
 
 export class UpgradeManager extends LoadingManager<Upgrade> {
   private offers: Map<UUID, Offer> = new Map();
@@ -142,6 +143,17 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       // Exclude upgrades which do not exist
       const upgrade = this.instantiate(type);
       if (!upgrade) {
+        return false;
+      }
+
+      // Exclude rare upgrades some of the time to make them occur less
+      // frequently
+      if (upgrade.isRare && RNGManager.nextBoolean(RARE_MODIFIER)) {
+        return false;
+      }
+
+      // Exclude class upgrades of a tier the player has already reached
+      if (upgrade instanceof ClassUpgrade && upgrade.tier <= hero.classTier) {
         return false;
       }
 

@@ -1,8 +1,8 @@
 type: HomingEnemy
 extends: BaseEnemy
 mass: 5
-maxLife: 50
-life: 50
+maxLife: 200
+life: 200
 speed: 200
 boundingBox: 
   width: 30
@@ -14,5 +14,5 @@ cannons:
       height: 17.5
       farHeight: 12.5
 weapon: HomingGun
-xpWorth: 25
+xpWorth: 40
 name: Seeker

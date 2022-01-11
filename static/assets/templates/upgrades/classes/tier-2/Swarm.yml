@@ -7,5 +7,4 @@ requires:
   - Homing
   - Plated
   - Regeneration
-exclusiveWith:
-  - Laser
+tier: 2

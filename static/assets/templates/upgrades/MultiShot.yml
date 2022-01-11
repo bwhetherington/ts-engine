@@ -1,8 +1,8 @@
 type: MultiShot
 extends: ModifierUpgrade
 name: Multishot
-description: You fire two more bullets, and your bullets deal 35% less damage.
-modifiers: 
+description: You fire two more bullets, and your bullets deal less damage.
+modifiers:
   weaponDamage: -0.35
   shotCount: 2
-  shotSpread: 1.2
+  shotSpread: -0.5

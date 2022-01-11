@@ -1,3 +1,6 @@
 type: Enemy
 extends: BaseEnemy
 name: Gunner
+maxLife: 200
+life: 200
+xpWorth: 20

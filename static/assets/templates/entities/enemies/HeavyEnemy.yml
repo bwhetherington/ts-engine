@@ -1,9 +1,9 @@
 type: HeavyEnemy
 extends: BaseEnemy
 mass: 5
-maxLife: 100
-life: 100
-armor: 1
+maxLife: 400
+life: 400
+armor: 4
 speed: 200
 boundingBox:
   width: 40
@@ -14,5 +14,5 @@ cannons:
       length: 30
       height: 25
 weapon: HeavyGun
-xpWorth: 25
+xpWorth: 40
 name: Tank

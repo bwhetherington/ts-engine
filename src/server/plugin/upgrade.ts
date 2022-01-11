@@ -31,15 +31,6 @@ export class UpgradePlugin extends Plugin {
       })
       .forEach(({hero}) => {
         hero.storedUpgrades += 1;
-
-        // let upgrades;
-        // if (to === 5) {
-        //   // Offer a hero upgrade at level 5
-        //   upgrades = UpgradeManager.sampleHeroUpgrades().take(2).toArray();
-        // } else {
-        //   upgrades = UpgradeManager.sampleUpgrades().take(3).toArray();
-        // }
-        // UpgradeManager.offerUpgrades(player, upgrades);
       });
 
     this.streamEvents<UpgradeEvent>('UpgradeEvent').forEach(
@@ -51,5 +42,24 @@ export class UpgradePlugin extends Plugin {
         ChatManager.info(`Upgrade selected: ${upgrade.name}`, player);
       }
     );
+
+    this.registerCommand({
+      name: 'upgrade',
+      help: 'Adds an upgrade to the hero',
+      async handler(player, arg) {
+        const hero = player.hero;
+        if (!hero) {
+          return;
+        }
+        if (arg) {
+          const upgrade = UpgradeManager.instantiate(arg);
+          if (upgrade) {
+            hero.applyUpgrade(upgrade);
+          }
+        } else {
+          hero.storedUpgrades += 1;
+        }
+      },
+    });
   }
 }

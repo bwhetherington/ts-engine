@@ -1,10 +1,10 @@
-import {Unit, Text, WorldManager, Trail} from 'core/entity';
-import {BLACK, GraphicsContext, hsv, WHITE} from 'core/graphics';
+import {Unit} from 'core/entity';
+import {GraphicsContext} from 'core/graphics';
 import {Data} from 'core/serialize';
 import {FireEvent, Weapon, WeaponManager} from 'core/weapon';
 import {NetworkManager} from 'core/net';
 import {LogManager} from 'core/log';
-import {CannonShape, Rectangle, Vector} from 'core/geometry';
+import {CannonShape, Vector} from 'core/geometry';
 import {GraphicsPipeline} from 'core/graphics/pipe';
 import {Iterator} from 'core/iterator';
 import {EventManager} from 'core/event';
@@ -20,13 +20,17 @@ export type ShapeType = CircleType | PolygonType;
 export interface CircleType {
   tag: 'circle';
   lockToWeapon?: boolean;
+  ignoreAngle?: true;
+  radius?: number;
 }
 
 export interface PolygonType {
   tag: 'polygon';
   lockToWeapon?: boolean;
+  ignoreAngle?: boolean;
   sides: number;
   angle?: number;
+  radius?: number;
 }
 
 interface TankCannon {
@@ -56,6 +60,7 @@ export class Tank extends Unit {
   ];
   public targetAngle: number = 0;
   public weaponAngle: number = 0;
+  private smoothWeaponAngle: number = 0;
   public turnSpeed: number = Math.PI * 1000;
   public modifiers: HeroModifier = new HeroModifier();
 
@@ -65,6 +70,7 @@ export class Tank extends Unit {
     tag: 'circle',
     lockToWeapon: false,
   };
+  protected innerBodyShape?: ShapeType;
 
   private fireTimer: number = 0;
   protected weapon?: Weapon;
@@ -84,7 +90,6 @@ export class Tank extends Unit {
     this.setLife(50);
 
     if (NetworkManager.isClient()) {
-      this.label = WorldManager.spawn(Text, this.position);
       this.streamEvents<FireEvent>('FireEvent')
         .filter(({data: {sourceID}}) => sourceID === this.id)
         .forEach(({data: {cannonIndex}}) => {
@@ -111,6 +116,15 @@ export class Tank extends Unit {
       this.angle = (this.angle + dir * this.turnSpeed * dt + tau) % tau;
     }
     super.step(dt);
+
+    if (this.shouldSmooth()) {
+      this.weaponAngle = this.smoothAngle(
+        this.weaponAngle,
+        this.smoothWeaponAngle,
+        dt * 2
+      );
+    }
+
     this.fireTimer = Math.max(0, this.fireTimer - dt);
   }
 
@@ -142,6 +156,17 @@ export class Tank extends Unit {
     return t;
   }
 
+  public override getLifeRegen(): number {
+    return Math.max(super.getLifeRegen() * this.modifiers.get('lifeRegen'), 0);
+  }
+
+  public override getLifeRegenDelay(): number {
+    return Math.max(
+      super.getLifeRegenDelay() * this.modifiers.get('lifeRegenDelay'),
+      0
+    );
+  }
+
   protected renderThruster(ctx: GraphicsContext) {
     const {width} = this.boundingBox;
     const radius = width / 2;
@@ -164,22 +189,17 @@ export class Tank extends Unit {
     }
   }
 
-  protected renderBody(ctx: GraphicsContext) {
+  protected renderBodyShape(shape: ShapeType, ctx: GraphicsContext) {
     let {width} = this.boundingBox;
     width *= 1.1;
-    const radius = width / 2;
-    const rotation = this.bodyShape.lockToWeapon
-      ? this.weaponAngle - this.angle
-      : 0;
-
-    // if (this.hasEffect('BurnEffect')) {
-    //   GraphicsPipeline.pipe()
-    //     .run(ctx, (ctx) => {
-    //       const from = {...this.getColor(), alpha: 0.75};
-    //       const to = {...from, alpha: 0}
-    //       ctx.gradientCircle(0, 0, radius * 3, from, to);
-    //     });
-    // }
+    const radius = (width / 2) * (shape.radius ?? 1);
+    let rotation = 0;
+    if (shape.lockToWeapon) {
+      rotation = this.weaponAngle - this.angle;
+    }
+    if (shape.ignoreAngle) {
+      rotation = this.angle;
+    }
 
     GraphicsPipeline.pipe()
       .options({
@@ -188,7 +208,7 @@ export class Tank extends Unit {
       })
       .rotate(rotation)
       .run(ctx, (ctx) => {
-        if (this.bodyShape.tag === 'circle') {
+        if (shape.tag === 'circle') {
           ctx.ellipse(
             -radius,
             -radius,
@@ -196,17 +216,24 @@ export class Tank extends Unit {
             radius * 2,
             this.getColor()
           );
-        } else if (this.bodyShape.tag === 'polygon') {
+        } else if (shape.tag === 'polygon') {
           ctx.regularPolygon(
             0,
             0,
-            this.bodyShape.sides,
+            shape.sides,
             radius,
             this.getColor(),
-            this.bodyShape.angle
+            shape.angle ?? 0
           );
         }
       });
+  }
+
+  protected renderBody(ctx: GraphicsContext) {
+    this.renderBodyShape(this.bodyShape, ctx);
+    if (this.innerBodyShape) {
+      this.renderBodyShape(this.innerBodyShape, ctx);
+    }
   }
 
   protected renderCannonShape(ctx: GraphicsContext, cannon: TankCannon) {
@@ -283,16 +310,29 @@ export class Tank extends Unit {
       weaponAngle: this.weaponAngle,
       weapon: this.weapon?.serialize(),
       modifiers: this.modifiers.serialize(),
+      // bodyShape: this.bodyShape,
+      // innerBodyShape: this.innerBodyShape,
     };
   }
 
   public override deserialize(data: Data, setInitialized?: boolean) {
     super.deserialize(data, setInitialized);
-    const {cannons, bodyShape, weapon, weaponAngle, targetAngle, modifiers} =
-      data;
+    const {
+      cannons,
+      bodyShape,
+      innerBodyShape,
+      weapon,
+      weaponAngle,
+      targetAngle,
+      modifiers,
+    } = data;
 
     if (modifiers) {
       this.modifiers.deserialize(modifiers);
+      this.setMaxLife(this.getMaxLife());
+      if (setInitialized) {
+        this.setLife(this.getMaxLife());
+      }
     }
 
     if (cannons instanceof Array) {
@@ -313,15 +353,35 @@ export class Tank extends Unit {
     if (bodyShape) {
       // TODO Add type checking
       if (bodyShape.tag === 'polygon') {
-        const {tag, sides, angle, lockToWeapon} = bodyShape;
+        const {tag, sides, angle, lockToWeapon, ignoreAngle, radius} =
+          bodyShape;
         this.bodyShape = {
           tag,
           sides,
           lockToWeapon,
+          ignoreAngle,
+          radius,
           angle: angle !== undefined ? (angle * Math.PI) / 180 : undefined,
         };
       } else {
         this.bodyShape = bodyShape;
+      }
+    }
+    if (innerBodyShape) {
+      // TODO Add type checking
+      if (innerBodyShape.tag === 'polygon') {
+        const {tag, sides, angle, lockToWeapon, ignoreAngle, radius} =
+          innerBodyShape;
+        this.innerBodyShape = {
+          tag,
+          sides,
+          lockToWeapon,
+          ignoreAngle,
+          radius,
+          angle: angle !== undefined ? (angle * Math.PI) / 180 : undefined,
+        };
+      } else {
+        this.innerBodyShape = innerBodyShape;
       }
     }
     if (weapon) {
@@ -343,7 +403,11 @@ export class Tank extends Unit {
     }
 
     if (typeof weaponAngle === 'number') {
-      this.weaponAngle = weaponAngle;
+      if (this.shouldSmooth()) {
+        this.smoothWeaponAngle = weaponAngle;
+      } else {
+        this.weaponAngle = weaponAngle;
+      }
     }
 
     if (typeof targetAngle === 'number') {
@@ -389,5 +453,17 @@ export class Tank extends Unit {
     } else if (actualWeapon) {
       this.weapon = actualWeapon;
     }
+  }
+
+  public override getSpeed(): number {
+    return Math.max(super.getSpeed() * this.modifiers.get('speed'), 0);
+  }
+
+  public override getMass(): number {
+    return Math.max(super.getMass() * this.modifiers.get('mass'), 0);
+  }
+
+  public override getFriction(): number {
+    return Math.max(super.getFriction() * this.modifiers.get('friction'), 0);
   }
 }

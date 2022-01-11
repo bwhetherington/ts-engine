@@ -4,3 +4,5 @@ build
 ignore
 env
 *.env
+*.cpuprofile
+*.heapsnapshot

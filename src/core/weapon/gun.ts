@@ -20,7 +20,6 @@ export class BaseGun extends Weapon {
   protected projectileType: AssetIdentifier = 'Projectile';
   protected projectileShape: ProjectileShape = 'circle';
   protected projectileSpeed: number = 500;
-  protected projectileSpread: number = 0.1;
   protected projectileDuration: number = 1;
 
   public constructor() {
@@ -34,11 +33,10 @@ export class BaseGun extends Weapon {
     angle: number,
     modifier?: HeroModifier
   ): Projectile {
-    let {pierce, projectileSpread, projectileSpeed, projectileDuration} = this;
+    let {pierce, projectileSpeed, projectileDuration} = this;
 
     if (modifier) {
       pierce = modifier.get('pierce') - 1 + pierce;
-      projectileSpread = modifier.get('projectileSpread') * projectileSpread;
       projectileSpeed = modifier.get('projectileSpeed') * projectileSpeed;
       projectileDuration =
         modifier.get('projectileDuration') * projectileDuration;
@@ -73,7 +71,6 @@ export class BaseGun extends Weapon {
       ...super.serialize(),
       projectileType: this.projectileType,
       projectileSpeed: this.projectileSpeed,
-      projectileSpread: this.projectileSpread,
       projectileShape: this.projectileShape,
       projectileDuration: this.projectileDuration,
     };
@@ -95,10 +92,6 @@ export class BaseGun extends Weapon {
 
     if (typeof projectileSpeed === 'number') {
       this.projectileSpeed = projectileSpeed;
-    }
-
-    if (typeof projectileSpread === 'number') {
-      this.projectileSpread = projectileSpread;
     }
 
     if (typeof projectileDuration === 'number') {

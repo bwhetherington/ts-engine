@@ -1,0 +1,16 @@
+type: Omni
+extends: ClassUpgrade
+name: Omni
+description: Change to a generalist tank, with better attributes across the board.
+className: OmniHero
+isRare: true
+tier: 1
+requires:
+  - GlassCannon
+  - SteadyShot
+  - RapidFire
+  - Plated
+  - Durable
+  - Regeneration
+  - Bulky
+  - Glide

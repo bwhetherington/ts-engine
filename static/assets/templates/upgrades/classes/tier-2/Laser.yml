@@ -6,5 +6,5 @@ className: SniperHero
 requires:
   - GlassCannon
   - SteadyShot
-exclusiveWith:
-  - Swarm
+  - Railgun
+tier: 2

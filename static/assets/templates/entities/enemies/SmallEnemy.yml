@@ -1,0 +1,17 @@
+type: SmallEnemy
+extends: BaseEnemy
+name: Pest
+mass: 1
+maxLife: 80
+life: 80
+speed: 175
+xpWorth: 15
+boundingBox:
+  width: 20
+  height: 20
+cannons:
+  - key: 0
+    shape:
+      length: 17.5
+      height: 10
+weapon: PestGun

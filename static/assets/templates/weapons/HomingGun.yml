@@ -5,5 +5,5 @@ shotInaccuracy: 0.1
 projectileSpeed: 500
 pierce: 1
 projectileDuration: 1.5
-damage: 5
+damage: 20
 rate: 0.35

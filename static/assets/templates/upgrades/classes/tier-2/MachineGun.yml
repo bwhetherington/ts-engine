@@ -5,8 +5,6 @@ description: Change to a machine gun tank, with a faster fire rate and lower dam
 className: MachineGunHero
 requires:
   - RapidFire
-  - MultiShot
-exclusiveWith:
-  - Railgun
-  - Homing
-  - Heavy
+  - GlassCannon
+  - Shotgun
+tier: 2

@@ -45,6 +45,9 @@ export class HomingProjectile extends Projectile {
         )
         .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
         .filter((unit) => unit.isAlive())
+        .filter(
+          (unit) => this.parent === undefined || this.parent.isHostileTo(unit)
+        )
         .filter((unit) => !this.hitEntities.has(unit.id))
         .map<[Unit | undefined, number]>((unit) => [
           unit,

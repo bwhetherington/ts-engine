@@ -7,6 +7,7 @@ import {InitialSyncEvent} from 'core/net/util';
 import {PlayerManager} from 'core/player';
 import {WorldManager} from 'core/entity';
 import {SerializeManager} from 'core/serialize';
+import { AlertManager } from 'core/alert';
 
 const log = LogManager.forFile(__filename);
 
@@ -25,15 +26,20 @@ function getProtocol(): string {
 
 export class Client extends Node {
   private sendBuffer: Message[] = [];
-  private socket: WebSocket;
+  private socket?: WebSocket;
   private isConnected: boolean = false;
   private name: string = '';
-  private bytesIn: number = 0;
 
   constructor(addr?: string) {
     super();
 
     this.name = generateName();
+    this.attemptConnect(addr);
+  }
+
+  private attemptConnect(addr?: string) {
+    this.socket?.close();
+
     const connect = addr ?? `${getProtocol()}//${location.host}`;
     this.socket = new WebSocket(connect);
     this.initializeSocket(this.socket);
@@ -69,14 +75,14 @@ export class Client extends Node {
   }
 
   public disconnect(_: Socket) {
-    this.socket.close();
+    this.socket?.close();
   }
 
   public send(message: Message, socket: Socket = -1) {
     if (socket === -1) {
       if (this.isConnected) {
         const data = SerializeManager.serialize(message);
-        this.socket.send(data);
+        this.socket?.send(data);
       } else {
         this.sendBuffer.push(message);
       }
@@ -103,6 +109,7 @@ export class Client extends Node {
   public onDisconnect(socket: Socket) {
     this.isConnected = false;
     log.debug('disconnected');
+    AlertManager.send('Disconnected from server');
     super.onDisconnect(socket);
   }
 

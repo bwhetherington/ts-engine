@@ -137,7 +137,9 @@ export interface DamageEvent {
 
 export interface KillEvent {
   targetID: UUID;
+  target?: Unit;
   sourceID?: UUID;
+  source?: Unit;
 }
 
 export interface RayCastResult {

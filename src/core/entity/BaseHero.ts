@@ -6,6 +6,7 @@ import {
   TimedText,
   Unit,
   WorldManager,
+  Text,
 } from 'core/entity';
 import {
   Key,
@@ -58,6 +59,8 @@ export class BaseHero extends Tank {
     [MovementDirection.Right]: false,
   };
   public upgrades: string[] = [];
+  public classTier: number = 0;
+
   private _storedUpgrades: number = 0;
 
   private xp: number = 0;
@@ -85,6 +88,9 @@ export class BaseHero extends Tank {
     super();
 
     this.type = BaseHero.typeName;
+
+    this.setMaxLife(200);
+    this.setLife(200);
 
     this.setWeapon('Gun');
     this.setLevelInternal(1);
@@ -131,6 +137,8 @@ export class BaseHero extends Tank {
       });
 
     if (NetworkManager.isClient()) {
+      this.label = WorldManager.spawn(Text, this.position);
+
       this.streamEvents<DamageEvent>('DamageEvent')
         .map(({data: {targetID, sourceID, amount}}) => ({
           amount,
@@ -210,10 +218,6 @@ export class BaseHero extends Tank {
     this.upgrades = [...other.upgrades];
   }
 
-  public override getLifeRegen(): number {
-    return this.modifiers.get('lifeRegen') * super.getLifeRegen();
-  }
-
   protected override getNameColor(): TextColor {
     return this.getPlayer()?.getNameColor() ?? super.getNameColor();
   }
@@ -234,7 +238,7 @@ export class BaseHero extends Tank {
   }
 
   protected lifeForLevel(level: number): number {
-    return 50 + (level - 1) * 5;
+    return 200;
   }
 
   protected armorForLevel(_level: number): number {
@@ -252,7 +256,7 @@ export class BaseHero extends Tank {
   public setExperience(amount: number, allowLevels: boolean = true) {
     this.xp = amount;
 
-    while (this.xp >= this.experienceForLevel(this.level) && this.level < 40) {
+    while (this.xp >= this.experienceForLevel(this.level)) {
       const oldLevel = this.level;
       this.setLevelInternal(this.level + 1);
       if (NetworkManager.isServer() && allowLevels) {
@@ -274,7 +278,7 @@ export class BaseHero extends Tank {
       this.setLevelInternal(this.level - 1);
     }
 
-    if (this.getPlayer()?.isActivePlayer?.()) {
+    if (this.getPlayer()?.isActivePlayer()) {
       const prevXp = this.experienceForLevel(this.level - 1);
       EventManager.emit({
         type: 'BarUpdateEvent',
@@ -297,12 +301,8 @@ export class BaseHero extends Tank {
   }
 
   private setLevelInternal(level: number) {
-    level = clamp(level, 1, 40);
     if (level !== this.level) {
       this.level = level;
-
-      this.setMaxLife(this.lifeForLevel(level));
-      this.armor = this.armorForLevel(level);
     }
   }
 
@@ -328,8 +328,7 @@ export class BaseHero extends Tank {
   }
 
   public updateMaxLife() {
-    const life = this.lifeForLevel(this.level);
-    this.setMaxLife(life);
+    this.setMaxLife(200);
   }
 
   public override setMaxLife(maxLife: number) {
@@ -399,6 +398,10 @@ export class BaseHero extends Tank {
     }
   }
 
+  private updateExperience() {
+    this.setExperience(this.getExperience());
+  }
+
   public override step(dt: number) {
     this.computeMovementInput();
     super.step(dt);
@@ -432,6 +435,7 @@ export class BaseHero extends Tank {
       replacementId: this.replacementId,
       xp: this.xp,
       storedUpgrades: this.storedUpgrades,
+      classTier: this.classTier,
     };
   }
 
@@ -443,7 +447,11 @@ export class BaseHero extends Tank {
       weaponAngle: oldWeaponAngle,
       targetAngle: oldTargetAngle,
     } = this;
-    const {playerID, xp, storedUpgrades} = data;
+    const {playerID, xp, storedUpgrades, classTier} = data;
+
+    if (typeof classTier === 'number') {
+      this.classTier = classTier;
+    }
 
     if (typeof storedUpgrades === 'number') {
       this.storedUpgrades = storedUpgrades;
@@ -451,8 +459,6 @@ export class BaseHero extends Tank {
 
     if (typeof xp === 'number') {
       this.setExperience(xp);
-    } else if (setInitialized && !this.isInitialized) {
-      this.setExperience(0);
     }
 
     const wasInitialized = this.isInitialized;
@@ -481,6 +487,7 @@ export class BaseHero extends Tank {
       if (player && player.hero !== this) {
         player.setHero(this);
       }
+      this.updateExperience();
     }
 
     if (this.getPlayer()?.isActivePlayer?.() && wasInitialized) {
