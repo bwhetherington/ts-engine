@@ -299,7 +299,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         }
 
         hero.setExperience(xpNum, true);
-      }
+      },
     });
 
     // Weaken enemies as they spawn

@@ -186,6 +186,7 @@ function validateNoAccount(res: JoinForm): FormResult {
 }
 
 function handleNoAccount(player: Player, res: JoinForm) {
+  console.log('handleNoAccount', res);
   player.load({
     username: res.username.value,
     xp: 0,
@@ -203,12 +204,14 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
     method: string,
     data?: Data
   ): Promise<void> {
+    let shouldSubmit = false;
     switch (method) {
       case 'login':
         await handleSubmit(player, response, data);
         break;
       case 'register':
         await handleRegister(player, response, data);
+        shouldSubmit = true;
         break;
       case 'noAccount':
         handleNoAccount(player, response);
@@ -220,7 +223,9 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
         player,
       },
     });
-    await handleSubmit(player, response, data);
+    if (shouldSubmit) {
+      await handleSubmit(player, response, data);
+    }
   },
   onReject(player: Player) {
     player.disconnect();
