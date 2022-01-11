@@ -60,7 +60,7 @@ const MAX_ATTEMPTS = 1000;
 export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   public static typeName: string = 'GamePlugin';
 
-  private wave: number = 35;
+  private wave: number = 0;
   private isWaiting: boolean = false;
 
   private spawnFeed() {
@@ -99,7 +99,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
   private async spawnWave() {
     this.isWaiting = true;
-    // await EventManager.sleep(3);
+    await EventManager.sleep(3);
     const numPlayers = this.getTeamCount(Team.Blue);
     const budget = this.getWaveBudget() * numPlayers;
     const wave = this.buildWave(budget);
