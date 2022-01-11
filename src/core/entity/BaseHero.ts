@@ -183,9 +183,10 @@ export class BaseHero extends Tank {
           return {target, source};
         })
         .filterMap(({target, source}) =>
-          target instanceof Unit && this === source ? target : undefined
+          target instanceof Unit ? {target, source} : undefined
         )
-        .forEach((target) => this.addExperience(target.getXPWorth()));
+        .filter(({source}) => this === source)
+        .forEach(({target}) => this.addExperience(target.getXPWorth()));
     }
   }
 
@@ -234,7 +235,7 @@ export class BaseHero extends Tank {
     if (level < 1) {
       return 0;
     }
-    return level * 20 + Math.ceil(level * level * 3);
+    return level * 20 + Math.ceil(level ** 2 * 3) + Math.ceil(level ** 3 / 15);
   }
 
   protected lifeForLevel(level: number): number {

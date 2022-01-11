@@ -12,6 +12,7 @@ import {
   WorldManager,
   SpawnEntityEvent,
   Team,
+  Tank,
 } from 'core/entity';
 import {EventManager, Priority} from 'core/event';
 import {StateMachine} from 'core/fsm';
@@ -21,6 +22,7 @@ import {Iterator} from 'core/iterator';
 import {NetworkManager} from 'core/net';
 import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {RNGManager} from 'core/random';
+import { HeroModifier } from 'core/upgrade';
 import {ChatManager} from 'server/chat';
 import {Server} from 'server/net';
 import {FsmPlugin} from 'server/plugin';
@@ -61,6 +63,10 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   public static typeName: string = 'GamePlugin';
 
   private wave: number = 0;
+  private globalModifier: HeroModifier = new HeroModifier({
+    damage: -0.5,
+    rate: -0.5,
+  });
   private isWaiting: boolean = false;
 
   private spawnFeed() {
@@ -106,33 +112,48 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     for (const enemy of wave) {
       this.spawnEnemy(enemy, Team.Red);
     }
-    this.wave += 1;
+    this.setWave(this.wave + 1);
     this.isWaiting = false;
+  }
+
+  private setWave(wave: number) {
+    this.wave = wave;
+    const damageModifier = wave / 30 - 0.5;
+    this.globalModifier.set('damage', damageModifier);
   }
 
   private spawnEnemy(type: string, team: Team) {
     // Create enemy
     const position = WorldManager.getRandomPosition();
     const enemy = WorldManager.spawnEntity(type);
-    enemy?.setPosition(position);
 
-    if (enemy instanceof Unit && team !== undefined) {
+    if (!(enemy instanceof Tank)) {
+      return;
+    }
+
+    enemy.modifiers.compose(this.globalModifier);
+
+    enemy.setPosition(position);
+
+    if (team !== undefined) {
       enemy.setTeam(team);
     } else {
       // Pick color
-      enemy?.setColor(randomColor());
+      enemy.setColor(randomColor());
     }
   }
 
   private getTeamCount(team: Team): number {
     return WorldManager.getEntities()
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
-      .filter((unit) => unit.team === team)
+      .filter((unit) => unit.team === team && unit.getXPWorth() > 0)
       .count();
   }
 
   private startGame() {
     ChatManager.info('Starting the game');
+
+    this.setWave(0);
 
     this.takeDuringState(
       GameState.Running,
@@ -216,17 +237,6 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       player.spawnHero();
       player.hero?.setTeam(Team.Blue);
     });
-
-    // Start timer
-    // this.countdown(
-    //   GameState.Running,
-    //   600,
-    //   [60, 30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-    // ).then((shouldTransition) => {
-    //   if (shouldTransition) {
-    //     this.transition(GameAction.Stop);
-    //   }
-    // });
   }
 
   private stopGame() {
@@ -301,18 +311,6 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         hero.setExperience(xpNum, true);
       },
     });
-
-    // Weaken enemies as they spawn
-    this.streamEvents<SpawnEntityEvent>('SpawnEntityEvent', Priority.Highest)
-      .filterMap(({data: {entity}}) =>
-        entity instanceof BaseEnemy ? entity : undefined
-      )
-      .forEach((enemy) => {
-        enemy.modifiers.composeModifiers({
-          rate: -0.5,
-          damage: -0.5,
-        });
-      });
 
     const stopHandler = async () => {
       await this.transition(GameAction.Stop);

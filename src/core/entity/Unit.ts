@@ -17,9 +17,11 @@ import {Event, EventManager} from 'core/event';
 import {NetworkManager} from 'core/net';
 import {Color, COLORS, COLOR_NAMES, reshade} from 'core/graphics';
 import {TextColor} from 'core/chat';
-import {Effect} from 'core/effect';
+import {Effect, EffectManager} from 'core/effect';
 import {UUID} from 'core/uuid';
 import {PlayerManager} from 'core/player';
+import { Iterator } from 'core/iterator';
+import { AssetIdentifier, isAssetIdentifier } from 'core/assets';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -376,6 +378,7 @@ export class Unit extends Entity {
       effectCounts,
       lifeRegen,
       lifeRegenDelay,
+      initialEffects,
     } = data;
     if (typeof lifeRegen === 'number') {
       this.lifeRegen = lifeRegen;
@@ -406,6 +409,18 @@ export class Unit extends Entity {
     }
     if (typeof effectCounts === 'object') {
       deserializeMapNumber(effectCounts, this.effectCounts);
+    }
+    if (initialEffects instanceof Array) {
+      Iterator.array(initialEffects)
+        .filterType(isAssetIdentifier)
+        .forEach((identifier) => {
+          const effect = EffectManager.instantiate(identifier);
+          if (!effect) {
+            return;
+          }
+          effect.source = this;
+          this.addEffect(effect);
+        })
     }
   }
 

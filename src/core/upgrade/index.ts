@@ -2,6 +2,8 @@ export * from 'core/upgrade/upgrade';
 export * from 'core/upgrade/modifier';
 export * from 'core/upgrade/class';
 export * from 'core/upgrade/aura';
+export * from 'core/upgrade/effect';
+
 import {Upgrade} from 'core/upgrade/upgrade';
 import {BaseHero} from 'core/entity';
 import {UUID} from 'core/uuid';

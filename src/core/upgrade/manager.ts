@@ -9,6 +9,7 @@ import {
   SelectUpgradeEvent,
   Upgrade,
   ModifierUpgrade,
+  EffectUpgrade,
   ClassUpgrade,
   CloseOfferEvent,
   RequestUpgradeEvent,
@@ -36,6 +37,7 @@ const EXCLUDED_UPGRADES = new Set([
   'ModifierUpgrade',
   'ClassUpgrade',
   'AuraUpgrade',
+  'EffectUpgrade',
 ]);
 
 // const CLASS_UPGRADES = new Set(['MachineGun', 'Homing', 'Railgun', 'Laser']);
@@ -54,6 +56,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
     this.registerAssetType(ModifierUpgrade);
     this.registerAssetType(ClassUpgrade);
     this.registerAssetType(AuraUpgrade);
+    this.registerAssetType(EffectUpgrade);
     await this.loadAssetTemplates('templates/upgrades');
 
     this.availableUpgrades = this.getAssetInitializers()

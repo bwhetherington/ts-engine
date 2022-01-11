@@ -2,8 +2,14 @@ type: Incineration
 extends: AuraUpgrade
 name: Incineration
 description: Gain a burning aura around your tank.
-aura: BurnAura
+aura:
+  type: Aura
+  radius: 150
+  targetHostile: true
+  effect:
+    type: BurnEffect
+    damage: 5
 requires:
-  - WildRegeneration
+  - Relentless
   - GlassCannon
 isRare: true

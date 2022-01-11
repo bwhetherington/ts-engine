@@ -5,6 +5,7 @@ import {GraphicsContext} from 'core/graphics';
 import {Data} from 'core/serialize';
 import {Iterator} from 'core/iterator';
 import {NetworkManager} from 'core/net';
+import { AssetIdentifier, isAssetIdentifier } from 'core/assets';
 
 const AURA_WIDTH = 40;
 const AURA_INTERVAL = 0.25;
@@ -12,7 +13,8 @@ const AURA_INTERVAL = 0.25;
 export class Aura extends Entity {
   public static typeName: string = 'Aura';
 
-  public effect?: string;
+  public effect?: AssetIdentifier;
+  public targetHostile: boolean = true;
 
   private counter: number = 0;
   private _radius: number = 50;
@@ -50,6 +52,12 @@ export class Aura extends Entity {
         if (unit === this.parent) {
           return false;
         }
+
+        // Choose correct team to target
+        if (this.targetHostile && !this.parent?.isHostileTo(unit)) {
+          return false;
+        }
+
         // Verify that they are within the radius
         if (
           unit.position.distanceToXYSquared(this.position.x, this.position.y) >
@@ -113,15 +121,19 @@ export class Aura extends Entity {
     return {
       ...super.serialize(),
       effect: this.effect,
+      targetHostile: this.targetHostile,
       radius: this.radius,
     };
   }
 
   public override deserialize(data: Data, setInitialized?: boolean): void {
     super.deserialize(data, setInitialized);
-    const {effect, radius} = data;
-    if (typeof effect === 'string') {
+    const {effect, targetHostile, radius} = data;
+    if (isAssetIdentifier(effect)) {
       this.effect = effect;
+    }
+    if (typeof targetHostile === 'boolean') {
+      this.targetHostile = targetHostile;
     }
     if (typeof radius === 'number') {
       this.radius = radius;

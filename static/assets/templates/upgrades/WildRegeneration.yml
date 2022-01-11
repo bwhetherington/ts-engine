@@ -1,9 +1,10 @@
-type: WildRegeneration
+type: Relentless
 extends: ModifierUpgrade
-name: Wild Regeneration
-description: Remove the delay on life regeneration, but reduce your life.
+name: Relentless
+description: Remove the delay on life regeneration, but reduce your life and regeneration rate.
 modifiers:
   lifeRegenDelay: -1
+  lifeRegen: -0.3
   life: -0.3
 requires:
   - Regeneration

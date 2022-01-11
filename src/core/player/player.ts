@@ -135,7 +135,6 @@ export class Player extends Observer implements Serializable {
       username: this.account.username,
       permissionLevel: this.account.permissionLevel,
     };
-    console.log('reset', this.account);
     this.load(blankAccount);
   }
 

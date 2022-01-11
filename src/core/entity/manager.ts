@@ -358,8 +358,7 @@ export class WorldManager
   }
 
   public findPath(from: Vector, to: Vector): Vector[] | undefined {
-    return [from, to];
-    // return this.graph?.findPath(from, to);
+    return this.graph?.findPath(from, to);
   }
 
   public deleteEntities() {

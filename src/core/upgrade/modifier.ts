@@ -27,7 +27,11 @@ export const MODIFIER_KEYS = [
 ];
 
 export class HeroModifier implements Serializable {
-  public modifiers: Modifiers = {};
+  public modifiers: Modifiers;
+
+  constructor(modifiers?: Modifiers) {
+    this.modifiers = modifiers ?? {};
+  }
 
   public serialize(): Data {
     return Iterator.entries(this.modifiers).fold(
@@ -54,6 +58,10 @@ export class HeroModifier implements Serializable {
 
   public get(key: string): number {
     return this.modifiers[key] ?? 1;
+  }
+
+  public set(key: string, value: number) {
+    this.modifiers[key] = value;
   }
 
   private composeKey(key: string, other: Modifiers, invert: boolean = false) {
