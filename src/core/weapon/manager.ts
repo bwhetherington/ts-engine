@@ -4,9 +4,9 @@ import {
   BaseRaygun,
   BaseHomingGun,
   BaseBarrageGun,
-} from 'core/weapon';
-import {LogManager} from 'core/log';
-import {LoadingManager} from 'core/assets';
+} from '@/core/weapon';
+import {LogManager} from '@/core/log';
+import {LoadingManager} from '@/core/assets';
 
 const log = LogManager.forFile(__filename);
 

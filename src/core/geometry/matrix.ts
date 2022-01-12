@@ -1,5 +1,5 @@
-import {Vector} from 'core/geometry';
-import {Data, Serializable} from 'core/serialize';
+import {Vector} from '@/core/geometry';
+import {Data, Serializable} from '@/core/serialize';
 
 export class Matrix3 implements Serializable {
   private a0: number = 0;

@@ -1,5 +1,5 @@
-import {EventManager, StepEvent} from 'core/event';
-import {Queue, SizedQueue} from 'core/util';
+import {EventManager, StepEvent} from '@/core/event';
+import {Queue, SizedQueue} from '@/core/util';
 
 export class MetricsManager {
   private frameTimes: Queue<number> = new SizedQueue(100);

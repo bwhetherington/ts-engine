@@ -1,7 +1,7 @@
-import {TextComponents} from 'core/chat';
-import {Vector, VectorLike} from 'core/geometry';
-import {Color} from 'core/graphics/color';
-import {GraphicsPipeline} from 'core/graphics/pipe';
+import {TextComponents} from '@/core/chat';
+import {Vector, VectorLike} from '@/core/geometry';
+import {Color} from '@/core/graphics/color';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
 
 export interface TextStyle {
   font?: string;

@@ -1,5 +1,5 @@
-import {Text, WorldManager, Echo} from 'core/entity';
-import {EventManager} from 'core/event';
+import {Text, WorldManager, Echo} from '@/core/entity';
+import {EventManager} from '@/core/event';
 
 export class TimedText extends Text {
   public static typeName: string = 'TimedText';

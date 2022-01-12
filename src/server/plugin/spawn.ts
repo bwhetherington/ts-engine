@@ -1,11 +1,11 @@
-import {WorldManager} from 'core/entity';
-import {Vector} from 'core/geometry';
-import {Iterator} from 'core/iterator';
-import {Player} from 'core/player';
+import {WorldManager} from '@/core/entity';
+import {Vector} from '@/core/geometry';
+import {Iterator} from '@/core/iterator';
+import {Player} from '@/core/player';
 
-import {ChatManager} from 'server/chat';
-import {Server} from 'server/net';
-import {Plugin} from 'server/plugin';
+import {ChatManager} from '@/server/chat';
+import {Server} from '@/server/net';
+import {Plugin} from '@/server/plugin';
 
 export class SpawnPlugin extends Plugin {
   public static typeName: string = 'SpawnPlugin';

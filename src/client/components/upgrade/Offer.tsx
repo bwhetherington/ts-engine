@@ -1,11 +1,16 @@
 import React, {useState} from 'react';
 
-import {UUID} from 'core/uuid';
-import {Upgrade, UpgradeManager, Offer, OfferUpgradeEvent} from 'core/upgrade';
-import {Iterator} from 'core/iterator';
+import {UUID} from '@/core/uuid';
+import {
+  Upgrade,
+  UpgradeManager,
+  Offer,
+  OfferUpgradeEvent,
+} from '@/core/upgrade';
+import {Iterator} from '@/core/iterator';
 
-import {Row} from 'client/components';
-import {UpgradeComponent} from 'client/components/upgrade';
+import {Row} from '@/client/components';
+import {UpgradeComponent} from '@/client/components/upgrade';
 
 interface OfferProps {
   offer: Offer;

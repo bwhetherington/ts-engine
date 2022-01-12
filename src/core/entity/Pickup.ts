@@ -1,4 +1,4 @@
-import {CollisionLayer, Entity, BaseHero} from 'core/entity';
+import {CollisionLayer, Entity, BaseHero} from '@/core/entity';
 import {
   BLACK,
   Color,
@@ -6,10 +6,10 @@ import {
   randomColor,
   reshade,
   WHITE,
-} from 'core/graphics';
-import {GraphicsPipeline} from 'core/graphics/pipe';
-import {LogManager} from 'core/log';
-import {NetworkManager} from 'core/net';
+} from '@/core/graphics';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {LogManager} from '@/core/log';
+import {NetworkManager} from '@/core/net';
 
 const log = LogManager.forFile(__filename);
 

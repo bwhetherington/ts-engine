@@ -1,10 +1,10 @@
-import {EventManager} from 'core/event';
-import {StateMachine} from 'core/fsm';
-import {AsyncIterator} from 'core/iterator';
-import {Data} from 'core/serialize';
-import {ChatManager} from 'server/chat';
-import {Server} from 'server/net';
-import {Plugin} from 'server/plugin';
+import {EventManager} from '@/core/event';
+import {StateMachine} from '@/core/fsm';
+import {AsyncIterator} from '@/core/iterator';
+import {Data} from '@/core/serialize';
+import {ChatManager} from '@/server/chat';
+import {Server} from '@/server/net';
+import {Plugin} from '@/server/plugin';
 
 interface TransitionEvent<A> {
   action: A;

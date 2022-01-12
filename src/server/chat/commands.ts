@@ -1,11 +1,11 @@
-import {CommandEntry, ChatManager} from 'server/chat';
-import {hsv, tryColor} from 'core/graphics/color';
-import {PlayerManager} from 'core/player';
-import {loadWorld} from 'server/util';
-import {LogManager} from 'core/log';
-import {RNGManager} from 'core/random';
-import {NetworkManager} from 'core/net';
-import {isOk} from 'core/net/http';
+import {CommandEntry, ChatManager} from '@/server/chat';
+import {hsv, tryColor} from '@/core/graphics/color';
+import {PlayerManager} from '@/core/player';
+import {loadWorld} from '@/server/util';
+import {LogManager} from '@/core/log';
+import {RNGManager} from '@/core/random';
+import {NetworkManager} from '@/core/net';
+import {isOk} from '@/core/net/http';
 
 const log = LogManager.forFile(__filename);
 

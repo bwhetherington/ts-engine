@@ -8,18 +8,18 @@ import {
   SelectUpgradeEvent,
   RequestUpgradeEvent,
   ChangeStoredUpgradeCountEvent,
-} from 'core/upgrade';
-import {UUID} from 'core/uuid';
-import {NetworkManager} from 'core/net';
+} from '@/core/upgrade';
+import {UUID} from '@/core/uuid';
+import {NetworkManager} from '@/core/net';
 
-import {Background, Button, Component, Panel} from 'client/components';
-export * from 'client/components/upgrade/Upgrade';
+import {Background, Button, Component, Panel} from '@/client/components';
+export * from '@/client/components/upgrade/Upgrade';
 
-import {OfferComponent} from 'client/components/upgrade/Offer';
+import {OfferComponent} from '@/client/components/upgrade/Offer';
 import {BlueButton} from '../common';
-import {PlayerManager} from 'core/player';
-import {KillEvent} from 'core/entity';
-import {Key, KeyAction, KeyEvent} from 'core/input';
+import {PlayerManager} from '@/core/player';
+import {KillEvent} from '@/core/entity';
+import {Key, KeyAction, KeyEvent} from '@/core/input';
 
 interface ContainerState {
   offers: Offer[];

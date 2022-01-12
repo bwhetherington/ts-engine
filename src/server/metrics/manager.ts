@@ -1,11 +1,11 @@
-import {LogManager} from 'core/log';
-import {EventManager, StepEvent} from 'core/event';
-import {SizedQueue} from 'core/util';
-import {MetricsEvent} from 'core/metrics';
-import {WorldManager} from 'core/entity';
-import {NetworkManager} from 'core/net';
-import {UUID, UUIDManager} from 'core/uuid';
-import {Player} from 'core/player';
+import {LogManager} from '@/core/log';
+import {EventManager, StepEvent} from '@/core/event';
+import {SizedQueue} from '@/core/util';
+import {MetricsEvent} from '@/core/metrics';
+import {WorldManager} from '@/core/entity';
+import {NetworkManager} from '@/core/net';
+import {UUID, UUIDManager} from '@/core/uuid';
+import {Player} from '@/core/player';
 
 const log = LogManager.forFile(__filename);
 

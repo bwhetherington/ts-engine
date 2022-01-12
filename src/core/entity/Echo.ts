@@ -1,7 +1,7 @@
-import {Entity, CollisionLayer} from 'core/entity';
-import {smoothStep} from 'core/util';
-import {GraphicsContext} from 'core/graphics';
-import {GraphicsPipeline} from 'core/graphics/pipe';
+import {Entity, CollisionLayer} from '@/core/entity';
+import {smoothStep} from '@/core/util';
+import {GraphicsContext} from '@/core/graphics';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
 
 const DURATION = 0.5;
 

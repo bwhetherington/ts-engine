@@ -1,13 +1,13 @@
-import {Player, PlayerLeaveEvent} from 'core/player';
-import {Serializable, Data} from 'core/serialize';
-import {LogManager} from 'core/log';
-import {SyncEvent, NetworkManager} from 'core/net';
-import {EventManager} from 'core/event';
-import {diff} from 'core/util';
-import {Iterator} from 'core/iterator';
-import {isUUID, UUID, UUIDManager} from 'core/uuid';
-import {isEmpty} from 'core/util/object';
-import {MetricsEvent} from 'core/metrics';
+import {Player, PlayerLeaveEvent} from '@/core/player';
+import {Serializable, Data} from '@/core/serialize';
+import {LogManager} from '@/core/log';
+import {SyncEvent, NetworkManager} from '@/core/net';
+import {EventManager} from '@/core/event';
+import {diff} from '@/core/util';
+import {Iterator} from '@/core/iterator';
+import {isUUID, UUID, UUIDManager} from '@/core/uuid';
+import {isEmpty} from '@/core/util/object';
+import {MetricsEvent} from '@/core/metrics';
 
 const log = LogManager.forFile(__filename);
 

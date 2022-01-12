@@ -1,8 +1,14 @@
-import {Form, FormManager, StringEntry, FormEntry, FormResult} from 'core/form';
-import {PlayerManager, Player} from 'core/player';
-import {Data} from 'core/serialize';
-import {LogManager} from 'core/log';
-import {capitalize} from 'core/util';
+import {
+  Form,
+  FormManager,
+  StringEntry,
+  FormEntry,
+  FormResult,
+} from '@/core/form';
+import {PlayerManager, Player} from '@/core/player';
+import {Data} from '@/core/serialize';
+import {LogManager} from '@/core/log';
+import {capitalize} from '@/core/util';
 
 const log = LogManager.forFile(__filename);
 

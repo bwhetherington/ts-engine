@@ -1,4 +1,4 @@
-import {UUID, UUIDManager} from 'core/uuid';
+import {UUID, UUIDManager} from '@/core/uuid';
 import {Iterator} from './sync';
 
 type MaybePromise<T> = T | Promise<T>;

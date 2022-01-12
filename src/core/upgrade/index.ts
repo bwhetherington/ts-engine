@@ -1,12 +1,12 @@
-export * from 'core/upgrade/upgrade';
-export * from 'core/upgrade/modifier';
-export * from 'core/upgrade/class';
-export * from 'core/upgrade/aura';
-export * from 'core/upgrade/effect';
+export * from '@/core/upgrade/upgrade';
+export * from '@/core/upgrade/modifier';
+export * from '@/core/upgrade/class';
+export * from '@/core/upgrade/aura';
+export * from '@/core/upgrade/effect';
 
-import {Upgrade} from 'core/upgrade/upgrade';
-import {BaseHero} from 'core/entity';
-import {UUID} from 'core/uuid';
+import {Upgrade} from '@/core/upgrade/upgrade';
+import {BaseHero} from '@/core/entity';
+import {UUID} from '@/core/uuid';
 
 export interface ChangeStoredUpgradeCountEvent {
   storedUpgrades: number;
@@ -41,6 +41,6 @@ export interface UpgradeEvent {
   upgrade: Upgrade;
 }
 
-import {UpgradeManager} from 'core/upgrade/manager';
+import {UpgradeManager} from '@/core/upgrade/manager';
 const UM = new UpgradeManager();
 export {UM as UpgradeManager};

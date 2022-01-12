@@ -1,5 +1,5 @@
-import {Entity, CollisionLayer} from 'core/entity';
-import {clamp} from 'core/util';
+import {Entity, CollisionLayer} from '@/core/entity';
+import {clamp} from '@/core/util';
 
 const FOLLOW_SPEED: number = 20;
 const SNAP_DISTANCE: number = 0.25;

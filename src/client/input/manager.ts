@@ -1,5 +1,5 @@
-import {EventManager, Event, BatchEvent, GameEvent} from 'core/event';
-import {LogManager} from 'core/log';
+import {EventManager, Event, BatchEvent, GameEvent} from '@/core/event';
+import {LogManager} from '@/core/log';
 import {
   KEY_MAP,
   KeyEvent,
@@ -9,11 +9,11 @@ import {
   MouseEvent,
   Key,
   MouseButton,
-} from 'core/input';
-import {CameraManager} from 'core/graphics';
-import {NetworkManager} from 'core/net';
-import {Iterator} from 'core/iterator';
-import {Vector} from 'core/geometry';
+} from '@/core/input';
+import {CameraManager} from '@/core/graphics';
+import {NetworkManager} from '@/core/net';
+import {Iterator} from '@/core/iterator';
+import {Vector} from '@/core/geometry';
 
 const log = LogManager.forFile(__filename);
 

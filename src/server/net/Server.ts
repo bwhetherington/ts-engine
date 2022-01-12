@@ -5,18 +5,18 @@ import {
 } from 'websocket';
 import * as http from 'http';
 
-import {Node, Message, Socket} from 'core/net';
-import {LogManager} from 'core/log';
-import {PlayerManager, Player} from 'core/player';
-import {EventManager, Event, StepEvent, Priority} from 'core/event';
-import {TimerManager, now} from 'server/util';
-import {WorldManager} from 'core/entity';
-import {InitialSyncEvent, PlayerInitializedEvent} from 'core/net/util';
+import {Node, Message, Socket} from '@/core/net';
+import {LogManager} from '@/core/log';
+import {PlayerManager, Player} from '@/core/player';
+import {EventManager, Event, StepEvent, Priority} from '@/core/event';
+import {TimerManager, now} from '@/server/util';
+import {WorldManager} from '@/core/entity';
+import {InitialSyncEvent, PlayerInitializedEvent} from '@/core/net/util';
 import process from 'process';
-import {isUUID, UUID, UUIDManager} from 'core/uuid';
-import {MetricsManager} from 'server/metrics';
-import {Data, SerializeManager} from 'core/serialize';
-import {Iterator} from 'core/iterator';
+import {isUUID, UUID, UUIDManager} from '@/core/uuid';
+import {MetricsManager} from '@/server/metrics';
+import {Data, SerializeManager} from '@/core/serialize';
+import {Iterator} from '@/core/iterator';
 
 const log = LogManager.forFile(__filename);
 

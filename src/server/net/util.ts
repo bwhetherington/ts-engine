@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import {stat, readFile, readdir} from 'fs/promises';
 import * as mime from 'mime-types';
 import * as path from 'path';
-import {LogManager} from 'core/log';
-import {Socket} from 'core/net';
-import {EventData} from 'core/event';
+import {LogManager} from '@/core/log';
+import {Socket} from '@/core/net';
+import {EventData} from '@/core/event';
 
 const log = LogManager.forFile(__filename);
 

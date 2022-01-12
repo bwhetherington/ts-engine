@@ -1,9 +1,9 @@
-import {Data} from 'core/serialize';
-import {GraphicsContext} from 'core/graphics';
-import {CollisionLayer, Entity} from 'core/entity';
-import {GraphicsPipeline} from 'core/graphics/pipe';
-import {TextFormatter} from 'core/chat/format';
-import {isTextColor, TextColor} from 'core/chat';
+import {Data} from '@/core/serialize';
+import {GraphicsContext} from '@/core/graphics';
+import {CollisionLayer, Entity} from '@/core/entity';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {TextFormatter} from '@/core/chat/format';
+import {isTextColor, TextColor} from '@/core/chat';
 
 const TEXT_FORMAT = '{color=$color|$text}{color=grey,style=small|$tag}';
 const TEXT_FORMATTER = new TextFormatter(TEXT_FORMAT);

@@ -1,1 +1,1 @@
-export * from 'core/fsm/machine';
+export * from '@/core/fsm/machine';

@@ -1,7 +1,7 @@
-import {Server} from 'server/net';
-import {LogManager} from 'core/log';
-import {Observer} from 'core/event';
-import {ChatManager, CommandEntry} from 'server/chat';
+import {Server} from '@/server/net';
+import {LogManager} from '@/core/log';
+import {Observer} from '@/core/event';
+import {ChatManager, CommandEntry} from '@/server/chat';
 
 const log = LogManager.forFile(__filename);
 

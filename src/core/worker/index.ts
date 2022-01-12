@@ -1,4 +1,4 @@
-import {Data} from 'core/serialize';
+import {Data} from '@/core/serialize';
 
 export interface Worker {
   postMessage(data: Data): void;
@@ -11,4 +11,4 @@ export interface WorkerMethods {
   [method: string]: ((value: any) => any) | undefined;
 }
 
-export * from 'core/worker/util';
+export * from '@/core/worker/util';

@@ -1,15 +1,15 @@
-import {Unit} from 'core/entity';
-import {GraphicsContext} from 'core/graphics';
-import {Data} from 'core/serialize';
-import {FireEvent, Weapon, WeaponManager} from 'core/weapon';
-import {NetworkManager} from 'core/net';
-import {LogManager} from 'core/log';
-import {CannonShape, Vector} from 'core/geometry';
-import {GraphicsPipeline} from 'core/graphics/pipe';
-import {Iterator} from 'core/iterator';
-import {EventManager} from 'core/event';
-import {clamp} from 'core/util';
-import {HeroModifier} from 'core/upgrade';
+import {Unit} from '@/core/entity';
+import {GraphicsContext} from '@/core/graphics';
+import {Data} from '@/core/serialize';
+import {FireEvent, Weapon, WeaponManager} from '@/core/weapon';
+import {NetworkManager} from '@/core/net';
+import {LogManager} from '@/core/log';
+import {CannonShape, Vector} from '@/core/geometry';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {Iterator} from '@/core/iterator';
+import {EventManager} from '@/core/event';
+import {clamp} from '@/core/util';
+import {HeroModifier} from '@/core/upgrade';
 
 const log = LogManager.forFile(__filename);
 
