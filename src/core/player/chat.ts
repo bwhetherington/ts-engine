@@ -1,7 +1,7 @@
-import {renderMessage, TextComponents, TextMessageOutEvent} from 'core/chat';
-import {Event, EventManager} from 'core/event';
-import {NetworkManager} from 'core/net';
-import {Player} from 'core/player';
+import {renderMessage, TextComponents, TextMessageOutEvent} from '@/core/chat';
+import {Event, EventManager} from '@/core/event';
+import {NetworkManager} from '@/core/net';
+import {Player} from '@/core/player';
 
 export class PlayerChatManager {
   public constructor(private player: Player) {}

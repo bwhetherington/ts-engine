@@ -1,4 +1,4 @@
-import {AbstractLogger, LogLevel} from 'core/log';
+import {AbstractLogger, LogLevel} from '@/core/log';
 
 export class LoggerWrapper extends AbstractLogger {
   protected logger?: AbstractLogger;

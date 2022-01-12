@@ -1,4 +1,4 @@
-import {UUIDManager} from 'core/uuid/manager';
+import {UUIDManager} from '@/core/uuid/manager';
 
 export type UUID = string;
 

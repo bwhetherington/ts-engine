@@ -1,4 +1,4 @@
-import {clamp} from 'core/util';
+import {clamp} from '@/core/util';
 import React from 'react';
 
 export enum BarStyle {

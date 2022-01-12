@@ -1,5 +1,5 @@
-import {EventManager, Event} from 'core/event';
-import {NetworkManager} from 'core/net';
+import {EventManager, Event} from '@/core/event';
+import {NetworkManager} from '@/core/net';
 import {
   TextMessageInEvent,
   SetNameEvent,
@@ -10,20 +10,20 @@ import {
   renderWarn,
   renderError,
   TextComponents,
-} from 'core/chat';
-import {LogManager} from 'core/log';
-import {PlayerManager, Player} from 'core/player';
-import {WorldManager, Unit, Feed, FeedVariant} from 'core/entity';
-import {TimerManager} from 'server/util';
-import {randomColor} from 'core/graphics/color';
-import {FormManager} from 'core/form';
+} from '@/core/chat';
+import {LogManager} from '@/core/log';
+import {PlayerManager, Player} from '@/core/player';
+import {WorldManager, Unit, Feed, FeedVariant} from '@/core/entity';
+import {TimerManager} from '@/server/util';
+import {randomColor} from '@/core/graphics/color';
+import {FormManager} from '@/core/form';
 import * as process from 'process';
-import {CommandEntry} from 'server/chat';
-import * as commands from 'server/chat/commands';
-import {Iterator} from 'core/iterator';
-import {RNGManager} from 'core/random';
-import {TextFormatter} from 'core/chat/format';
-import {Vector} from 'core/geometry';
+import {CommandEntry} from '@/server/chat';
+import * as commands from '@/server/chat/commands';
+import {Iterator} from '@/core/iterator';
+import {RNGManager} from '@/core/random';
+import {TextFormatter} from '@/core/chat/format';
+import {Vector} from '@/core/geometry';
 
 const log = LogManager.forFile(__filename);
 

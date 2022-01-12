@@ -1,11 +1,11 @@
 import React from 'react';
-import {Component} from 'client/components';
-import {StepEvent} from 'core/event';
+import {Component} from '@/client/components';
+import {StepEvent} from '@/core/event';
 import {Column, Panel, PanelHeader} from './common';
-import {HDCanvas} from 'client/util';
-import {CollisionLayer, Entity, BaseHero, WorldManager} from 'core/entity';
-import {Color, rgba, WHITE} from 'core/graphics/color';
-import {GraphicsPipeline} from 'core/graphics/pipe';
+import {HDCanvas} from '@/client/util';
+import {CollisionLayer, Entity, BaseHero, WorldManager} from '@/core/entity';
+import {Color, rgba, WHITE} from '@/core/graphics/color';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
 
 const CANVAS_OPTIONS = {
   width: 200,

@@ -5,11 +5,11 @@ import {
   Event,
   StepEvent,
   Priority,
-} from 'core/event';
-import {AsyncIterator, iterateKeys} from 'core/iterator';
-import {Props} from 'client/components';
+} from '@/core/event';
+import {AsyncIterator, iterateKeys} from '@/core/iterator';
+import {Props} from '@/client/components';
 import React from 'react';
-import {UUID, UUIDManager} from 'core/uuid';
+import {UUID, UUIDManager} from '@/core/uuid';
 
 type Handlers = Readonly<Record<string, Readonly<string[]>>>;
 

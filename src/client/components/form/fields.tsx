@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Component, Props} from 'client/components';
+import {Component, Props} from '@/client/components';
 import {
   StringInput,
   FloatInput,
@@ -12,8 +12,8 @@ import {
   FlexPadding,
   PanelHeader,
   UI_MARGIN,
-} from 'client/components';
-import {Form, Field, Entry} from 'core/form';
+} from '@/client/components';
+import {Form, Field, Entry} from '@/core/form';
 
 const FieldContainer = styled.div`
   display: flex;

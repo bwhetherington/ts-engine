@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import {sanitize} from 'dompurify';
 
-import {ClassUpgrade, ModifierUpgrade, Upgrade} from 'core/upgrade';
-import {UUID} from 'core/uuid';
+import {ClassUpgrade, ModifierUpgrade, Upgrade} from '@/core/upgrade';
+import {UUID} from '@/core/uuid';
 
-import {Button, Column, Panel, PanelHeader} from 'client/components';
+import {Button, Column, Panel, PanelHeader} from '@/client/components';
 import {BlueButton, Minor} from '../common';
 import {JsxEmit} from 'typescript';
 import {ModifiersComponent} from './Modifiers';

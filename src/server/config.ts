@@ -1,5 +1,5 @@
-import {AssetManager} from 'core/assets';
-import {Data, Serializable} from 'core/serialize';
+import {AssetManager} from '@/core/assets';
+import {Data, Serializable} from '@/core/serialize';
 
 export class Config implements Serializable {
   public tickRate: number = 30;

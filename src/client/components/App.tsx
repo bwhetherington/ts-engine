@@ -13,7 +13,7 @@ import {
   Column,
   Panel,
   Row,
-} from 'client/components';
+} from '@/client/components';
 import {AlertContainer} from './alert';
 
 const UIContainer = styled.div`

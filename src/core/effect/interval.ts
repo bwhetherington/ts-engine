@@ -1,5 +1,5 @@
-import {EventManager} from 'core/event';
-import {Data} from 'core/serialize';
+import {EventManager} from '@/core/event';
+import {Data} from '@/core/serialize';
 import {Effect} from '.';
 
 export class IntervalEffect extends Effect {

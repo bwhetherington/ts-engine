@@ -1,9 +1,9 @@
-import {Data} from 'core/serialize';
-import {GraphicsContext} from 'core/graphics';
-import {rgb} from 'core/graphics/color';
-import {CollisionLayer, Entity} from 'core/entity';
-import {GraphicsPipeline} from 'core/graphics/pipe';
-import {clamp} from 'core/util';
+import {Data} from '@/core/serialize';
+import {GraphicsContext} from '@/core/graphics';
+import {rgb} from '@/core/graphics/color';
+import {CollisionLayer, Entity} from '@/core/entity';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {clamp} from '@/core/util';
 
 const BORDER_COLOR = rgb(0.25, 0.25, 0.25);
 const BAR_COLOR = rgb(0.2, 0.9, 0.2);

@@ -1,8 +1,8 @@
-import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
-import {EffectManager} from 'core/effect';
-import {Aura, BaseHero, WorldManager} from 'core/entity';
-import {Data} from 'core/serialize';
-import {Upgrade} from 'core/upgrade';
+import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
+import {EffectManager} from '@/core/effect';
+import {Aura, BaseHero, WorldManager} from '@/core/entity';
+import {Data} from '@/core/serialize';
+import {Upgrade} from '@/core/upgrade';
 
 export class EffectUpgrade extends Upgrade {
   public static typeName: string = 'EffectUpgrade';

@@ -1,13 +1,13 @@
-import {KillEvent, Tank, Unit, WorldManager} from 'core/entity';
-import {Queue} from 'core/util';
-import {NetworkManager} from 'core/net';
-import {LogManager} from 'core/log';
-import {Data} from 'core/serialize';
-import {Vector, VectorLike} from 'core/geometry';
-import {GraphicsContext, randomColor, rgb} from 'core/graphics';
-import {GraphicsPipeline} from 'core/graphics/pipe';
-import {EventManager} from 'core/event';
-import {RNGManager} from 'core/random';
+import {KillEvent, Tank, Unit, WorldManager} from '@/core/entity';
+import {Queue} from '@/core/util';
+import {NetworkManager} from '@/core/net';
+import {LogManager} from '@/core/log';
+import {Data} from '@/core/serialize';
+import {Vector, VectorLike} from '@/core/geometry';
+import {GraphicsContext, randomColor, rgb} from '@/core/graphics';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {EventManager} from '@/core/event';
+import {RNGManager} from '@/core/random';
 
 const log = LogManager.forFile(__filename);
 

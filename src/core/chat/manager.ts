@@ -1,13 +1,13 @@
-import {Event} from 'core/event';
+import {Event} from '@/core/event';
 import {
   TextMessageOutEvent,
   TextComponent,
   renderInfo,
   renderWarn,
   renderError,
-} from 'core/chat';
-import {LogManager} from 'core/log';
-import {Player} from 'core/player';
+} from '@/core/chat';
+import {LogManager} from '@/core/log';
+import {Player} from '@/core/player';
 
 const log = LogManager.forFile(__filename);
 

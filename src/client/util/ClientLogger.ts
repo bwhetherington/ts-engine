@@ -1,5 +1,5 @@
-import {AbstractLogger, ClientLogEvent, LogLevel} from 'core/log';
-import {NetworkManager} from 'core/net';
+import {AbstractLogger, ClientLogEvent, LogLevel} from '@/core/log';
+import {NetworkManager} from '@/core/net';
 
 export class ClientLogger extends AbstractLogger {
   private alertServerLevel: LogLevel = 'warn';

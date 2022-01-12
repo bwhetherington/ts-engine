@@ -1,5 +1,5 @@
-import {Color, isColor, WHITE} from 'core/graphics';
-import {Data, Serializable} from 'core/serialize';
+import {Color, isColor, WHITE} from '@/core/graphics';
+import {Data, Serializable} from '@/core/serialize';
 
 export interface ThemeProps {
   type: string;

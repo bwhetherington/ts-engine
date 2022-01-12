@@ -1,6 +1,6 @@
-import {Pickup, BaseHero} from 'core/entity';
-import {Data} from 'core/serialize';
-import {UpgradeManager} from 'core/upgrade';
+import {Pickup, BaseHero} from '@/core/entity';
+import {Data} from '@/core/serialize';
+import {UpgradeManager} from '@/core/upgrade';
 
 export class UpgradePickup extends Pickup {
   public static typeName: string = 'UpgradePickup';

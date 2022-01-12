@@ -1,4 +1,4 @@
-import {Weapon} from 'core/weapon';
+import {Weapon} from '@/core/weapon';
 import {
   WorldManager,
   Ray,
@@ -6,14 +6,14 @@ import {
   Entity,
   Unit,
   DisplayRayEvent,
-} from 'core/entity';
-import {Iterator, iterator} from 'core/iterator';
-import {EventManager} from 'core/event';
-import {Color} from 'core/graphics/color';
-import {NetworkManager} from 'core/net';
-import {RNGManager} from 'core/random';
-import {Data} from 'core/serialize';
-import {HeroModifier} from 'core/upgrade';
+} from '@/core/entity';
+import {Iterator, iterator} from '@/core/iterator';
+import {EventManager} from '@/core/event';
+import {Color} from '@/core/graphics/color';
+import {NetworkManager} from '@/core/net';
+import {RNGManager} from '@/core/random';
+import {Data} from '@/core/serialize';
+import {HeroModifier} from '@/core/upgrade';
 
 const COLOR: Color = {
   red: 0.8,
