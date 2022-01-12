@@ -1,4 +1,4 @@
-import {iterator, Iterator} from '@/core/iterator';
+import {iterator, Iterator} from 'core/iterator';
 
 class Node<T> {
   public value: T;

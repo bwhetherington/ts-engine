@@ -1,5 +1,5 @@
-import {BaseGun} from '@/core/weapon';
-import {HeroModifier} from '@/core/upgrade';
+import {BaseGun} from 'core/weapon';
+import {HeroModifier} from 'core/upgrade';
 
 export class BaseBarrageGun extends BaseGun {
   public static typeName: string = 'BaseBarrageGun';

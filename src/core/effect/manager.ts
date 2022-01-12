@@ -1,12 +1,12 @@
-import {LoadingManager} from '@/core/assets';
+import {LoadingManager} from 'core/assets';
 import {
   Effect,
   IntervalEffect,
   ModifierEffect,
   SpawnEffect,
   DotEffect,
-} from '@/core/effect';
-import {UUID} from '@/core/uuid';
+} from 'core/effect';
+import {UUID} from 'core/uuid';
 
 export class EffectManager extends LoadingManager<Effect> {
   private effects: Map<UUID, Effect> = new Map();

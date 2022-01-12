@@ -156,5 +156,5 @@ export const MOVEMENT_DIRECTION_MAP: Partial<Record<Key, MovementDirection>> = {
   [Key.D]: MovementDirection.Right,
 };
 
-export * from '@/core/input/controller';
-export * from '@/core/input/player';
+export * from 'core/input/controller';
+export * from 'core/input/player';

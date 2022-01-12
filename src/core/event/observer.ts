@@ -6,10 +6,10 @@ import {
   Event,
   Priority,
   PlayerEvent,
-} from '@/core/event';
-import {AsyncIterator, Iterator} from '@/core/iterator';
-import {PlayerManager} from '@/core/player';
-import {UUID} from '@/core/uuid';
+} from 'core/event';
+import {AsyncIterator, Iterator} from 'core/iterator';
+import {PlayerManager} from 'core/player';
+import {UUID} from 'core/uuid';
 
 export abstract class Observer {
   private handlers: Record<string, Set<UUID>> = {};

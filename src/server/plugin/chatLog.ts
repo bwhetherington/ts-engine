@@ -4,12 +4,12 @@ import {
   TextComponents,
   TextMessageInEvent,
   TextMessageOutEvent,
-} from '@/core/chat';
+} from 'core/chat';
 
-import {Server} from '@/server/net';
-import {Plugin} from '@/server/plugin';
-import {Priority} from '@/core/event';
-import {PlayerManager} from '@/core/player';
+import {Server} from 'server/net';
+import {Plugin} from 'server/plugin';
+import {Priority} from 'core/event';
+import {PlayerManager} from 'core/player';
 
 const LOG_FILE = 'chat.log';
 

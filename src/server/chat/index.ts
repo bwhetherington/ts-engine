@@ -1,5 +1,5 @@
-import {ServerChatManager} from '@/server/chat/manager';
-import {Player} from '@/core/player';
+import {ServerChatManager} from 'server/chat/manager';
+import {Player} from 'core/player';
 
 type CommandHandler = (player: Player, ...args: string[]) => void;
 

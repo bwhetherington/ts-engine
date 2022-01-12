@@ -1,8 +1,8 @@
-import {Projectile, WorldManager, Unit} from '@/core/entity';
-import {DirectionVector} from '@/core/geometry';
-import {NetworkManager} from '@/core/net';
-import {RNGManager} from '@/core/random';
-import {Data} from '@/core/serialize';
+import {Projectile, WorldManager, Unit} from 'core/entity';
+import {DirectionVector} from 'core/geometry';
+import {NetworkManager} from 'core/net';
+import {RNGManager} from 'core/random';
+import {Data} from 'core/serialize';
 
 export class ShatterProjectile extends Projectile {
   public static typeName: string = 'ShatterProjectile';

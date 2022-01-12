@@ -1,5 +1,5 @@
-import {Bounded, Rectangle, VectorLike} from '@/core/geometry';
-import {GraphicsContext, Renderable} from '@/core/graphics';
+import {Bounded, Rectangle, VectorLike} from 'core/geometry';
+import {GraphicsContext, Renderable} from 'core/graphics';
 
 export abstract class Partioner<T extends Bounded>
   implements Bounded, Renderable

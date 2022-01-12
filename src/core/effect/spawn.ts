@@ -1,8 +1,8 @@
-import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
-import {IntervalEffect} from '@/core/effect';
-import {Tank, Unit, WorldManager} from '@/core/entity';
-import {RNGManager} from '@/core/random';
-import {Data} from '@/core/serialize';
+import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
+import {IntervalEffect} from 'core/effect';
+import {Tank, Unit, WorldManager} from 'core/entity';
+import {RNGManager} from 'core/random';
+import {Data} from 'core/serialize';
 
 export class SpawnEffect extends IntervalEffect {
   public static typeName: string = 'SpawnEffect';

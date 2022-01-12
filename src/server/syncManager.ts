@@ -1,9 +1,9 @@
-import {WorldManager} from '@/core/entity';
-import {Observer, Priority, Event, StepEvent} from '@/core/event';
-import {NetworkManager, SyncEvent} from '@/core/net';
-import {PlayerManager} from '@/core/player';
-import {isEmpty} from '@/core/util/object';
-import {Config} from '@/server/config';
+import {WorldManager} from 'core/entity';
+import {Observer, Priority, Event, StepEvent} from 'core/event';
+import {NetworkManager, SyncEvent} from 'core/net';
+import {PlayerManager} from 'core/player';
+import {isEmpty} from 'core/util/object';
+import {Config} from 'server/config';
 
 export class SyncManager extends Observer {
   private isFlaggedForFullSync: boolean = false;

@@ -1,4 +1,4 @@
-import {SerializeManager} from '@/core/serialize/manager';
+import {SerializeManager} from 'core/serialize/manager';
 
 export interface Data {
   [key: string]: any;
@@ -19,4 +19,4 @@ export type SerializableType =
 const SM = new SerializeManager();
 export {SM as SerializeManager};
 
-export * from '@/core/serialize/util';
+export * from 'core/serialize/util';

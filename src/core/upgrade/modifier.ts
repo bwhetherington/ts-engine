@@ -1,7 +1,7 @@
-import {Data, Serializable} from '@/core/serialize';
-import {Upgrade} from '@/core/upgrade';
-import {BaseHero} from '@/core/entity';
-import {Iterator} from '@/core/iterator';
+import {Data, Serializable} from 'core/serialize';
+import {Upgrade} from 'core/upgrade';
+import {BaseHero} from 'core/entity';
+import {Iterator} from 'core/iterator';
 
 type Modifiers = Record<string, number>;
 

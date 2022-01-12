@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {Column, Line} from '@/client/components';
+import {Column, Line} from 'client/components';
 
-import {Iterator} from '@/core/iterator';
-import {HeroModifier, MODIFIER_KEYS} from '@/core/upgrade';
+import {Iterator} from 'core/iterator';
+import {HeroModifier, MODIFIER_KEYS} from 'core/upgrade';
 import styled from 'styled-components';
 
 interface ModifiersProps {

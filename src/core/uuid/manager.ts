@@ -1,7 +1,7 @@
-import {UUID} from '@/core/uuid';
-import {NetworkManager} from '@/core/net';
-import {LogManager} from '@/core/log';
-import {RNGManager} from '@/core/random';
+import {UUID} from 'core/uuid';
+import {NetworkManager} from 'core/net';
+import {LogManager} from 'core/log';
+import {RNGManager} from 'core/random';
 
 import {v4 as uuid} from 'uuid';
 

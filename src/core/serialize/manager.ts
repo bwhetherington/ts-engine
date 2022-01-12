@@ -1,5 +1,5 @@
-import {Iterator} from '@/core/iterator';
-import {Data} from '@/core/serialize';
+import {Iterator} from 'core/iterator';
+import {Data} from 'core/serialize';
 import {Encoder} from './encoder';
 
 const encoder = new Encoder();

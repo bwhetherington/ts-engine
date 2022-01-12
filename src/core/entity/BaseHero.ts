@@ -7,7 +7,7 @@ import {
   Unit,
   WorldManager,
   Text,
-} from '@/core/entity';
+} from 'core/entity';
 import {
   Key,
   KeyAction,
@@ -16,24 +16,24 @@ import {
   MouseButton,
   MouseEvent,
   MovementDirection,
-} from '@/core/input';
-import {Event, EventData, EventManager, Priority} from '@/core/event';
-import {Data} from '@/core/serialize';
-import {Player, PlayerManager} from '@/core/player';
-import {LogManager} from '@/core/log';
-import {NetworkManager} from '@/core/net';
-import {CameraManager} from '@/core/graphics';
-import {BarUpdateEvent, clamp} from '@/core/util';
-import {RNGManager} from '@/core/random';
-import {TextColor} from '@/core/chat';
-import {isUUID, UUID} from '@/core/uuid';
+} from 'core/input';
+import {Event, EventData, EventManager, Priority} from 'core/event';
+import {Data} from 'core/serialize';
+import {Player, PlayerManager} from 'core/player';
+import {LogManager} from 'core/log';
+import {NetworkManager} from 'core/net';
+import {CameraManager} from 'core/graphics';
+import {BarUpdateEvent, clamp} from 'core/util';
+import {RNGManager} from 'core/random';
+import {TextColor} from 'core/chat';
+import {isUUID, UUID} from 'core/uuid';
 import {
   ChangeStoredUpgradeCountEvent,
   Upgrade,
   UpgradeEvent,
   UpgradeManager,
-} from '@/core/upgrade';
-import {Iterator} from '@/core/iterator';
+} from 'core/upgrade';
+import {Iterator} from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 

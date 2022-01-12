@@ -1,15 +1,15 @@
-import {Bounded, Rectangle, Vector} from '@/core/geometry';
-import {GraphicsContext, Color, Renderable} from '@/core/graphics';
-import {WHITE, tryColor} from '@/core/graphics/color';
-import {CollisionLayer, WorldManager, CollisionEvent} from '@/core/entity';
-import {Data, Serializable} from '@/core/serialize';
+import {Bounded, Rectangle, Vector} from 'core/geometry';
+import {GraphicsContext, Color, Renderable} from 'core/graphics';
+import {WHITE, tryColor} from 'core/graphics/color';
+import {CollisionLayer, WorldManager, CollisionEvent} from 'core/entity';
+import {Data, Serializable} from 'core/serialize';
 import {isCollisionLayer, shuntOutOf} from './util';
-import {EventManager, Observer} from '@/core/event';
-import {isUUID, UUID, UUIDManager} from '@/core/uuid';
-import {AsyncIterator} from '@/core/iterator';
-import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {clamp} from '@/core/util';
-import {NetworkManager} from '@/core/net';
+import {EventManager, Observer} from 'core/event';
+import {isUUID, UUID, UUIDManager} from 'core/uuid';
+import {AsyncIterator} from 'core/iterator';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {clamp} from 'core/util';
+import {NetworkManager} from 'core/net';
 
 export class Entity
   extends Observer

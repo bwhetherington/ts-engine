@@ -1,11 +1,11 @@
-import {EffectManager} from '@/core/effect';
-import {Entity, Unit, WorldManager, CollisionLayer} from '@/core/entity';
-import {EventManager} from '@/core/event';
-import {GraphicsContext} from '@/core/graphics';
-import {Data} from '@/core/serialize';
-import {Iterator} from '@/core/iterator';
-import {NetworkManager} from '@/core/net';
-import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
+import {EffectManager} from 'core/effect';
+import {Entity, Unit, WorldManager, CollisionLayer} from 'core/entity';
+import {EventManager} from 'core/event';
+import {GraphicsContext} from 'core/graphics';
+import {Data} from 'core/serialize';
+import {Iterator} from 'core/iterator';
+import {NetworkManager} from 'core/net';
+import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
 
 const AURA_WIDTH = 40;
 const AURA_INTERVAL = 0.25;

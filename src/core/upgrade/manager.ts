@@ -1,7 +1,7 @@
-import {LoadingManager} from '@/core/assets';
-import {EventManager} from '@/core/event';
-import {Player} from '@/core/player';
-import {RNGManager} from '@/core/random';
+import {LoadingManager} from 'core/assets';
+import {EventManager} from 'core/event';
+import {Player} from 'core/player';
+import {RNGManager} from 'core/random';
 import {
   AuraUpgrade,
   Offer,
@@ -13,12 +13,12 @@ import {
   ClassUpgrade,
   CloseOfferEvent,
   RequestUpgradeEvent,
-} from '@/core/upgrade';
-import {UUID, UUIDManager} from '@/core/uuid';
-import {Iterator} from '@/core/iterator';
-import {BaseHero, WorldManager} from '@/core/entity';
-import {NetworkManager} from '@/core/net';
-import {LogManager} from '@/core/log';
+} from 'core/upgrade';
+import {UUID, UUIDManager} from 'core/uuid';
+import {Iterator} from 'core/iterator';
+import {BaseHero, WorldManager} from 'core/entity';
+import {NetworkManager} from 'core/net';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 

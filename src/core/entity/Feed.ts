@@ -1,8 +1,8 @@
-import {Unit} from '@/core/entity';
-import {EventManager} from '@/core/event';
-import {GraphicsContext, rgb} from '@/core/graphics';
-import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {Data} from '@/core/serialize';
+import {Unit} from 'core/entity';
+import {EventManager} from 'core/event';
+import {GraphicsContext, rgb} from 'core/graphics';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {Data} from 'core/serialize';
 
 export enum FeedVariant {
   Small = 0,

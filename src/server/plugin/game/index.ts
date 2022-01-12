@@ -1,5 +1,5 @@
-import {AlertEvent} from '@/core/alert';
-import {AlertManager} from '@/core/alert';
+import {AlertEvent} from 'core/alert';
+import {AlertManager} from 'core/alert';
 import {
   BaseHero,
   DamageEvent,
@@ -13,19 +13,19 @@ import {
   SpawnEntityEvent,
   Team,
   Tank,
-} from '@/core/entity';
-import {EventManager, Priority} from '@/core/event';
-import {StateMachine} from '@/core/fsm';
-import {Vector} from '@/core/geometry';
-import {COLORS, randomColor} from '@/core/graphics';
-import {Iterator} from '@/core/iterator';
-import {NetworkManager} from '@/core/net';
-import {PlayerJoinEvent, PlayerManager} from '@/core/player';
-import {RNGManager} from '@/core/random';
-import {HeroModifier} from '@/core/upgrade';
-import {ChatManager} from '@/server/chat';
-import {Server} from '@/server/net';
-import {FsmPlugin} from '@/server/plugin';
+} from 'core/entity';
+import {EventManager, Priority} from 'core/event';
+import {StateMachine} from 'core/fsm';
+import {Vector} from 'core/geometry';
+import {COLORS, randomColor} from 'core/graphics';
+import {Iterator} from 'core/iterator';
+import {NetworkManager} from 'core/net';
+import {PlayerJoinEvent, PlayerManager} from 'core/player';
+import {RNGManager} from 'core/random';
+import {HeroModifier} from 'core/upgrade';
+import {ChatManager} from 'server/chat';
+import {Server} from 'server/net';
+import {FsmPlugin} from 'server/plugin';
 
 export enum GameState {
   Starting,

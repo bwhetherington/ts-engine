@@ -1,8 +1,8 @@
-import {NetworkManager} from '@/core/net';
-import {SetThemeEvent} from '@/core/theme';
-import {ChatManager} from '@/server/chat';
-import {Server} from '@/server/net';
-import {Plugin} from '@/server/plugin';
+import {NetworkManager} from 'core/net';
+import {SetThemeEvent} from 'core/theme';
+import {ChatManager} from 'server/chat';
+import {Server} from 'server/net';
+import {Plugin} from 'server/plugin';
 
 export class ThemePlugin extends Plugin {
   public static override typeName: string = 'ThemePlugin';

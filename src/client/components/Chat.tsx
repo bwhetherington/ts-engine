@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Component, Props} from '@/client/components';
-import {COLOR_MAPPING, toCss} from '@/core/graphics';
+import {Component, Props} from 'client/components';
+import {COLOR_MAPPING, toCss} from 'core/graphics';
 import {
   TextColor,
   TextComponent,
@@ -9,12 +9,12 @@ import {
   TextMessageOutEvent,
   TextMessageInEvent,
   TextCommandEvent,
-} from '@/core/chat';
-import {NetworkManager} from '@/core/net';
-import {EventManager, StepEvent} from '@/core/event';
-import {Key, KeyAction, KeyEvent} from '@/core/input';
-import {Column, PanelContainer, StringInput} from '@/client/components/common';
-import {clamp} from '@/core/util';
+} from 'core/chat';
+import {NetworkManager} from 'core/net';
+import {EventManager, StepEvent} from 'core/event';
+import {Key, KeyAction, KeyEvent} from 'core/input';
+import {Column, PanelContainer, StringInput} from 'client/components/common';
+import {clamp} from 'core/util';
 
 type Lines = Readonly<TextComponents[]>;
 

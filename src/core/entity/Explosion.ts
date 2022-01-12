@@ -1,6 +1,6 @@
-import {Entity, CollisionLayer} from '@/core/entity';
-import {StepEvent} from '@/core/event';
-import {GraphicsContext} from '@/core/graphics';
+import {Entity, CollisionLayer} from 'core/entity';
+import {StepEvent} from 'core/event';
+import {GraphicsContext} from 'core/graphics';
 
 function explodeFunction(t: number): number {
   // `t` is the time remaining in [0..1]

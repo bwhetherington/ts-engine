@@ -5,8 +5,8 @@ import {
   Vector,
   Partioner,
   VectorLike,
-} from '@/core/geometry';
-import {GraphicsContext, CameraManager, Renderable} from '@/core/graphics';
+} from 'core/geometry';
+import {GraphicsContext, CameraManager, Renderable} from 'core/graphics';
 import {
   Entity,
   Unit,
@@ -28,33 +28,33 @@ import {
   Feed,
   SyncHeroEvent,
   Follow,
-} from '@/core/entity';
-import {LogManager} from '@/core/log';
-import {EventManager, Priority, StepEvent} from '@/core/event';
-import {Serializable, Data} from '@/core/serialize';
-import {Iterator, iterator} from '@/core/iterator';
-import {diff} from '@/core/util';
-import {NetworkManager, SyncEvent} from '@/core/net';
-import {reshade} from '@/core/graphics/color';
-import {Graph} from '@/core/entity/pathfinding';
-import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {RNGManager} from '@/core/random';
+} from 'core/entity';
+import {LogManager} from 'core/log';
+import {EventManager, Priority, StepEvent} from 'core/event';
+import {Serializable, Data} from 'core/serialize';
+import {Iterator, iterator} from 'core/iterator';
+import {diff} from 'core/util';
+import {NetworkManager, SyncEvent} from 'core/net';
+import {reshade} from 'core/graphics/color';
+import {Graph} from 'core/entity/pathfinding';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {RNGManager} from 'core/random';
 import {
   AssetIdentifier,
   AssetManager,
   AssetType,
   LoadingManager,
-} from '@/core/assets';
-import {isUUID, UUID, UUIDManager} from '@/core/uuid';
-import {DataBuffer} from '@/core/buf';
+} from 'core/assets';
+import {isUUID, UUID, UUIDManager} from 'core/uuid';
+import {DataBuffer} from 'core/buf';
 import {Trail} from './Trail';
 import {ShatterProjectile} from './ShatterProjectile';
-import {ThemeManager} from '@/core/theme';
+import {ThemeManager} from 'core/theme';
 import {SpawnEntityEvent} from './util';
 import {Pickup} from './Pickup';
 import {UpgradePickup} from './UpgradePickup';
 import {Aura} from './Aura';
-import {HeroModifier} from '@/core/upgrade';
+import {HeroModifier} from 'core/upgrade';
 
 const log = LogManager.forFile(__filename);
 

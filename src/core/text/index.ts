@@ -1,5 +1,5 @@
-import {UUID} from '@/core/uuid';
-import {Color} from '@/core/graphics';
+import {UUID} from 'core/uuid';
+import {Color} from 'core/graphics';
 
 export interface TextUpdateEvent {
   id: UUID;

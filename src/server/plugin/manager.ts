@@ -1,7 +1,7 @@
-import {Iterator} from '@/core/iterator';
-import {UUID, UUIDManager} from '@/core/uuid';
-import {Server} from '@/server/net';
-import {Plugin} from '@/server/plugin';
+import {Iterator} from 'core/iterator';
+import {UUID, UUIDManager} from 'core/uuid';
+import {Server} from 'server/net';
+import {Plugin} from 'server/plugin';
 
 type PluginType = (new () => Plugin) & typeof Plugin;
 

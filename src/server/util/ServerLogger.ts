@@ -1,4 +1,4 @@
-import {AbstractLogger} from '@/core/log';
+import {AbstractLogger} from 'core/log';
 
 export class ServerLogger extends AbstractLogger {
   public logRaw(...text: string[]) {

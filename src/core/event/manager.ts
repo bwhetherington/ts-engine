@@ -1,4 +1,4 @@
-import {Queue} from '@/core/util/queue';
+import {Queue} from 'core/util/queue';
 import {
   Event,
   GameEvent,
@@ -7,14 +7,14 @@ import {
   EventData,
   PlayerEvent,
   Priority,
-} from '@/core/event';
-import {UUID, UUIDManager} from '@/core/uuid';
-import {LogManager} from '@/core/log';
-import {formatData} from '@/core/util';
-import {AsyncIterator, Iterator} from '@/core/iterator';
-import {PlayerManager} from '@/core/player';
+} from 'core/event';
+import {UUID, UUIDManager} from 'core/uuid';
+import {LogManager} from 'core/log';
+import {formatData} from 'core/util';
+import {AsyncIterator, Iterator} from 'core/iterator';
+import {PlayerManager} from 'core/player';
 import {BatchEvent, priorities} from './util';
-import {NetworkManager} from '@/core/net';
+import {NetworkManager} from 'core/net';
 
 const log = LogManager.forFile(__filename);
 

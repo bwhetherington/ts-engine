@@ -1,13 +1,13 @@
-import {Node, Message, Socket, DisconnectEvent} from '@/core/net';
-import {LogManager} from '@/core/log';
+import {Node, Message, Socket, DisconnectEvent} from 'core/net';
+import {LogManager} from 'core/log';
 import {uniqueNamesGenerator, colors, animals} from 'unique-names-generator';
-import {SetNameEvent} from '@/core/chat';
-import {Event, EventManager} from '@/core/event';
-import {InitialSyncEvent} from '@/core/net/util';
-import {PlayerManager} from '@/core/player';
-import {WorldManager} from '@/core/entity';
-import {SerializeManager} from '@/core/serialize';
-import {AlertManager} from '@/core/alert';
+import {SetNameEvent} from 'core/chat';
+import {Event, EventManager} from 'core/event';
+import {InitialSyncEvent} from 'core/net/util';
+import {PlayerManager} from 'core/player';
+import {WorldManager} from 'core/entity';
+import {SerializeManager} from 'core/serialize';
+import {AlertManager} from 'core/alert';
 
 const log = LogManager.forFile(__filename);
 

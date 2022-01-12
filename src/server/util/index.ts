@@ -1,11 +1,11 @@
 import path from 'path';
 import {readFile, readdir} from 'fs/promises';
-import {now, Timer} from '@/server/util/Timer';
-import {ServerLogger} from '@/server/util/ServerLogger';
-import {TimerManager} from '@/server/util/TimerManager';
-import {Iterator} from '@/core/iterator';
-import {BufferData} from '@/core/util';
-export * from '@/server/util/world';
+import {now, Timer} from 'server/util/Timer';
+import {ServerLogger} from 'server/util/ServerLogger';
+import {TimerManager} from 'server/util/TimerManager';
+import {Iterator} from 'core/iterator';
+import {BufferData} from 'core/util';
+export * from 'server/util/world';
 
 function transformPath(url: string): string {
   const transformed = path.join('static', 'assets', url);

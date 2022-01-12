@@ -1,7 +1,7 @@
-import {NetworkManager, PlayerInitializedEvent} from '@/core/net';
-import {EventManager} from '@/core/event';
-import {LogManager} from '@/core/log';
-import {WorldManager} from '@/core/entity';
+import {NetworkManager, PlayerInitializedEvent} from 'core/net';
+import {EventManager} from 'core/event';
+import {LogManager} from 'core/log';
+import {WorldManager} from 'core/entity';
 import {
   Timer,
   HDCanvas,
@@ -9,19 +9,19 @@ import {
   ClientLogger,
   loadFile,
   loadDirectory,
-} from '@/client/util';
-import {CameraManager} from '@/core/graphics';
-import {InputManager} from '@/client/input';
-import {PlayerManager} from '@/core/player';
-import {FormManager} from '@/core/form';
-import {WeaponManager} from '@/core/weapon';
-import {loadReactUI} from '@/client/components';
-import {MetricsManager} from '@/client/metrics';
-import {AssetManager} from '@/core/assets';
-import {UpgradeManager} from '@/core/upgrade';
-import {ThemeManager} from '@/core/theme';
-import {EffectManager} from '@/core/effect';
-import {AlertEvent, AlertManager} from '@/core/alert';
+} from 'client/util';
+import {CameraManager} from 'core/graphics';
+import {InputManager} from 'client/input';
+import {PlayerManager} from 'core/player';
+import {FormManager} from 'core/form';
+import {WeaponManager} from 'core/weapon';
+import {loadReactUI} from 'client/components';
+import {MetricsManager} from 'client/metrics';
+import {AssetManager} from 'core/assets';
+import {UpgradeManager} from 'core/upgrade';
+import {ThemeManager} from 'core/theme';
+import {EffectManager} from 'core/effect';
+import {AlertEvent, AlertManager} from 'core/alert';
 
 const log = LogManager.forFile(__filename);
 

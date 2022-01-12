@@ -1,6 +1,6 @@
-import {HomingProjectile, Projectile, Tank} from '@/core/entity';
-import {BaseGun} from '@/core/weapon';
-import {HeroModifier} from '@/core/upgrade';
+import {HomingProjectile, Projectile, Tank} from 'core/entity';
+import {BaseGun} from 'core/weapon';
+import {HeroModifier} from 'core/upgrade';
 
 export class BaseHomingGun extends BaseGun {
   public static typeName: string = 'BaseHomingGun';

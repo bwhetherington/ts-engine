@@ -1,7 +1,7 @@
-import {Queue, SizedQueue} from '@/core/util/queue';
-import {TimerHandler, AbstractTimer, sleep} from '@/core/util/time';
-import {diff} from '@/core/util/object';
-import {Data} from '@/core/serialize';
+import {Queue, SizedQueue} from 'core/util/queue';
+import {TimerHandler, AbstractTimer, sleep} from 'core/util/time';
+import {diff} from 'core/util/object';
+import {Data} from 'core/serialize';
 import {StringBuffer} from './stringbuffer';
 
 export function clamp(x: number, low: number, high: number): number {
@@ -45,11 +45,11 @@ export {
   diff,
 };
 
-export * from '@/core/util/heap';
-export * from '@/core/metrics';
+export * from 'core/util/heap';
+export * from 'core/metrics';
 
 export interface BufferData {
   toString(encoding?: BufferEncoding): string;
 }
 
-// export * from '@/core/util/map';
+// export * from 'core/util/map';

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Data} from '@/core/serialize';
-import {Iterator} from '@/core/iterator';
+import {Data} from 'core/serialize';
+import {Iterator} from 'core/iterator';
 
 export interface ColumnInfo {
   field: string;

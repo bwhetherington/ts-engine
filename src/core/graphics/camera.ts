@@ -1,6 +1,6 @@
-import {Rectangle, Vector, Bounded} from '@/core/geometry';
-import {Entity, Follow, WorldManager} from '@/core/entity';
-import {LogManager} from '@/core/log';
+import {Rectangle, Vector, Bounded} from 'core/geometry';
+import {Entity, Follow, WorldManager} from 'core/entity';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 

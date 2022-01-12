@@ -9,19 +9,19 @@ import {
   Echo,
   CollisionLayer,
   Trail,
-} from '@/core/entity';
-import {Data, deserializeMapNumber, serialize} from '@/core/serialize';
-import {Vector} from '@/core/geometry';
-import {clamp} from '@/core/util';
-import {Event, EventManager} from '@/core/event';
-import {NetworkManager} from '@/core/net';
-import {Color, COLORS, COLOR_NAMES, reshade} from '@/core/graphics';
-import {TextColor} from '@/core/chat';
-import {Effect, EffectManager} from '@/core/effect';
-import {UUID} from '@/core/uuid';
-import {PlayerManager} from '@/core/player';
-import {Iterator} from '@/core/iterator';
-import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
+} from 'core/entity';
+import {Data, deserializeMapNumber, serialize} from 'core/serialize';
+import {Vector} from 'core/geometry';
+import {clamp} from 'core/util';
+import {Event, EventManager} from 'core/event';
+import {NetworkManager} from 'core/net';
+import {Color, COLORS, COLOR_NAMES, reshade} from 'core/graphics';
+import {TextColor} from 'core/chat';
+import {Effect, EffectManager} from 'core/effect';
+import {UUID} from 'core/uuid';
+import {PlayerManager} from 'core/player';
+import {Iterator} from 'core/iterator';
+import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;

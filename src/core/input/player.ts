@@ -5,10 +5,10 @@ import {
   KeyAction,
   KeyEvent,
   MOVEMENT_DIRECTION_MAP,
-} from '@/core/input';
-import {BaseHero} from '@/core/entity';
-import {UUID} from '@/core/uuid';
-import {NetworkManager} from '@/core/net';
+} from 'core/input';
+import {BaseHero} from 'core/entity';
+import {UUID} from 'core/uuid';
+import {NetworkManager} from 'core/net';
 
 export class PlayerController extends Controller {
   private mouseDown: boolean = false;

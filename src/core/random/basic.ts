@@ -1,4 +1,4 @@
-import {AbstractRNG} from '@/core/random';
+import {AbstractRNG} from 'core/random';
 
 const A: number = 1664525;
 const C: number = 1013904223;

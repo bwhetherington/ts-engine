@@ -1,6 +1,6 @@
-import {TextColor} from '@/core/chat';
-import {RNGManager} from '@/core/random';
-import {HashMap, Key} from '@/core/util/map';
+import {TextColor} from 'core/chat';
+import {RNGManager} from 'core/random';
+import {HashMap, Key} from 'core/util/map';
 
 export interface Color {
   red: number;

@@ -1,8 +1,8 @@
 import React from 'react';
-import {EventTable, Component, Panel, PanelHeader} from '@/client/components';
-import {EventManager} from '@/core/event';
-import {PlayerManager} from '@/core/player';
-import {TableEvent} from '@/core/table';
+import {EventTable, Component, Panel, PanelHeader} from 'client/components';
+import {EventManager} from 'core/event';
+import {PlayerManager} from 'core/player';
+import {TableEvent} from 'core/table';
 
 const SCOREBOARD_COLUMNS = [
   {

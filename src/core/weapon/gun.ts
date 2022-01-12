@@ -1,4 +1,4 @@
-import {Weapon} from '@/core/weapon';
+import {Weapon} from 'core/weapon';
 import {
   WorldManager,
   Projectile,
@@ -7,12 +7,12 @@ import {
   isProjectileShape,
   Trail,
   Aura,
-} from '@/core/entity';
-import {Data} from '@/core/serialize';
-import {RNGManager} from '@/core/random';
+} from 'core/entity';
+import {Data} from 'core/serialize';
+import {RNGManager} from 'core/random';
 import {HeroModifier} from '../upgrade/modifier';
-import {DotEffect} from '@/core/effect';
-import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
+import {DotEffect} from 'core/effect';
+import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
 
 export class BaseGun extends Weapon {
   public static typeName: string = 'BaseGun';

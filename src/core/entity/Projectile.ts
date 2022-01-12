@@ -1,15 +1,15 @@
-import {Entity, Trail, Unit, WorldManager} from '@/core/entity';
-import {BLACK, GraphicsContext, rgba, WHITE} from '@/core/graphics';
-import {LogManager} from '@/core/log';
+import {Entity, Trail, Unit, WorldManager} from 'core/entity';
+import {BLACK, GraphicsContext, rgba, WHITE} from 'core/graphics';
+import {LogManager} from 'core/log';
 import {CollisionLayer} from './util';
-import {Data} from '@/core/serialize';
-import {NetworkManager} from '@/core/net';
-import {isUUID, UUID} from '@/core/uuid';
-import {iterator} from '@/core/iterator';
+import {Data} from 'core/serialize';
+import {NetworkManager} from 'core/net';
+import {isUUID, UUID} from 'core/uuid';
+import {iterator} from 'core/iterator';
 import {Echo, EchoVariant} from './Echo';
-import {EventManager} from '@/core/event';
-import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {DotEffect, EffectManager} from '@/core/effect';
+import {EventManager} from 'core/event';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {DotEffect, EffectManager} from 'core/effect';
 
 const log = LogManager.forFile(__filename);
 

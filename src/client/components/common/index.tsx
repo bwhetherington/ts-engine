@@ -173,4 +173,4 @@ export const Line: React.FunctionComponent<LineProps> = ({label, value}) => (
   </div>
 );
 
-export * from '@/client/components/common/inputs';
+export * from 'client/components/common/inputs';

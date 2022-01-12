@@ -5,15 +5,15 @@ import {
   Echo,
   Unit,
   DisplayRayEvent,
-} from '@/core/entity';
-import {GraphicsContext} from '@/core/graphics';
-import {Vector, VectorLike} from '@/core/geometry';
-import {sleep, clamp, smoothStep} from '@/core/util';
-import {LogManager} from '@/core/log';
-import {reshade, WHITE} from '@/core/graphics/color';
-import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {EventManager} from '@/core/event';
-import {NetworkManager} from '@/core/net';
+} from 'core/entity';
+import {GraphicsContext} from 'core/graphics';
+import {Vector, VectorLike} from 'core/geometry';
+import {sleep, clamp, smoothStep} from 'core/util';
+import {LogManager} from 'core/log';
+import {reshade, WHITE} from 'core/graphics/color';
+import {GraphicsPipeline} from 'core/graphics/pipe';
+import {EventManager} from 'core/event';
+import {NetworkManager} from 'core/net';
 
 const log = LogManager.forFile(__filename);
 

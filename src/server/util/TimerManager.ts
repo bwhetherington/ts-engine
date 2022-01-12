@@ -1,5 +1,5 @@
-import {Timer} from '@/server/util';
-import {LogManager} from '@/core/log';
+import {Timer} from 'server/util';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 

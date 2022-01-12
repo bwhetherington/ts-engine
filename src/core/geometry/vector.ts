@@ -1,5 +1,5 @@
-import {DataBuffer, DataSerializable} from '@/core/buf';
-import {Data, Serializable} from '@/core/serialize';
+import {DataBuffer, DataSerializable} from 'core/buf';
+import {Data, Serializable} from 'core/serialize';
 
 export interface VectorLike {
   x: number;

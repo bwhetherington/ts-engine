@@ -1,7 +1,7 @@
-import {LogManager} from '@/core/log';
-import {EventManager, GameEvent} from '@/core/event';
-import {Data} from '@/core/serialize';
-import {UUID} from '@/core/uuid';
+import {LogManager} from 'core/log';
+import {EventManager, GameEvent} from 'core/event';
+import {Data} from 'core/serialize';
+import {UUID} from 'core/uuid';
 
 const log = LogManager.forFile(__filename);
 

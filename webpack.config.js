@@ -35,10 +35,7 @@ module.exports = {
     ],
   },
   resolve: {
-    modules: ['node_modules'],
-    alias: {
-      '@': path.resolve(path.join(__dirname, 'src')),
-    },
+    modules: ['node_modules', path.join(__dirname, 'src')],
     extensions: ['.ts', '.tsx', '.js', '.json'],
   },
   output: {

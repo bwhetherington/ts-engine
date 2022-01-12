@@ -1,6 +1,6 @@
-import {Tank} from '@/core/entity';
-import {Data} from '@/core/serialize';
-import {HeroModifier} from '@/core/upgrade';
+import {Tank} from 'core/entity';
+import {Data} from 'core/serialize';
+import {HeroModifier} from 'core/upgrade';
 import {Effect} from '.';
 
 export class ModifierEffect extends Effect {

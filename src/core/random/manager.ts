@@ -1,5 +1,5 @@
-import {AbstractRNG, RNG, BasicRNG} from '@/core/random';
-import {LogManager} from '@/core/log';
+import {AbstractRNG, RNG, BasicRNG} from 'core/random';
+import {LogManager} from 'core/log';
 
 const log = LogManager.forFile(__filename);
 

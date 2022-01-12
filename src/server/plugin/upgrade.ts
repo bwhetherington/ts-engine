@@ -1,10 +1,10 @@
-import {LevelUpEvent, BaseHero, WorldManager} from '@/core/entity';
-import {RNGManager} from '@/core/random';
-import {UpgradeEvent, UpgradeManager} from '@/core/upgrade';
-import {ChatManager} from '@/server/chat';
+import {LevelUpEvent, BaseHero, WorldManager} from 'core/entity';
+import {RNGManager} from 'core/random';
+import {UpgradeEvent, UpgradeManager} from 'core/upgrade';
+import {ChatManager} from 'server/chat';
 
-import {Server} from '@/server/net';
-import {Plugin} from '@/server/plugin';
+import {Server} from 'server/net';
+import {Plugin} from 'server/plugin';
 
 export class UpgradePlugin extends Plugin {
   public static typeName: string = 'UpgradePlugin';

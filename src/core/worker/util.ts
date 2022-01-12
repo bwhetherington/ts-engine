@@ -1,5 +1,5 @@
-import {Worker} from '@/core/worker';
-import {Data} from '@/core/serialize';
+import {Worker} from 'core/worker';
+import {Data} from 'core/serialize';
 
 export class GameWorker {
   private worker: Worker;

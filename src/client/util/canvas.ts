@@ -6,12 +6,12 @@ import {
   GraphicsContext,
   GraphicsOptions,
   CameraManager,
-} from '@/core/graphics';
-import {COLOR_MAPPING, WHITE} from '@/core/graphics/color';
-import {GraphicsProc, ShadowStyle} from '@/core/graphics/context';
-import {Vector, Bounds, Matrix3, VectorLike} from '@/core/geometry';
-import {TextColor, TextComponent, TextComponents} from '@/core/chat';
-import {ThemeManager} from '@/core/theme';
+} from 'core/graphics';
+import {COLOR_MAPPING, WHITE} from 'core/graphics/color';
+import {GraphicsProc, ShadowStyle} from 'core/graphics/context';
+import {Vector, Bounds, Matrix3, VectorLike} from 'core/geometry';
+import {TextColor, TextComponent, TextComponents} from 'core/chat';
+import {ThemeManager} from 'core/theme';
 
 interface Options {
   width: number;
