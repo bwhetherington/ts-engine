@@ -28,9 +28,10 @@ import {
   Feed,
   SyncHeroEvent,
   Follow,
+  FlameProjectile,
 } from '@/core/entity';
 import {LogManager} from '@/core/log';
-import {EventManager, Priority, StepEvent} from '@/core/event';
+import {EventManager, Priority, StepEvent, Event} from '@/core/event';
 import {Serializable, Data} from '@/core/serialize';
 import {Iterator, iterator} from '@/core/iterator';
 import {diff} from '@/core/util';
@@ -46,17 +47,22 @@ import {
   LoadingManager,
 } from '@/core/assets';
 import {isUUID, UUID, UUIDManager} from '@/core/uuid';
-import {DataBuffer} from '@/core/buf';
 import {Trail} from './Trail';
 import {ShatterProjectile} from './ShatterProjectile';
 import {ThemeManager} from '@/core/theme';
-import {SpawnEntityEvent} from './util';
+import {DamageEvent, SpawnEntityEvent} from './util';
 import {Pickup} from './Pickup';
 import {UpgradePickup} from './UpgradePickup';
 import {Aura} from './Aura';
 import {HeroModifier} from '@/core/upgrade';
+import { PlayerManager } from '../player';
 
 const log = LogManager.forFile(__filename);
+
+interface PlayerDamageBatch {
+  in: number;
+  out: Map<UUID, number>;
+}
 
 export class WorldManager
   extends LoadingManager<Entity>
@@ -72,6 +78,8 @@ export class WorldManager
   private unitCount: number = 0;
   private entityCounts: Record<string, number> = {};
   public friction: number = 1;
+
+  private damageBatch: DamageEvent[] = [];
 
   private graph?: Graph;
   private shouldPopulateGraph: boolean = false;
@@ -92,6 +100,84 @@ export class WorldManager
     this.space.resize(bounds);
   }
 
+  private initializeBatchedDamageEvents() {
+    
+  }
+
+  public batchDamageEvent(event: DamageEvent) {
+    this.damageBatch.push(event);
+  }
+
+  private sendBatchedDamageEvents() {
+    if (this.damageBatch.length === 0) {
+      return;
+    }
+
+    const playerTotals: Map<UUID, PlayerDamageBatch> = new Map();
+    for (const event of this.damageBatch) {
+      PlayerManager.getPlayers()
+        .filterMap((player) => {
+          const heroId = player.hero?.id;
+          if (heroId !== undefined) {
+            return {playerId: player.id, heroId};
+          }
+        })
+        // .use((player) => console.log(player.heroId, ',', event))
+        .filter(({heroId}) => event.sourceID === heroId || event.targetID === heroId)
+        .forEach(({playerId, heroId}) => {
+          let batch = playerTotals.get(playerId);
+          if (batch === undefined) {
+            batch = {
+              in: 0,
+              out: new Map(),
+            };
+            playerTotals.set(playerId, batch);
+          }
+          if (event.sourceID === heroId) {
+            const outBatch = batch.out.get(event.targetID) ?? 0;
+            batch.out.set(event.targetID, outBatch + event.amount);
+          } else {
+            batch.in += event.amount;
+          }
+        });
+    }
+
+    for (const [playerId, totals] of playerTotals.entries()) {
+      const heroId = PlayerManager.getPlayer(playerId)?.hero?.id;
+      if (heroId === undefined) {
+        continue;
+      }
+
+      // Record damage in
+      if (totals.in > 0) {
+        const inEvent = {
+          type: 'DamageEvent',
+          data: {
+            targetID: heroId,
+            amount: totals.in,
+          },
+        };
+        NetworkManager.sendEvent<DamageEvent>(inEvent);
+      }
+
+      for (const [target, amount] of totals.out.entries()) {
+        if (amount > 0) {
+          const outEvent = {
+            type: 'DamageEvent',
+            data: {
+              targetID: target,
+              sourceID: heroId,
+              amount,
+            },
+          };
+          NetworkManager.sendEvent<DamageEvent>(outEvent);
+        }
+      }
+    }
+
+    this.damageBatch = [];
+  }
+
   private async registerAllEntities(): Promise<void> {
     // Class entities
     this.registerAssetType(Entity);
@@ -109,6 +195,7 @@ export class WorldManager
     this.registerAssetType(Pickup);
     this.registerAssetType(UpgradePickup);
     this.registerAssetType(Aura);
+    this.registerAssetType(FlameProjectile);
 
     // Effect entities
     this.registerAssetType(Text);
@@ -157,6 +244,8 @@ export class WorldManager
     EventManager.streamEvents<StepEvent>('StepEvent', Priority.High).forEach(
       ({data: {dt}}) => this.step(dt)
     );
+
+    this.initializeBatchedDamageEvents();
   }
 
   public render(ctx: GraphicsContext) {
@@ -441,6 +530,9 @@ export class WorldManager
     });
 
     this.populateGraph();
+    if (NetworkManager.isServer()) {
+      this.sendBatchedDamageEvents();
+    }
   }
 
   public spawn<T extends Entity>(

@@ -129,7 +129,10 @@ export class Tank extends Unit {
   }
 
   public override calculateDamageIn(amount: number): number {
-    return Math.max(1, amount - this.armor);
+    if (amount === 0) {
+      return 0;
+    }
+    return Math.max(0, amount - this.armor);
   }
 
   public override setThrusting(thrusting: number) {

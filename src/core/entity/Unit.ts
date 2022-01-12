@@ -217,16 +217,8 @@ export class Unit extends Entity {
       },
     };
     EventManager.emit<DamageEvent>(event);
-    const {targetID, sourceID} = event.data;
-    if (NetworkManager.isServer()) {
-      PlayerManager.getPlayers()
-        .filter((player) => {
-          const id = player.hero?.id;
-          return id === targetID || id === sourceID;
-        })
-        .map((player) => player.socket)
-        .forEach((socket) => NetworkManager.sendEvent(event, socket));
-    }
+    // NetworkManager.sendEvent<DamageEvent>(event);
+    WorldManager.batchDamageEvent(event.data);
     if (amount > 0) {
       this.flash();
     }

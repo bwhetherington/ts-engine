@@ -35,7 +35,7 @@ export class Projectile extends Entity {
   public showExplosion: boolean = true;
   public bounces: number = 0;
 
-  private timeCreated: number;
+  protected timeCreated: number;
 
   protected hitEntities: Set<UUID> = new Set();
   public ignoreEntities: Set<UUID> = new Set();
@@ -54,10 +54,14 @@ export class Projectile extends Entity {
     this.boundingBox.height = 20;
     this.timeCreated = EventManager.timeElapsed;
 
-    if (NetworkManager.isClient()) {
+    if (NetworkManager.isClient() && this.hasTrail()) {
       const trail = WorldManager.spawn(Trail);
       trail?.initialize(this);
     }
+  }
+
+  protected hasTrail(): boolean {
+    return true;
   }
 
   public override step(dt: number) {
@@ -193,6 +197,7 @@ export class Projectile extends Entity {
       shape: this.shape,
       showExplosion: this.showExplosion,
       bounces: this.bounces,
+      hasTrail: this.hasTrail,
     };
   }
 

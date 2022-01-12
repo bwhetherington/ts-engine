@@ -8,8 +8,15 @@ export function clamp(x: number, low: number, high: number): number {
   return Math.max(low, Math.min(high, x));
 }
 
+// 3x^2 - 2x^3
+// vvv
+// 6x - 6x^2
 export function smoothStep(x: number): number {
   return clamp(3 * x * x - 2 * x * x * x, 0, 1);
+}
+
+export function smoothStepDerivative(x: number): number {
+  return 6 * x - 6 * x * x;
 }
 
 export function capitalize(word: string): string {

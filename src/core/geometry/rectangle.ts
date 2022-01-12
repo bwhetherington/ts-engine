@@ -147,4 +147,8 @@ export class Rectangle
     this.width = w;
     this.height = h;
   }
+
+  public copy(): Rectangle {
+    return new Rectangle(this.width, this.height, this.x, this.y);
+  }
 }

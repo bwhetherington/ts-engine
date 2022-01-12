@@ -1,0 +1,18 @@
+type: FlameHero
+extends: BaseHero
+boundingBox:
+  width: 35
+  height: 35
+innerBodyShape:
+  tag: polygon
+  lockToWeapon: true
+  sides: 4
+  radius: 0.67
+  angle: 45
+cannons:
+  - key: 0
+    shape:
+      length: 25
+      height: 20
+      farHeight: 30
+weapon: FlameGun

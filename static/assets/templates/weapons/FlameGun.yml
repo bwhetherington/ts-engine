@@ -1,0 +1,17 @@
+type: FlameGun
+extends: BaseGun
+shotInaccuracy: 0.75
+projectileType:
+  type: FlameProjectile
+  boundingBox:
+    width: 20
+    height: 20
+  friction: 250
+projectileSpeed: 250
+pierce: 5
+damage: 0
+rate: 0.2
+hitEffect:
+  type: BurnEffect
+  damage: 1
+  duration: 10
