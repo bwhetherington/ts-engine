@@ -1,4 +1,10 @@
-import {Form, FormManager, StringEntry, FormEntry, FormResult} from '@/core/form';
+import {
+  Form,
+  FormManager,
+  StringEntry,
+  FormEntry,
+  FormResult,
+} from '@/core/form';
 import {PlayerManager, Player} from '@/core/player';
 import {Data} from '@/core/serialize';
 import {LogManager} from '@/core/log';

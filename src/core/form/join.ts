@@ -1,4 +1,10 @@
-import {Form, FormManager, StringEntry, FormEntry, FormResult} from '@/core/form';
+import {
+  Form,
+  FormManager,
+  StringEntry,
+  FormEntry,
+  FormResult,
+} from '@/core/form';
 import {EventManager} from '@/core/event';
 import {ConnectEvent, NetworkManager} from '@/core/net';
 import {PlayerManager, Player, PlayerJoinEvent} from '@/core/player';
