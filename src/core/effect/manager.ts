@@ -1,5 +1,11 @@
 import {LoadingManager} from 'core/assets';
-import {Effect, IntervalEffect, ModifierEffect, SpawnEffect, DotEffect} from 'core/effect';
+import {
+  Effect,
+  IntervalEffect,
+  ModifierEffect,
+  SpawnEffect,
+  DotEffect,
+} from 'core/effect';
 import {UUID} from 'core/uuid';
 
 export class EffectManager extends LoadingManager<Effect> {

@@ -22,7 +22,7 @@ import {Iterator} from 'core/iterator';
 import {NetworkManager} from 'core/net';
 import {PlayerJoinEvent, PlayerManager} from 'core/player';
 import {RNGManager} from 'core/random';
-import { HeroModifier } from 'core/upgrade';
+import {HeroModifier} from 'core/upgrade';
 import {ChatManager} from 'server/chat';
 import {Server} from 'server/net';
 import {FsmPlugin} from 'server/plugin';

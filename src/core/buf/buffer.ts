@@ -31,8 +31,8 @@ export class DataBuffer {
     return num;
   }
 
-  public writeFloat(number: number) {
-    this.buffer.writeFloatBE(number, this.offset);
+  public writeFloat(num: number) {
+    this.buffer.writeFloatBE(num, this.offset);
     this.offset += 4;
   }
 
@@ -42,8 +42,8 @@ export class DataBuffer {
     return num;
   }
 
-  public writeDouble(number: number) {
-    this.buffer.writeDoubleBE(number, this.offset);
+  public writeDouble(num: number) {
+    this.buffer.writeDoubleBE(num, this.offset);
     this.offset += 8;
   }
 
@@ -53,8 +53,8 @@ export class DataBuffer {
     return num;
   }
 
-  public writeUInt32(number: number) {
-    this.buffer.writeUInt32BE(number, this.offset);
+  public writeUInt32(num: number) {
+    this.buffer.writeUInt32BE(num, this.offset);
     this.offset += 4;
   }
 
@@ -64,8 +64,8 @@ export class DataBuffer {
     return num;
   }
 
-  public writeInt32(number: number) {
-    this.buffer.writeInt32BE(number, this.offset);
+  public writeInt32(num: number) {
+    this.buffer.writeInt32BE(num, this.offset);
     this.offset += 4;
   }
 

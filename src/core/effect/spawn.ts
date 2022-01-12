@@ -1,7 +1,7 @@
-import { AssetIdentifier, isAssetIdentifier } from 'core/assets';
+import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
 import {IntervalEffect} from 'core/effect';
 import {Tank, Unit, WorldManager} from 'core/entity';
-import { RNGManager } from 'core/random';
+import {RNGManager} from 'core/random';
 import {Data} from 'core/serialize';
 
 export class SpawnEffect extends IntervalEffect {
@@ -48,7 +48,8 @@ export class SpawnEffect extends IntervalEffect {
       child.setXPWorth(0);
     }
 
-    child?.streamInterval(this.entityDuration)
+    child
+      ?.streamInterval(this.entityDuration)
       .take(1)
       .forEach(() => {
         child.markForDelete();

@@ -9,23 +9,6 @@ import {isOk} from 'core/net/http';
 
 const log = LogManager.forFile(__filename);
 
-export const setColor: CommandEntry = {
-  name: 'setcolor',
-  help: 'Sets the hue of the player color from 0 to 359',
-  handler(player, ...args) {
-    if (args.length === 1) {
-      const color = tryColor(args[0]);
-
-      const hero = player.hero;
-      if (hero && color) {
-        hero.setColor(color);
-      }
-    } else {
-      ChatManager.error('Must specify 1 argument', player);
-    }
-  },
-};
-
 export const loadLevel: CommandEntry = {
   name: 'loadlevel',
   help: 'Loads the specified level.',
@@ -42,62 +25,6 @@ export const loadLevel: CommandEntry = {
     } else {
       ChatManager.error('Must specify 1 argument');
     }
-  },
-};
-
-export const saveAll: CommandEntry = {
-  name: 'saveall',
-  help: 'Saves all players.',
-  permissionLevel: 1,
-  async handler(player) {
-    try {
-      const start = Date.now();
-      await PlayerManager.saveAll();
-      const time = Date.now() - start;
-      ChatManager.info(`All players saved (${time} ms)`, player);
-    } catch (ex: any) {
-      ChatManager.error('Error saving players', player);
-      log.error(ex.message ?? 'Could not load file');
-    }
-  },
-};
-
-export const roll: CommandEntry = {
-  name: 'roll',
-  help: 'rolls dice',
-  permissionLevel: 0,
-  async handler(player, ...args) {
-    function roll(die: number) {
-      const res = RNGManager.nextInt(1, die + 1);
-      ChatManager.info(`${player.name} rolls d${die} => ${res}`);
-    }
-    if (args.length > 0) {
-      for (const arg of args) {
-        const die = parseInt(arg);
-        roll(die);
-      }
-    } else {
-      roll(20);
-    }
-  },
-};
-
-export const pre: CommandEntry = {
-  name: 'pre',
-  help: 'preformatted message',
-  permissionLevel: 0,
-  async handler(player) {
-    ChatManager.sendComponents(
-      [
-        {
-          content: JSON.stringify(player.serialize(), null, 2),
-          style: {
-            pre: true,
-          },
-        },
-      ],
-      player
-    );
   },
 };
 

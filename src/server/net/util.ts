@@ -17,9 +17,9 @@ enum PathType {
   None,
 }
 
-async function determinePathType(path: fs.PathLike): Promise<PathType> {
+async function determinePathType(pathLike: fs.PathLike): Promise<PathType> {
   try {
-    const statRes = await stat(path);
+    const statRes = await stat(pathLike);
     return statRes.isDirectory() ? PathType.Directory : PathType.File;
   } catch (ex) {
     return PathType.None;

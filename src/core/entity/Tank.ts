@@ -104,7 +104,7 @@ export class Tank extends Unit {
     this.targetAngle = (this.targetAngle + tau) % tau;
     this.angle = (this.angle + tau) % tau;
 
-    let diff = (this.targetAngle - this.angle + tau) % tau;
+    const diff = (this.targetAngle - this.angle + tau) % tau;
 
     if (Math.abs(diff) < this.turnSpeed * dt) {
       this.angle = this.targetAngle;

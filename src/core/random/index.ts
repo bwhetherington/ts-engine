@@ -12,8 +12,8 @@ export interface RNG {
   floats(min: number, max: number): Iterator<number>;
 }
 
-function toIntRange(min: number, max: number, number: number): number {
-  return Math.floor(number * (max - min) + min);
+function toIntRange(min: number, max: number, num: number): number {
+  return Math.floor(num * (max - min) + min);
 }
 
 export abstract class AbstractRNG implements RNG {

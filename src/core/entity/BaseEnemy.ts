@@ -76,7 +76,7 @@ export class BaseEnemy extends Tank {
         entity.position.distanceTo(this.position),
       ])
       .fold(
-        [<Unit | undefined>undefined, Number.POSITIVE_INFINITY],
+        [undefined as Unit | undefined, Number.POSITIVE_INFINITY],
         (min, cur) => {
           if (cur[1] < min[1]) {
             return cur;

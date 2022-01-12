@@ -17,17 +17,17 @@ import {Vector} from 'core/geometry';
 
 const log = LogManager.forFile(__filename);
 
-function initializeKeyStates(): Array<boolean> {
-  const obj = [];
+function initializeKeyStates(): boolean[] {
+  const obj: boolean[] = [];
 
-  for (let i = 0; i < Object.keys(Key).length; i++) {
+  Iterator.keys(Key).forEach(() => {
     obj.push(false);
-  }
+  });
 
   return obj;
 }
 
-function initializeButtonStates(): Array<boolean> {
+function initializeButtonStates(): boolean[] {
   const obj = [];
 
   for (let i = 0; i < Object.keys(MouseButton).length; i++) {
@@ -39,8 +39,8 @@ function initializeButtonStates(): Array<boolean> {
 
 export class InputManager {
   private element?: HTMLElement;
-  private keyStates: Array<boolean> = initializeKeyStates();
-  private mouseButtonStates: Array<boolean> = initializeButtonStates();
+  private keyStates: boolean[] = initializeKeyStates();
+  private mouseButtonStates: boolean[] = initializeButtonStates();
   private mousePosition: Vector = new Vector(0, 0);
 
   public constructor() {}
@@ -65,14 +65,14 @@ export class InputManager {
       this.updateMousePosition(event);
       const mouseEvent = {
         type: 'MouseEvent',
-        data: <MouseEvent>{
+        data: {
           action: MouseAction.Move,
           x: this.mousePosition.x,
           y: this.mousePosition.y,
         },
       };
-      EventManager.emit(mouseEvent);
-      NetworkManager.send(mouseEvent);
+      EventManager.emit<MouseEvent>(mouseEvent);
+      NetworkManager.sendEvent<MouseEvent>(mouseEvent);
     });
     this.element?.addEventListener('keydown', (event) => {
       this.keyDown(event.code);
@@ -96,13 +96,13 @@ export class InputManager {
         this.keyStates[key] = true;
         const keyEvent = {
           type: 'KeyEvent',
-          data: <KeyEvent>{
+          data: {
             action: KeyAction.KeyDown,
             key,
           },
         };
-        EventManager.emit(keyEvent);
-        NetworkManager.send(keyEvent);
+        EventManager.emit<KeyEvent>(keyEvent);
+        NetworkManager.sendEvent<KeyEvent>(keyEvent);
       }
     } else {
       log.warn('unrecognized key: ' + code);
@@ -116,13 +116,13 @@ export class InputManager {
         this.keyStates[key] = false;
         const keyEvent = {
           type: 'KeyEvent',
-          data: <KeyEvent>{
+          data: {
             action: KeyAction.KeyUp,
             key,
           },
         };
-        EventManager.emit(keyEvent);
-        NetworkManager.send(keyEvent);
+        EventManager.emit<KeyEvent>(keyEvent);
+        NetworkManager.sendEvent<KeyEvent>(keyEvent);
       }
     } else {
       log.warn('unrecognized key: ' + code);

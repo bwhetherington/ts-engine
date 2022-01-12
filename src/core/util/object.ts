@@ -1,3 +1,4 @@
+import {Iterator} from 'core/iterator';
 import {Data} from 'core/serialize';
 
 export function isEmpty(obj: object): boolean {
@@ -27,7 +28,7 @@ export function diff(
       }
       if (inequal || include.includes(key)) {
         if (typeof a === 'object') {
-          const obj = a instanceof Array ? <any[]>[] : <Data>{};
+          const obj = a instanceof Array ? ([] as any[]) : ({} as any);
           if (diff(a, b, obj)) {
             diffObj[key] = obj;
           }
@@ -38,12 +39,11 @@ export function diff(
     }
   }
 
-  for (const key in diffObj) {
-    const val = diffObj[key];
+  Iterator.entries(diffObj).forEach(([key, val]) => {
     if (typeof val === 'object' && Object.keys(val).length === 0) {
       delete diffObj[key];
     }
-  }
+  });
 
   return isModified;
 }

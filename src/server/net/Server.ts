@@ -16,12 +16,11 @@ import process from 'process';
 import {isUUID, UUID, UUIDManager} from 'core/uuid';
 import {MetricsManager} from 'server/metrics';
 import {Data, SerializeManager} from 'core/serialize';
+import {Iterator} from 'core/iterator';
 
 const log = LogManager.forFile(__filename);
 
-interface Connections {
-  [key: number]: Connection;
-}
+type Connections = Record<string, Connection>;
 
 interface PingEntry {
   startTime: number;
@@ -151,9 +150,14 @@ export class Server extends Node {
     const data = SerializeManager.serialize(message);
     if (socket === -1) {
       // Send to all sockets
-      for (const index in this.connections) {
-        this.sendRaw(data, parseInt(index));
-      }
+      Iterator.keys(this.connections)
+        .filterMap((key) => {
+          const index = parseInt(key);
+          if (!Number.isNaN(index)) {
+            return index;
+          }
+        })
+        .forEach((index) => this.sendRaw(data, index));
     } else {
       // Send to just one socket
       const connection = this.connections[socket];

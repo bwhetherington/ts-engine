@@ -14,19 +14,19 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
     this.setXY(x, y);
   }
 
+  public set magnitude(amount: number) {
+    const {magnitudeSquared} = this;
+    if (magnitudeSquared > 0) {
+      this.scale(amount / Math.sqrt(magnitudeSquared));
+    }
+  }
+
   public get magnitude(): number {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
   public get magnitudeSquared(): number {
     return this.x * this.x + this.y * this.y;
-  }
-
-  public set magnitude(amount: number) {
-    const {magnitudeSquared} = this;
-    if (magnitudeSquared > 0) {
-      this.scale(amount / Math.sqrt(magnitudeSquared));
-    }
   }
 
   public get angle(): number {

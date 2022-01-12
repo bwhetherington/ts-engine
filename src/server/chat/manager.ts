@@ -402,7 +402,7 @@ export class ServerChatManager {
           return;
         }
 
-        const inner = players.map((player) => player.id).join(', ');
+        const inner = players.map(({id}) => id).join(', ');
         this.info('Player IDs: ' + inner, player);
       },
       'Looks up the player ID associated with the given name',

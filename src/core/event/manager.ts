@@ -107,7 +107,7 @@ export class EventManager {
     const handlers = this.handlers[type];
     if (handlers !== undefined) {
       for (const priority of priorities()) {
-        for (const id in handlers[priority]) {
+        for (const id of Object.keys(handlers[priority])) {
           // Check if the event has been canceled
           if (this.isPropagationCanceled) {
             log.trace(`event ${event} canceled`);

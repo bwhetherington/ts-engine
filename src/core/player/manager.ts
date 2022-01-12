@@ -28,16 +28,12 @@ export class PlayerManager implements Serializable {
     if (NetworkManager.isClient()) {
       EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
         const {pings} = event.data;
-        for (const index in pings) {
-          const id = UUIDManager.from(index);
+        Iterator.entries(pings).forEach(([id, ping]) => {
           const player = this.getPlayer(id);
           if (player) {
-            const ping = pings[id];
-            if (typeof ping === 'number') {
-              player.ping = pings[id];
-            }
+            player.ping = ping;
           }
-        }
+        });
       });
     }
 
@@ -112,9 +108,11 @@ export class PlayerManager implements Serializable {
 
   public serialize(): Data {
     const players: Data = {};
-    for (const index in this.players) {
-      players[index] = this.players[index].serialize();
-    }
+
+    Iterator.entries(this.players).forEach(([index, player]) => {
+      players[index] = player.serialize();
+    });
+
     const {removed} = this;
     this.removed = [];
 
@@ -131,8 +129,7 @@ export class PlayerManager implements Serializable {
   public deserialize(data: Data) {
     const {players, removed} = data;
     if (players) {
-      for (const index in players) {
-        const id = UUIDManager.from(index);
+      Iterator.entries(players).forEach(([id, playerData]: [string, any]) => {
         let newPlayer = false;
         let player = this.players[id];
         if (!player) {
@@ -140,11 +137,11 @@ export class PlayerManager implements Serializable {
           player.id = id;
           newPlayer = true;
         }
-        player.deserialize(players[index]);
+        player.deserialize(playerData);
         if (newPlayer) {
           this.add(player);
         }
-      }
+      });
     }
     if (removed) {
       for (const id of removed) {

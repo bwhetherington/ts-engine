@@ -65,7 +65,7 @@ async function* take<T>(gen: AsyncIterable<T>, num: number): AsyncIterable<T> {
       i += 1;
 
       // Immediately stop if this was the last iteration
-      if (i == num) {
+      if (i === num) {
         return;
       }
     } else {

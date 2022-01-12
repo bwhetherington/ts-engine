@@ -72,8 +72,8 @@ export class HDCanvas implements GraphicsContext {
       this.setSize(width, height);
 
       // Set up auto scaling
-      let ctx;
-      if ((ctx = this.getContext())) {
+      const ctx = this.getContext();
+      if (ctx) {
         ctx.lineCap = 'square';
         ctx.lineJoin = 'round';
       }

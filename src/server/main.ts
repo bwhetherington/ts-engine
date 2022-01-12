@@ -118,7 +118,5 @@ async function main(): Promise<void> {
   ]);
 }
 
-main().catch((ex) => {
-  log.error('error occurred');
-  console.error(ex);
-});
+// tslint:disable-next-line
+main().catch(console.error);

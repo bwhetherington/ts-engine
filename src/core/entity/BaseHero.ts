@@ -206,7 +206,7 @@ export class BaseHero extends Tank {
         type: 'UpgradeEvent',
         data: {
           hero: this,
-          upgrade: upgrade,
+          upgrade,
         },
       });
     }
@@ -281,9 +281,9 @@ export class BaseHero extends Tank {
 
     if (this.getPlayer()?.isActivePlayer()) {
       const prevXp = this.experienceForLevel(this.level - 1);
-      EventManager.emit({
+      EventManager.emit<BarUpdateEvent>({
         type: 'BarUpdateEvent',
-        data: <BarUpdateEvent>{
+        data: {
           id: 'xp-bar',
           value: this.xp - prevXp,
           maxValue: this.experienceForLevel(this.level) - prevXp,
@@ -339,9 +339,9 @@ export class BaseHero extends Tank {
     }
     super.setMaxLife(life);
     if (this.getPlayer()?.isActivePlayer?.()) {
-      EventManager.emit({
+      EventManager.emit<BarUpdateEvent>({
         type: 'BarUpdateEvent',
-        data: <BarUpdateEvent>{
+        data: {
           id: 'life-bar',
           value: this.getLife(),
           maxValue: this.getMaxLife(),
@@ -353,9 +353,9 @@ export class BaseHero extends Tank {
   public override setLife(life: number, source?: Unit) {
     super.setLife(life, source);
     if (this.getPlayer()?.isActivePlayer?.()) {
-      EventManager.emit({
+      EventManager.emit<BarUpdateEvent>({
         type: 'BarUpdateEvent',
-        data: <BarUpdateEvent>{
+        data: {
           id: 'life-bar',
           value: this.getLife(),
           maxValue: this.getMaxLife(),
@@ -468,16 +468,16 @@ export class BaseHero extends Tank {
     if (!wasInitialized) {
       const {turning} = data;
       if (turning) {
-        for (const key in this.turning) {
+        Iterator.keys(this.turning).forEach((key) => {
           const keyDirection = parseInt(key) as MovementDirection;
           if (Number.isNaN(keyDirection)) {
-            continue;
+            return;
           }
           const newValue = turning[keyDirection];
           if (typeof newValue === 'boolean') {
             this.turning[keyDirection] = newValue;
           }
-        }
+        });
         this.computeMovementInput();
       }
     }
@@ -545,9 +545,9 @@ export class BaseHero extends Tank {
 
   public override cleanup() {
     if (this.getPlayer()?.isActivePlayer()) {
-      EventManager.emit({
+      EventManager.emit<BarUpdateEvent>({
         type: 'BarUpdateEvent',
-        data: <BarUpdateEvent>{
+        data: {
           id: 'life-bar',
           value: 0,
           maxValue: this.getMaxLife(),

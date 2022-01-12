@@ -25,9 +25,9 @@ export abstract class ChatManager {
     components: (string | null | TextComponent)[],
     target: number | Player = -1
   ) {
-    const outEvent = {
+    const outEvent: Event<TextMessageOutEvent> = {
       type: 'TextMessageOutEvent',
-      data: <TextMessageOutEvent>{
+      data: {
         components,
       },
     };

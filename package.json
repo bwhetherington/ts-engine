@@ -14,7 +14,8 @@
     "start": "NODE_ENV=production NODE_PATH=build/server/ node build/server/server/main.js",
     "server:dev": "PORT=8000 nodemon",
     "dev": "run-p -s watch:client:silent server:dev",
-    "format": "prettier --write ./src"
+    "format": "prettier --write ./src",
+    "lint": "tslint -c tslint.json 'src/**/*.ts' 'src/**/*.tsx'"
   },
   "keywords": [],
   "author": "",
@@ -39,6 +40,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
     "ts-loader": "^9.2.6",
+    "tslint": "^6.1.3",
     "typescript": "^4.3.0-beta",
     "webpack": "^5.65.0",
     "webpack-cli": "^4.9.1",

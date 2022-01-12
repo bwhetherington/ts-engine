@@ -311,7 +311,7 @@ export class WorldManager
   }
 
   public remove(entity: Entity | UUID) {
-    let actual: Entity | undefined = undefined;
+    let actual: Entity | undefined;
     if (isUUID(entity)) {
       actual = this.getEntity(entity);
     } else {
@@ -480,29 +480,28 @@ export class WorldManager
   }
 
   public serialize(): Data {
-    const out = <Data>{
+    const out = {
       entities: {},
       deleted: this.toDelete,
       boundingBox: this.boundingBox.serialize(),
       friction: this.friction,
-    };
-    for (const key in this.entities) {
-      const entity = this.entities[key];
+    } as Data;
+
+    Iterator.entries(this.entities).forEach(([key, entity]) => {
       if (entity.markedForDelete) {
         out.deleted.push(entity.id);
       } else {
         out.entities[key] = this.entities[key].serialize();
       }
-    }
+    });
     return out;
   }
 
   public deserialize(data: Data) {
     const {entities, deleted, boundingBox, friction} = data;
-    for (const id in entities) {
-      const entry = entities[id];
+    Iterator.entries(entities).forEach(([id, entry]: [string, any]) => {
       if (Object.keys(entry).length === 0) {
-        continue;
+        return;
       }
       const {type} = entry;
       const idNum = UUIDManager.from(id);
@@ -526,7 +525,7 @@ export class WorldManager
       } else {
         log.warn(`failed to create entity from data: ${JSON.stringify(entry)}`);
       }
-    }
+    });
 
     if (deleted instanceof Array) {
       iterator(deleted)

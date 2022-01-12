@@ -37,7 +37,7 @@ export class FormContainer extends Component<{}, FormContainerState> {
 
   private showForm(form: ClientForm) {
     let didModify = false;
-    let newState = Iterator.from(this.state.forms)
+    const newState = Iterator.from(this.state.forms)
       .map((oldForm) => {
         if (oldForm.id === form.id) {
           didModify = true;

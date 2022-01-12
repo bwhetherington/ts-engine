@@ -186,7 +186,6 @@ function validateNoAccount(res: JoinForm): FormResult {
 }
 
 function handleNoAccount(player: Player, res: JoinForm) {
-  console.log('handleNoAccount', res);
   player.load({
     username: res.username.value,
     xp: 0,

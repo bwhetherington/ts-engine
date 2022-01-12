@@ -15,7 +15,7 @@ export class Timer extends AbstractTimer {
     this.previous = performance.now();
 
     this.trigger = async (time: number) => {
-      let dt = (time - this.previous) / 1000;
+      const dt = (time - this.previous) / 1000;
       await this.onTick(Math.min(dt, MAX_TIME));
       this.previous = time;
       this.handle = window.requestAnimationFrame(this.trigger);

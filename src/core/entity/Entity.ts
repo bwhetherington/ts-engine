@@ -86,8 +86,8 @@ export class Entity
 
   public render(ctx: GraphicsContext) {
     const {width, height} = this.boundingBox;
-    GraphicsPipeline.pipe().run(ctx, (ctx) => {
-      ctx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
+    GraphicsPipeline.pipe().run(ctx, (innerCtx) => {
+      innerCtx.ellipse(-width / 2, -height / 2, width, height, this.getColor());
     });
   }
 

@@ -17,44 +17,40 @@ export abstract class Node {
   public abstract disconnect(socket: Socket): void;
 
   public onMessage(message: Message, socket: Socket) {
-    const event = {
+    EventManager.emit<NetworkMessageEvent>({
       type: 'NetworkMessageEvent',
-      data: <NetworkMessageEvent>{
+      data: {
         socket,
         message,
       },
-    };
-    EventManager.emit(event);
+    });
 
     // If the message is also a game event, mirror it
     if (typeof message.type === 'string' && typeof message.data === 'object') {
-      const gameEvent: GameEvent = {
+      EventManager.emit<GameEvent>({
         type: message.type,
         data: message.data,
         socket,
-      };
-      EventManager.emit(gameEvent);
+      });
     }
   }
 
   public onConnect(socket: Socket) {
-    const event = {
+    EventManager.emit<ConnectEvent>({
       type: 'ConnectEvent',
-      data: <ConnectEvent>{
+      data: {
         socket,
       },
-    };
-    EventManager.emit(event);
+    });
   }
 
   public onDisconnect(socket: Socket) {
-    const event = {
+    EventManager.emit<DisconnectEvent>({
       type: 'DisconnectEvent',
-      data: <DisconnectEvent>{
+      data: {
         socket,
       },
-    };
-    EventManager.emit(event);
+    });
   }
 
   public isClient(): boolean {

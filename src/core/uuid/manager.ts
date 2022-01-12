@@ -25,17 +25,11 @@ export class UUIDManager {
   }
 
   public generate(): UUID {
-    let uuid = this.generateInternal();
-    // while (this.generated.has(uuid)) {
-    //   log.warn('UUID collision');
-    //   uuid = this.generateInternal();
-    // }
-    // this.generated.add(uuid);
-    return uuid;
+    return this.generateInternal();
   }
 
   public free(uuid: UUID) {
-    // this.generated.delete(uuid);
+    // Do nothing
   }
 
   public from(str: string): UUID {

@@ -32,7 +32,7 @@ export class IntervalEffect extends Effect {
   public override deserialize(data: Data, initialize?: boolean) {
     super.deserialize(data, initialize);
     const {interval} = data;
-    if (typeof interval == 'number') {
+    if (typeof interval === 'number') {
       this.interval = interval;
     }
   }

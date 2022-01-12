@@ -112,9 +112,7 @@ export function iterateKeys<T>(obj: IterableObject<T>): Iterator<string> {
 }
 
 function* iterateArray<T>(array: T[]): Iterable<T> {
-  for (let i = 0; i < array.length; i++) {
-    yield array[i];
-  }
+  yield* array;
 }
 
 function* iterateSet<T>(set: Set<T>): Iterable<T> {

@@ -7,8 +7,8 @@ export class StringBuffer implements ToString {
 
   public append(s: string | ToString) {
     if (typeof s === 'string') {
-      for (let i = 0; i < s.length; i++) {
-        this.buffer.push(s[i]);
+      for (const ch of s) {
+        this.buffer.push(ch);
       }
     } else {
       this.append(s.toString());

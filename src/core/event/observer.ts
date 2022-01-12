@@ -7,7 +7,7 @@ import {
   Priority,
   PlayerEvent,
 } from 'core/event';
-import {AsyncIterator} from 'core/iterator';
+import {AsyncIterator, Iterator} from 'core/iterator';
 import {PlayerManager} from 'core/player';
 import {UUID} from 'core/uuid';
 
@@ -78,11 +78,10 @@ export abstract class Observer {
   }
 
   public cleanup() {
-    for (const type in this.handlers) {
-      const handlerSet = this.handlers[type];
+    Iterator.entries(this.handlers).forEach(([type, handlerSet]) => {
       for (const id of handlerSet) {
         EventManager.removeListener(type, id);
       }
-    }
+    });
   }
 }

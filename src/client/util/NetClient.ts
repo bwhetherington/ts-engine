@@ -2,7 +2,7 @@ import {Node, Message, Socket, DisconnectEvent} from 'core/net';
 import {LogManager} from 'core/log';
 import {uniqueNamesGenerator, colors, animals} from 'unique-names-generator';
 import {SetNameEvent} from 'core/chat';
-import {EventManager} from 'core/event';
+import {Event, EventManager} from 'core/event';
 import {InitialSyncEvent} from 'core/net/util';
 import {PlayerManager} from 'core/player';
 import {WorldManager} from 'core/entity';
@@ -93,12 +93,13 @@ export class Client extends Node {
 
   public onConnect(socket: Socket) {
     this.isConnected = true;
-    this.send({
+    const event: Event<SetNameEvent> = {
       type: 'SetNameEvent',
-      data: <SetNameEvent>{
+      data: {
         name: this.name,
       },
-    });
+    };
+    this.send(event);
     for (const message of this.sendBuffer) {
       this.send(message);
     }

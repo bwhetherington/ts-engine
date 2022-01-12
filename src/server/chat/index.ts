@@ -9,7 +9,7 @@ export interface CommandEntry {
   help: string;
   permissionLevel?: number;
   subcommands?: Record<string, CommandHandler>;
-  aliases?: Array<string>;
+  aliases?: string[];
 }
 
 const CM = new ServerChatManager();

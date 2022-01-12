@@ -20,8 +20,8 @@ import {TextColor} from 'core/chat';
 import {Effect, EffectManager} from 'core/effect';
 import {UUID} from 'core/uuid';
 import {PlayerManager} from 'core/player';
-import { Iterator } from 'core/iterator';
-import { AssetIdentifier, isAssetIdentifier } from 'core/assets';
+import {Iterator} from 'core/iterator';
+import {AssetIdentifier, isAssetIdentifier} from 'core/assets';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -34,10 +34,10 @@ export enum Team {
 }
 
 const TEAM_COLORS: Record<Team, Color> = {
-  [Team.Blue]: COLOR_NAMES['blue'],
-  [Team.Red]: COLOR_NAMES['red'],
-  [Team.Green]: COLOR_NAMES['green'],
-  [Team.Yellow]: COLOR_NAMES['yellow'],
+  [Team.Blue]: COLOR_NAMES.blue,
+  [Team.Red]: COLOR_NAMES.red,
+  [Team.Green]: COLOR_NAMES.green,
+  [Team.Yellow]: COLOR_NAMES.yellow,
 };
 
 export class Unit extends Entity {
@@ -420,7 +420,7 @@ export class Unit extends Entity {
           }
           effect.source = this;
           this.addEffect(effect);
-        })
+        });
     }
   }
 
