@@ -1,0 +1,10 @@
+type: FlameThrower
+extends: ClassUpgrade
+name: Flame Thrower
+description: Change to a flame thrower tank, with a weapon that burns its targets over time.
+className: FlameHero
+requires:
+  - RapidFire
+  - GlassCannon
+  - Shotgun
+tier: 2

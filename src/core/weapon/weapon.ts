@@ -212,12 +212,13 @@ export abstract class Weapon implements Serializable {
   }
 
   protected rollDamage(modifier?: HeroModifier): number {
-    let {damage} = this;
-    if (modifier) {
-      damage = modifier.get('damage') * modifier.get('weaponDamage') * damage;
-    }
-    const roll = RNGManager.nextFloat(-damage / 10, damage / 10);
-    return Math.max(1, damage + roll);
+    return this.damage;
+    // let {damage} = this;
+    // if (modifier) {
+    //   damage = modifier.get('damage') * modifier.get('weaponDamage') * damage;
+    // }
+    // const roll = RNGManager.nextFloat(-damage / 10, damage / 10);
+    // return Math.max(1, damage + roll);
   }
 
   protected onHit(source: Unit, unit?: Unit) {

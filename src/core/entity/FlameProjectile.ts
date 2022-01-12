@@ -31,7 +31,11 @@ export class FlameProjectile extends Projectile {
 
   private getParameter(): number {
     const end = this.getEndTime();
-    const progress = clamp((end - EventManager.timeElapsed) / this.duration, 0, 1);
+    const progress = clamp(
+      (end - EventManager.timeElapsed) / this.duration,
+      0,
+      1
+    );
     const t = smoothStep(progress);
     return 1 - t;
   }
@@ -40,22 +44,13 @@ export class FlameProjectile extends Projectile {
     super.step(dt);
     const t = this.getParameter();
     const newSize = this.getInitialSize() * (1 + t * 2);
-    this.updateBoundingBoxSize(
-      newSize, newSize,
-    );
+    this.updateBoundingBoxSize(newSize, newSize);
   }
 
   public override render(ctx: GraphicsContext) {
     const color = {...this.getColor(), alpha: 0.75};
     const center = {...color, alpha: 0.25};
     const radius = this.boundingBox.width / 2;
-    ctx.gradientCircle(
-      0,
-      0,
-      radius / 3,
-      radius,
-      center,
-      color
-    );
+    ctx.gradientCircle(0, 0, radius / 3, radius, center, color);
   }
 }

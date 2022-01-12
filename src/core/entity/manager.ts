@@ -55,7 +55,7 @@ import {Pickup} from './Pickup';
 import {UpgradePickup} from './UpgradePickup';
 import {Aura} from './Aura';
 import {HeroModifier} from '@/core/upgrade';
-import { PlayerManager } from '../player';
+import {PlayerManager} from '../player';
 
 const log = LogManager.forFile(__filename);
 
@@ -100,10 +100,6 @@ export class WorldManager
     this.space.resize(bounds);
   }
 
-  private initializeBatchedDamageEvents() {
-    
-  }
-
   public batchDamageEvent(event: DamageEvent) {
     this.damageBatch.push(event);
   }
@@ -122,8 +118,9 @@ export class WorldManager
             return {playerId: player.id, heroId};
           }
         })
-        // .use((player) => console.log(player.heroId, ',', event))
-        .filter(({heroId}) => event.sourceID === heroId || event.targetID === heroId)
+        .filter(
+          ({heroId}) => event.sourceID === heroId || event.targetID === heroId
+        )
         .forEach(({playerId, heroId}) => {
           let batch = playerTotals.get(playerId);
           if (batch === undefined) {
@@ -244,8 +241,6 @@ export class WorldManager
     EventManager.streamEvents<StepEvent>('StepEvent', Priority.High).forEach(
       ({data: {dt}}) => this.step(dt)
     );
-
-    this.initializeBatchedDamageEvents();
   }
 
   public render(ctx: GraphicsContext) {

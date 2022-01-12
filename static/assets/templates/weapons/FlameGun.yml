@@ -13,5 +13,5 @@ damage: 0
 rate: 0.2
 hitEffect:
   type: BurnEffect
-  damage: 1
-  duration: 10
+  damage: 4
+  duration: 2

@@ -8,6 +8,9 @@ bodyShape:
   lockToWeapon: true
   sides: 4
   angle: 45
+innerBodyShape:
+  tag: circle
+  radius: 0.33
 mass: 5
 speed: 200
 cannons:

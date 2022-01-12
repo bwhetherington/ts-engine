@@ -205,8 +205,14 @@ export class Unit extends Entity {
     if (this.isImmune) {
       return;
     }
+
     const damageOut = source?.calculateDamageOut(amount, this) ?? amount;
     const damageIn = this.calculateDamageIn(damageOut, source);
+
+    if (damageIn <= 0) {
+      return;
+    }
+
     this.setLife(this.life - damageIn, source);
     const event = {
       type: 'DamageEvent',
@@ -217,7 +223,6 @@ export class Unit extends Entity {
       },
     };
     EventManager.emit<DamageEvent>(event);
-    // NetworkManager.sendEvent<DamageEvent>(event);
     WorldManager.batchDamageEvent(event.data);
     if (amount > 0) {
       this.flash();
