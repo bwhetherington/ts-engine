@@ -1,8 +1,8 @@
-type: Laser
+type: Heavy
 extends: ClassUpgrade
-name: Laser
+name: Heavy
 description: Change to a heavy tank, with large, piercing projectile.
-className: SniperHero
+className: HeavyHero
 requires:
   - Bulky
   - PowerfulShots
