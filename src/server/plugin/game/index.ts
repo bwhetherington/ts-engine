@@ -162,7 +162,6 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     // Spawn enemy units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
-      .filter(() => false)
       .filter(() => !this.isWaiting)
       // Only spawn when there are players
       .filter(() => this.getTeamCount(Team.Blue) > 0)
