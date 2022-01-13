@@ -37,6 +37,7 @@ import {EffectManager} from '@/core/effect';
 import {AlertEvent, AlertManager} from '@/core/alert';
 
 async function main(): Promise<void> {
+  const foo = 10;
   LogManager.initialize('debug', new ServerLogger());
   AssetManager.initialize(loadFile, loadDirectory);
 
