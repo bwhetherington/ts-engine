@@ -1,8 +1,7 @@
 import {Rectangle, RectangleLike, Vector, VectorLike} from '@/core/geometry';
 import {Color} from '@/core/graphics';
 import {Iterator} from '@/core/iterator';
-import {clamp} from '@/core/util';
-import {DataSerializable} from './serialize';
+import {DataSerializable} from '@/core/buf';
 
 export class DataBuffer {
   private buffer: Buffer;

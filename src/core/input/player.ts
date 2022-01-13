@@ -1,11 +1,4 @@
-import {
-  Controller,
-  MouseAction,
-  MouseEvent,
-  KeyAction,
-  KeyEvent,
-  MOVEMENT_DIRECTION_MAP,
-} from '@/core/input';
+import {Controller, MouseAction, MouseEvent} from '@/core/input';
 import {BaseHero} from '@/core/entity';
 import {UUID} from '@/core/uuid';
 import {NetworkManager} from '@/core/net';

@@ -25,7 +25,7 @@ export async function loadDirectory(path: string): Promise<string[]> {
   const res = await fetch(join('assets', path));
   const data = await res.json();
   const filePaths = Iterator.values(data)
-    .map((file) => '' + file)
+    .map((file) => `${file}`)
     .filterMap((file) => stripPrefix(file, 'assets'))
     .toArray();
   return filePaths;

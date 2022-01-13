@@ -1,6 +1,5 @@
 import {LoadingManager} from '@/core/assets';
 import {EventManager} from '@/core/event';
-import {Player} from '@/core/player';
 import {RNGManager} from '@/core/random';
 import {
   AuraUpgrade,
@@ -21,17 +20,6 @@ import {NetworkManager} from '@/core/net';
 import {LogManager} from '@/core/log';
 
 const log = LogManager.forFile(__filename);
-
-interface OfferEntry extends Offer {
-  hero: UUID;
-  reject(): void;
-  resolve(choice: UpgradeSelection): void;
-}
-
-interface UpgradeSelection {
-  upgrade: Upgrade;
-  hero: UUID;
-}
 
 const EXCLUDED_UPGRADES = new Set([
   'ModifierUpgrade',

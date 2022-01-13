@@ -1,12 +1,5 @@
 import {CollisionLayer, Entity, BaseHero} from '@/core/entity';
-import {
-  BLACK,
-  Color,
-  GraphicsContext,
-  randomColor,
-  reshade,
-  WHITE,
-} from '@/core/graphics';
+import {BLACK, Color, GraphicsContext, reshade} from '@/core/graphics';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
 import {LogManager} from '@/core/log';
 import {NetworkManager} from '@/core/net';

@@ -4,8 +4,6 @@ import {GraphicsContext} from '@/core/graphics';
 import {smoothStep, clamp} from '@/core/util';
 import {Rectangle} from '@/core/geometry';
 
-const FLAME_WIDTH = 10;
-
 export class FlameProjectile extends Projectile {
   public static override typeName: string = 'FlameProjectile';
 

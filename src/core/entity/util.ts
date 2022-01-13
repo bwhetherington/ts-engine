@@ -1,10 +1,6 @@
 import {Entity, Unit} from '@/core/entity';
 import {Rectangle, Vector, VectorLike} from '@/core/geometry';
-import {LogManager} from '@/core/log';
 import {UUID} from '@/core/uuid';
-import {Color} from '@/core/graphics';
-
-const log = LogManager.forFile(__filename);
 
 export interface SpawnEntityEvent {
   entity: Entity;

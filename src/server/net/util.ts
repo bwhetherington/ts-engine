@@ -4,8 +4,6 @@ import {stat, readFile, readdir} from 'fs/promises';
 import * as mime from 'mime-types';
 import * as path from 'path';
 import {LogManager} from '@/core/log';
-import {Socket} from '@/core/net';
-import {EventData} from '@/core/event';
 
 const log = LogManager.forFile(__filename);
 
@@ -89,7 +87,7 @@ export async function createServer(options: Options): Promise<http.Server> {
         res.end();
       }
     } catch (_) {
-      log.error(`request triggered error: ${req.url}`);
+      log.error(`request triggered error: ${req.url ?? 'undefined'}`);
       res.writeHead(500, 'Internal server error');
       res.end();
     }

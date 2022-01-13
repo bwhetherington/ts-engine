@@ -1,5 +1,4 @@
 import {EventManager} from '@/core/event';
-import {sleep} from '@/core/util';
 
 export type GameImage = HTMLImageElement;
 

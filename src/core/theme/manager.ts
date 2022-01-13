@@ -1,6 +1,6 @@
 import {LoadingManager} from '@/core/assets';
 import {EventManager} from '@/core/event';
-import {rgb, WHITE} from '@/core/graphics';
+import {rgb} from '@/core/graphics';
 import {NetworkManager} from '@/core/net';
 import {SetThemeEvent, Theme} from '@/core/theme';
 

@@ -31,7 +31,7 @@ import {
   FlameProjectile,
 } from '@/core/entity';
 import {LogManager} from '@/core/log';
-import {EventManager, Priority, StepEvent, Event} from '@/core/event';
+import {EventManager, Priority, StepEvent} from '@/core/event';
 import {Serializable, Data} from '@/core/serialize';
 import {Iterator, iterator} from '@/core/iterator';
 import {diff} from '@/core/util';
@@ -347,7 +347,7 @@ export class WorldManager
       attempts < 10 &&
       this.query(cursor)
         .filter((entity) => entity.collisionLayer === CollisionLayer.Geometry)
-        .any((entity) => !!entity)
+        .some((entity) => !!entity)
     ) {
       attempts += 1;
       position = RNGManager.nextVector(this.boundingBox);
@@ -694,7 +694,7 @@ export class WorldManager
         }
       }
 
-      const hitWall = Iterator.set(querySet).any(
+      const hitWall = Iterator.set(querySet).some(
         (candidate) => candidate.collisionLayer === CollisionLayer.Geometry
       );
       if (hitWall) {

@@ -16,7 +16,7 @@ export abstract class Plugin extends Observer {
     this.name = (this.constructor as typeof Plugin).typeName;
   }
 
-  public async initialize(server: Server): Promise<void> {
+  public async initialize(_server: Server): Promise<void> {
     log.debug(`plugin ${this.name} initialized`);
   }
 

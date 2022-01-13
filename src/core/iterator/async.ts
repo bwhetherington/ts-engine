@@ -224,58 +224,6 @@ class IteratorBuilder<T> {
   }
 }
 
-function buildIterator<T>(
-  body: (fns: IteratorFunctions<T>) => void
-): AsyncIterable<T> {
-  let yieldQueue: T[] = [];
-  let resolver = (_?: void) => {};
-  let yieldResolver = (_?: void) => {};
-  let guard = new Promise<void>((resolve) => {
-    resolver = resolve;
-  });
-  let yieldGuard = new Promise<void>((resolve) => {
-    yieldResolver = resolve;
-  });
-  let isRunning = true;
-
-  const $yield = async (arg: T) => {
-    yieldQueue.push(arg);
-    resolver();
-    guard = new Promise<void>((resolve) => {
-      resolver = resolve;
-    });
-    await yieldGuard;
-  };
-
-  const $return = async () => {
-    resolver();
-    isRunning = false;
-    await yieldGuard;
-  };
-
-  const $yieldAll = async (iterable: Iterable<T>) => {
-    for (const x of iterable) {
-      await $yield(x);
-    }
-  };
-
-  body({$yield, $yieldAll, $return});
-
-  return (async function* () {
-    while (isRunning) {
-      for (const val of yieldQueue) {
-        yield val;
-      }
-      yieldResolver();
-      yieldGuard = new Promise((resolve) => {
-        yieldResolver = resolve;
-      });
-      yieldQueue = [];
-      await guard;
-    }
-  })();
-}
-
 export class AsyncIterator<T> implements AsyncIterable<T> {
   public onComplete?: () => void;
 
@@ -384,6 +332,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   /**
    * Produces a new iterator which yields some number of elements from the
    * beginning of this iterator.
+   *
    * @param amount The number of elements to take
    */
   public take(amount: number): AsyncIterator<T> {
@@ -394,6 +343,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * Produces a new iterator which yields values until one does not satisfy
    * the given predicate. The first value not to satisfy the given predicate is
    * not included in the new iterator.
+   *
    * @param fn A predicate function
    */
   public takeWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
@@ -403,6 +353,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   /**
    * Produces a new iterator which ignores some number of elements at the
    * beginning.
+   *
    * @param amount The number of elements to skip
    */
   public skip(amount: number): AsyncIterator<T> {
@@ -413,6 +364,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    * Produces a new iterator which ignores elements of this iterator while a
    * given predicate holds. The first element of the new iterator will be the
    * first element which does not satisfy the given predicate.
+   *
    * @param fn A predicate function
    */
   public skipWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
@@ -422,6 +374,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   /**
    * Produces a new iterator which executes the specified function on each
    * element before yielding it.
+   *
    * @param fn A function
    */
   public use(fn: (x: T) => MaybePromise<void>): AsyncIterator<T> {
@@ -430,6 +383,7 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
 
   /**
    * Executes the specified function once on each element of this iterator.
+   *
    * @param fn A function
    */
   public async forEach(fn: (x: T) => MaybePromise<void>): Promise<void> {
@@ -454,9 +408,10 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   /**
    * Determines whether at least one element of this iterator satisfies the
    * given predicate.
+   *
    * @param fn A predicate function
    */
-  public async any(fn: (x: T) => MaybePromise<boolean>): Promise<boolean> {
+  public async some(fn: (x: T) => MaybePromise<boolean>): Promise<boolean> {
     const res = !!(await this.find(fn));
     this.cleanup();
     return res;
@@ -465,15 +420,17 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
   /**
    * Determines whether every element of this iterator satisfies the given
    * predicate.
+   *
    * @param fn A predicate function
    */
   public async all(fn: (x: T) => MaybePromise<boolean>): Promise<boolean> {
-    const didAnyFail = await this.any(async (x) => !(await fn(x)));
+    const didAnyFail = await this.some(async (x) => !(await fn(x)));
     return !didAnyFail;
   }
 
   /**
    * Produces the first element of this iterator that satisfies the given predicate.
+   *
    * @param fn A predicate function
    */
   public find(fn: (x: T) => MaybePromise<boolean>): Promise<T | undefined> {

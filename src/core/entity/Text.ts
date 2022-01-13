@@ -47,7 +47,7 @@ export class Text extends Entity {
       this.tag = tag;
     }
     if (isTextColor(textColor)) {
-      this.textColor = textColor as TextColor;
+      this.textColor = textColor;
     }
     if (typeof textSize === 'number') {
       this.textSize = textSize;

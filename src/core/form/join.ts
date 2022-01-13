@@ -99,7 +99,7 @@ async function validateSubmit(input: JoinForm): Promise<FormResult> {
     }
     return {isValid: false, message: 'Invalid credentials.'};
   } catch (ex: any) {
-    log.error('error connecting to player server: ' + ex.message);
+    log.error(`error connecting to player server: ${ex.message}`);
     return {isValid: false, message: 'Could not connect to login server.'};
   }
 }

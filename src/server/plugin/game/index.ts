@@ -1,8 +1,6 @@
-import {AlertEvent} from '@/core/alert';
 import {AlertManager} from '@/core/alert';
 import {
   BaseHero,
-  DamageEvent,
   BaseEnemy,
   Feed,
   FeedVariant,
@@ -10,16 +8,14 @@ import {
   Projectile,
   Unit,
   WorldManager,
-  SpawnEntityEvent,
   Team,
   Tank,
 } from '@/core/entity';
-import {EventManager, Priority} from '@/core/event';
+import {EventManager} from '@/core/event';
 import {StateMachine} from '@/core/fsm';
 import {Vector} from '@/core/geometry';
 import {COLORS, randomColor} from '@/core/graphics';
 import {Iterator} from '@/core/iterator';
-import {NetworkManager} from '@/core/net';
 import {PlayerJoinEvent, PlayerManager} from '@/core/player';
 import {RNGManager} from '@/core/random';
 import {HeroModifier} from '@/core/upgrade';
@@ -54,10 +50,6 @@ const MIN_BUDGET = Iterator.values(ENEMY_COSTS).fold(
 );
 
 export type GameStateMachine = StateMachine<GameState, GameAction>;
-
-const NPC_DAMAGE_MULTIPLIER = 0.5;
-
-const MAX_ATTEMPTS = 1000;
 
 export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   public static typeName: string = 'GamePlugin';
@@ -342,7 +334,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
           if (!tank) {
             continue;
           }
-          tank.setName('' + (1 + i));
+          tank.setName(`${1 + i}`);
           tank.isActive = false;
           tank.weaponAngle = Math.PI / 2;
           tank.setColor(color);

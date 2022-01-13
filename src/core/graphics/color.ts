@@ -60,8 +60,6 @@ export const COLOR_NAMES: Record<string, Color> = {
   black: fromHSV({hue: 0, value: 0.25, saturation: 0}),
 };
 
-type ColorKey = string | number | Color;
-
 export function randomColor(): Color {
   const i = RNGManager.nextInt(0, COLORS.length);
   return {...COLORS[i]};
@@ -125,9 +123,6 @@ export function hsva(
   const c = value * saturation;
   const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
   const m = value - c;
-  const RED_LIGHTNESS = 0.314;
-  const GREEN_LIGHTNESS = 0.512;
-  const BLUE_LIGHTNESS = 0.174;
 
   let r = 0;
   let g = 0;
@@ -239,7 +234,7 @@ export function toCss(color: Color): string {
   const greenInt = toColorInt(green);
   const blueInt = toColorInt(blue);
   const out =
-    'rgba(' + redInt + ', ' + greenInt + ', ' + blueInt + ', ' + alpha + ')';
+    'rgba(' + redInt + ', ' + greenInt + ', ' + blueInt + ', ' + alpha + ')'; // eslint-disable-line
   return out;
 }
 

@@ -147,7 +147,7 @@ export class InputManager {
         NetworkManager.sendEvent<MouseEvent>(buttonEvent);
       }
     } else {
-      log.warn('unrecognized button: ' + code);
+      log.warn(`unrecognized button: ${code}`);
     }
   }
 
@@ -169,7 +169,7 @@ export class InputManager {
         NetworkManager.sendEvent<MouseEvent>(buttonEvent);
       }
     } else {
-      log.warn('unrecognized button: ' + code);
+      log.warn(`unrecognized button: ${code}`);
     }
   }
 

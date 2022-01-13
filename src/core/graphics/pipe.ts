@@ -27,11 +27,10 @@ export class GraphicsPipeline {
   }
 
   public alpha(alpha: number, isFancy: boolean = false): GraphicsPipeline {
-    let parent: GraphicsPipeline = this;
-    if (isFancy) {
-      parent = this.options({useFancyAlpha: isFancy});
-    }
-    return new AlphaPipeline(alpha, parent);
+    return new AlphaPipeline(
+      alpha,
+      isFancy ? this.options({useFancyAlpha: true}) : this
+    );
   }
 
   public options(options: Partial<GraphicsOptions>): GraphicsPipeline {

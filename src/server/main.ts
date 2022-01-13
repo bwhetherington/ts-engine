@@ -1,13 +1,12 @@
 import process from 'process';
 
-import {EventManager, Event} from '@/core/event';
+import {EventManager} from '@/core/event';
 import {LogManager} from '@/core/log';
 import {registerRenameForm} from '@/core/form/rename';
-import {isEmpty} from '@/core/util/object';
 import {RNGManager} from '@/core/random';
 import {BasicAuth} from '@/core/net/http';
 import {AssetManager} from '@/core/assets';
-import {NetworkManager, SyncEvent} from '@/core/net';
+import {NetworkManager} from '@/core/net';
 import {WorldManager} from '@/core/entity';
 import {PlayerManager} from '@/core/player';
 import {FormManager} from '@/core/form';
@@ -36,8 +35,6 @@ import {SpawnPlugin} from '@/server/plugin/spawn';
 import {SyncManager} from './syncManager';
 import {EffectManager} from '@/core/effect';
 import {AlertEvent, AlertManager} from '@/core/alert';
-
-const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
   LogManager.initialize('debug', new ServerLogger());
@@ -118,5 +115,5 @@ async function main(): Promise<void> {
   ]);
 }
 
-// tslint:disable-next-line
+// eslint-disable-next-line
 main().catch(console.error);

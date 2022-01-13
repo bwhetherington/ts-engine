@@ -45,7 +45,7 @@ export enum Priority {
 
 export function* priorities(): Iterable<Priority> {
   for (let i = Priority.Highest; i <= Priority.Lowest; i++) {
-    yield i as Priority;
+    yield i;
   }
 }
 

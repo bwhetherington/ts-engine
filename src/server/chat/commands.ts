@@ -1,13 +1,8 @@
 import {CommandEntry, ChatManager} from '@/server/chat';
-import {hsv, tryColor} from '@/core/graphics/color';
 import {PlayerManager} from '@/core/player';
 import {loadWorld} from '@/server/util';
-import {LogManager} from '@/core/log';
-import {RNGManager} from '@/core/random';
 import {NetworkManager} from '@/core/net';
 import {isOk} from '@/core/net/http';
-
-const log = LogManager.forFile(__filename);
 
 export const loadLevel: CommandEntry = {
   name: 'loadlevel',
@@ -80,7 +75,9 @@ export const showUser: CommandEntry = {
     }
 
     ChatManager.info(
-      `${targetPlayer.toString()} ${targetPlayer.hero?.toString()}`,
+      `${targetPlayer.toString()} ${
+        targetPlayer.hero?.toString() ?? 'undefined'
+      }`,
       player
     );
   },

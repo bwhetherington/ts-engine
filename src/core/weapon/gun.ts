@@ -5,13 +5,9 @@ import {
   Tank,
   ProjectileShape,
   isProjectileShape,
-  Trail,
-  Aura,
 } from '@/core/entity';
 import {Data} from '@/core/serialize';
-import {RNGManager} from '@/core/random';
 import {HeroModifier} from '../upgrade/modifier';
-import {DotEffect} from '@/core/effect';
 import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
 
 export class BaseGun extends Weapon {
@@ -48,7 +44,7 @@ export class BaseGun extends Weapon {
     projectile.setPosition(source.getCannonTip());
     projectile.setColor(source.getBaseColor());
     projectile.parent = source;
-    projectile.damage = this.rollDamage(modifier);
+    projectile.damage = this.rollDamage();
     projectile.pierce = pierce;
     projectile.velocity.setXY(1, 0);
     projectile.velocity.angle = angle;
@@ -81,7 +77,6 @@ export class BaseGun extends Weapon {
     const {
       projectileType,
       projectileSpeed,
-      projectileSpread,
       projectileShape,
       projectileDuration,
     } = data;

@@ -1,15 +1,10 @@
 import fs from 'fs';
 
-import {
-  TextComponents,
-  TextMessageInEvent,
-  TextMessageOutEvent,
-} from '@/core/chat';
+import {TextComponents, TextMessageOutEvent} from '@/core/chat';
 
 import {Server} from '@/server/net';
 import {Plugin} from '@/server/plugin';
 import {Priority} from '@/core/event';
-import {PlayerManager} from '@/core/player';
 
 const LOG_FILE = 'chat.log';
 

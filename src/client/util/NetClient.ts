@@ -1,4 +1,4 @@
-import {Node, Message, Socket, DisconnectEvent} from '@/core/net';
+import {Node, Message, Socket} from '@/core/net';
 import {LogManager} from '@/core/log';
 import {uniqueNamesGenerator, colors, animals} from 'unique-names-generator';
 import {SetNameEvent} from '@/core/chat';

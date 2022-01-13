@@ -10,10 +10,6 @@ const NODE_POSITION = {
   BOTTOM_RIGHT: 3,
 };
 
-function calculateMaxDepth(size: number): number {
-  return Math.floor(Math.log(size) / (2 * Math.log(2)));
-}
-
 class QuadNode<T extends Bounded> {
   public boundingBox: Rectangle;
   private children: T[] = [];

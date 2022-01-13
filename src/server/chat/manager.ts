@@ -27,8 +27,6 @@ import {Vector} from '@/core/geometry';
 
 const log = LogManager.forFile(__filename);
 
-const DEFAULT_NAME = 'Unknown';
-
 const MESSAGE_FORMAT =
   '{style=bold|<}{color=$authorColor,style=bold|$authorName}{style=bold|>} $messageContent';
 const MESSAGE_FORMATTER = new TextFormatter(MESSAGE_FORMAT);
@@ -58,8 +56,7 @@ export class ServerChatManager {
       command.name,
       command.handler,
       command.help,
-      command.permissionLevel ?? 0,
-      ...(command.aliases ?? [])
+      command.permissionLevel ?? 0
     );
   }
 
@@ -67,8 +64,7 @@ export class ServerChatManager {
     command: string,
     handler: CommandHandler,
     help: string,
-    permissionLevel: number,
-    ...aliases: string[]
+    permissionLevel: number
   ) {
     const entry = {
       name: command,
@@ -87,7 +83,7 @@ export class ServerChatManager {
       log.info(
         `command ${player.name}(${player.getPermissionLevel()}): ${command}(${
           handler.permissionLevel
-        }): [${args}]`
+        }): [${JSON.stringify(args)}]`
       );
 
       if ((player.getPermissionLevel() ?? 0) >= handler.permissionLevel) {
@@ -173,8 +169,7 @@ export class ServerChatManager {
         this.sendComponents(components, player);
       },
       'Lists all commands and their help messages',
-      0,
-      'h'
+      0
     );
 
     this.registerCommand(
@@ -183,8 +178,7 @@ export class ServerChatManager {
         this.info('Pong!', player);
       },
       "Responds to the user's ping with a pong",
-      0,
-      'p'
+      0
     );
 
     this.registerCommand(
@@ -195,9 +189,7 @@ export class ServerChatManager {
         }
       },
       "Sets the player's name",
-      0,
-      'rn',
-      'nick'
+      0
     );
 
     this.registerCommand(
@@ -286,7 +278,7 @@ export class ServerChatManager {
         if (hero) {
           const life = hero.getMaxLife();
           hero.setLife(life);
-          this.info('Healed to ' + life + ' life', player);
+          this.info(`Healed to ${life} life`, player);
         }
       },
       "Heals the player's hero to maximum life",
@@ -309,7 +301,7 @@ export class ServerChatManager {
 
     this.registerCommand(
       'stop',
-      (player) => {
+      (_player) => {
         this.info('Stopping the server');
         process.kill(process.pid, 'SIGINT');
       },
@@ -374,7 +366,7 @@ export class ServerChatManager {
           return;
         }
 
-        this.info(intervalString + ',' + interval);
+        this.info(`${intervalString},${interval}`);
 
         TimerManager.setInterval(interval);
       },

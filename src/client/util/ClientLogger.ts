@@ -5,17 +5,17 @@ export class ClientLogger extends AbstractLogger {
   private alertServerLevel: LogLevel = 'warn';
 
   public logRaw(...text: string[]) {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     console.log(...text);
   }
 
   public logRawError(...text: string[]) {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     console.error(...text);
   }
 
   public logRawWarn(...text: string[]) {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     console.warn(...text);
   }
 

@@ -1,6 +1,6 @@
 import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
 import {IntervalEffect} from '@/core/effect';
-import {Tank, Unit, WorldManager} from '@/core/entity';
+import {Unit, WorldManager} from '@/core/entity';
 import {RNGManager} from '@/core/random';
 import {Data} from '@/core/serialize';
 

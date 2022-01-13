@@ -5,7 +5,7 @@ import {SyncEvent, NetworkManager} from '@/core/net';
 import {EventManager} from '@/core/event';
 import {diff} from '@/core/util';
 import {Iterator} from '@/core/iterator';
-import {isUUID, UUID, UUIDManager} from '@/core/uuid';
+import {isUUID, UUID} from '@/core/uuid';
 import {isEmpty} from '@/core/util/object';
 import {MetricsEvent} from '@/core/metrics';
 

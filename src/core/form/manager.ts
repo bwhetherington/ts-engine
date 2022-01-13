@@ -10,12 +10,9 @@ import {
   FormRejectEvent,
 } from '@/core/form';
 import {NetworkManager} from '@/core/net';
-import {sleep} from '@/core/util';
 import {UUID, UUIDManager} from '@/core/uuid';
 
 const log = LogManager.forFile(__filename);
-
-type FormResolver = (response: Data) => void;
 
 type FormSubmitHandler = (event: Event<FormSubmitEvent>) => void;
 type FormRejectHandler = (event: Event<FormRejectEvent>) => void;
@@ -131,11 +128,12 @@ export class FormManager {
 
   public registerForm<T extends Data>(formEntry: FormEntry<T>) {
     log.debug(`form ${formEntry.name} registered`);
+    // eslint-disable-next-line
     const {name, form, checkType, validate, onSubmit, onReject} = formEntry;
     this.forms[name] = form;
     const formSubmitHandler = async (event: Event<FormSubmitEvent>) => {
       const {socket, data} = event;
-      log.debug('receive form submit ' + socket);
+      log.debug(`receive form submit ${socket ?? 'undefined'}`);
       const player = PlayerManager.getSocket(socket);
       if (player) {
         const {data: response, method = 'submit', id} = data;

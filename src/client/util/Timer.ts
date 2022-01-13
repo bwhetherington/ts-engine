@@ -1,7 +1,4 @@
 import {TimerHandler, AbstractTimer} from '@/core/util';
-import {LogManager} from '@/core/log';
-
-const log = LogManager.forFile(__filename);
 
 const MAX_TIME = 4 / 60;
 

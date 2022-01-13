@@ -130,7 +130,7 @@ export class Server extends Node {
     this.wsServer.on('request', (req) => {
       this.accept(req);
     });
-    this.wsServer.on('close', (connection) => {});
+    this.wsServer.on('close', () => {});
 
     EventManager.streamEvents<PlayerInitializedEvent>(
       'PlayerInitializedEvent',
@@ -230,6 +230,8 @@ export class Server extends Node {
       const id = message.data.id as UUID;
       const entry = this.pingResolvers[id];
       if (entry) {
+        // ESLint erroneously thinks this is referencing an unbound method
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         const {startTime, resolver} = entry;
         const endTime = now();
         resolver(endTime - startTime);

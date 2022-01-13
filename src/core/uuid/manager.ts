@@ -1,13 +1,6 @@
 import {UUID} from '@/core/uuid';
-import {NetworkManager} from '@/core/net';
-import {LogManager} from '@/core/log';
-import {RNGManager} from '@/core/random';
 
 import {v4 as uuid} from 'uuid';
-
-const log = LogManager.forFile(__filename);
-
-const UUID_SIZE = 1_000_000_000;
 
 export class UUIDManager {
   // private generated: Set<UUID> = new Set();
@@ -28,7 +21,7 @@ export class UUIDManager {
     return this.generateInternal();
   }
 
-  public free(uuid: UUID) {
+  public free(_uuid: UUID) {
     // Do nothing
   }
 

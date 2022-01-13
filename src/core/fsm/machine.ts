@@ -26,13 +26,13 @@ export class StateMachine<S extends number, A extends number> {
   public canTransitionWith(action: A): boolean {
     return Iterator.from(this.transitions)
       .filter((transition) => transition.from === this.currentState)
-      .any((transition) => transition.action === action);
+      .some((transition) => transition.action === action);
   }
 
   public canTransitionTo(state: S): boolean {
     return Iterator.from(this.transitions)
       .filter((transition) => transition.from === this.currentState)
-      .any((transition) => transition.to === state);
+      .some((transition) => transition.to === state);
   }
 
   private getNextState(action: A): S | undefined {

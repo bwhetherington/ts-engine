@@ -2,13 +2,12 @@ import {
   Entity,
   CollisionLayer,
   WorldManager,
-  Echo,
   Unit,
   DisplayRayEvent,
 } from '@/core/entity';
 import {GraphicsContext} from '@/core/graphics';
 import {Vector, VectorLike} from '@/core/geometry';
-import {sleep, clamp, smoothStep} from '@/core/util';
+import {clamp, smoothStep} from '@/core/util';
 import {LogManager} from '@/core/log';
 import {reshade, WHITE} from '@/core/graphics/color';
 import {GraphicsPipeline} from '@/core/graphics/pipe';

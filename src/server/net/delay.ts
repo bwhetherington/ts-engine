@@ -1,4 +1,4 @@
-import {Message, Socket} from '@/core/net';
+import {Socket} from '@/core/net';
 import {RNGManager} from '@/core/random';
 import {Server} from './Server';
 
@@ -16,8 +16,7 @@ export class DelayServer extends Server {
   }
 
   private getDelay(socket: Socket): number {
-    return RNGManager.nextFloat(0.025, 0.075) * 1000;
-    // return (this.delays[socket] ?? 0) * 1000;
+    return (this.delays[socket] ?? 0) * 1000;
   }
 
   private delayAction(socket: Socket, then: () => void) {

@@ -1,7 +1,4 @@
 import {AbstractRNG, RNG, BasicRNG} from '@/core/random';
-import {LogManager} from '@/core/log';
-
-const log = LogManager.forFile(__filename);
 
 export class RNGManager extends AbstractRNG {
   private rng: RNG = new BasicRNG();

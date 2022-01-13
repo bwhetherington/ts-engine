@@ -1,26 +1,9 @@
 import {Weapon} from '@/core/weapon';
-import {
-  WorldManager,
-  Ray,
-  Tank,
-  Entity,
-  Unit,
-  DisplayRayEvent,
-} from '@/core/entity';
-import {Iterator, iterator} from '@/core/iterator';
+import {WorldManager, Tank, Entity, Unit, DisplayRayEvent} from '@/core/entity';
+import {Iterator} from '@/core/iterator';
 import {EventManager} from '@/core/event';
-import {Color} from '@/core/graphics/color';
 import {NetworkManager} from '@/core/net';
-import {RNGManager} from '@/core/random';
 import {Data} from '@/core/serialize';
-import {HeroModifier} from '@/core/upgrade';
-
-const COLOR: Color = {
-  red: 0.8,
-  green: 0.1,
-  blue: 0.1,
-  alpha: 0.75,
-};
 
 export class BaseRaygun extends Weapon {
   public static typeName: string = 'BaseRaygun';
@@ -47,7 +30,7 @@ export class BaseRaygun extends Weapon {
     }
   }
 
-  public fire(source: Tank, angle: number, modifier?: HeroModifier) {
+  public fire(source: Tank, angle: number) {
     const start = source.getCannonTip();
     const set: Set<Entity> = new Set();
     set.add(source);
@@ -59,7 +42,7 @@ export class BaseRaygun extends Weapon {
       (entity: Entity) => entity instanceof Unit && entity !== source
     );
 
-    const damage = this.rollDamage(modifier);
+    const damage = this.rollDamage();
     Iterator.from(hit)
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
       .forEach((unit) => {

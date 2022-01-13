@@ -1,4 +1,4 @@
-import {Tank, BaseHero} from '@/core/entity';
+import {BaseHero} from '@/core/entity';
 
 export abstract class Controller {
   protected hero?: BaseHero;
@@ -11,5 +11,5 @@ export abstract class Controller {
     this.hero = undefined;
   }
 
-  public step(dt: number) {}
+  public step(_dt: number) {}
 }

@@ -1,17 +1,18 @@
-import {Entity, Trail, Unit, WorldManager} from '@/core/entity';
-import {BLACK, GraphicsContext, rgba, WHITE} from '@/core/graphics';
-import {LogManager} from '@/core/log';
-import {CollisionLayer} from './util';
+import {
+  Entity,
+  Trail,
+  Unit,
+  WorldManager,
+  Echo,
+  EchoVariant,
+  CollisionLayer,
+} from '@/core/entity';
+import {GraphicsContext, rgba} from '@/core/graphics';
 import {Data} from '@/core/serialize';
 import {NetworkManager} from '@/core/net';
 import {isUUID, UUID} from '@/core/uuid';
-import {iterator} from '@/core/iterator';
-import {Echo, EchoVariant} from './Echo';
 import {EventManager} from '@/core/event';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {DotEffect, EffectManager} from '@/core/effect';
-
-const log = LogManager.forFile(__filename);
 
 const DURATION = 1.5;
 
@@ -120,14 +121,13 @@ export class Projectile extends Entity {
     echo.velocity.zero();
   }
 
-  public remove(showExplosion: boolean = true) {
+  public remove(_showExplosion: boolean = true) {
     if (NetworkManager.isServer()) {
       this.markForDelete();
     } else {
       this.isVisible = false;
       this.isCollidable = false;
       if (!this.hasExploded && this.showExplosion) {
-        const variant = showExplosion ? EchoVariant.Grow : EchoVariant.Shrink;
         this.explodeInternal();
       }
     }
@@ -137,7 +137,7 @@ export class Projectile extends Entity {
     return super.isAlive() && !this.hasExploded;
   }
 
-  protected onHitInternal(target?: Unit) {}
+  protected onHitInternal(_target?: Unit) {}
 
   public hit(unit?: Unit): boolean {
     if (unit) {

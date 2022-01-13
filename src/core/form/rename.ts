@@ -7,10 +7,7 @@ import {
 } from '@/core/form';
 import {PlayerManager, Player} from '@/core/player';
 import {Data} from '@/core/serialize';
-import {LogManager} from '@/core/log';
 import {capitalize} from '@/core/util';
-
-const log = LogManager.forFile(__filename);
 
 export interface RenameForm {
   name: StringEntry;
@@ -69,7 +66,7 @@ export const RenameFormEntry: FormEntry<RenameForm> = {
     // Check if player already has this name
     const nameExists = PlayerManager.getPlayers()
       .filter((other) => player !== other)
-      .any((player) => player.name === name);
+      .some((player) => player.name === name);
     if (nameExists) {
       return {
         isValid: false,

@@ -10,7 +10,6 @@ import {BasicAuth} from '@/core/net/http';
 import {randomColor} from '@/core/graphics/color';
 import {PlayerChatManager} from './chat';
 import {TextColor} from '@/core/chat';
-import {CameraManager} from '@/core/graphics';
 
 const log = LogManager.forFile(__filename);
 

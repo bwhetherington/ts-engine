@@ -52,7 +52,7 @@ export abstract class AbstractLogger {
     this.tags.push(tag);
   }
 
-  public setTags(tags: string[]) {
+  public setTags(_tags: string[]) {
     this.tags = [];
   }
 

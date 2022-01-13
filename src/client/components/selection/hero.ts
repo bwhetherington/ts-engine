@@ -1,4 +1,4 @@
-import {Entity, WorldManager} from '@/core/entity';
+import {Entity} from '@/core/entity';
 import React from 'react';
 import {Component, Props} from '@/client/components';
 import {HDCanvas} from '@/client/util';
@@ -33,8 +33,5 @@ export class HeroPanel extends Component<HeroPanelProps, HeroPanelState> {
     }
   }
 
-  public componentDidMount() {
-    // Create hero
-    const hero = WorldManager.spawnEntity(this.props.type);
-  }
+  public componentDidMount() {}
 }

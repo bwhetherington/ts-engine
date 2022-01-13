@@ -160,8 +160,8 @@ export class HDCanvas implements GraphicsContext {
       const scale = this.ratio;
       element.width = w * scale;
       element.height = h * scale;
-      element.style.width = w + 'px';
-      element.style.height = h + 'px';
+      element.style.width = `${w}px`;
+      element.style.height = `${h}px`;
       const ctx = element.getContext('2d');
       if (ctx) {
         ctx.setTransform(scale, 0, 0, scale, 0, 0);

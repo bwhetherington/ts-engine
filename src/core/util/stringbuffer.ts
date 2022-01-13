@@ -53,8 +53,6 @@ export class StringBuffer implements ToString {
       } else {
         this.formatData(item);
       }
-    } else {
-      this.append('' + item);
     }
   }
 

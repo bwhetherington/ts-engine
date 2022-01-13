@@ -15,13 +15,12 @@ import {Vector} from '@/core/geometry';
 import {clamp} from '@/core/util';
 import {Event, EventManager} from '@/core/event';
 import {NetworkManager} from '@/core/net';
-import {Color, COLORS, COLOR_NAMES, reshade} from '@/core/graphics';
+import {Color, COLOR_NAMES, reshade} from '@/core/graphics';
 import {TextColor} from '@/core/chat';
 import {Effect, EffectManager} from '@/core/effect';
 import {UUID} from '@/core/uuid';
-import {PlayerManager} from '@/core/player';
 import {Iterator} from '@/core/iterator';
-import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
+import {isAssetIdentifier} from '@/core/assets';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;
@@ -193,11 +192,11 @@ export class Unit extends Entity {
     }
   }
 
-  protected calculateDamageOut(amount: number, target: Unit): number {
+  protected calculateDamageOut(amount: number): number {
     return amount;
   }
 
-  protected calculateDamageIn(amount: number, source?: Unit): number {
+  protected calculateDamageIn(amount: number): number {
     return amount;
   }
 
@@ -206,8 +205,8 @@ export class Unit extends Entity {
       return;
     }
 
-    const damageOut = source?.calculateDamageOut(amount, this) ?? amount;
-    const damageIn = this.calculateDamageIn(damageOut, source);
+    const damageOut = source?.calculateDamageOut(amount) ?? amount;
+    const damageIn = this.calculateDamageIn(damageOut);
 
     if (damageIn <= 0) {
       return;

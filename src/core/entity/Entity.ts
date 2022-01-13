@@ -379,7 +379,7 @@ export class Entity
     return `${this.type}(${this.id})`;
   }
 
-  public collide(other?: Entity) {}
+  public collide(_other?: Entity) {}
 
   public streamCollisions(): AsyncIterator<CollisionEvent> {
     return this.streamEvents<CollisionEvent>('CollisionEvent')

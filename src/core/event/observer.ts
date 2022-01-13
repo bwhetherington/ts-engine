@@ -5,10 +5,8 @@ import {
   StepEvent,
   Event,
   Priority,
-  PlayerEvent,
 } from '@/core/event';
 import {AsyncIterator, Iterator} from '@/core/iterator';
-import {PlayerManager} from '@/core/player';
 import {UUID} from '@/core/uuid';
 
 export abstract class Observer {

@@ -7,14 +7,13 @@ import {
   EventData,
   PlayerEvent,
   Priority,
+  BatchEvent,
+  priorities,
 } from '@/core/event';
 import {UUID, UUIDManager} from '@/core/uuid';
 import {LogManager} from '@/core/log';
-import {formatData} from '@/core/util';
 import {AsyncIterator, Iterator} from '@/core/iterator';
 import {PlayerManager} from '@/core/player';
-import {BatchEvent, priorities} from './util';
-import {NetworkManager} from '@/core/net';
 
 const log = LogManager.forFile(__filename);
 
@@ -110,7 +109,7 @@ export class EventManager {
         for (const id of Object.keys(handlers[priority])) {
           // Check if the event has been canceled
           if (this.isPropagationCanceled) {
-            log.trace(`event ${event} canceled`);
+            log.trace(`event ${JSON.stringify(event)} canceled`);
             return;
           }
           const handler = handlers[priority][id];

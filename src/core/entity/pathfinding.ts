@@ -1,12 +1,10 @@
-import {WorldManager, CollisionLayer} from '@/core/entity';
+import {WorldManager, CollisionLayer, Entity} from '@/core/entity';
 import {Rectangle, Vector, VectorLike} from '@/core/geometry';
 import {GraphicsContext} from '@/core/graphics';
 import {WHITE, BLACK, rgb} from '@/core/graphics/color';
 import {Heap} from '@/core/util';
 import {Iterator} from '@/core/iterator';
 import {LogManager} from '@/core/log';
-import {Console} from 'console';
-import {Entity} from './Entity';
 
 const log = LogManager.forFile(__filename);
 
@@ -206,7 +204,7 @@ export class Graph {
 
         const isPathable =
           WorldManager.boundingBox.contains(sampler) &&
-          !WorldManager.query(sampler).any(
+          !WorldManager.query(sampler).some(
             (entity) => entity.collisionLayer === CollisionLayer.Geometry
           );
 

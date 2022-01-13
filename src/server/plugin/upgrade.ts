@@ -1,5 +1,4 @@
 import {LevelUpEvent, BaseHero, WorldManager} from '@/core/entity';
-import {RNGManager} from '@/core/random';
 import {UpgradeEvent, UpgradeManager} from '@/core/upgrade';
 import {ChatManager} from '@/server/chat';
 

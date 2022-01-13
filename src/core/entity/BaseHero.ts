@@ -20,10 +20,9 @@ import {
 import {Event, EventData, EventManager, Priority} from '@/core/event';
 import {Data} from '@/core/serialize';
 import {Player, PlayerManager} from '@/core/player';
-import {LogManager} from '@/core/log';
 import {NetworkManager} from '@/core/net';
 import {CameraManager} from '@/core/graphics';
-import {BarUpdateEvent, clamp} from '@/core/util';
+import {BarUpdateEvent} from '@/core/util';
 import {RNGManager} from '@/core/random';
 import {TextColor} from '@/core/chat';
 import {isUUID, UUID} from '@/core/uuid';
@@ -34,8 +33,6 @@ import {
   UpgradeManager,
 } from '@/core/upgrade';
 import {Iterator} from '@/core/iterator';
-
-const log = LogManager.forFile(__filename);
 
 export interface LevelUpEvent {
   id: UUID;
@@ -227,7 +224,7 @@ export class BaseHero extends Tank {
     return Math.max(1, this.getExperience() / 2);
   }
 
-  protected damageBonusForLevel(level: number): number {
+  protected damageBonusForLevel(_level: number): number {
     return 0;
   }
 
@@ -238,7 +235,7 @@ export class BaseHero extends Tank {
     return level * 20 + Math.ceil(level ** 2 * 3) + Math.ceil(level ** 3 / 15);
   }
 
-  protected lifeForLevel(level: number): number {
+  protected lifeForLevel(_level: number): number {
     return 200;
   }
 

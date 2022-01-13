@@ -1,4 +1,3 @@
-import {Iterator} from '@/core/iterator';
 import {Data} from '@/core/serialize';
 import {Encoder} from './encoder';
 
@@ -46,9 +45,9 @@ export function decompress(obj: Data): Data {
   return newObj;
 }
 
-function compose<T, U, V>(f: (x: T) => U, g: (x: U) => V): (x: T) => V {
-  return (x) => g(f(x));
-}
+// function compose<T, U, V>(f: (x: T) => U, g: (x: U) => V): (x: T) => V {
+//   return (x) => g(f(x));
+// }
 
 export class SerializeManager {
   private serializer: (input: Data) => string = JSON.stringify;

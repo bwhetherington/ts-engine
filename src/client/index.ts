@@ -84,5 +84,5 @@ async function main(): Promise<void> {
   }
 }
 
-// tslint:disable-next-line
+// eslint-disable-next-line
 main().catch(console.error);

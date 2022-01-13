@@ -54,7 +54,7 @@ export class Bounds implements Bounded {
     y: number,
     width: number,
     height: number,
-    verbose: boolean = false
+    _verbose: boolean = false
   ) {
     if (this.isEmptyInternal) {
       this.boundingBox.x = x;
