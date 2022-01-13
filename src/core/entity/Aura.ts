@@ -1,23 +1,22 @@
-import {EffectManager} from '@/core/effect';
+import {Effect, EffectManager} from '@/core/effect';
 import {Entity, Unit, WorldManager, CollisionLayer} from '@/core/entity';
-import {EventManager} from '@/core/event';
 import {GraphicsContext} from '@/core/graphics';
 import {Data} from '@/core/serialize';
 import {Iterator} from '@/core/iterator';
 import {NetworkManager} from '@/core/net';
 import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
+import {UUID} from '@/core/uuid';
 
 const AURA_WIDTH = 40;
-const AURA_INTERVAL = 0.25;
 
 export class Aura extends Entity {
-  public static typeName: string = 'Aura';
+  public static override typeName: string = 'Aura';
 
   public effect?: AssetIdentifier;
   public targetHostile: boolean = true;
 
-  private counter: number = 0;
   private _radius: number = 50;
+  private activeEffects: Map<UUID, Effect> = new Map();
 
   constructor() {
     super();
@@ -25,7 +24,6 @@ export class Aura extends Entity {
     this.radius = 150;
     this.isCollidable = false;
     this.isSpatial = false;
-    this.counter = EventManager.timeElapsed % AURA_INTERVAL;
   }
 
   public get radius() {
@@ -69,7 +67,7 @@ export class Aura extends Entity {
       });
   }
 
-  private applyEffect(target: Unit) {
+  private applyEffect(target: Unit): Effect | undefined {
     if (!this.effect) {
       return;
     }
@@ -78,17 +76,33 @@ export class Aura extends Entity {
       return;
     }
     effect.source = this.parent;
-    effect.duration = AURA_INTERVAL;
+    delete effect.duration;
     target.addEffect(effect);
+    return effect;
   }
 
   public override step(dt: number) {
     super.step(dt);
     if (NetworkManager.isServer()) {
-      this.counter += dt;
-      if (this.counter >= AURA_INTERVAL) {
-        this.counter %= AURA_INTERVAL;
-        this.getTargets().forEach((unit) => this.applyEffect(unit));
+      const targets = new Map(this.getTargets().map((unit) => [unit.id, unit]));
+
+      // Check for new entities
+      for (const target of targets.values()) {
+        // Triger on enter if a new target is found
+        if (!this.activeEffects.has(target.id)) {
+          this.onUnitEnter(target);
+        }
+      }
+
+      // Check for entities which may no longer be in radius
+      for (const existing of this.activeEffects.keys()) {
+        // Trigger on leave if a target is not found among the existing targets
+        if (!targets.has(existing)) {
+          const entity = WorldManager.getEntity(existing);
+          if (entity instanceof Unit) {
+            this.onUnitLeave(entity);
+          }
+        }
       }
     }
   }
@@ -97,6 +111,22 @@ export class Aura extends Entity {
     this.attachTo(unit);
     this.setPosition(unit.position);
     unit.addAura(this);
+  }
+
+  private onUnitEnter(unit: Unit) {
+    const effect = this.applyEffect(unit);
+    if (effect) {
+      this.activeEffects.set(unit.id, effect);
+    }
+  }
+
+  private onUnitLeave(unit: Unit) {
+    const effect = this.activeEffects.get(unit.id);
+    if (!effect) {
+      return;
+    }
+    unit.removeEffect(effect);
+    this.activeEffects.delete(unit.id);
   }
 
   public render(ctx: GraphicsContext) {

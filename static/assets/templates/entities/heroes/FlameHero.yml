@@ -6,9 +6,9 @@ boundingBox:
 innerBodyShape:
   tag: polygon
   lockToWeapon: true
-  sides: 4
+  sides: 3
   radius: 0.67
-  angle: 45
+  angle: 60
 cannons:
   - key: 0
     shape:

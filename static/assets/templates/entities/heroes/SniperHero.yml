@@ -1,6 +1,12 @@
 type: SniperHero
 extends: BaseHero
 weapon: Raygun
+innerBodyShape:
+  tag: polygon
+  lockToWeapon: true
+  sides: 4
+  radius: 0.67
+  angle: 45
 cannons:
   - key: 0
     shape:
