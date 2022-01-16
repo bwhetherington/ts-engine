@@ -9,16 +9,17 @@ export class AuraUpgrade extends Upgrade {
   private aura: AssetIdentifier = 'Aura';
 
   public applyTo(hero: BaseHero) {
-    const aura = WorldManager.spawnEntity(this.aura);
+    const aura = WorldManager.instantiate(this.aura);
     if (!aura) {
       return;
     }
 
     if (aura instanceof Aura) {
+      WorldManager.add(aura);
       aura.initialize(hero);
       hero.addAura(aura);
     } else {
-      aura.markForDelete();
+      aura.cleanup();
     }
   }
 

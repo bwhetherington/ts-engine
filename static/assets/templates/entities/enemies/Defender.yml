@@ -1,0 +1,38 @@
+type: DefenderEnemy
+extends: BaseEnemy
+name: Defender
+boundingBox:
+  width: 35
+  height: 35
+bodyShape:
+  tag: polygon
+  lockToWeapon: true
+  sides: 4
+  angle: 45
+mass: 5
+speed: 200
+maxLife: 600
+life: 450
+armor: 4
+xpWorth: 60
+cannons:
+  - key: 0
+    shape:
+      length: 20
+      height: 10
+      farHeight: 20
+      angle: 0
+weapon: Gun
+modifiers:
+  rate: -0.25
+initialAuras:
+  - type: Aura
+    targetHostile: false
+    includeSelf: false
+    effect:
+      type: ModifierEffect
+      modifiers:
+        armor: 2
+        lifeRegenDelay: -1
+        lifeRegen: 2
+    radius: 200

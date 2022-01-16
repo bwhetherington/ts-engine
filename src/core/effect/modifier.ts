@@ -1,7 +1,7 @@
 import {Tank} from '@/core/entity';
 import {Data} from '@/core/serialize';
 import {HeroModifier} from '@/core/upgrade';
-import {Effect} from '.';
+import {Effect} from '@/core/effect';
 
 export class ModifierEffect extends Effect {
   public static typeName: string = 'ModifierEffect';
@@ -22,15 +22,15 @@ export class ModifierEffect extends Effect {
     }
   }
 
-  protected override onStart() {
+  public override onStart() {
     if (this.target instanceof Tank) {
-      this.target.modifiers.compose(this.modifiers);
+      this.target.composeModifiers(this.modifiers);
     }
   }
 
-  protected override onEnd() {
+  public override onEnd() {
     if (this.target instanceof Tank) {
-      this.target.modifiers.compose(this.modifiers, true);
+      this.target.composeModifiers(this.modifiers, true);
     }
   }
 }

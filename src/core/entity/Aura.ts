@@ -14,6 +14,7 @@ export class Aura extends Entity {
 
   public effect?: AssetIdentifier;
   public targetHostile: boolean = true;
+  public includeSelf: boolean = true;
 
   private _radius: number = 50;
   private activeEffects: Map<UUID, Effect> = new Map();
@@ -46,8 +47,8 @@ export class Aura extends Entity {
     return WorldManager.query(this.boundingBox)
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
       .filter((unit) => {
-        // Exclude owner from targets
-        if (unit === this.parent) {
+        // Excluse self if applicable
+        if (!this.includeSelf && unit === this.parent) {
           return false;
         }
 
@@ -56,13 +57,20 @@ export class Aura extends Entity {
           return false;
         }
 
+        if (!this.targetHostile && this.parent?.isHostileTo(unit)) {
+          return false;
+        }
+
         // Verify that they are within the radius
+        const unitRadius = unit.boundingBox.width / 2;
+        const fullRadius = this.radius + unitRadius;
         if (
           unit.position.distanceToXYSquared(this.position.x, this.position.y) >
-          this.radius * this.radius
+          fullRadius * fullRadius
         ) {
           return false;
         }
+
         return true;
       });
   }
@@ -78,6 +86,7 @@ export class Aura extends Entity {
     effect.source = this.parent;
     delete effect.duration;
     target.addEffect(effect);
+
     return effect;
   }
 
@@ -152,18 +161,22 @@ export class Aura extends Entity {
       ...super.serialize(),
       effect: this.effect,
       targetHostile: this.targetHostile,
+      includeSelf: this.includeSelf,
       radius: this.radius,
     };
   }
 
   public override deserialize(data: Data, setInitialized?: boolean): void {
     super.deserialize(data, setInitialized);
-    const {effect, targetHostile, radius} = data;
+    const {effect, targetHostile, includeSelf, radius} = data;
     if (isAssetIdentifier(effect)) {
       this.effect = effect;
     }
     if (typeof targetHostile === 'boolean') {
       this.targetHostile = targetHostile;
+    }
+    if (typeof includeSelf === 'boolean') {
+      this.includeSelf = includeSelf;
     }
     if (typeof radius === 'number') {
       this.radius = radius;
@@ -171,6 +184,15 @@ export class Aura extends Entity {
   }
 
   public override cleanup() {
+    // Remove effect from every unit in its radius
+    for (const unitId of this.activeEffects.keys()) {
+      const unit = WorldManager.getEntity(unitId);
+      if (!(unit instanceof Unit)) {
+        continue;
+      }
+      this.onUnitLeave(unit);
+    }
+
     super.cleanup();
     this.parent?.removeAura(this);
   }

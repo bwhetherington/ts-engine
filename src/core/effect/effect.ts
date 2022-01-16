@@ -95,7 +95,7 @@ export class Effect extends Observer implements Serializable {
     }
   }
 
-  protected onStart() {}
+  public onStart() {}
 
-  protected onEnd() {}
+  public onEnd() {}
 }

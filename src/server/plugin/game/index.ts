@@ -2,8 +2,6 @@ import {AlertManager} from '@/core/alert';
 import {
   BaseHero,
   BaseEnemy,
-  Feed,
-  FeedVariant,
   KillEvent,
   Projectile,
   Unit,
@@ -34,17 +32,41 @@ export enum GameAction {
   Stop,
 }
 
-const ENEMY_COSTS: Record<string, number> = {
-  Enemy: 10,
-  HeavyEnemy: 20,
-  HomingEnemy: 15,
-  SwarmEnemy: 20,
-  SmallEnemy: 5,
+interface EnemyEntry {
+  cost: number;
+  minWave: number;
+}
+
+const ENEMY_COSTS: Record<string, EnemyEntry> = {
+  Enemy: {
+    cost: 10,
+    minWave: 2,
+  },
+  HeavyEnemy: {
+    cost: 20,
+    minWave: 8,
+  },
+  HomingEnemy: {
+    cost: 15,
+    minWave: 5,
+  },
+  SwarmEnemy: {
+    cost: 25,
+    minWave: 15,
+  },
+  DefenderEnemy: {
+    cost: 20,
+    minWave: 15,
+  },
+  SmallEnemy: {
+    cost: 5,
+    minWave: 0,
+  },
 };
 
 const ENEMY_TYPES = Object.keys(ENEMY_COSTS);
 
-const MIN_BUDGET = Iterator.values(ENEMY_COSTS).fold(
+const MIN_BUDGET = Iterator.values(ENEMY_COSTS).map((entry) => entry.cost).fold(
   Number.POSITIVE_INFINITY,
   Math.min
 );
@@ -60,25 +82,10 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     rate: -0.5,
   });
   private isWaiting: boolean = false;
-
-  private spawnFeed() {
-    const num = RNGManager.nextFloat(0, 1);
-    const position = WorldManager.getRandomPosition();
-    let size;
-    if (num < 0.2) {
-      size = FeedVariant.Large;
-    } else if (num < 0.5) {
-      size = FeedVariant.Medium;
-    } else {
-      size = FeedVariant.Small;
-    }
-    const entity = WorldManager.spawnEntity('Feed') as Feed | undefined;
-    entity?.setPosition(position);
-    entity?.setVariant(size);
-  }
+  private isPaused: boolean = false;
 
   private getWaveBudget(): number {
-    return this.wave * 2.5 + 10;
+    return this.wave * 2 + 10;
   }
 
   public buildWave(budget: number): string[] {
@@ -86,8 +93,8 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     const sample = RNGManager.sample(ENEMY_TYPES, true)
       .map((type) => [type, ENEMY_COSTS[type] ?? MIN_BUDGET] as const)
       .takeWhile(() => budget >= MIN_BUDGET);
-    for (const [type, cost] of sample) {
-      if (cost <= budget) {
+    for (const [type, {cost, minWave}] of sample) {
+      if (minWave <= this.wave && cost <= budget) {
         wave.push(type);
         budget -= cost;
       }
@@ -114,16 +121,36 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     this.globalModifier.set('damage', damageModifier);
   }
 
+  private getEnemySpawnPoints(): Iterator<Vector> {
+    const {x, y, farX, farY} = WorldManager.boundingBox;
+    const points = RNGManager.vectors(x, y, farX, farY);
+    return points
+      // Set an upper limit to avoid possible infinite loop
+      .take(100)
+      .filter((pt) => {
+        // Disqualify a point if it is within a certain radius of any hero
+        const doesOverlap = PlayerManager.getPlayers()
+          .filterMap((player) => player.hero)
+          .some((hero) => pt.distanceTo(hero.position) <= 200);
+        return !doesOverlap;
+      });
+  }
+
   private spawnEnemy(type: string, team: Team) {
     // Create enemy
-    const position = WorldManager.getRandomPosition();
+    const position = this.getEnemySpawnPoints().first();
+    if (!position) {
+      // Fail to spawn if there are no valid positions
+      // Could this be used as an exploit? Possibly
+      return;
+    }
     const enemy = WorldManager.spawnEntity(type);
 
     if (!(enemy instanceof Tank)) {
       return;
     }
 
-    enemy.modifiers.compose(this.globalModifier);
+    enemy.composeModifiers(this.globalModifier);
 
     enemy.setPosition(position);
 
@@ -158,11 +185,15 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       AlertManager.send(
         `${target.getName()} was killed by ${source.getName()}`
       );
+
+      if (this.getTeamCount(Team.Blue) === 0) {
+        this.transition(GameAction.Stop);
+      }
     });
 
     // Spawn enemy units
     this.takeDuringState(GameState.Running, this.streamInterval(1))
-      .filter(() => !this.isWaiting)
+      .filter(() => !(this.isWaiting || this.isPaused))
       // Only spawn when there are players
       .filter(() => this.getTeamCount(Team.Blue) > 0)
       // Only spawn a new wave when the previous wave is fully defeated
@@ -283,8 +314,22 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     await super.initialize(server);
 
     this.registerCommand({
+      name: 'pause',
+      help: 'Pause the game',
+      permissionLevel: 1,
+      handler: (player) => {
+        const isPaused = !this.isPaused;
+        this.isPaused = isPaused;
+        const status = isPaused ? 'paused' : 'unpaused';
+        const message = `${player.name} has ${status} the game`;
+        AlertManager.send(message);
+      },
+    });
+
+    this.registerCommand({
       name: 'level',
       help: 'Level up',
+      permissionLevel: 1,
       handler(player, xp) {
         if (xp === undefined) {
           return;
@@ -311,12 +356,14 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     this.registerCommand({
       name: 'stopGame',
       help: 'Stops the current game',
+      permissionLevel: 1,
       handler: stopHandler,
     });
 
     this.registerCommand({
       name: 'spawnColors',
       help: 'Spawns tanks with the current color palette',
+      permissionLevel: 1,
       handler() {
         const {width, x, y} = WorldManager.boundingBox;
         const num = COLORS.length;
@@ -349,12 +396,14 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     this.registerCommand({
       name: 'startGame',
       help: 'Starts the current game',
+      permissionLevel: 1,
       handler: startHandler,
     });
 
     this.registerCommand({
       name: 'force',
       help: 'Applies a force to your character',
+      permissionLevel: 1,
       handler(player, amount) {
         const hero = player.hero;
         if (amount && hero) {

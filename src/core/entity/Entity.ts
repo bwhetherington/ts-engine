@@ -211,7 +211,11 @@ export class Entity
   }
 
   public step(dt: number) {
-    this.updatePosition(dt);
+    for (let i = 0; i < 4; i++) {
+      const miniStep = dt / 4;
+      this.updatePosition(miniStep);
+    }
+    // this.updatePosition(dt);
   }
 
   public isAlive(): boolean {
@@ -376,7 +380,7 @@ export class Entity
   }
 
   public override toString(): string {
-    return `${this.type}(${this.id})`;
+    return `${this.type}[${this.id}]`;
   }
 
   public collide(_other?: Entity) {}

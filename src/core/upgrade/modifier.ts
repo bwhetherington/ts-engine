@@ -105,10 +105,7 @@ export class ModifierUpgrade extends Upgrade {
   }
 
   public applyTo(hero: BaseHero) {
-    hero.modifiers.compose(this.modifiers);
-    if (this.modifiers.has('life')) {
-      hero.updateMaxLife();
-    }
+    hero.composeModifiers(this.modifiers);
   }
 
   public serialize(): Data {

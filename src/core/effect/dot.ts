@@ -1,5 +1,4 @@
 import {IntervalEffect} from '@/core/effect';
-import {Tank} from '@/core/entity';
 import {Data} from '@/core/serialize';
 
 export class DotEffect extends IntervalEffect {
@@ -23,10 +22,6 @@ export class DotEffect extends IntervalEffect {
   }
 
   protected override run() {
-    let damage = this.damage;
-    if (this.source instanceof Tank) {
-      damage = this.source.modifiers.get('damage') * damage;
-    }
-    this.target?.damage(damage, this.source);
+    this.target?.damage(this.damage, this.source);
   }
 }

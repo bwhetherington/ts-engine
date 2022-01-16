@@ -79,6 +79,8 @@ export class WorldManager
   private entityCounts: Record<string, number> = {};
   public friction: number = 1;
 
+  private previousDeleted: UUID[] = [];
+
   private damageBatch: DamageEvent[] = [];
 
   private graph?: Graph;
@@ -569,7 +571,7 @@ export class WorldManager
   public serialize(): Data {
     const out = {
       entities: {},
-      deleted: this.toDelete,
+      deleted: [...this.previousDeleted, ...this.toDelete],
       boundingBox: this.boundingBox.serialize(),
       friction: this.friction,
     } as Data;
@@ -581,6 +583,11 @@ export class WorldManager
         out.entities[key] = this.entities[key].serialize();
       }
     });
+
+    const allToDelete = [...new Set(out.deleted as UUID[])];
+    this.previousDeleted = allToDelete;
+    out.deleted = allToDelete;
+
     return out;
   }
 

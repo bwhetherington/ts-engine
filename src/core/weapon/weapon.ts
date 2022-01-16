@@ -94,7 +94,7 @@ export abstract class Weapon implements Serializable {
     if (!modifier) {
       return this.rate;
     }
-    return this.rate / modifier.get('rate');
+    return this.rate / Math.max(0.1, modifier.get('rate'));
   }
 
   protected getShotCount(modifier?: HeroModifier): number {
@@ -211,8 +211,8 @@ export abstract class Weapon implements Serializable {
     }
   }
 
-  protected rollDamage(): number {
-    return this.damage;
+  protected rollDamage(source: Tank): number {
+    return this.damage * source.modifiers.get('weaponDamage');
   }
 
   protected onHit(source: Unit, unit?: Unit) {

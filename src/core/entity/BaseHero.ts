@@ -330,11 +330,7 @@ export class BaseHero extends Tank {
   }
 
   public override setMaxLife(maxLife: number) {
-    let life = maxLife;
-    if (NetworkManager.isServer() && this.modifiers) {
-      life = Math.round(this.modifiers.get('life') * life);
-    }
-    super.setMaxLife(life);
+    super.setMaxLife(maxLife);
     if (this.getPlayer()?.isActivePlayer?.()) {
       EventManager.emit<BarUpdateEvent>({
         type: 'BarUpdateEvent',
@@ -514,20 +510,11 @@ export class BaseHero extends Tank {
     }
   }
 
-  public override calculateDamageIn(amount: number): number {
-    const armor = this.modifiers.get('armor') - 1 + this.armor;
-    return Math.max(1, amount - armor);
-  }
-
   public isEventSubject<E extends EventData>(event: Event<E>): boolean {
     const {socket} = event;
     const player = this.getPlayer();
     const isLocal = socket === undefined && player?.isActivePlayer();
     return isLocal || socket === player?.socket;
-  }
-
-  protected override calculateDamageOut(amount: number): number {
-    return amount;
   }
 
   public override shouldUpdateLocally(): boolean {

@@ -99,6 +99,9 @@ export class Unit extends Entity {
   }
 
   public isHostileTo(other: Unit): boolean {
+    if (this.id === other.id) {
+      return false;
+    }
     if (this.team === undefined) {
       return true;
     }
@@ -117,6 +120,7 @@ export class Unit extends Entity {
     this.effectCounts.set(effect.type, count + 1);
 
     effect.target = this;
+    effect.onStart();
   }
 
   public getLifeRegenDelay(): number {
@@ -132,6 +136,7 @@ export class Unit extends Entity {
   }
 
   public removeEffect(effect: Effect) {
+    effect.onEnd();
     this.effects.delete(effect.id);
     delete effect.target;
 
@@ -375,6 +380,7 @@ export class Unit extends Entity {
       lifeRegen,
       lifeRegenDelay,
       initialEffects,
+      initialAuras,
     } = data;
     if (typeof lifeRegen === 'number') {
       this.lifeRegen = lifeRegen;
@@ -409,13 +415,24 @@ export class Unit extends Entity {
     if (initialEffects instanceof Array) {
       Iterator.array(initialEffects)
         .filterType(isAssetIdentifier)
-        .forEach((identifier) => {
-          const effect = EffectManager.instantiate(identifier);
-          if (!effect) {
-            return;
-          }
+        .filterMap((identifier) => EffectManager.instantiate(identifier))
+        .forEach((effect) => {
           effect.source = this;
           this.addEffect(effect);
+        });
+    }
+    if (initialAuras instanceof Array) {
+      Iterator.array(initialAuras)
+        .filterType(isAssetIdentifier)
+        .filterMap((identifier) => WorldManager.instantiate(identifier))
+        .forEach((entity) => {
+          if (entity instanceof Aura) {
+            WorldManager.add(entity);
+            entity.initialize(this);
+            this.addAura(entity);
+          } else {
+            entity.cleanup();
+          }
         });
     }
   }

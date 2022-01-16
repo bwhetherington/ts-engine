@@ -129,7 +129,8 @@ export class Tank extends Unit {
     if (amount === 0) {
       return 0;
     }
-    return Math.max(1, amount - this.armor);
+    const armor = this.modifiers.get('armor') - 1 + this.armor;
+    return Math.max(1, amount - armor);
   }
 
   public override setThrusting(thrusting: number) {
@@ -310,8 +311,7 @@ export class Tank extends Unit {
       weaponAngle: this.weaponAngle,
       weapon: this.weapon?.serialize(),
       modifiers: this.modifiers.serialize(),
-      // bodyShape: this.bodyShape,
-      // innerBodyShape: this.innerBodyShape,
+      armor: this.armor,
     };
   }
 
@@ -325,6 +325,7 @@ export class Tank extends Unit {
       weaponAngle,
       targetAngle,
       modifiers,
+      armor,
     } = data;
 
     if (modifiers) {
@@ -413,6 +414,9 @@ export class Tank extends Unit {
     if (typeof targetAngle === 'number') {
       this.targetAngle = targetAngle;
     }
+    if (typeof armor === 'number') {
+      this.armor = armor;
+    }
   }
 
   public override cleanup() {
@@ -465,5 +469,34 @@ export class Tank extends Unit {
 
   public override getFriction(): number {
     return Math.max(super.getFriction() * this.modifiers.get('friction'), 0);
+  }
+
+  public override setMaxLife(maxLife: number) {
+    let life = maxLife;
+    if (NetworkManager.isServer() && this.modifiers) {
+      life = Math.round(this.modifiers.get('life') * life);
+    }
+    super.setMaxLife(life);
+  }
+
+  private getBaseMaxLife() {
+    const maxLife = this.getMaxLife();
+    const lifeMod = this.modifiers.get('life');
+    if (lifeMod < 0) {
+      return 0;
+    }
+    return Math.round(maxLife / lifeMod);
+  }
+
+  public composeModifiers(modifier: HeroModifier, isInverted: boolean = false) {
+    const oldMaxLife = this.getBaseMaxLife();
+    this.modifiers.compose(modifier, isInverted);
+    if (modifier.has('life')) {
+      this.setMaxLife(oldMaxLife);
+    }
+  }
+
+  protected override calculateDamageOut(amount: number): number {
+    return amount * this.modifiers.get('damage');
   }
 }
