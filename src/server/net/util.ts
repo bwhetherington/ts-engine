@@ -64,7 +64,8 @@ export async function createServer(options: Options): Promise<http.Server> {
         } else {
           // Search for file in each static directory
           for (const dir of dirs) {
-            const filePath = path.join(dir, req.url);
+            const [queryPath, _params] = req.url.split('?');
+            const filePath = path.join(dir, queryPath);
             const type = await determinePathType(filePath);
             switch (type) {
               case PathType.File:

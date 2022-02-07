@@ -24,6 +24,10 @@ export const MODIFIER_KEYS = [
   'projectileSpeed',
   'projectileDuration',
   'projectileSpread',
+  // New ones
+  'reflection',
+  'absorption',
+  'lifeSteal',
 ];
 
 export class HeroModifier implements Serializable {

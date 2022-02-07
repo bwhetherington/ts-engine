@@ -211,11 +211,7 @@ export class Entity
   }
 
   public step(dt: number) {
-    for (let i = 0; i < 4; i++) {
-      const miniStep = dt / 4;
-      this.updatePosition(miniStep);
-    }
-    // this.updatePosition(dt);
+    this.updatePosition(dt);
   }
 
   public isAlive(): boolean {

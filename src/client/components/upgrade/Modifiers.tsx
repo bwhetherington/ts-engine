@@ -11,10 +11,6 @@ interface ModifiersProps {
 }
 
 const ModifiersContent = styled.table`
-  /* padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 5px;
-  padding-bottom: 5px; */
   margin-left: auto;
   margin-right: auto;
 `;
@@ -22,12 +18,10 @@ const ModifiersContent = styled.table`
 const ModifierLabel = styled.td`
   font-weight: bold;
   text-align: right;
-  /* flex-grow: 0; */
 `;
 
 const ModifierValue = styled.td`
   text-align: left;
-  /* flex-grow: 1; */
 `;
 
 enum KeyType {
@@ -109,13 +103,25 @@ const KEY_INFO: Record<string, KeyInfo> = {
     name: 'Duration',
     type: KeyType.Multiplier,
   },
+  absorption: {
+    name: 'Absorb',
+    type: KeyType.Multiplier,
+  },
+  reflection: {
+    name: 'Reflect',
+    type: KeyType.Multiplier,
+  },
+  lifeSteal: {
+    name: 'Siphon',
+    type: KeyType.Multiplier,
+  },
 };
 
 function formatSign(value: number): string {
   if (value > 0) {
-    return '+' + value;
+    return `+${value}`;
   } else {
-    return '' + value;
+    return `${value}`;
   }
 }
 

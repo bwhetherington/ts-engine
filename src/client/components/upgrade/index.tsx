@@ -12,7 +12,7 @@ import {
 import {UUID} from '@/core/uuid';
 import {NetworkManager} from '@/core/net';
 
-import {Background, Button, Component, Panel} from '@/client/components';
+import {Background, Component} from '@/client/components';
 export * from '@/client/components/upgrade/Upgrade';
 
 import {OfferComponent} from '@/client/components/upgrade/Offer';
@@ -20,14 +20,15 @@ import {BlueButton} from '../common';
 import {PlayerManager} from '@/core/player';
 import {KillEvent} from '@/core/entity';
 import {Key, KeyAction, KeyEvent} from '@/core/input';
+import { Empty } from '@/core/util';
 
 interface ContainerState {
   offers: Offer[];
   storedUpgrades: number;
 }
 
-export class UpgradeContainer extends Component<{}, ContainerState> {
-  constructor(props: {}) {
+export class UpgradeContainer extends Component<Empty, ContainerState> {
+  constructor(props: Empty) {
     super(props, {
       offers: [],
       storedUpgrades: 0,

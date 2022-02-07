@@ -1,7 +1,6 @@
 import {
   DamageEvent,
   Entity,
-  KillEvent,
   Tank,
   TimedText,
   Unit,
@@ -169,21 +168,6 @@ export class BaseHero extends Tank {
           text.friction = 50;
           text.textSize = 20;
         });
-    }
-
-    if (NetworkManager.isServer()) {
-      this.streamEvents<KillEvent>('KillEvent')
-        .map((event) => {
-          const {targetID, sourceID} = event.data;
-          const target = WorldManager.getEntity(targetID);
-          const source = WorldManager.getEntity(sourceID);
-          return {target, source};
-        })
-        .filterMap(({target, source}) =>
-          target instanceof Unit ? {target, source} : undefined
-        )
-        .filter(({source}) => this === source)
-        .forEach(({target}) => this.addExperience(target.getXPWorth()));
     }
   }
 

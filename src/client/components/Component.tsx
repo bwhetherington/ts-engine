@@ -10,6 +10,7 @@ import {AsyncIterator, iterateKeys} from '@/core/iterator';
 import {Props} from '@/client/components';
 import React from 'react';
 import {UUID, UUIDManager} from '@/core/uuid';
+import {Empty} from '@/core/util';
 
 type Handlers = Readonly<Record<string, Readonly<string[]>>>;
 
@@ -17,7 +18,7 @@ interface ComponentState {
   handlers: Handlers;
 }
 
-export class Component<P = {}, S = {}> extends React.Component<
+export class Component<P = Empty, S = Empty> extends React.Component<
   Props<P>,
   S & ComponentState
 > {

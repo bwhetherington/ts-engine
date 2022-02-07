@@ -130,7 +130,33 @@ export class Tank extends Unit {
       return 0;
     }
     const armor = this.modifiers.get('armor') - 1 + this.armor;
-    return Math.max(1, amount - armor);
+    const adjusted = (amount - armor) * (2 - this.modifiers.get('absorption'));
+    return Math.max(1, adjusted);
+  }
+
+  protected override onDamageOut(amount: number, target: Unit) {
+    super.onDamageOut(amount, target);
+    const lifeSteal = this.modifiers.get('lifeSteal') - 1;
+    const healAmount = lifeSteal * amount;
+    if (healAmount > 0) {
+      this.heal(healAmount);
+    }
+  }
+
+  protected override onDamageIn(amount: number, source?: Unit) {
+    super.onDamageIn(amount, source);
+
+    if (!source) {
+      return;
+    }
+
+    const reflect = this.modifiers.get('reflection') - 1;
+    if (reflect <= 0) {
+      return;
+    }
+
+    const reflectAmount = amount * reflect;
+    source.damage(reflectAmount, this, true);
   }
 
   public override setThrusting(thrusting: number) {

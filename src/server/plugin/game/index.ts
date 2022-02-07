@@ -162,10 +162,14 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     }
   }
 
-  private getTeamCount(team: Team): number {
+  private getTeamUnits(team: Team): Iterator<Unit> {
     return WorldManager.getEntities()
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
       .filter((unit) => unit.team === team && unit.getXPWorth() > 0)
+  }
+
+  private getTeamCount(team: Team): number {
+    return this.getTeamUnits(team)
       .count();
   }
 
@@ -224,6 +228,28 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         }
       }
     };
+
+    // Distribute experience evenly among all players
+    this.takeDuringState(GameState.Running, this.streamEvents<KillEvent>('KillEvent'))
+      .map((event) => {
+        const {targetID, sourceID} = event.data;
+        const target = WorldManager.getEntity(targetID);
+        const source = WorldManager.getEntity(sourceID);
+        return {target, source};
+      })
+      .filterMap(({target, source}) =>
+        (target instanceof Unit && source instanceof Unit) ? {target, source} : undefined
+      )
+      .filter(({source}) => source.team === Team.Blue)
+      .forEach(({target}) => {
+        const heroes = this.getTeamUnits(Team.Blue)
+          .filterMap((unit) => unit instanceof BaseHero ? unit : undefined)
+          .toArray();
+        const xp = target.getXPWorth() / heroes.length;
+        for (const hero of heroes) {
+          hero.addExperience(xp);
+        }
+      });
 
     // Respawn players
     this.takeDuringState(

@@ -25,7 +25,7 @@ const UIContainer = styled.div`
   pointer-events: none;
 `;
 
-export const App: React.FunctionComponent<{}> = () => (
+export const App: React.FunctionComponent<Record<string, never>> = () => (
   <UIContainer>
     <div className="top left">
       <Debug />

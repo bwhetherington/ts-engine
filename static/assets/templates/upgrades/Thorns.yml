@@ -1,0 +1,8 @@
+type: Thorns
+extends: ModifierUpgrade
+name: Thorns
+description: Absorb some incoming damage, and reflect some back to enemies.
+modifiers: 
+  absorption: 0.1
+  reflection: 0.5
+isRepeatable: false

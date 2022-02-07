@@ -59,4 +59,6 @@ export interface BufferData {
   toString(encoding?: BufferEncoding): string;
 }
 
+export type Empty = Record<string, never>;
+
 // export * from '@/core/util/map';

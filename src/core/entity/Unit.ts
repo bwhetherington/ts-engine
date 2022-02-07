@@ -205,30 +205,50 @@ export class Unit extends Entity {
     return amount;
   }
 
-  public damage(amount: number, source?: Unit) {
+  protected onDamageIn(_amount: number, _source?: Unit) {}
+
+  protected onDamageOut(_amount: number, _target: Unit) {}
+
+  public heal(amount: number) {
+    this.setLife(this.life + amount);
+  }
+
+  public damage(amount: number, source?: Unit, isPure?: boolean) {
     if (this.isImmune) {
       return;
     }
 
-    const damageOut = source?.calculateDamageOut(amount) ?? amount;
-    const damageIn = this.calculateDamageIn(damageOut);
+    let actualDamage: number;
 
-    if (damageIn <= 0) {
+    if (isPure) {
+      actualDamage = amount;
+    } else {
+      const damageOut = source?.calculateDamageOut(amount) ?? amount;
+      const damageIn = this.calculateDamageIn(damageOut);
+      actualDamage = damageIn;
+    }
+
+    if (actualDamage <= 0) {
       return;
     }
 
-    this.setLife(this.life - damageIn, source);
+    this.setLife(this.life - actualDamage, source);
     const event = {
       type: 'DamageEvent',
       data: {
         targetID: this.id,
         sourceID: source?.id,
-        amount: damageIn,
+        amount: actualDamage,
       },
     };
     EventManager.emit<DamageEvent>(event);
     WorldManager.batchDamageEvent(event.data);
+
     if (amount > 0) {
+      if (!isPure) {
+        this.onDamageIn(actualDamage, source);
+        source?.onDamageOut(actualDamage, this);
+      }
       this.flash();
     }
   }

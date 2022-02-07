@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import {Component, Props} from '@/client/components';
 import {COLOR_MAPPING, toCss} from '@/core/graphics';
 import {
-  TextColor,
   TextComponent,
   TextComponents,
   TextMessageOutEvent,
@@ -11,7 +10,7 @@ import {
   TextCommandEvent,
 } from '@/core/chat';
 import {NetworkManager} from '@/core/net';
-import {EventManager, StepEvent} from '@/core/event';
+import {EventManager} from '@/core/event';
 import {Key, KeyAction, KeyEvent} from '@/core/input';
 import {Column, PanelContainer, StringInput} from '@/client/components/common';
 import {clamp} from '@/core/util';
