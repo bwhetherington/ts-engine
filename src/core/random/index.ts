@@ -61,7 +61,12 @@ export abstract class AbstractRNG implements RNG {
     return this.iterator().map((num) => num * (max - min) + min);
   }
 
-  public vectors(minX: number, minY: number, maxX: number, maxY: number): Iterator<Vector> {
+  public vectors(
+    minX: number,
+    minY: number,
+    maxX: number,
+    maxY: number
+  ): Iterator<Vector> {
     const x = this.floats(minX, maxX);
     const y = this.floats(minY, maxY);
     return x.zip(y).map(([x, y]) => new Vector(x, y));

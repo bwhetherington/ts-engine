@@ -66,10 +66,9 @@ const ENEMY_COSTS: Record<string, EnemyEntry> = {
 
 const ENEMY_TYPES = Object.keys(ENEMY_COSTS);
 
-const MIN_BUDGET = Iterator.values(ENEMY_COSTS).map((entry) => entry.cost).fold(
-  Number.POSITIVE_INFINITY,
-  Math.min
-);
+const MIN_BUDGET = Iterator.values(ENEMY_COSTS)
+  .map((entry) => entry.cost)
+  .fold(Number.POSITIVE_INFINITY, Math.min);
 
 export type GameStateMachine = StateMachine<GameState, GameAction>;
 
@@ -124,16 +123,18 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   private getEnemySpawnPoints(): Iterator<Vector> {
     const {x, y, farX, farY} = WorldManager.boundingBox;
     const points = RNGManager.vectors(x, y, farX, farY);
-    return points
-      // Set an upper limit to avoid possible infinite loop
-      .take(100)
-      .filter((pt) => {
-        // Disqualify a point if it is within a certain radius of any hero
-        const doesOverlap = PlayerManager.getPlayers()
-          .filterMap((player) => player.hero)
-          .some((hero) => pt.distanceTo(hero.position) <= 200);
-        return !doesOverlap;
-      });
+    return (
+      points
+        // Set an upper limit to avoid possible infinite loop
+        .take(100)
+        .filter((pt) => {
+          // Disqualify a point if it is within a certain radius of any hero
+          const doesOverlap = PlayerManager.getPlayers()
+            .filterMap((player) => player.hero)
+            .some((hero) => pt.distanceTo(hero.position) <= 200);
+          return !doesOverlap;
+        })
+    );
   }
 
   private spawnEnemy(type: string, team: Team) {
@@ -165,12 +166,11 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   private getTeamUnits(team: Team): Iterator<Unit> {
     return WorldManager.getEntities()
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
-      .filter((unit) => unit.team === team && unit.getXPWorth() > 0)
+      .filter((unit) => unit.team === team && unit.getXPWorth() > 0);
   }
 
   private getTeamCount(team: Team): number {
-    return this.getTeamUnits(team)
-      .count();
+    return this.getTeamUnits(team).count();
   }
 
   private startGame() {
@@ -230,7 +230,10 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     };
 
     // Distribute experience evenly among all players
-    this.takeDuringState(GameState.Running, this.streamEvents<KillEvent>('KillEvent'))
+    this.takeDuringState(
+      GameState.Running,
+      this.streamEvents<KillEvent>('KillEvent')
+    )
       .map((event) => {
         const {targetID, sourceID} = event.data;
         const target = WorldManager.getEntity(targetID);
@@ -238,12 +241,14 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         return {target, source};
       })
       .filterMap(({target, source}) =>
-        (target instanceof Unit && source instanceof Unit) ? {target, source} : undefined
+        target instanceof Unit && source instanceof Unit
+          ? {target, source}
+          : undefined
       )
       .filter(({source}) => source.team === Team.Blue)
       .forEach(({target}) => {
         const heroes = this.getTeamUnits(Team.Blue)
-          .filterMap((unit) => unit instanceof BaseHero ? unit : undefined)
+          .filterMap((unit) => (unit instanceof BaseHero ? unit : undefined))
           .toArray();
         const xp = target.getXPWorth() / heroes.length;
         for (const hero of heroes) {

@@ -60,6 +60,8 @@ export abstract class Node {
   public isServer(): boolean {
     return !this.isClient();
   }
+
+  public stop() {}
 }
 
 export class DefaultNode extends Node {

@@ -197,7 +197,7 @@ export class Projectile extends Entity {
       shape: this.shape,
       showExplosion: this.showExplosion,
       bounces: this.bounces,
-      hasTrail: this.hasTrail,
+      hasTrail: this.hasTrail(),
     };
   }
 

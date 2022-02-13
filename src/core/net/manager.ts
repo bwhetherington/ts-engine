@@ -38,4 +38,6 @@ export class NetworkManager {
   public isServer(): boolean {
     return this.node.isServer();
   }
+
+  public stop() {}
 }

@@ -22,6 +22,7 @@ import {UpgradeManager} from '@/core/upgrade';
 import {ThemeManager} from '@/core/theme';
 import {EffectManager} from '@/core/effect';
 import {AlertEvent, AlertManager} from '@/core/alert';
+import {SerializeManager} from '@/core/serialize';
 
 const log = LogManager.forFile(__filename);
 
@@ -36,6 +37,7 @@ async function main(): Promise<void> {
   const client = new Client();
 
   EventManager.initialize();
+  SerializeManager.initialize();
   NetworkManager.initialize(client);
   await WeaponManager.initialize();
   await WorldManager.initialize();

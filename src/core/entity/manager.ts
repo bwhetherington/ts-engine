@@ -584,8 +584,10 @@ export class WorldManager
       }
     });
 
-    const allToDelete = [...new Set(out.deleted as UUID[])];
-    this.previousDeleted = allToDelete;
+    const nonNulls = Iterator.array(out.deleted as UUID[]).filter(isUUID);
+
+    const allToDelete = [...new Set(nonNulls)];
+    this.previousDeleted = this.toDelete;
     out.deleted = allToDelete;
 
     return out;

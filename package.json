@@ -62,6 +62,7 @@
     "priorityqueuejs": "^2.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "short-uuid": "^4.2.0",
     "styled-components": "^5.3.3",
     "ts-node": "^8.10.2",
     "ts-path-mapping": "^0.1.4",

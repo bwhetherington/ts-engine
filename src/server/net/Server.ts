@@ -175,6 +175,10 @@ export class Server extends Node {
     log.info(`listening on port ${port}`);
   }
 
+  public stop() {
+    this.httpServer?.close();
+  }
+
   public onConnect(socket: Socket) {
     super.onConnect(socket);
 

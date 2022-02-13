@@ -1,3 +1,4 @@
+import {Data} from '../serialize';
 import {AsyncIterator} from './async';
 
 function* map<T, U>(gen: Iterable<T>, fn: (x: T) => U): Iterable<U> {
@@ -170,6 +171,21 @@ function* zip<T, U>(a: Iterable<T>, b: Iterable<U>): Iterable<[T, U]> {
   }
 }
 
+function* flatEntries(obj: IterableObject<any>): Iterable<[string, any]> {
+  if (obj instanceof Array) {
+    return;
+  }
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+      yield [key, value];
+      if (typeof value === 'object') {
+        yield* flatEntries(value as Data);
+      }
+    }
+  }
+}
+
 export class Iterator<T> implements Iterable<T> {
   private generator: Iterable<T>;
 
@@ -193,6 +209,10 @@ export class Iterator<T> implements Iterable<T> {
 
   public static entries<T>(obj: IterableObject<T>): Iterator<[string, T]> {
     return Iterator.keys(obj).map((key) => [key, obj[key]]);
+  }
+
+  public static flatEntries(obj: IterableObject<any>): Iterator<[string, any]> {
+    return new Iterator(flatEntries(obj));
   }
 
   public static array<T>(array: T[]): Iterator<T> {

@@ -35,6 +35,8 @@ import {SpawnPlugin} from '@/server/plugin/spawn';
 import {SyncManager} from './syncManager';
 import {EffectManager} from '@/core/effect';
 import {AlertEvent, AlertManager} from '@/core/alert';
+import {LogKeysPlugin} from './plugin/keys';
+import {SerializeManager} from '@/core/serialize';
 
 async function main(): Promise<void> {
   LogManager.initialize('debug', new ServerLogger());
@@ -51,6 +53,7 @@ async function main(): Promise<void> {
   };
 
   EventManager.initialize();
+  SerializeManager.initialize();
 
   const server = new Server();
   server.initialize(httpServer);
@@ -112,6 +115,7 @@ async function main(): Promise<void> {
     UpgradePlugin,
     SpawnPlugin,
     ThemePlugin,
+    LogKeysPlugin,
   ]);
 }
 

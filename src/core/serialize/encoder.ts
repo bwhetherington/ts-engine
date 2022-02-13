@@ -1,24 +1,19 @@
 export class Encoder {
-  private floatBuf: Float32Array = new Float32Array(1);
-  private byteBuf: Uint8Array = new Uint8Array(4);
+
+  private inFloat = new Float32Array(1);
+  private inInt = new Uint32Array(1);
+
+  private outInt = new Uint32Array(this.inFloat.buffer);
+  private outFloat = new Float32Array(this.inInt.buffer);
 
   public encode(num: number): string {
-    this.floatBuf[0] = num;
-    this.byteBuf = new Uint8Array(this.floatBuf.buffer);
-
-    let str = '';
-    for (let i = 0; i < this.byteBuf.length; i++) {
-      str += String.fromCharCode(this.byteBuf[i]);
-    }
-
-    return str;
+    this.inFloat[0] = num;
+    return this.outInt[0].toString(36);
   }
 
   public decode(str: string): number {
-    for (let i = 0; i < 4; i++) {
-      this.byteBuf[i] = str.charCodeAt(i);
-    }
-    this.floatBuf = new Float32Array(this.byteBuf.buffer);
-    return this.floatBuf[0];
+    const int = parseInt(str, 36);
+    this.inInt[0] = int;
+    return this.outFloat[0];
   }
 }

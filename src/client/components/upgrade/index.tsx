@@ -20,7 +20,7 @@ import {BlueButton} from '../common';
 import {PlayerManager} from '@/core/player';
 import {KillEvent} from '@/core/entity';
 import {Key, KeyAction, KeyEvent} from '@/core/input';
-import { Empty } from '@/core/util';
+import {Empty} from '@/core/util';
 
 interface ContainerState {
   offers: Offer[];
