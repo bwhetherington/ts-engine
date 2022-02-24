@@ -58,7 +58,7 @@
     "js-yaml": "^4.1.0",
     "jsonpack": "^1.1.5",
     "mime-types": "^2.1.27",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "priorityqueuejs": "^2.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
