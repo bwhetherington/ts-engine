@@ -12,7 +12,8 @@ import {NetworkManager} from '@/core/net';
 import {UUID} from '@/core/uuid';
 import {Iterator} from '@/core/iterator';
 
-import {Component, FormComponent, Background} from '@/client/components';
+import {Component, FormComponent, Background, Props} from '@/client/components';
+import {Empty} from '@/core/util';
 
 const Container = styled.div`
   pointer-events: auto;
@@ -28,8 +29,8 @@ interface FormContainerState {
   forms: ClientForm[];
 }
 
-export class FormContainer extends Component<{}, FormContainerState> {
-  public constructor(props: {}) {
+export class FormContainer extends Component<Empty, FormContainerState> {
+  public constructor(props: Props<Empty>) {
     super(props, {
       forms: [],
     });

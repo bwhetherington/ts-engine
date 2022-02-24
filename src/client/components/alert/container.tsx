@@ -4,6 +4,7 @@ import {AlertEvent} from '@/core/alert';
 import {EventManager, StepEvent} from '@/core/event';
 import {UUID, UUIDManager} from '@/core/uuid';
 import {AlertComponent} from '@/client/components/alert';
+import {Empty} from '@/core/util';
 
 interface AlertEntry {
   id: UUID;
@@ -15,8 +16,8 @@ interface State {
   alerts: AlertEntry[];
 }
 
-export class AlertContainer extends Component<{}, State> {
-  constructor(props: Props<{}>) {
+export class AlertContainer extends Component<Empty, State> {
+  constructor(props: Props<Empty>) {
     super(props, {
       alerts: [],
     });

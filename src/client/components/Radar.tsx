@@ -1,11 +1,12 @@
 import React from 'react';
 import {Component} from '@/client/components';
 import {StepEvent} from '@/core/event';
-import {Column, Panel, PanelHeader} from './common';
+import {Panel, PanelHeader} from './common';
 import {HDCanvas} from '@/client/util';
 import {CollisionLayer, Entity, BaseHero, WorldManager} from '@/core/entity';
 import {Color, rgba, WHITE} from '@/core/graphics/color';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {Empty} from '@/core/util';
 
 const CANVAS_OPTIONS = {
   width: 200,
@@ -18,7 +19,7 @@ interface RadarState {
   unitCount: number;
 }
 
-export class Radar extends Component<{}, RadarState> {
+export class Radar extends Component<Empty, RadarState> {
   private canvasRef = React.createRef<HTMLCanvasElement>();
 
   private computeColor(entity: Entity): Color {

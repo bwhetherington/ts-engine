@@ -3,6 +3,7 @@ import {EventTable, Component, Panel, PanelHeader} from '@/client/components';
 import {EventManager} from '@/core/event';
 import {PlayerManager} from '@/core/player';
 import {TableEvent} from '@/core/table';
+import {Empty} from '@/core/util';
 
 const SCOREBOARD_COLUMNS = [
   {
@@ -27,7 +28,7 @@ const SCOREBOARD_COLUMNS = [
   },
 ];
 
-export class Scoreboard extends Component<{}, {}> {
+export class Scoreboard extends Component<Empty, Empty> {
   public componentDidMount() {
     this.streamInterval(1).forEach(() => {
       const rows = PlayerManager.getPlayers()
@@ -39,7 +40,7 @@ export class Scoreboard extends Component<{}, {}> {
           name: player.name,
           level: player.hero?.getLevel() ?? 0,
           xp: player.hero?.getExperience() ?? 0,
-          ping: Math.round(player.ping * 1000) + 'ms',
+          ping: `${Math.round(player.ping * 1000)}ms`,
         }))
         .take(10)
         .toArray();

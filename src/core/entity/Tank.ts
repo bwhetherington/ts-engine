@@ -60,6 +60,7 @@ export class Tank extends Unit {
   private smoothWeaponAngle: number = 0;
   public turnSpeed: number = Math.PI * 1000;
   public modifiers: HeroModifier = new HeroModifier();
+  private lastFire: number = 0;
 
   private thrustTime: number = 0;
 
@@ -157,6 +158,10 @@ export class Tank extends Unit {
 
     const reflectAmount = amount * reflect;
     source.damage(reflectAmount, this, true);
+  }
+
+  protected override getLifeRegenTime(): number {
+    return this.lastFire;
   }
 
   public override setThrusting(thrusting: number) {
@@ -468,6 +473,7 @@ export class Tank extends Unit {
 
   public fire(angle: number) {
     this.weapon?.fireInternal(this, angle, this.modifiers);
+    this.lastFire = EventManager.timeElapsed;
   }
 
   public setWeapon(weapon?: Weapon | string) {

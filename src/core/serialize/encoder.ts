@@ -1,5 +1,4 @@
 export class Encoder {
-
   private inFloat = new Float32Array(1);
   private inInt = new Uint32Array(1);
 

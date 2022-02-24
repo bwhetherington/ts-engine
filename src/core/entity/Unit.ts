@@ -294,8 +294,8 @@ export class Unit extends Entity {
   }
 
   protected getRegenForStep(dt: number): number {
-    const timeSinceDamage = EventManager.timeElapsed - this.lastFlash;
-    if (timeSinceDamage >= this.getLifeRegenDelay()) {
+    const time = EventManager.timeElapsed - this.getLifeRegenTime();
+    if (time >= this.getLifeRegenDelay()) {
       return this.getLifeRegen() * this.getMaxLife() * dt;
     }
     return 0;
@@ -505,6 +505,10 @@ export class Unit extends Entity {
 
   public flash() {
     this.lastFlash = EventManager.timeElapsed;
+  }
+
+  protected getLifeRegenTime(): number {
+    return this.lastFlash;
   }
 
   public getBaseColor(): Color {

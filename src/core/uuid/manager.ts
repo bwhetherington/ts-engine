@@ -7,8 +7,8 @@ export class UUIDManager {
 
   private generateInternal(): UUID {
     const index = this.index;
-    this.index += 1
-    const id = NetworkManager.isClient() ? (index * -1) : index;
+    this.index += 1;
+    const id = NetworkManager.isClient() ? index * -1 : index;
     return '*' + id.toString(36);
     // return '-' + gen.new();
     // return '-' + uuid();

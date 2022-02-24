@@ -1,11 +1,12 @@
 import React from 'react';
-import {Component, Panel, PanelHeader, Line} from '@/client/components';
+import {Component, Panel, PanelHeader, Line, Props} from '@/client/components';
 import {EventManager, StepEvent} from '@/core/event';
 import {MetricsManager} from '@/client/metrics';
 import {WorldManager} from '@/core/entity';
 import {MetricsEvent} from '@/core/metrics';
 import {PlayerManager} from '@/core/player';
 import {UUIDManager} from '@/core/uuid';
+import {Empty} from '@/core/util';
 
 interface DebugState {
   fps: number;
@@ -19,8 +20,8 @@ interface DebugState {
   serverUuids: number;
 }
 
-export class Debug extends Component<{}, DebugState> {
-  public constructor(props: {}) {
+export class Debug extends Component<Empty, DebugState> {
+  public constructor(props: Props<Empty>) {
     super(props, {
       fps: 0,
       clientEntities: 0,
@@ -81,7 +82,7 @@ export class Debug extends Component<{}, DebugState> {
           <Line label="Listeners" value={this.state.serverListeners} />
           <Line
             label="Latency"
-            value={Math.round(this.state.ping * 1000) + 'ms'}
+            value={`${Math.round(this.state.ping * 1000)}ms`}
           />
         </div>
       </Panel>
