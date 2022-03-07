@@ -97,6 +97,7 @@ async function main(): Promise<void> {
   async function cleanup(): Promise<never> {
     await PlayerManager.cleanup();
     await PluginManager.cleanup();
+    NetworkManager.stop();
     process.exit(0);
   }
 

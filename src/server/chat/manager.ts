@@ -29,7 +29,9 @@ const log = LogManager.forFile(__filename);
 
 const MESSAGE_FORMAT =
   '{style=bold|<}{color=$authorColor,style=bold|$authorName}{style=bold|>} $messageContent';
-const MESSAGE_FORMATTER = new TextFormatter(MESSAGE_FORMAT);
+
+const SERVER_FORMAT =
+  '{color=$color,style=bold|<$kind>} {color=$color|$content}';
 
 type CommandHandler = (player: Player, ...args: string[]) => void;
 
@@ -42,6 +44,11 @@ interface Command {
 
 export class ServerChatManager {
   private commands: {[command: string]: Command} = {};
+
+  private chatFormatter: TextFormatter = new TextFormatter(MESSAGE_FORMAT);
+  private serverMessageFormatter: TextFormatter = new TextFormatter(
+    SERVER_FORMAT
+  );
 
   private loadCommands() {
     Iterator.values(commands).forEach(this.registerCommandEntry.bind(this));
@@ -97,7 +104,7 @@ export class ServerChatManager {
   }
 
   private formatMessage(author: Player, content: string): TextComponents {
-    return MESSAGE_FORMATTER.format({
+    return this.chatFormatter.format({
       authorName: author.name,
       authorColor: author.getNameColor(),
       messageContent: content,
@@ -451,19 +458,31 @@ export class ServerChatManager {
   }
 
   public info(message: string, target: number | Player = -1) {
-    const components = renderInfo(message);
+    const components = this.serverMessageFormatter.format({
+      color: 'grey',
+      kind: 'Info',
+      content: message,
+    });
     this.sendComponents(components, target);
     log.info('[' + message + ']');
   }
 
   public warn(message: string, target: number | Player = -1) {
-    const components = renderWarn(message);
+    const components = this.serverMessageFormatter.format({
+      color: 'yellow',
+      kind: 'Warn',
+      content: message,
+    });
     this.sendComponents(components, target);
     log.warn('[' + message + ']');
   }
 
   public error(message: string, target: number | Player = -1) {
-    const components = renderError(message);
+    const components = this.serverMessageFormatter.format({
+      color: 'red',
+      kind: 'Error',
+      content: message,
+    });
     this.sendComponents(components, target);
     log.error('[' + message + ']');
   }
