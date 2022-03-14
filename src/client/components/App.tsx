@@ -16,7 +16,7 @@ import {
   EffectComponent,
   AlertContainer,
 } from '@/client/components';
-import { EffectsContainer } from './Effects';
+import {EffectsContainer} from './Effects';
 
 const UIContainer = styled.div`
   position: fixed;

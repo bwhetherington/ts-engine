@@ -7,4 +7,5 @@ requires:
 modifiers:
   rate: -0.3
   shotInaccuracy: 0.5
+  shotSpread: 0.5
   weaponDamage: 0.5

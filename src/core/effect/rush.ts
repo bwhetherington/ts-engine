@@ -1,6 +1,6 @@
 import {Effect, EffectManager} from '@/core/effect';
 import {KillEvent, Unit, WorldManager} from '@/core/entity';
-import { ModifierEffect } from './modifier';
+import {ModifierEffect} from './modifier';
 
 export class RushEffect extends Effect {
   public static typeName: string = 'RushEffect';
@@ -16,7 +16,9 @@ export class RushEffect extends Effect {
       })
       .filter((target) => target.getXPWorth() > 0)
       .forEach(() => {
-        const buff = EffectManager.instantiate('ModifierEffect') as ModifierEffect;
+        const buff = EffectManager.instantiate(
+          'ModifierEffect'
+        ) as ModifierEffect;
         buff.modifiers.set('damage', 0.2);
         buff.modifiers.set('speed', 0.2);
         buff.duration = 10;

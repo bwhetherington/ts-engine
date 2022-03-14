@@ -12,7 +12,7 @@ export const PanelContainer = styled.div`
   padding: ${UI_MARGIN};
   border-radius: ${UI_MARGIN};
   pointer-events: auto;
-  font-size: 0.9em;
+  font-size: 1em;
   user-select: none;
   color: white;
   backdrop-filter: blur(20px);
@@ -25,7 +25,7 @@ interface ColumnProps {
 
 export const Column = styled.div<ColumnProps>`
   display: flex;
-  flex-direction: ${(props) => props.invert ? 'column-reverse' : 'column'};
+  flex-direction: ${(props) => (props.invert ? 'column-reverse' : 'column')};
   pointer-events: inherit;
   gap: ${(props) => props.margin ?? UI_MARGIN};
 `;
@@ -77,6 +77,7 @@ export const Button = styled.button`
   outline: none;
   color: white;
   font-family: inherit;
+  font-size: inherit;
   margin: 2px;
   cursor: pointer;
 

@@ -25,14 +25,14 @@ const TooltipBox = styled.div`
 `;
 
 const TooltipCard = styled.div`
-   & ${TooltipText}:hover + ${TooltipBox} {
-      visibility: visible;
-      color: #fff;
-      background-color: rgba(0, 0, 0, 0.8);
-      width: 230px;
-      padding: 8px 8px;
-      border-radius: 4px;
-   }
+  & ${TooltipText}:hover + ${TooltipBox} {
+    visibility: visible;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 230px;
+    padding: 8px 8px;
+    border-radius: 4px;
+  }
 `;
 
 // example:
@@ -42,11 +42,7 @@ const TooltipCard = styled.div`
 
 export const Tooltip: React.FC<TooltipProps> = (props) => (
   <TooltipCard>
-    <TooltipText>
-      {props.children}
-    </TooltipText>
-    <TooltipBox>
-      {props.content}
-    </TooltipBox>
+    <TooltipText>{props.children}</TooltipText>
+    <TooltipBox>{props.content}</TooltipBox>
   </TooltipCard>
 );

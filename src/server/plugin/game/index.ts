@@ -1,5 +1,5 @@
 import {AlertManager} from '@/core/alert';
-import { EffectManager } from '@/core/effect';
+import {EffectManager} from '@/core/effect';
 import {
   BaseHero,
   BaseEnemy,
@@ -52,7 +52,7 @@ const ENEMY_COSTS: Record<string, EnemyEntry> = {
     minWave: 5,
   },
   FlameEnemy: {
-    cost: 15,
+    cost: 25,
     minWave: 10,
   },
   SwarmEnemy: {
@@ -356,7 +356,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       handler: async () => {
         await this.transition(GameAction.Stop);
       },
-    })
+    });
 
     this.registerCommand({
       name: 'pause',
@@ -381,7 +381,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
           player.hero?.addEffect(effect);
         }
       },
-    })
+    });
 
     this.registerCommand({
       name: 'level',

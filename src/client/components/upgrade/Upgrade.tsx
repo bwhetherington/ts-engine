@@ -5,10 +5,15 @@ import {sanitize} from 'dompurify';
 import {ClassUpgrade, ModifierUpgrade, Upgrade} from '@/core/upgrade';
 import {UUID} from '@/core/uuid';
 
-import {Button, Column, Panel, PanelHeader} from '@/client/components';
-import {BlueButton, Minor} from '../common';
-import {JsxEmit} from 'typescript';
-import {ModifiersComponent} from './Modifiers';
+import {
+  Button,
+  Column,
+  Panel,
+  PanelHeader,
+  BlueButton,
+  Minor,
+} from '@/client/components';
+import {ModifiersComponent} from '@/client/components/upgrade/Modifiers';
 
 interface UpgradeProps {
   id: UUID;
@@ -17,8 +22,8 @@ interface UpgradeProps {
 }
 
 const Container = styled.div`
-  width: 200px;
-  height: 280px;
+  width: 220px;
+  height: 320px;
   display: flex;
   flex-direction: column;
 `;

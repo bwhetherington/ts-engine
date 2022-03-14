@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Column, Tooltip} from '.';
-import { TooltipPosition } from './common';
+import {TooltipPosition} from './common';
 
 const boonColor = 'rgba(32, 128, 192, 0.85)';
 const conditionColor = 'rgba(192, 32, 32, 0.85)';
@@ -14,7 +14,7 @@ const EffectBox = styled.div<EffectBoxProps>`
   width: 30px;
   height: 30px;
   text-align: center;
-  background: ${(props) => props.isBoon ? boonColor : conditionColor};
+  background: ${(props) => (props.isBoon ? boonColor : conditionColor)};
   color: white;
   border-radius: 4px;
   display: flex;

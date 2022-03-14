@@ -19,6 +19,8 @@ interface Options {
   isFullScreen?: boolean;
 }
 
+const DEFAULT_FONT = 'Roboto Mono';
+
 function createFontString(font: string, size: number, scale: number): string {
   const fontSize = size / scale;
   return `bold ${fontSize}px ${font}`;
@@ -236,7 +238,7 @@ export class HDCanvas implements GraphicsContext {
     const ctx = this.curContext;
     if (ctx) {
       const scaleValue = this.scaleValue;
-      const {font = 'Roboto Mono', size = 12} = style;
+      const {font = DEFAULT_FONT, size = 12} = style;
       ctx.lineWidth = this.options.lineWidth / scaleValue;
       ctx.textAlign = 'left';
 
@@ -290,7 +292,7 @@ export class HDCanvas implements GraphicsContext {
     const ctx = this.curContext;
     if (ctx) {
       const scaleValue = this.scaleValue;
-      const {font = 'Roboto Mono', size = 12, color = WHITE} = style;
+      const {font = DEFAULT_FONT, size = 12, color = WHITE} = style;
       ctx.lineWidth = this.options.lineWidth / scaleValue;
       this.setStyles(ctx, color, 0.35);
       ctx.textAlign = 'center';

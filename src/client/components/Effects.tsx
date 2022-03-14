@@ -1,11 +1,11 @@
 import React from 'react';
 import {EffectComponent, Props, Row} from '@/client/components';
-import { Iterator } from '@/core/iterator';
-import { Unit } from '@/core/entity';
-import { Component } from './Component';
-import { Empty } from '@/core/util';
-import { UpdateEffectCountEvent } from '@/core/effect';
-import { PlayerManager } from '@/core/player';
+import {Iterator} from '@/core/iterator';
+import {Unit} from '@/core/entity';
+import {Component} from './Component';
+import {Empty} from '@/core/util';
+import {UpdateEffectCountEvent} from '@/core/effect';
+import {PlayerManager} from '@/core/player';
 
 interface EffectsContainerState {
   effectCounts: [string, number][];
@@ -41,7 +41,9 @@ export class EffectsContainer extends Component<Empty, EffectsContainerState> {
 
   public override render(): JSX.Element {
     const topFive = Iterator.array(this.state.effectCounts)
-      .map(([name, count]) => <EffectComponent name={name} key={name} isBoon={true} stacks={count} />)
+      .map(([name, count]) => (
+        <EffectComponent name={name} key={name} isBoon={true} stacks={count} />
+      ))
       .toArray();
     return <Row>{topFive}</Row>;
   }

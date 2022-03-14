@@ -139,7 +139,11 @@ export class Tank extends Unit {
     return Math.max(1, adjusted);
   }
 
-  protected override onDamageOut(amount: number, type: DamageType, target: Unit) {
+  protected override onDamageOut(
+    amount: number,
+    type: DamageType,
+    target: Unit
+  ) {
     super.onDamageOut(amount, type, target);
     const lifeSteal = this.modifiers.get('lifeSteal') - 1;
     const healAmount = lifeSteal * amount;
@@ -148,7 +152,11 @@ export class Tank extends Unit {
     }
   }
 
-  protected override onDamageIn(amount: number, type: DamageType, source?: Unit) {
+  protected override onDamageIn(
+    amount: number,
+    type: DamageType,
+    source?: Unit
+  ) {
     super.onDamageIn(amount, type, source);
 
     if (!source) {

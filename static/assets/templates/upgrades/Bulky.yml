@@ -7,6 +7,7 @@ modifiers:
   armor: 2
   mass: 0.2
   speed: -0.2
+  absorption: 0.2
 requires:
   - Durable
   - Plated

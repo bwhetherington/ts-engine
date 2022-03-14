@@ -6,9 +6,6 @@ import {
   TextMessageOutEvent,
   TextComponent,
   TextCommandEvent,
-  renderInfo,
-  renderWarn,
-  renderError,
   TextComponents,
 } from '@/core/chat';
 import {LogManager} from '@/core/log';
@@ -30,8 +27,7 @@ const log = LogManager.forFile(__filename);
 const MESSAGE_FORMAT =
   '{style=bold|<}{color=$authorColor,style=bold|$authorName}{style=bold|>} $messageContent';
 
-const SERVER_FORMAT =
-  '{color=$color|$content}';
+const SERVER_FORMAT = '{color=$color|$content}';
 
 type CommandHandler = (player: Player, ...args: string[]) => void;
 
