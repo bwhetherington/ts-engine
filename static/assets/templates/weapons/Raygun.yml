@@ -5,4 +5,3 @@ rayDistance: 1000
 pierce: 3
 damage: 50
 rate: 0.7
-hitEffect: BurnEffect

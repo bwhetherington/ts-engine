@@ -187,4 +187,7 @@ export const KEYS: Record<string, number> = {
   radius: 189,
   DefenderEnemy: 190,
   SwarmEnemy: 191,
+  MegaEnemy: 192,
 };
+
+// {0:13,1:{14:{15:{"-njLY27uP77trBWWE2Y4KNm":{31:{32:#695e85c2,33:#d32370c2},36:{32:#d2bc4ec2,33:#d32334c2},37:{32:#f084a5c2,33:#96b47bc2},80:#ac87893f,81:{84:#c8354b3e}},"-fHpwtuJNS8NymF7etRBEHc":{31:{32:#1a8650c2,33:#7f763bc2},36:{32:#1a8614c2,33:#fdecfec1},80:#40fd19c0,81:{84:#f617de3e}},"-54eVcgMK1ci9Ca6AhXY3Tv":{31:{32:#cc7e1043,33:#fbbca7c1},36:{32:#cc7e1a43,33:#f6792fc1},37:{32:#18fe2544,33:#e7769342}},"-mCQ9eVXTaJpc5ujqF1aUdK":{31:{32:#fc281fc3,33:#7bf714c2},36:{32:#fc2815c3,33:#f7eed9c1},37:{32:#3b2f2fc4,33:#61347842}}}},39:{}}}

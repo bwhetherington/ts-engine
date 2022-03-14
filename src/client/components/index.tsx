@@ -8,6 +8,9 @@ export * from '@/client/components/table';
 export * from '@/client/components/form';
 export * from '@/client/components/Radar';
 export * from '@/client/components/upgrade';
+export * from '@/client/components/alert';
+export * from '@/client/components/Effect';
+export * from '@/client/components/Effects';
 
 import {App} from '@/client/components/App';
 import {LogManager} from '@/core/log';

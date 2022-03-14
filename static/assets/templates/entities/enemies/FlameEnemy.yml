@@ -1,0 +1,18 @@
+type: FlameEnemy
+extends: BaseEnemy
+mass: 5
+maxLife: 200
+life: 200
+speed: 200
+boundingBox: 
+  width: 30
+  height: 30
+cannons: 
+  - key: 0
+    shape: 
+      length: 25
+      height: 17.5
+      farHeight: 22.5
+weapon: FlameGun
+xpWorth: 40
+name: Flamer

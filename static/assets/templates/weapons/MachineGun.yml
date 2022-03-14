@@ -2,6 +2,6 @@ type: MachineGun
 extends: BaseBarrageGun
 projectileType: Projectile
 shotInaccuracy: 0.2
-projectileSpeed: 750
+projectileSpeed: 500
 damage: 15
 projectileShape: circle

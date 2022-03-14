@@ -674,6 +674,7 @@ export class WorldManager
     angle: number,
     maxDist: number,
     maxTargets: number,
+    width: number,
     validate: (x: Entity) => boolean
   ): RayCastResult {
     const stepSize = 5;
@@ -687,13 +688,18 @@ export class WorldManager
     const {x: dx, y: dy} = vec;
     vec.set(from);
 
+    const cursor = new Rectangle();
+    cursor.width = width;
+    cursor.height = width;
+
     while (
       traveled < maxDist &&
       hit.size < maxTargets &&
       this.isInBoundsPoint(vec)
     ) {
+      cursor.setCenter(vec);
       // Check if we collide with any entities
-      const querySet = new Set(this.queryPoint(vec));
+      const querySet = new Set(this.query(cursor));
 
       const candidates = Iterator.set(querySet).filter(validate);
       for (const candidate of candidates) {

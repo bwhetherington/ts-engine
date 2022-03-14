@@ -5,6 +5,7 @@ import {
   ModifierEffect,
   SpawnEffect,
   DotEffect,
+  RushEffect,
 } from '@/core/effect';
 import {UUID} from '@/core/uuid';
 
@@ -21,6 +22,7 @@ export class EffectManager extends LoadingManager<Effect> {
     this.registerAssetType(DotEffect);
     this.registerAssetType(ModifierEffect);
     this.registerAssetType(SpawnEffect);
+    this.registerAssetType(RushEffect);
     await this.loadAssetTemplates('templates/effects');
   }
 }

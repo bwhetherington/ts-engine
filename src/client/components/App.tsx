@@ -13,8 +13,10 @@ import {
   Column,
   Panel,
   Row,
+  EffectComponent,
+  AlertContainer,
 } from '@/client/components';
-import {AlertContainer} from './alert';
+import { EffectsContainer } from './Effects';
 
 const UIContainer = styled.div`
   position: fixed;
@@ -40,6 +42,9 @@ export const App: React.FunctionComponent<Record<string, never>> = () => (
               <EventBar label="XP" barStyle={BarStyle.XP} id="xp-bar" />
             </Column>
           </Panel>
+        </Column>
+        <Column invert={true}>
+          <EffectsContainer />
         </Column>
       </Row>
     </div>

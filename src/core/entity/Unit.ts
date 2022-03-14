@@ -9,6 +9,7 @@ import {
   Echo,
   CollisionLayer,
   Trail,
+  DamageType,
 } from '@/core/entity';
 import {Data, deserializeMapNumber, serialize} from '@/core/serialize';
 import {Vector} from '@/core/geometry';
@@ -17,7 +18,7 @@ import {Event, EventManager} from '@/core/event';
 import {NetworkManager} from '@/core/net';
 import {Color, COLOR_NAMES, reshade} from '@/core/graphics';
 import {TextColor} from '@/core/chat';
-import {Effect, EffectManager} from '@/core/effect';
+import {Effect, EffectManager, UpdateEffectCountEvent} from '@/core/effect';
 import {UUID} from '@/core/uuid';
 import {Iterator} from '@/core/iterator';
 import {isAssetIdentifier} from '@/core/assets';
@@ -50,7 +51,7 @@ export class Unit extends Entity {
   private life: number = 10;
   private isImmune: boolean = false;
   protected lifeRegen: number = 0;
-  protected lifeRegenDelay: number = 3;
+  protected lifeRegenDelay: number = 1;
   protected speed: number = 250;
   private xpWorth: number = 1;
 
@@ -58,7 +59,7 @@ export class Unit extends Entity {
   protected hpBar?: Bar;
   protected trail?: Trail;
   protected thrusting: number = 0;
-  protected effectCounts: Map<string, number> = new Map();
+  public effectCounts: Map<string, number> = new Map();
 
   private lastFlash: number = 0;
   private flashColor?: Color;
@@ -108,6 +109,16 @@ export class Unit extends Entity {
     return this.team !== other.team;
   }
 
+  private updateEffectCount() {
+    EventManager.emit<UpdateEffectCountEvent>({
+      type: 'UpdateEffectCountEvent',
+      data: {
+        targetID: this.id,
+        effectCounts: serialize(this.effectCounts),
+      },
+    });
+  }
+
   public addEffect(effect: Effect) {
     if (!this.isAlive()) {
       effect.cleanup();
@@ -121,6 +132,8 @@ export class Unit extends Entity {
 
     effect.target = this;
     effect.onStart();
+
+    this.updateEffectCount();
   }
 
   public getLifeRegenDelay(): number {
@@ -146,6 +159,8 @@ export class Unit extends Entity {
     }
 
     effect.cleanup();
+
+    this.updateEffectCount();
   }
 
   public removeAura(aura: Aura) {
@@ -197,34 +212,34 @@ export class Unit extends Entity {
     }
   }
 
-  protected calculateDamageOut(amount: number): number {
+  protected calculateDamageOut(amount: number, _type: DamageType): number {
     return amount;
   }
 
-  protected calculateDamageIn(amount: number): number {
+  protected calculateDamageIn(amount: number, _type: DamageType): number {
     return amount;
   }
 
-  protected onDamageIn(_amount: number, _source?: Unit) {}
+  protected onDamageIn(_amount: number, _type: DamageType, _source?: Unit) {}
 
-  protected onDamageOut(_amount: number, _target: Unit) {}
+  protected onDamageOut(_amount: number, _type: DamageType, _target: Unit) {}
 
   public heal(amount: number) {
     this.setLife(this.life + amount);
   }
 
-  public damage(amount: number, source?: Unit, isPure?: boolean) {
+  public damage(amount: number, type: DamageType, source?: Unit) {
     if (this.isImmune) {
       return;
     }
 
     let actualDamage: number;
 
-    if (isPure) {
+    if (type === DamageType.Pure) {
       actualDamage = amount;
     } else {
-      const damageOut = source?.calculateDamageOut(amount) ?? amount;
-      const damageIn = this.calculateDamageIn(damageOut);
+      const damageOut = source?.calculateDamageOut(amount, type) ?? amount;
+      const damageIn = this.calculateDamageIn(damageOut, type);
       actualDamage = damageIn;
     }
 
@@ -245,9 +260,9 @@ export class Unit extends Entity {
     WorldManager.batchDamageEvent(event.data);
 
     if (amount > 0) {
-      if (!isPure) {
-        this.onDamageIn(actualDamage, source);
-        source?.onDamageOut(actualDamage, this);
+      if (type !== DamageType.Pure) {
+        this.onDamageIn(actualDamage, type, source);
+        source?.onDamageOut(actualDamage, type, this);
       }
       this.flash();
     }
@@ -431,6 +446,7 @@ export class Unit extends Entity {
     }
     if (typeof effectCounts === 'object') {
       deserializeMapNumber(effectCounts, this.effectCounts);
+      this.updateEffectCount();
     }
     if (initialEffects instanceof Array) {
       Iterator.array(initialEffects)

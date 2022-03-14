@@ -1,3 +1,4 @@
+export * from '@/core/entity/damage';
 export * from '@/core/entity/Entity';
 export * from '@/core/entity/Unit';
 export * from '@/core/entity/Tank';

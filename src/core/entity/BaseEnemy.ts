@@ -49,14 +49,6 @@ export class BaseEnemy extends Tank {
     }
   }
 
-  public override damage(amount: number, source?: Unit) {
-    super.damage(amount, source);
-    if (NetworkManager.isServer() && source) {
-      // this.target = source;
-      // this.moveTo(source.position);
-    }
-  }
-
   public moveTo(targetPoint: Vector) {
     const path = WorldManager.findPath(this.position, targetPoint);
     if (path) {
@@ -138,7 +130,7 @@ export class BaseEnemy extends Tank {
 
       if (this.isActive) {
         const {target} = this;
-        if (target && target.isAlive) {
+        if (target?.isAlive()) {
           // Point cannon at target
           const angle = this.position.angleTo(target.position);
           this.weaponAngle = angle;

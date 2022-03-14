@@ -2,7 +2,7 @@ type: SwarmGun
 extends: BaseHomingGun
 projectileType: HomingProjectile
 shotInaccuracy: 0.5
-projectileSpeed: 300
+projectileSpeed: 175
 pierce: 1
 projectileDuration: 2.5
 damage: 12

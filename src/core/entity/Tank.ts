@@ -1,4 +1,4 @@
-import {Unit} from '@/core/entity';
+import {DamageType, Unit} from '@/core/entity';
 import {GraphicsContext} from '@/core/graphics';
 import {Data} from '@/core/serialize';
 import {FireEvent, Weapon, WeaponManager} from '@/core/weapon';
@@ -126,17 +126,21 @@ export class Tank extends Unit {
     this.fireTimer = Math.max(0, this.fireTimer - dt);
   }
 
-  public override calculateDamageIn(amount: number): number {
+  public override calculateDamageIn(amount: number, type: DamageType): number {
     if (amount === 0) {
       return 0;
     }
-    const armor = this.modifiers.get('armor') - 1 + this.armor;
-    const adjusted = (amount - armor) * (2 - this.modifiers.get('absorption'));
+    // Apply armor reduction to physical damage
+    if (type === DamageType.Physical) {
+      const armor = this.modifiers.get('armor') - 1 + this.armor;
+      amount -= armor;
+    }
+    const adjusted = amount * (2 - this.modifiers.get('absorption'));
     return Math.max(1, adjusted);
   }
 
-  protected override onDamageOut(amount: number, target: Unit) {
-    super.onDamageOut(amount, target);
+  protected override onDamageOut(amount: number, type: DamageType, target: Unit) {
+    super.onDamageOut(amount, type, target);
     const lifeSteal = this.modifiers.get('lifeSteal') - 1;
     const healAmount = lifeSteal * amount;
     if (healAmount > 0) {
@@ -144,8 +148,8 @@ export class Tank extends Unit {
     }
   }
 
-  protected override onDamageIn(amount: number, source?: Unit) {
-    super.onDamageIn(amount, source);
+  protected override onDamageIn(amount: number, type: DamageType, source?: Unit) {
+    super.onDamageIn(amount, type, source);
 
     if (!source) {
       return;
@@ -157,7 +161,7 @@ export class Tank extends Unit {
     }
 
     const reflectAmount = amount * reflect;
-    source.damage(reflectAmount, this, true);
+    source.damage(reflectAmount, DamageType.Pure, this);
   }
 
   protected override getLifeRegenTime(): number {

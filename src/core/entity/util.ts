@@ -147,4 +147,5 @@ export interface DisplayRayEvent {
   start: VectorLike;
   stop: VectorLike;
   sourceID: UUID;
+  width: number;
 }

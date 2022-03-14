@@ -3,6 +3,6 @@ extends: BaseGun
 projectileType: BigProjectile
 pierce: 5
 projectileSpread: 0.1
-projectileSpeed: 300
+projectileSpeed: 200
 damage: 50
 rate: 0.65

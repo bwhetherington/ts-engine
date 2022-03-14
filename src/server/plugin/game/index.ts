@@ -1,4 +1,5 @@
 import {AlertManager} from '@/core/alert';
+import { EffectManager } from '@/core/effect';
 import {
   BaseHero,
   BaseEnemy,
@@ -49,6 +50,10 @@ const ENEMY_COSTS: Record<string, EnemyEntry> = {
   HomingEnemy: {
     cost: 15,
     minWave: 5,
+  },
+  FlameEnemy: {
+    cost: 15,
+    minWave: 10,
   },
   SwarmEnemy: {
     cost: 25,
@@ -345,6 +350,15 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     await super.initialize(server);
 
     this.registerCommand({
+      name: 'reset',
+      help: 'Reset the game',
+      permissionLevel: 1,
+      handler: async () => {
+        await this.transition(GameAction.Stop);
+      },
+    })
+
+    this.registerCommand({
       name: 'pause',
       help: 'Pause the game',
       permissionLevel: 1,
@@ -356,6 +370,18 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         AlertManager.send(message);
       },
     });
+
+    this.registerCommand({
+      name: 'rush',
+      help: 'Add the rush effect',
+      permissionLevel: 1,
+      handler: (player) => {
+        const effect = EffectManager.instantiate('RushEffect');
+        if (effect) {
+          player.hero?.addEffect(effect);
+        }
+      },
+    })
 
     this.registerCommand({
       name: 'level',

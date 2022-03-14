@@ -3,5 +3,5 @@ extends: ModifierUpgrade
 name: Siphon
 description: Heal when dealing damage to enemies.
 modifiers: 
-  lifeSteal: 0.05
+  lifeSteal: 0.1
 isRepeatable: false

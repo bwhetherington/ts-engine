@@ -44,7 +44,7 @@ export class BaseGun extends Weapon {
     projectile.setPosition(source.getCannonTip());
     projectile.setColor(source.getBaseColor());
     projectile.parent = source;
-    projectile.damage = this.rollDamage(source);
+    projectile.damage = this.getDamage(source.modifiers);
     projectile.pierce = pierce;
     projectile.velocity.setXY(1, 0);
     projectile.velocity.angle = angle;

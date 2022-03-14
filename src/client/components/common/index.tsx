@@ -20,13 +20,13 @@ export const PanelContainer = styled.div`
 
 interface ColumnProps {
   margin?: number;
+  invert?: boolean;
 }
 
 export const Column = styled.div<ColumnProps>`
   display: flex;
-  flex-direction: column;
+  flex-direction: ${(props) => props.invert ? 'column-reverse' : 'column'};
   pointer-events: inherit;
-  /* pointer-events: none; */
   gap: ${(props) => props.margin ?? UI_MARGIN};
 `;
 
@@ -174,3 +174,4 @@ export const Line: React.FunctionComponent<LineProps> = ({label, value}) => (
 );
 
 export * from '@/client/components/common/inputs';
+export * from '@/client/components/common/tooltip';

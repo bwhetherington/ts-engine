@@ -23,6 +23,8 @@ export class Ray extends Entity {
   public static typeName: string = 'Ray';
   public static isTypeInitialized: boolean = false;
 
+  public width: number = 1;
+
   private start: Vector = new Vector();
   private stop: Vector = new Vector();
   private timeElapsed: number = 0;
@@ -43,7 +45,7 @@ export class Ray extends Entity {
       if (NetworkManager.isClient()) {
         EventManager.streamEvents<DisplayRayEvent>('DisplayRayEvent')
           .map((event) => event.data)
-          .forEach(({start, stop, sourceID}) => {
+          .forEach(({start, stop, sourceID, width}) => {
             let color;
             const source = WorldManager.getEntity(sourceID);
             if (source instanceof Unit) {
@@ -58,6 +60,7 @@ export class Ray extends Entity {
             }
             ray.initialize(start, stop);
             ray.setColor(color);
+            ray.width = width;
           });
       }
     }
@@ -114,7 +117,7 @@ export class Ray extends Entity {
     const t = this.getParameter();
     GraphicsPipeline.pipe()
       .alpha((t * 2) / 3)
-      .options({lineWidth: BASE_THICKNESS * t})
+      .options({lineWidth: BASE_THICKNESS * t * this.width})
       .translate(-this.position.x, -this.position.y)
       .run(ctx, (ctx) => {
         ctx.line(

@@ -1,0 +1,18 @@
+type: MegaEnemy
+extends: BaseEnemy
+mass: 50
+maxLife: 4000
+life: 4000
+armor: 20
+speed: 100
+boundingBox:
+  width: 80
+  height: 80
+cannons:
+  - key: 0
+    shape:
+      length: 60
+      height: 50
+weapon: HeavyGun
+xpWorth: 400
+name: Tank

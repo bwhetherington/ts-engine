@@ -211,11 +211,11 @@ export abstract class Weapon implements Serializable {
     }
   }
 
-  protected rollDamage(source: Tank): number {
-    return this.damage * source.modifiers.get('weaponDamage');
+  protected getDamage(modifiers: HeroModifier): number {
+    return this.damage * modifiers.get('weaponDamage');
   }
 
-  protected onHit(source: Unit, unit?: Unit) {
+  protected onHit(source: Tank, unit?: Unit) {
     if (!(this.hitEffect && unit)) {
       return;
     }

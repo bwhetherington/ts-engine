@@ -31,7 +31,7 @@ const MESSAGE_FORMAT =
   '{style=bold|<}{color=$authorColor,style=bold|$authorName}{style=bold|>} $messageContent';
 
 const SERVER_FORMAT =
-  '{color=$color,style=bold|<$kind>} {color=$color|$content}';
+  '{color=$color|$content}';
 
 type CommandHandler = (player: Player, ...args: string[]) => void;
 

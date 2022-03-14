@@ -6,6 +6,7 @@ import {
   Echo,
   EchoVariant,
   CollisionLayer,
+  DamageType,
 } from '@/core/entity';
 import {GraphicsContext, rgba} from '@/core/graphics';
 import {Data} from '@/core/serialize';
@@ -146,7 +147,7 @@ export class Projectile extends Entity {
         !this.ignoreEntities.has(unit.id) &&
         this.hitEntities.size < this.pierce
       ) {
-        unit.damage(this.damage, this.parent);
+        unit.damage(this.damage, DamageType.Physical, this.parent);
         unit.applyForce(this.velocity, this.mass);
         this.onHitInternal(unit);
         this.onHit?.(unit);

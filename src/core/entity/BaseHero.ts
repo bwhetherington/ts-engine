@@ -391,9 +391,9 @@ export class BaseHero extends Tank {
         CameraManager.setTargetXY(x, y);
       }
 
-      if (this.label) {
-        this.label.tag = ` [${this.level}]`;
-      }
+      // if (this.label) {
+      //   this.label.tag = ` [${this.level}]`;
+      // }
     }
 
     if (this.mouseDown && NetworkManager.isServer()) {
