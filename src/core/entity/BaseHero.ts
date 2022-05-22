@@ -32,6 +32,7 @@ import {
   UpgradeManager,
 } from '@/core/upgrade';
 import {Iterator} from '@/core/iterator';
+import {Vector} from '@/core/geometry';
 
 export interface LevelUpEvent {
   id: UUID;
@@ -97,10 +98,10 @@ export class BaseHero extends Tank {
       .forEach(({data: {action, x, y, button}}) => {
         if (action === MouseAction.Move) {
           // Subtract our position from mouse position
-          this.vectorBuffer.setXY(x, y);
-          this.vectorBuffer.add(this.position, -1);
-          this.weaponAngle = this.vectorBuffer.angle;
-          // this.targetAngle = this.vectorBuffer.angle;
+          Vector.BUFFER.setXY(x, y);
+          Vector.BUFFER.add(this.position, -1);
+          this.weaponAngle = Vector.BUFFER.angle;
+          // this.targetAngle = Vector.BUFFER.angle;
         }
         if (action === MouseAction.ButtonDown || MouseAction.ButtonUp) {
           const state = action === MouseAction.ButtonDown;
@@ -353,23 +354,23 @@ export class BaseHero extends Tank {
   }
 
   private computeMovementInput() {
-    this.vectorBuffer.setXY(0, 0);
+    Vector.BUFFER.setXY(0, 0);
     if (this.turning[MovementDirection.Up]) {
-      this.vectorBuffer.addXY(0, -1);
+      Vector.BUFFER.addXY(0, -1);
     }
     if (this.turning[MovementDirection.Down]) {
-      this.vectorBuffer.addXY(0, 1);
+      Vector.BUFFER.addXY(0, 1);
     }
     if (this.turning[MovementDirection.Left]) {
-      this.vectorBuffer.addXY(-1, 0);
+      Vector.BUFFER.addXY(-1, 0);
     }
     if (this.turning[MovementDirection.Right]) {
-      this.vectorBuffer.addXY(1, 0);
+      Vector.BUFFER.addXY(1, 0);
     }
-    this.vectorBuffer.normalize();
-    if (this.vectorBuffer.magnitudeSquared > 0) {
+    Vector.BUFFER.normalize();
+    if (Vector.BUFFER.magnitudeSquared > 0) {
       this.setThrusting(1);
-      this.targetAngle = this.vectorBuffer.angle % (2 * Math.PI);
+      this.targetAngle = Vector.BUFFER.angle % (2 * Math.PI);
     } else {
       this.setThrusting(0);
       this.targetAngle = this.angle;

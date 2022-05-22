@@ -32,15 +32,15 @@ export class UpgradePlugin extends Plugin {
         hero.storedUpgrades += 1;
       });
 
-    this.streamEvents<UpgradeEvent>('UpgradeEvent').forEach(
-      ({data: {hero, upgrade}}) => {
-        const player = hero.getPlayer();
-        if (!player) {
-          return;
-        }
-        ChatManager.info(`Upgrade selected: ${upgrade.name}`, player);
-      }
-    );
+    // this.streamEvents<UpgradeEvent>('UpgradeEvent').forEach(
+    //   ({data: {hero, upgrade}}) => {
+    //     const player = hero.getPlayer();
+    //     if (!player) {
+    //       return;
+    //     }
+    //     ChatManager.info(`Upgrade selected: ${upgrade.name}`, player);
+    //   }
+    // );
 
     this.registerCommand({
       name: 'upgrade',

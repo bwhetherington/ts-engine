@@ -1,10 +1,8 @@
 type: Relentless
 extends: ModifierUpgrade
 name: Relentless
-description: Remove the delay on life regeneration, but reduce your life and regeneration rate.
+description: Remove the delay on life regeneration, allowing you to regenerate while firing.
 modifiers:
   lifeRegenDelay: -1
-  lifeRegen: -0.3
-  life: -0.3
 requires:
   - Regeneration

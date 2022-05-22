@@ -1,0 +1,5 @@
+type: Rupture
+extends: EffectUpgrade
+name: Rupture
+description: Enemies explode when killed, dealing damage based on their maximum life.
+effect: RuptureEffect

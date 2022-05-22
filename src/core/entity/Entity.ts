@@ -11,6 +11,8 @@ import {GraphicsPipeline} from '@/core/graphics/pipe';
 import {clamp} from '@/core/util';
 import {NetworkManager} from '@/core/net';
 
+const SMOOTH_INCREMENT = 5;
+
 export class Entity
   extends Observer
   implements Bounded, Serializable, Renderable
@@ -23,7 +25,6 @@ export class Entity
   public position: Vector = new Vector(0, 0);
   public velocity: Vector = new Vector(0, 0);
   public angle: number = 0;
-  public vectorBuffer: Vector = new Vector(0, 0);
   public id: UUID;
   public color: Color = WHITE;
   public collisionLayer: CollisionLayer = CollisionLayer.Unit;
@@ -40,6 +41,8 @@ export class Entity
   public isInitialized: boolean = false;
   public attachedTo?: Entity;
 
+  protected timeCreated: number;
+
   private isExternal: boolean = false;
   private smoothTarget: Vector = new Vector();
   private smoothAngleTarget: number = 0;
@@ -48,6 +51,7 @@ export class Entity
     super();
     this.id = UUIDManager.generate();
     this.type = Entity.typeName;
+    this.timeCreated = EventManager.timeElapsed;
   }
 
   public static initializeType() {
@@ -124,7 +128,7 @@ export class Entity
       angleDiff -= 2 * Math.PI;
     }
 
-    const angleIncrement = 10 * dt * angleDiff;
+    const angleIncrement = SMOOTH_INCREMENT * dt * angleDiff;
     angle += angleIncrement;
     angle %= 2 * Math.PI;
 
@@ -157,10 +161,10 @@ export class Entity
       ) {
         this.setPosition(this.smoothTarget);
       } else {
-        this.vectorBuffer.set(this.smoothTarget);
-        this.vectorBuffer.add(this.position, -1);
-        const increment = clamp(10 * dt, 0, 1);
-        this.addPosition(this.vectorBuffer, increment);
+        Vector.BUFFER.set(this.smoothTarget);
+        Vector.BUFFER.add(this.position, -1);
+        const increment = clamp(SMOOTH_INCREMENT * dt, 0, 1);
+        this.addPosition(Vector.BUFFER, increment);
       }
 
       // Smooth angle
@@ -199,10 +203,10 @@ export class Entity
     const normal = this.getTotalFriction();
     if (normal > 0) {
       const oldAngle = this.velocity.angle;
-      this.vectorBuffer.set(this.velocity);
-      this.vectorBuffer.normalize();
+      Vector.BUFFER.set(this.velocity);
+      Vector.BUFFER.normalize();
       const scale = -dt * normal;
-      this.velocity.add(this.vectorBuffer, scale);
+      this.velocity.add(Vector.BUFFER, scale);
       const newAngle = this.velocity.angle;
       if (oldAngle - newAngle > 0.01 || this.velocity.magnitude < 1) {
         this.velocity.setXY(0, 0);
@@ -342,9 +346,9 @@ export class Entity
     if (position !== undefined) {
       if (this.shouldSmooth()) {
         // Extrapolate predicted position from velocity
-        this.vectorBuffer.set(this.smoothTarget);
-        this.vectorBuffer.deserialize(position);
-        this.smoothTarget.set(this.vectorBuffer);
+        Vector.BUFFER.set(this.smoothTarget);
+        Vector.BUFFER.deserialize(position);
+        this.smoothTarget.set(Vector.BUFFER);
         if (!this.isInitialized && setInitialized) {
           this.position.deserialize(position);
         }

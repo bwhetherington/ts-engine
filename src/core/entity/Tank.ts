@@ -474,9 +474,9 @@ export class Tank extends Unit {
       this.position.x,
       this.position.y,
       this.weaponAngle,
-      this.vectorBuffer
+      Vector.BUFFER
     );
-    return this.vectorBuffer;
+    return Vector.BUFFER;
   }
 
   public getCannonAngle(): number {

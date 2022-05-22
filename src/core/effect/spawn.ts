@@ -3,6 +3,7 @@ import {IntervalEffect} from '@/core/effect';
 import {Unit, WorldManager} from '@/core/entity';
 import {RNGManager} from '@/core/random';
 import {Data} from '@/core/serialize';
+import {Vector} from '@/core/geometry';
 
 export class SpawnEffect extends IntervalEffect {
   public static typeName: string = 'SpawnEffect';
@@ -39,11 +40,11 @@ export class SpawnEffect extends IntervalEffect {
     if (child instanceof Unit && this.source?.team !== undefined) {
       // Find position near character
       const RADIUS = 75;
-      child.vectorBuffer.setXY(1, 0);
-      child.vectorBuffer.angle = RNGManager.nextFloat(0, 2 * Math.PI);
-      child.vectorBuffer.magnitude = RNGManager.nextFloat(0, RADIUS);
-      child.vectorBuffer.add(this.source.position);
-      child.setPosition(child.vectorBuffer);
+      Vector.BUFFER.setXY(1, 0);
+      Vector.BUFFER.angle = RNGManager.nextFloat(0, 2 * Math.PI);
+      Vector.BUFFER.magnitude = RNGManager.nextFloat(0, RADIUS);
+      Vector.BUFFER.add(this.source.position);
+      child.setPosition(Vector.BUFFER);
       child.setTeam(this.source.team);
       child.setXPWorth(0);
     }

@@ -384,6 +384,30 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     });
 
     this.registerCommand({
+      name: 'burst',
+      help: 'Add the burst effect',
+      permissionLevel: 1,
+      handler: (player) => {
+        const effect = EffectManager.instantiate('BurstEffect');
+        if (effect) {
+          player.hero?.addEffect(effect);
+        }
+      },
+    });
+
+    this.registerCommand({
+      name: 'rupture',
+      help: 'Add the rupture effect',
+      permissionLevel: 1,
+      handler: (player) => {
+        const effect = EffectManager.instantiate('RuptureEffect');
+        if (effect) {
+          player.hero?.addEffect(effect);
+        }
+      },
+    });
+
+    this.registerCommand({
       name: 'level',
       help: 'Level up',
       permissionLevel: 1,

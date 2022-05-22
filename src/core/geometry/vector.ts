@@ -10,6 +10,8 @@ export class Vector implements DataSerializable, Serializable, VectorLike {
   public x: number = 0;
   public y: number = 0;
 
+  public static BUFFER = new Vector(0, 0);
+
   constructor(x: number = 0, y: number = 0) {
     this.setXY(x, y);
   }

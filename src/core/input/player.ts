@@ -2,6 +2,7 @@ import {Controller, MouseAction, MouseEvent} from '@/core/input';
 import {BaseHero} from '@/core/entity';
 import {UUID} from '@/core/uuid';
 import {NetworkManager} from '@/core/net';
+import {Vector} from '@/core/geometry';
 
 export class PlayerController extends Controller {
   private mouseDown: boolean = false;
@@ -18,9 +19,9 @@ export class PlayerController extends Controller {
           const {action, x, y} = event.data;
           if (action === MouseAction.Move) {
             // Subtract our position from mouse position
-            hero.vectorBuffer.setXY(x, y);
-            hero.vectorBuffer.add(hero.position, -1);
-            hero.angle = hero.vectorBuffer.angle;
+            Vector.BUFFER.setXY(x, y);
+            Vector.BUFFER.add(hero.position, -1);
+            hero.angle = Vector.BUFFER.angle;
           } else if (action === MouseAction.ButtonDown) {
             this.mouseDown = true;
           } else if (action === MouseAction.ButtonUp) {

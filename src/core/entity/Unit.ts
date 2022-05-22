@@ -340,10 +340,10 @@ export class Unit extends Entity {
     if (this.velocity.magnitude > speed) {
       // If we've exceeded the maximum velocity, apply a scaling friction
       const excess = this.velocity.magnitude - speed;
-      this.vectorBuffer.set(this.velocity);
-      this.vectorBuffer.normalize();
-      this.vectorBuffer.scale(-excess);
-      this.velocity.add(this.vectorBuffer);
+      Vector.BUFFER.set(this.velocity);
+      Vector.BUFFER.normalize();
+      Vector.BUFFER.scale(-excess);
+      this.velocity.add(Vector.BUFFER);
     }
 
     // Update effects
@@ -547,11 +547,11 @@ export class Unit extends Entity {
 
   public override collide(other?: Entity) {
     if (other && other.collisionLayer === CollisionLayer.Unit) {
-      this.vectorBuffer.set(other.position);
-      this.vectorBuffer.add(this.position, -1);
-      this.vectorBuffer.normalize();
+      Vector.BUFFER.set(other.position);
+      Vector.BUFFER.add(this.position, -1);
+      Vector.BUFFER.normalize();
       other.applyForce(
-        this.vectorBuffer,
+        Vector.BUFFER,
         this.getMass() * 300 * EventManager.lastStepDt
       );
     }

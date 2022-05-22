@@ -37,8 +37,6 @@ export class Projectile extends Entity {
   public showExplosion: boolean = true;
   public bounces: number = 0;
 
-  protected timeCreated: number;
-
   protected hitEntities: Set<UUID> = new Set();
   public ignoreEntities: Set<UUID> = new Set();
 
@@ -54,7 +52,6 @@ export class Projectile extends Entity {
     this.setColor(rgba(1.0, 0.6, 0.3, 0.8));
     this.boundingBox.width = 20;
     this.boundingBox.height = 20;
-    this.timeCreated = EventManager.timeElapsed;
 
     if (NetworkManager.isClient() && this.hasTrail()) {
       const trail = WorldManager.spawn(Trail);
@@ -81,13 +78,13 @@ export class Projectile extends Entity {
 
     if (
       other === undefined ||
-      other.collisionLayer === CollisionLayer.Geometry
+      (other.collisionLayer === CollisionLayer.Geometry)
     ) {
       // Bounce off of a wall
       this.bounces -= 1;
       if (this.bounces < 0) {
         this.hit();
-        this.remove(true);
+        this.remove(this.showExplosion);
       }
       return;
     }
@@ -154,7 +151,7 @@ export class Projectile extends Entity {
         this.hitEntities.add(unit.id);
 
         if (this.hitEntities.size >= this.pierce) {
-          this.remove(true);
+          this.remove(this.showExplosion);
           return false;
         }
       } else {

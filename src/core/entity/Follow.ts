@@ -1,5 +1,6 @@
 import {Entity, CollisionLayer} from '@/core/entity';
 import {clamp} from '@/core/util';
+import {Vector} from '@/core/geometry';
 
 const FOLLOW_SPEED: number = 20;
 const SNAP_DISTANCE: number = 0.25;
@@ -46,10 +47,10 @@ export class Follow extends Entity {
       return;
     }
 
-    this.vectorBuffer.set(this.parent.position);
-    this.vectorBuffer.add(this.position, -1);
+    Vector.BUFFER.set(this.parent.position);
+    Vector.BUFFER.add(this.position, -1);
     const increment = clamp(this.followSpeed * dt, 0, 1);
-    this.addPosition(this.vectorBuffer, increment);
+    this.addPosition(Vector.BUFFER, increment);
   }
 
   public follow(entity: Entity, speed: number = FOLLOW_SPEED) {
@@ -64,6 +65,5 @@ export class Follow extends Entity {
 
   public override shouldUpdateLocally(): boolean {
     return true;
-    // return !!this.parent?.shouldUpdateLocally();
   }
 }

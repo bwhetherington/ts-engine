@@ -15,6 +15,7 @@ export class Effect extends Observer implements Serializable {
   public static typeName: string = 'Effect';
 
   public type: string = Effect.typeName;
+  public name: string = this.type;
   public id: UUID;
   public target?: Unit;
   public source?: Unit;
@@ -64,6 +65,7 @@ export class Effect extends Observer implements Serializable {
     return {
       id: this.id,
       type: this.type,
+      name :this.name,
       targetId: this.target?.id,
       sourceId: this.source?.id,
       duration: this.duration,
@@ -71,12 +73,15 @@ export class Effect extends Observer implements Serializable {
   }
 
   public deserialize(data: Data, _initialize?: boolean) {
-    const {id, type, sourceId, targetId, duration} = data;
+    const {id, type, name, sourceId, targetId, duration} = data;
     if (isUUID(id)) {
       this.id = id;
     }
     if (typeof type === 'string') {
       this.type = type;
+    }
+    if (typeof name === 'string') {
+      this.name = name;
     }
     if (isUUID(sourceId)) {
       const source = WorldManager.getEntity(sourceId);

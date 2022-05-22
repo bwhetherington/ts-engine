@@ -1,49 +1,122 @@
-import {Entity, CollisionLayer} from '@/core/entity';
-import {StepEvent} from '@/core/event';
+import {CollisionLayer, Projectile, Unit, WorldManager} from '@/core/entity';
+import {EventManager} from '@/core/event';
 import {GraphicsContext} from '@/core/graphics';
+import {Rectangle} from '@/core/geometry';
+import {clamp, smoothStep} from '@/core/util';
+import { Data } from '../serialize';
+import {Iterator} from '@/core/iterator';
+import { NetworkManager } from '../net';
 
-function explodeFunction(t: number): number {
-  // `t` is the time remaining in [0..1]
-  t = 1 - t;
-  return (t + 1) / 2;
-}
+const SHOCKWAVE_WIDTH = 30;
 
-const DURATION = 0.3;
-
-export class Explosion extends Entity {
+export class Explosion extends Projectile {
   public static typeName: string = 'Explosion';
 
   public radius: number = 20;
 
-  private timeRemaining: number = DURATION;
-
   public constructor() {
     super();
     this.type = Explosion.typeName;
-    this.collisionLayer = CollisionLayer.Effect;
-    this.doSync = false;
+    this.collisionLayer = CollisionLayer.Aura;
+    this.showExplosion = false;
     this.isCollidable = false;
-    this.isVisible = true;
-
-    this.streamEvents<StepEvent>('StepEvent').forEach(({data: {dt}}) => {
-      this.timeRemaining -= dt;
-      if (this.timeRemaining <= 0) {
-        this.markForDelete();
-      }
-    });
   }
 
-  public override renderInternal(ctx: GraphicsContext) {
-    this.render(ctx);
+  protected override hasTrail(): boolean {
+    return false;
+  }
+
+  private getEndTime(): number {
+    return this.timeCreated + this.duration;
+  }
+
+  private updateBoundingBoxSize(radius: number) {
+    this.boundingBox.width = radius * 2;
+    this.boundingBox.height = radius * 2;
+  }
+
+  public override step(dt: number) {
+    super.step(dt);
+    const t = this.getParameter();
+    const radius = Math.max(1, t * this.radius);
+    this.updateBoundingBoxSize(radius);
+
+    if (NetworkManager.isServer()) {
+      for (const target of this.getTargets()) {
+        this.hit(target);
+      }
+    }
+  }
+
+  private getParameter(): number {
+    const end = this.getEndTime();
+    const progress = clamp(
+      (end - EventManager.timeElapsed) / this.duration,
+      0,
+      1
+    );
+    const t = smoothStep(progress);
+    return 1 - t;
+  }
+
+  private getTargets(): Iterator<Unit> {
+    return WorldManager.query(this.boundingBox)
+      .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
+
+      // Ignore entities that we have already hit or that we are ignoring
+      .filter((unit) => !(this.hitEntities.has(unit.id) || this.ignoreEntities.has(unit.id)))
+
+      // Ignore non-hostile units
+      .filter((unit) => {
+        return !this.parent || this.parent.isHostileTo(unit);
+      })
+
+      // Ignore units outside of the circle
+      .filter((unit) => {
+        // Verify that they are within the radius
+        const unitRadius = unit.boundingBox.width / 2;
+        const fullRadius = this.boundingBox.width / 2 + unitRadius;
+        if (
+          unit.position.distanceToXYSquared(this.position.x, this.position.y) >
+          fullRadius * fullRadius
+        ) {
+          return false;
+        }
+
+        return true;
+      });
   }
 
   public override render(ctx: GraphicsContext) {
-    const t = this.timeRemaining / DURATION;
-    const r = explodeFunction(t) * this.radius;
-    ctx.ellipse(-r, -r, 2 * r, 2 * r, this.getColor());
+    const radius = this.boundingBox.width / 2;
+    const color = {...this.getColor(), alpha: Math.max(0, (0.8 - this.getParameter()))};
+    const center = {...color, alpha: 0};
+    ctx.gradientCircle(
+      0,
+      0,
+      Math.max(radius - SHOCKWAVE_WIDTH, 0),
+      radius,
+      center,
+      color
+    );
   }
 
   public override shouldDeleteIfOffscreen(): boolean {
     return true;
+  }
+
+  public override serialize(): Data {
+    return {
+      ...super.serialize(),
+      radius: this.radius,
+    };
+  }
+
+  public override deserialize(data: Data): void {
+    super.deserialize(data);
+    const {radius} = data;
+    if (typeof radius === 'number') {
+      this.radius = radius;
+    }
   }
 }

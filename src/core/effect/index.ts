@@ -4,6 +4,8 @@ export * from '@/core/effect/dot';
 export * from '@/core/effect/spawn';
 export * from '@/core/effect/modifier';
 export * from '@/core/effect/rush';
+export * from '@/core/effect/burst';
+export * from '@/core/effect/rupture';
 
 import {UUID} from '@/core/uuid';
 

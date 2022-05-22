@@ -164,6 +164,20 @@ async function* debounce<T>(
   }
 }
 
+async function* takeEachN<T>(
+  gen: AsyncIterable<T>,
+  n: number
+): AsyncIterable<T> {
+  let counter = 0;
+  for await (const x of gen) {
+    counter += 1;
+    while (counter >= n) {
+      counter -= n;
+      yield x;
+    }
+  }
+}
+
 interface IteratorFunctions<T> {
   $yield(arg: T): Promise<void>;
   $yieldAll(args: Iterable<T>): Promise<void>;
@@ -473,6 +487,10 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
 
   public zip<U>(b: AsyncIterable<U>): AsyncIterator<[T, U]> {
     return AsyncIterator.generator(zip(this.generator, b));
+  }
+
+  public takeEachN(n: number): AsyncIterator<T> {
+    return this.chain(takeEachN(this, n));
   }
 
   private cleanup() {

@@ -1,6 +1,6 @@
 import {Projectile, Entity, WorldManager, Unit} from '@/core/entity';
 import {EventManager} from '@/core/event';
-import {DirectionVector, Rectangle} from '@/core/geometry';
+import {DirectionVector, Rectangle, Vector} from '@/core/geometry';
 import {NetworkManager} from '@/core/net';
 import {Data} from '@/core/serialize';
 import {isUUID} from '@/core/uuid';
@@ -68,10 +68,10 @@ export class HomingProjectile extends Projectile {
     if (NetworkManager.isServer() && this.isHoming) {
       const target = this.selectTarget();
       if (target) {
-        this.vectorBuffer.set(target.position);
-        this.vectorBuffer.add(this.position, -1);
-        this.vectorBuffer.magnitude = this.turnSpeed;
-        this.velocity.add(this.vectorBuffer);
+        Vector.BUFFER.set(target.position);
+        Vector.BUFFER.add(this.position, -1);
+        Vector.BUFFER.magnitude = this.turnSpeed;
+        this.velocity.add(Vector.BUFFER);
       }
 
       if (this.velocity.magnitudeSquared > this.maxSpeed * this.maxSpeed) {
