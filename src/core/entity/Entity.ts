@@ -10,8 +10,7 @@ import {AsyncIterator} from '@/core/iterator';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
 import {clamp} from '@/core/util';
 import {NetworkManager} from '@/core/net';
-
-const SMOOTH_INCREMENT = 5;
+import {Config, ConfigManager} from '../config';
 
 export class Entity
   extends Observer
@@ -19,7 +18,8 @@ export class Entity
 {
   public static typeName: string = 'Entity';
   public static typeNum: number = 0;
-  public static isTypeInitialized: boolean = false;
+
+  protected static config: Config = new Config();
 
   public boundingBox: Rectangle = new Rectangle(20, 20, 0, 0);
   public position: Vector = new Vector(0, 0);
@@ -55,9 +55,7 @@ export class Entity
   }
 
   public static initializeType() {
-    if (!Entity.isTypeInitialized) {
-      Entity.isTypeInitialized = true;
-    }
+    this.config = ConfigManager.getConfig('EntityConfig');
   }
 
   public applyForce(force: Vector, scalar: number = 1) {
@@ -128,7 +126,8 @@ export class Entity
       angleDiff -= 2 * Math.PI;
     }
 
-    const angleIncrement = SMOOTH_INCREMENT * dt * angleDiff;
+    const smoothIncrement = Entity.config.get('smoothIncrement');
+    const angleIncrement = smoothIncrement * dt * angleDiff;
     angle += angleIncrement;
     angle %= 2 * Math.PI;
 
@@ -163,7 +162,11 @@ export class Entity
       } else {
         Vector.BUFFER.set(this.smoothTarget);
         Vector.BUFFER.add(this.position, -1);
-        const increment = clamp(SMOOTH_INCREMENT * dt, 0, 1);
+        const increment = clamp(
+          Entity.config.get('smoothIncrement') * dt,
+          0,
+          1
+        );
         this.addPosition(Vector.BUFFER, increment);
       }
 

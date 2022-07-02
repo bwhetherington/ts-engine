@@ -20,6 +20,7 @@ export class Effect extends Observer implements Serializable {
   public target?: Unit;
   public source?: Unit;
   public duration?: number;
+  public isBoon: boolean = false;
   public isMarkedForDelete: boolean = false;
 
   constructor() {
@@ -65,15 +66,16 @@ export class Effect extends Observer implements Serializable {
     return {
       id: this.id,
       type: this.type,
-      name :this.name,
+      name: this.name,
       targetId: this.target?.id,
       sourceId: this.source?.id,
       duration: this.duration,
+      isBoon: this.isBoon,
     };
   }
 
   public deserialize(data: Data, _initialize?: boolean) {
-    const {id, type, name, sourceId, targetId, duration} = data;
+    const {id, type, name, sourceId, targetId, duration, isBoon} = data;
     if (isUUID(id)) {
       this.id = id;
     }
@@ -97,6 +99,9 @@ export class Effect extends Observer implements Serializable {
     }
     if (typeof duration === 'number') {
       this.duration = duration;
+    }
+    if (typeof isBoon === 'boolean') {
+      this.isBoon = isBoon;
     }
   }
 

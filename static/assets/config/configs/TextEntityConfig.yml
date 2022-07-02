@@ -1,0 +1,3 @@
+type: TextEntityConfig
+extends: Config
+format: "{color=$color|$text}{color=grey,style=small|$tag}"

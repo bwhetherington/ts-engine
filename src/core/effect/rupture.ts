@@ -1,8 +1,8 @@
 import {Effect} from '@/core/effect';
 import {Explosion, KillEvent, Unit, WorldManager} from '@/core/entity';
 
-export class RuptureEffect extends Effect {
-  public static typeName: string = 'RuptureEffect';
+export class BaseRuptureEffect extends Effect {
+  public static typeName: string = 'BaseRuptureEffect';
 
   public override onStart() {
     this.streamEvents<KillEvent>('KillEvent')
@@ -15,7 +15,10 @@ export class RuptureEffect extends Effect {
       })
       .filter((target) => target.getXPWorth() > 0)
       .forEach((target) => {
-        const explosion = WorldManager.spawnEntity('Explosion', target.position) as Explosion;
+        const explosion = WorldManager.spawnEntity(
+          'Explosion',
+          target.position
+        ) as Explosion;
         explosion.parent = this.target;
         explosion.duration = 1.5;
         explosion.radius = target.boundingBox.width * 5;

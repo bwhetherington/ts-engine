@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: path.resolve(__dirname, 'src', 'client', 'index.ts'),
@@ -40,9 +41,17 @@ module.exports = {
       '@': path.resolve(path.join(__dirname, 'src')),
     },
     extensions: ['.ts', '.tsx', '.js', '.json'],
+    fallback: {
+      buffer: require.resolve('buffer/'),
+    }
   },
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build', 'client'),
-  }
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+    }),
+  ]
 };

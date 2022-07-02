@@ -133,7 +133,7 @@ export class HDCanvas implements GraphicsContext {
     if (options.doFill !== undefined) {
       this.options.doFill = options.doFill;
     }
-    this.options.ignoreScale = !!options.ignoreScale;
+    this.options.isUiElement = !!options.isUiElement;
     this.options.useFancyAlpha = !!options.useFancyAlpha;
     this.options.uniformColor = !!options.uniformColor;
     // this.hidden?.setOptions(options);
@@ -366,7 +366,7 @@ export class HDCanvas implements GraphicsContext {
 
     const fullWidth = fullW ?? w;
 
-    if (this.options.ignoreScale) {
+    if (this.options.isUiElement) {
       ctx.lineWidth /= this.scaleValue;
       const newWidth = fullWidth / this.scaleValue;
       const newHeight = h / this.scaleValue;
@@ -408,7 +408,7 @@ export class HDCanvas implements GraphicsContext {
 
       const fullWidth = fullW ?? w;
 
-      if (this.options.ignoreScale) {
+      if (this.options.isUiElement) {
         ctx.lineWidth /= this.scaleValue;
         const newWidth = fullWidth / this.scaleValue;
         const newHeight = h / this.scaleValue;

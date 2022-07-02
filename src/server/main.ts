@@ -37,10 +37,12 @@ import {EffectManager} from '@/core/effect';
 import {AlertEvent, AlertManager} from '@/core/alert';
 import {LogKeysPlugin} from './plugin/keys';
 import {SerializeManager} from '@/core/serialize';
+import {ConfigManager} from '@/core/config';
 
 async function main(): Promise<void> {
   LogManager.initialize('debug', new ServerLogger());
   AssetManager.initialize(loadFile, loadDirectory);
+  await ConfigManager.initialize();
 
   const httpServer = await createServer({
     dirs: ['./static/', './build/client/'],

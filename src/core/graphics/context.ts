@@ -13,7 +13,7 @@ export interface GraphicsOptions {
   doStroke: boolean;
   uniformColor: boolean;
   doFill: boolean;
-  ignoreScale?: boolean;
+  isUiElement?: boolean;
   useFancyAlpha?: boolean;
 }
 

@@ -101,7 +101,6 @@ export class EventManager {
     this.isPropagationCanceled = false;
 
     const {type} = event;
-    // log.trace(`handle event: ${formatData(event)}`);
 
     const handlers = this.handlers[type];
     if (handlers !== undefined) {

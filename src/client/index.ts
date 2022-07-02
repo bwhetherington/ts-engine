@@ -23,12 +23,14 @@ import {ThemeManager} from '@/core/theme';
 import {EffectManager} from '@/core/effect';
 import {AlertEvent, AlertManager} from '@/core/alert';
 import {SerializeManager} from '@/core/serialize';
+import {ConfigManager} from '@/core/config';
 
 const log = LogManager.forFile(__filename);
 
 async function main(): Promise<void> {
   LogManager.initialize('debug', new ClientLogger());
   AssetManager.initialize(loadFile, loadDirectory);
+  await ConfigManager.initialize();
 
   loadReactUI();
 

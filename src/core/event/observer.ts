@@ -11,6 +11,7 @@ import {UUID} from '@/core/uuid';
 
 export abstract class Observer {
   private handlers: Record<string, Set<UUID>> = {};
+  private isCleanedUp: boolean = false;
 
   private getHandlers(type: string): Set<UUID> {
     let handlers = this.handlers[type];
@@ -81,5 +82,14 @@ export abstract class Observer {
         EventManager.removeListener(type, id);
       }
     });
+    this.isCleanedUp = true;
+  }
+
+  public async sleep(seconds: number): Promise<boolean> {
+    await this.streamInterval(seconds)
+      .take(1)
+      .takeUntil(() => this.isCleanedUp)
+      .drain();
+    return !this.isCleanedUp;
   }
 }

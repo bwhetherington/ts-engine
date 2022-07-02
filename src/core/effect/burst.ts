@@ -2,8 +2,8 @@ import {Effect} from '@/core/effect';
 import {Explosion, WorldManager} from '@/core/entity';
 import {FireEvent} from '@/core/weapon';
 
-export class BurstEffect extends Effect {
-  public static typeName: string = 'BurstEffect';
+export class BaseBurstEffect extends Effect {
+  public static typeName: string = 'BaseBurstEffect';
 
   public override onStart() {
     this.streamEvents<FireEvent>('FireEvent')
@@ -12,7 +12,10 @@ export class BurstEffect extends Effect {
       .takeEachN(5)
       .forEach((source) => {
         // Do something
-        const explosion = WorldManager.spawnEntity('Explosion', source.position) as Explosion;
+        const explosion = WorldManager.spawnEntity(
+          'Explosion',
+          source.position
+        ) as Explosion;
         explosion.parent = source;
         explosion.duration = 1;
         explosion.radius = 500;

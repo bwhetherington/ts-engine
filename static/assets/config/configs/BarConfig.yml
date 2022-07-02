@@ -1,0 +1,4 @@
+type: BarConfig
+extends: Config
+height: 12
+width: 70

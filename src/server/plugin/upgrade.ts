@@ -1,6 +1,5 @@
 import {LevelUpEvent, BaseHero, WorldManager} from '@/core/entity';
-import {UpgradeEvent, UpgradeManager} from '@/core/upgrade';
-import {ChatManager} from '@/server/chat';
+import {UpgradeManager} from '@/core/upgrade';
 
 import {Server} from '@/server/net';
 import {Plugin} from '@/server/plugin';
@@ -31,16 +30,6 @@ export class UpgradePlugin extends Plugin {
       .forEach(({hero}) => {
         hero.storedUpgrades += 1;
       });
-
-    // this.streamEvents<UpgradeEvent>('UpgradeEvent').forEach(
-    //   ({data: {hero, upgrade}}) => {
-    //     const player = hero.getPlayer();
-    //     if (!player) {
-    //       return;
-    //     }
-    //     ChatManager.info(`Upgrade selected: ${upgrade.name}`, player);
-    //   }
-    // );
 
     this.registerCommand({
       name: 'upgrade',

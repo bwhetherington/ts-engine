@@ -26,6 +26,9 @@ const TooltipBox = styled.div`
 
 const TooltipCard = styled.div`
   & ${TooltipText}:hover + ${TooltipBox} {
+    position: absolute;
+    left: 0;
+    top: 0;
     visibility: visible;
     color: #fff;
     background-color: rgba(0, 0, 0, 0.8);

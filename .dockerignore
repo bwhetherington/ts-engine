@@ -5,3 +5,4 @@ ignore
 env
 *.cpuprofile
 *.heapsnapshot
+*.old

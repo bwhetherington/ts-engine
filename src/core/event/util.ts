@@ -2,7 +2,7 @@ import {Socket} from '@/core/net';
 import {Player} from '@/core/player';
 import {UUID} from '@/core/uuid';
 
-type HandlerFunction<T, U> = (arg: Event<T>, id: UUID) => U;
+type HandlerFunction<T extends EventData, U> = (arg: Event<T>, id: UUID) => U;
 
 export type Handler<T extends EventData> = HandlerFunction<
   T,

@@ -1,0 +1,3 @@
+type: EntityConfig
+extends: Config
+smoothIncrement: 5

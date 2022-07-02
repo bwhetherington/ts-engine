@@ -157,7 +157,6 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     }
 
     enemy.composeModifiers(this.globalModifier);
-
     enemy.setPosition(position);
 
     if (team !== undefined) {
@@ -319,7 +318,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     });
   }
 
-  protected createMachine(): GameStateMachine {
+  protected override createMachine(): GameStateMachine {
     return new StateMachine(
       GameState.Starting,
       [

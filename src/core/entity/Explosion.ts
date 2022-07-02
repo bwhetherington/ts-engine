@@ -1,11 +1,10 @@
 import {CollisionLayer, Projectile, Unit, WorldManager} from '@/core/entity';
 import {EventManager} from '@/core/event';
 import {GraphicsContext} from '@/core/graphics';
-import {Rectangle} from '@/core/geometry';
 import {clamp, smoothStep} from '@/core/util';
-import { Data } from '../serialize';
+import {Data} from '../serialize';
 import {Iterator} from '@/core/iterator';
-import { NetworkManager } from '../net';
+import {NetworkManager} from '../net';
 
 const SHOCKWAVE_WIDTH = 30;
 
@@ -60,36 +59,47 @@ export class Explosion extends Projectile {
   }
 
   private getTargets(): Iterator<Unit> {
-    return WorldManager.query(this.boundingBox)
-      .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
+    return (
+      WorldManager.query(this.boundingBox)
+        .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
 
-      // Ignore entities that we have already hit or that we are ignoring
-      .filter((unit) => !(this.hitEntities.has(unit.id) || this.ignoreEntities.has(unit.id)))
+        // Ignore entities that we have already hit or that we are ignoring
+        .filter(
+          (unit) =>
+            !(this.hitEntities.has(unit.id) || this.ignoreEntities.has(unit.id))
+        )
 
-      // Ignore non-hostile units
-      .filter((unit) => {
-        return !this.parent || this.parent.isHostileTo(unit);
-      })
+        // Ignore non-hostile units
+        .filter((unit) => {
+          return !this.parent || this.parent.isHostileTo(unit);
+        })
 
-      // Ignore units outside of the circle
-      .filter((unit) => {
-        // Verify that they are within the radius
-        const unitRadius = unit.boundingBox.width / 2;
-        const fullRadius = this.boundingBox.width / 2 + unitRadius;
-        if (
-          unit.position.distanceToXYSquared(this.position.x, this.position.y) >
-          fullRadius * fullRadius
-        ) {
-          return false;
-        }
+        // Ignore units outside of the circle
+        .filter((unit) => {
+          // Verify that they are within the radius
+          const unitRadius = unit.boundingBox.width / 2;
+          const fullRadius = this.boundingBox.width / 2 + unitRadius;
+          if (
+            unit.position.distanceToXYSquared(
+              this.position.x,
+              this.position.y
+            ) >
+            fullRadius * fullRadius
+          ) {
+            return false;
+          }
 
-        return true;
-      });
+          return true;
+        })
+    );
   }
 
   public override render(ctx: GraphicsContext) {
     const radius = this.boundingBox.width / 2;
-    const color = {...this.getColor(), alpha: Math.max(0, (0.8 - this.getParameter()))};
+    const color = {
+      ...this.getColor(),
+      alpha: Math.max(0, 0.8 - this.getParameter()),
+    };
     const center = {...color, alpha: 0};
     ctx.gradientCircle(
       0,

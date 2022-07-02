@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Column, Tooltip} from '.';
-import {TooltipPosition} from './common';
+import {Column} from '.';
 
 const boonColor = 'rgba(32, 128, 192, 0.85)';
 const conditionColor = 'rgba(192, 32, 32, 0.85)';
@@ -27,8 +26,6 @@ const EffectStackLabel = styled.span`
   padding: 2px;
   padding-left: 4px;
   padding-right: 4px;
-  /* margin-left: auto;
-  margin-right: auto; */
   text-align: center;
   background: rgba(0, 0, 0, 0.75);
   color: white;
@@ -47,14 +44,11 @@ function abbreviateName(name: string, places = 2): string {
 export const EffectComponent: React.FC<EffectProps> = (props) => {
   const name = abbreviateName(props.name, 2);
   return (
-    <Column>
-      <EffectBox isBoon={false}>
-        {name}
-        {/* <Tooltip position={TooltipPosition.Top} content={props.name}>
-          {name}
-        </Tooltip> */}
-      </EffectBox>
-      <EffectStackLabel>{props.stacks}</EffectStackLabel>
-    </Column>
+    <>
+      <Column>
+        <EffectBox isBoon={props.isBoon}>{name}</EffectBox>
+        <EffectStackLabel>{props.stacks}</EffectStackLabel>
+      </Column>
+    </>
   );
 };

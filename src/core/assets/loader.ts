@@ -59,7 +59,13 @@ export class LoadingManager<T extends Asset> {
     }
   }
 
-  public registerAssetTemplate(template: AssetTemplate) {
+  public registerAssetTypes(...types: AssetType<T>[]) {
+    for (const Type of types) {
+      this.registerAssetType(Type);
+    }
+  }
+
+  protected registerAssetTemplate(template: AssetTemplate) {
     const {type, extends: base} = template;
 
     const baseInitializer = this.initializers[base];

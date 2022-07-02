@@ -4,10 +4,14 @@ import {rgb} from '@/core/graphics/color';
 import {CollisionLayer, Entity} from '@/core/entity';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
 import {clamp} from '@/core/util';
+import {ConfigManager} from '../config';
 
 const BORDER_COLOR = rgb(0.25, 0.25, 0.25);
 const BAR_COLOR = rgb(0.2, 0.9, 0.2);
 const FOLLOW_COLOR = rgb(0.85, 1, 0.85);
+
+export const BAR_HEIGHT = 12;
+export const BAR_WIDTH = 70;
 
 export class Bar extends Entity {
   public static typeName: string = 'Bar';
@@ -23,8 +27,9 @@ export class Bar extends Entity {
     this.isCollidable = false;
     this.isVisible = true;
     this.collisionLayer = CollisionLayer.HUD;
-    this.boundingBox.width = 70;
-    this.boundingBox.height = 12;
+    const config = ConfigManager.getConfig('BarConfig');
+    this.boundingBox.width = config.get('width');
+    this.boundingBox.height = config.get('height');
     this.friction = 0;
   }
 
@@ -56,7 +61,7 @@ export class Bar extends Entity {
 
       GraphicsPipeline.pipe()
         .options({
-          ignoreScale: true,
+          isUiElement: true,
           uniformColor: true,
           doFill: true,
           doStroke: false,
@@ -97,7 +102,7 @@ export class Bar extends Entity {
       // GraphicsPipeline.pipe()
       //   .options({
       //     lineWidth,
-      //     ignoreScale: true,
+      //     isUiElement: true,
       //     uniformColor: true,
       //   })
       //   .run(ctx, (ctx) => {
@@ -113,7 +118,7 @@ export class Bar extends Entity {
       // GraphicsPipeline.pipe()
       //   .options({
       //     lineWidth,
-      //     ignoreScale: true,
+      //     isUiElement: true,
       //   })
       //   .run(ctx, (ctx) => {
       //     ctx.roundRect(

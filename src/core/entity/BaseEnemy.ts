@@ -39,7 +39,7 @@ export class BaseEnemy extends Tank {
       this.setColor(randomColor());
       this.selectTarget();
       EventManager.sleep(RNGManager.nextFloat(0.5, 3)).then(() => {
-        this.streamInterval(3).forEach(() => {
+        this.streamInterval(1).forEach(() => {
           this.selectTarget();
         });
       });
@@ -50,7 +50,8 @@ export class BaseEnemy extends Tank {
   }
 
   public moveTo(targetPoint: Vector) {
-    const path = WorldManager.findPath(this.position, targetPoint);
+    // const path = WorldManager.findPath(this.position, targetPoint);
+    const path = [this.position, targetPoint];
     if (path) {
       this.followPath(path);
     }

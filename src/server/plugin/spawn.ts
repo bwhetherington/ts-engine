@@ -1,4 +1,4 @@
-import {WorldManager} from '@/core/entity';
+import {Team, Unit, WorldManager} from '@/core/entity';
 import {Vector} from '@/core/geometry';
 import {Iterator} from '@/core/iterator';
 import {Player} from '@/core/player';
@@ -17,7 +17,10 @@ export class SpawnPlugin extends Plugin {
     }
     const loc = new Vector(0, 0);
     Iterator.range(0, count ?? 1).forEach(() => {
-      WorldManager.spawnEntity(type, loc);
+      const unit = WorldManager.spawnEntity(type, loc);
+      if (unit instanceof Unit) {
+        unit.setTeam(Team.Red);
+      }
     });
   }
 

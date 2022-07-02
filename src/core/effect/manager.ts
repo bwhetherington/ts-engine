@@ -1,4 +1,4 @@
-import {LoadingManager} from '@/core/assets';
+import {AssetTemplate, LoadingManager} from '@/core/assets';
 import {
   Effect,
   IntervalEffect,
@@ -6,16 +6,30 @@ import {
   SpawnEffect,
   DotEffect,
   RushEffect,
-  BurstEffect,
-  RuptureEffect,
+  BaseBurstEffect,
+  BaseRuptureEffect,
 } from '@/core/effect';
-import {UUID} from '@/core/uuid';
+
+interface EffectInfo {
+  isBoon: boolean;
+}
 
 export class EffectManager extends LoadingManager<Effect> {
-  private effects: Map<UUID, Effect> = new Map();
+  private effectInfo: Map<string, EffectInfo> = new Map();
 
   constructor() {
     super('EffectManager');
+  }
+
+  public getInfo(type: string): EffectInfo | undefined {
+    return this.effectInfo.get(type);
+  }
+
+  protected override registerAssetTemplate(template: AssetTemplate): void {
+    this.effectInfo.set(template.type, {
+      isBoon: template.isBoon ?? false,
+    });
+    super.registerAssetTemplate(template);
   }
 
   public async initialize(): Promise<void> {
@@ -25,8 +39,8 @@ export class EffectManager extends LoadingManager<Effect> {
     this.registerAssetType(ModifierEffect);
     this.registerAssetType(SpawnEffect);
     this.registerAssetType(RushEffect);
-    this.registerAssetType(BurstEffect);
-    this.registerAssetType(RuptureEffect);
+    this.registerAssetType(BaseBurstEffect);
+    this.registerAssetType(BaseRuptureEffect);
     await this.loadAssetTemplates('templates/effects');
   }
 }

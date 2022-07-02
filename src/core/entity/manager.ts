@@ -178,32 +178,30 @@ export class WorldManager
   }
 
   private async registerAllEntities(): Promise<void> {
-    // Class entities
-    this.registerAssetType(Entity);
-    this.registerAssetType(Unit);
-    this.registerAssetType(BaseHero);
-    this.registerAssetType(Geometry);
-    this.registerAssetType(Explosion);
-    this.registerAssetType(Ray);
-    this.registerAssetType(Projectile);
-    this.registerAssetType(Tank);
-    this.registerAssetType(BaseEnemy);
-    this.registerAssetType(HomingProjectile);
-    this.registerAssetType(ShatterProjectile);
-    this.registerAssetType(Feed);
-    this.registerAssetType(Pickup);
-    this.registerAssetType(UpgradePickup);
-    this.registerAssetType(Aura);
-    this.registerAssetType(FlameProjectile);
-
-    // Effect entities
-    this.registerAssetType(Text);
-    this.registerAssetType(TimedText);
-    this.registerAssetType(Bar);
-    this.registerAssetType(Echo);
-    this.registerAssetType(Trail);
-    this.registerAssetType(Follow);
-
+    this.registerAssetTypes(
+      Entity,
+      Unit,
+      BaseHero,
+      Geometry,
+      Explosion,
+      Ray,
+      Projectile,
+      Tank,
+      BaseEnemy,
+      HomingProjectile,
+      ShatterProjectile,
+      Feed,
+      Pickup,
+      UpgradePickup,
+      Aura,
+      FlameProjectile,
+      Text,
+      TimedText,
+      Bar,
+      Echo,
+      Trail,
+      Follow
+    );
     await this.loadAssetTemplates('templates/entities');
   }
 

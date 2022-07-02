@@ -87,6 +87,19 @@ async function* takeWhile<T>(
   }
 }
 
+async function* takeUntil<T>(
+  gen: AsyncIterable<T>,
+  fn: (x: T) => MaybePromise<boolean>
+): AsyncIterable<T> {
+  for await (const x of gen) {
+    if (await fn(x)) {
+      break;
+    } else {
+      yield x;
+    }
+  }
+}
+
 async function* skip<T>(gen: AsyncIterable<T>, num: number): AsyncIterable<T> {
   let i = 0;
   for await (const x of gen) {
@@ -362,6 +375,10 @@ export class AsyncIterator<T> implements AsyncIterable<T> {
    */
   public takeWhile(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
     return this.chain(takeWhile(this, fn));
+  }
+
+  public takeUntil(fn: (x: T) => MaybePromise<boolean>): AsyncIterator<T> {
+    return this.chain(takeUntil(this, fn));
   }
 
   /**

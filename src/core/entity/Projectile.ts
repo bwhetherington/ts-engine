@@ -78,7 +78,7 @@ export class Projectile extends Entity {
 
     if (
       other === undefined ||
-      (other.collisionLayer === CollisionLayer.Geometry)
+      other.collisionLayer === CollisionLayer.Geometry
     ) {
       // Bounce off of a wall
       this.bounces -= 1;

@@ -4,12 +4,13 @@ import {CollisionLayer, Entity} from '@/core/entity';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
 import {TextFormatter} from '@/core/chat/format';
 import {isTextColor, TextColor} from '@/core/chat';
-
-const TEXT_FORMAT = '{color=$color|$text}{color=grey,style=small|$tag}';
-const TEXT_FORMATTER = new TextFormatter(TEXT_FORMAT);
+import {Config, ConfigManager} from '../config';
 
 export class Text extends Entity {
   public static typeName: string = 'Text';
+
+  protected static config = new Config();
+  protected static formatter: TextFormatter = new TextFormatter('$text');
 
   public text: string = '';
   public textColor: TextColor = 'none';
@@ -36,6 +37,11 @@ export class Text extends Entity {
     };
   }
 
+  public static override initializeType(): void {
+    this.config = ConfigManager.getConfig('TextEntityConfig');
+    this.formatter = new TextFormatter(this.config.get('format'));
+  }
+
   public override deserialize(data: Data) {
     super.deserialize(data);
 
@@ -55,7 +61,7 @@ export class Text extends Entity {
   }
 
   public override render(ctx: GraphicsContext) {
-    const components = TEXT_FORMATTER.format({
+    const components = Text.formatter.format({
       color: this.textColor,
       text: this.text,
       tag: this.tag,

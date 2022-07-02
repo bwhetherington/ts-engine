@@ -6,3 +6,4 @@ env
 *.env
 *.cpuprofile
 *.heapsnapshot
+*.old

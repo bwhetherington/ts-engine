@@ -2,3 +2,4 @@ type: EnrageEffect
 extends: ModifierEffect
 modifiers:
   damage: 0.2
+isBoon: true
