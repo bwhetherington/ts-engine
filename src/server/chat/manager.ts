@@ -1,6 +1,6 @@
 import * as process from 'process';
 
-import {EventManager, Event} from '@/core/event';
+import {EventManager, Event, makeEvent} from '@/core/event';
 import {NetworkManager} from '@/core/net';
 import {
   TextMessageInEvent,
@@ -119,7 +119,7 @@ export class ServerChatManager {
       }
     );
 
-    EventManager.streamEventsForPlayer<TextMessageInEvent>('TextMessageInEvent')
+    EventManager.streamEventsForPlayer(TextMessageInEvent)
       .filter(({player}) => player.hasJoined)
       .forEach(({data, player}) => {
         const {name} = player;
@@ -128,7 +128,7 @@ export class ServerChatManager {
         log.info(`[<${name}> ${data.content}]`);
       });
 
-    EventManager.streamEventsForPlayer<TextCommandEvent>('TextCommandEvent')
+    EventManager.streamEventsForPlayer(TextCommandEvent)
       .filter(({player}) => player.hasJoined)
       .forEach(({data: {command, args}, player}) => {
         this.handleCommand(player, command, args);
@@ -444,11 +444,8 @@ export class ServerChatManager {
     target: number | Player = -1
   ) {
     const socket = target instanceof Player ? target.socket : target;
-    const outEvent: Event<TextMessageOutEvent> = {
-      type: 'TextMessageOutEvent',
-      data: {
-        components,
-      },
+    const outEvent = {
+      ...makeEvent(TextMessageOutEvent, {components}),
       socket,
     };
     EventManager.emit(outEvent);

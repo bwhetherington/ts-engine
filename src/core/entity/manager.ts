@@ -238,7 +238,7 @@ export class WorldManager
         });
     }
 
-    EventManager.streamEvents<StepEvent>('StepEvent', Priority.High).forEach(
+    EventManager.streamEvents(StepEvent, Priority.High).forEach(
       ({data: {dt}}) => this.step(dt)
     );
   }

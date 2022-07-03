@@ -1,5 +1,5 @@
 import {renderMessage, TextComponents, TextMessageOutEvent} from '@/core/chat';
-import {Event, EventManager} from '@/core/event';
+import {Event, EventManager, makeEvent} from '@/core/event';
 import {NetworkManager} from '@/core/net';
 import {Player} from '@/core/player';
 
@@ -16,12 +16,9 @@ export class PlayerChatManager {
       } else {
         message = [content];
       }
-      const event: Event<TextMessageOutEvent> = {
-        type: 'TextMessageOutEvent',
-        data: {
-          components: message,
-        },
-      };
+      const event = makeEvent(TextMessageOutEvent, {
+        components: message,
+      });
       if (isServer) {
         NetworkManager.sendEvent(event);
       } else {

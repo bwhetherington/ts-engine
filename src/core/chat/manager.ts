@@ -1,4 +1,4 @@
-import {Event} from '@/core/event';
+import {Event, makeEvent} from '@/core/event';
 import {
   TextMessageOutEvent,
   TextComponent,
@@ -25,12 +25,7 @@ export abstract class ChatManager {
     components: (string | null | TextComponent)[],
     target: number | Player = -1
   ) {
-    const outEvent: Event<TextMessageOutEvent> = {
-      type: 'TextMessageOutEvent',
-      data: {
-        components,
-      },
-    };
+    const outEvent = makeEvent(TextMessageOutEvent, {components});
     const socket = target instanceof Player ? target.socket : target;
     this.dispatch(outEvent, socket);
   }

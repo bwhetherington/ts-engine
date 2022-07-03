@@ -16,7 +16,7 @@ export class SyncManager extends Observer {
       }
     );
 
-    this.streamEvents<StepEvent>('StepEvent', Priority.Lowest)
+    this.streamEvents(StepEvent, Priority.Lowest)
       .map(() => {
         const event: Event<SyncEvent> = {
           type: 'SyncEvent',

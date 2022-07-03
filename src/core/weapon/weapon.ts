@@ -27,7 +27,7 @@ export abstract class Weapon implements Serializable {
   private id?: UUID;
 
   public constructor() {
-    this.id = EventManager.addListener<StepEvent>('StepEvent', (event) => {
+    this.id = EventManager.addListener(StepEvent, (event) => {
       const {dt} = event.data;
       if (this.cooldown > 0) {
         this.cooldown -= dt;
@@ -37,7 +37,7 @@ export abstract class Weapon implements Serializable {
 
   public cleanup() {
     if (this.id !== undefined) {
-      EventManager.removeListener('StepEvent', this.id);
+      EventManager.removeListener(StepEvent, this.id);
     }
   }
 

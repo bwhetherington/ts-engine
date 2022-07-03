@@ -42,7 +42,8 @@ export class Server extends Node {
     this.freedSockets = [];
 
     let timeElapsed = 0;
-    EventManager.addListener<StepEvent>('StepEvent', (event) => {
+
+    EventManager.streamEvents(StepEvent).forEach((event) => {
       timeElapsed += event.data.dt;
       if (timeElapsed >= 1) {
         timeElapsed %= 1;

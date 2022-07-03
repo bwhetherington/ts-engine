@@ -24,7 +24,7 @@ export class AlertContainer extends Component<Empty, State> {
   }
 
   public override componentDidMount() {
-    this.streamEvents<AlertEvent>('AlertEvent').forEach((event) => {
+    this.streamEvents(AlertEvent).forEach((event) => {
       this.addAlert(event.data);
     });
     this.streamInterval(0.5).forEach(() => {

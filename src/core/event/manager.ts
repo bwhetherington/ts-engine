@@ -1,6 +1,7 @@
 import {Queue} from '@/core/util/queue';
 import {
   Event,
+  EventType,
   GameEvent,
   GameHandler,
   Handler,
@@ -9,6 +10,10 @@ import {
   Priority,
   BatchEvent,
   priorities,
+  getTypeId,
+  TypeId,
+  makeEventType,
+  makeEvent,
 } from '@/core/event';
 import {UUID, UUIDManager} from '@/core/uuid';
 import {LogManager} from '@/core/log';
@@ -20,6 +25,7 @@ const log = LogManager.forFile(__filename);
 export interface StepEvent {
   dt: number;
 }
+export const StepEvent = makeEventType<StepEvent>('StepEvent');
 
 type GameHandlers = Record<UUID, GameHandler>[];
 
@@ -32,6 +38,12 @@ export class EventManager {
   public stepCount: number = 0;
 
   private isPropagationCanceled: boolean = false;
+
+  public streamType<T extends EventData>(
+    ident: EventType<T>
+  ): AsyncIterator<Event<T>> {
+    return this.streamEvents<T>(ident[0]);
+  }
 
   public initialize() {
     // Handle all events in batch events
@@ -47,6 +59,10 @@ export class EventManager {
 
   public emit<E extends EventData>(event: Event<E>) {
     this.events.enqueue(event);
+  }
+
+  public emitEvent<E extends EventData>(type: EventType<E>, data: E) {
+    this.emit(makeEvent(type, data));
   }
 
   private getHandlers(type: string): GameHandlers {
@@ -68,10 +84,11 @@ export class EventManager {
   }
 
   public addListener<E extends EventData>(
-    type: string,
+    typeId: TypeId<E>,
     handler: Handler<E>,
     priority: Priority = Priority.Normal
   ): UUID {
+    const type = getTypeId(typeId);
     const handlers = this.getHandlers(type);
     const id = UUIDManager.generate();
     handlers[priority][id] = handler;
@@ -80,7 +97,11 @@ export class EventManager {
     return id;
   }
 
-  public removeListener(type: string, id: UUID): boolean {
+  public removeListener<E extends EventData>(
+    typeId: TypeId<E>,
+    id: UUID
+  ): boolean {
+    const type = getTypeId(typeId);
     const handlers = this.getHandlers(type);
     for (const priority of priorities()) {
       const priorityHandlers = handlers[priority];
@@ -129,10 +150,7 @@ export class EventManager {
 
   public async step(dt: number): Promise<void> {
     this.lastStepDt = dt;
-    this.emit<StepEvent>({
-      type: 'StepEvent',
-      data: {dt},
-    });
+    this.emitEvent(StepEvent, {dt});
     await this.pollEvents();
     this.timeElapsed += dt;
     this.stepCount += 1;
@@ -145,7 +163,7 @@ export class EventManager {
   public sleep(time: number): Promise<void> {
     return new Promise((resolve) => {
       let passed = 0;
-      this.addListener<StepEvent>('StepEvent', (event, id) => {
+      this.addListener(StepEvent, (event, id) => {
         passed += event.data.dt;
         if (passed >= time) {
           this.removeListener('StepEvent', id);
@@ -157,7 +175,7 @@ export class EventManager {
 
   public runPeriodic(period: number, action: () => void): UUID {
     let passed = 0;
-    return this.addListener<StepEvent>('StepEvent', (event) => {
+    return this.addListener(StepEvent, (event) => {
       passed += event.data.dt;
       while (passed >= period) {
         passed -= period;
@@ -167,14 +185,15 @@ export class EventManager {
   }
 
   public streamEvents<E extends EventData>(
-    type: string,
+    type: TypeId<E>,
     priority: Priority = Priority.Normal,
     allowExternal: boolean = false
   ): AsyncIterator<Event<E>> {
     let id: UUID;
+    const eventType = getTypeId(type);
     const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
       id = this.addListener<E>(
-        type,
+        eventType,
         async (event) => {
           await $yield(event);
         },
@@ -182,7 +201,7 @@ export class EventManager {
       );
     });
     iter.onComplete = () => {
-      this.removeListener(type, id);
+      this.removeListener(eventType, id);
     };
     if (allowExternal) {
       return iter;
@@ -199,16 +218,16 @@ export class EventManager {
     priority: Priority = Priority.Normal,
     allowExternal: boolean = false
   ): AsyncIterator<void> {
-    return this.streamEvents<StepEvent>('StepEvent', priority, allowExternal)
+    return this.streamEvents(StepEvent, priority, allowExternal)
       .map(() => {})
       .debounce(period);
   }
 
   public streamEventsForPlayer<E extends EventData>(
-    type: string,
+    typeId: TypeId<E>,
     priority: Priority = Priority.Normal
   ): AsyncIterator<PlayerEvent<E>> {
-    return this.streamEvents<E>(type, priority, true).filterMap(
+    return this.streamEvents<E>(typeId, priority, true).filterMap(
       ({data, socket, type}) => {
         const player = PlayerManager.getSocket(socket);
         return player ? {data, player, type} : undefined;

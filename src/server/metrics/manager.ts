@@ -33,22 +33,19 @@ export class MetricsManager {
 
     const frameTimes = new SizedQueue<number>(100);
 
-    EventManager.addListener<StepEvent>('StepEvent', (event) => {
+    EventManager.addListener(StepEvent, (event) => {
       frameTimes.enqueue(event.data.dt);
       this.timer += event.data.dt;
       if (this.timer > 1) {
         this.timer %= 1;
-        NetworkManager.sendEvent<MetricsEvent>({
-          type: 'MetricsEvent',
-          data: {
-            tps: calculateTps(frameTimes),
-            entities: WorldManager.getEntityCount(),
-            listeners: EventManager.getListenerCount(),
-            connections: 0,
-            timeElapsed: EventManager.timeElapsed,
-            pings: this.pings,
-            uuids: UUIDManager.getCount(),
-          },
+        NetworkManager.sendTypedEvent(MetricsEvent, {
+          tps: calculateTps(frameTimes),
+          entities: WorldManager.getEntityCount(),
+          listeners: EventManager.getListenerCount(),
+          connections: 0,
+          timeElapsed: EventManager.timeElapsed,
+          pings: this.pings,
+          uuids: UUIDManager.getCount(),
         });
       }
     });

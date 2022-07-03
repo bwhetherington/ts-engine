@@ -26,7 +26,7 @@ export class PlayerManager implements Serializable {
     });
 
     if (NetworkManager.isClient()) {
-      EventManager.addListener<MetricsEvent>('MetricsEvent', (event) => {
+      EventManager.streamEvents(MetricsEvent).forEach((event) => {
         const {pings} = event.data;
         Iterator.entries(pings).forEach(([id, ping]) => {
           const player = this.getPlayer(id);

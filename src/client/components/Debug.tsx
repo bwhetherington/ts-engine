@@ -36,7 +36,7 @@ export class Debug extends Component<Empty, DebugState> {
   }
 
   public componentDidMount() {
-    this.streamEvents<StepEvent>('StepEvent').forEach(async () => {
+    this.streamEvents(StepEvent).forEach(async () => {
       await this.updateState({
         fps: MetricsManager.getAverageFPS(),
         clientEntities: WorldManager.getEntityCount(),
@@ -45,7 +45,7 @@ export class Debug extends Component<Empty, DebugState> {
       });
     });
 
-    this.streamEvents<MetricsEvent>('MetricsEvent').forEach(async (event) => {
+    this.streamEvents(MetricsEvent).forEach(async (event) => {
       // Calculate client ping
       const partialState: Partial<DebugState> = {
         tps: event.data.tps,

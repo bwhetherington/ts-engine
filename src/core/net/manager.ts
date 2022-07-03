@@ -1,7 +1,7 @@
 import {Message, Socket, Node, DefaultNode} from '@/core/net';
 import {LogManager} from '@/core/log';
 import {HTTPClient} from '@/core/net/http';
-import {Event, EventData} from '@/core/event';
+import {Event, EventData, EventType, makeEvent} from '@/core/event';
 
 const log = LogManager.forFile(__filename);
 
@@ -28,6 +28,15 @@ export class NetworkManager {
   }
 
   public sendEvent<E extends EventData>(event: Event<E>, socket: Socket = -1) {
+    this.node.send(event, socket);
+  }
+
+  public sendTypedEvent<E extends EventData>(
+    type: EventType<E>,
+    data: E,
+    socket: Socket = -1
+  ) {
+    const event = makeEvent(type, data);
     this.node.send(event, socket);
   }
 

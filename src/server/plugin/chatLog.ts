@@ -50,11 +50,7 @@ export class ChatLogPlugin extends Plugin {
       flags: 'a',
     });
 
-    this.streamEvents<TextMessageOutEvent>(
-      'TextMessageOutEvent',
-      Priority.Highest,
-      true
-    )
+    this.streamEvents(TextMessageOutEvent, Priority.Highest, true)
       .filter((event) => event.socket === -1)
       .map(({data: {components}}) => components)
       .map(generateString)

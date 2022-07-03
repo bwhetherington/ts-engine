@@ -61,13 +61,7 @@ async function main(): Promise<void> {
   server.initialize(httpServer);
   NetworkManager.initialize(server, new ServerHTTPClient(serverAuth));
   AlertManager.initialize((event: AlertEvent, target: number) => {
-    NetworkManager.sendEvent<AlertEvent>(
-      {
-        type: 'AlertEvent',
-        data: event,
-      },
-      target
-    );
+    NetworkManager.sendTypedEvent(AlertEvent, event, target);
   });
   ChatManager.initialize();
   server.start(parseInt(process.env.PORT ?? '0') || 8080);

@@ -1,3 +1,4 @@
+import {makeEventType} from '@/core/event';
 export {TextFormatter} from '@/core/chat/format';
 export {ChatManager as CM} from '@/core/chat/manager';
 
@@ -48,19 +49,27 @@ export interface TextComponent {
 export interface TextMessageInEvent {
   content: string;
 }
+export const TextMessageInEvent =
+  makeEventType<TextMessageInEvent>('TextMessageInEvent');
 
 export interface TextMessageOutEvent {
   components: (string | null | TextComponent)[];
 }
+export const TextMessageOutEvent = makeEventType<TextMessageOutEvent>(
+  'TextMessageOutEvent'
+);
 
 export interface SetNameEvent {
   name: string;
 }
+export const SetNameEvent = makeEventType<SetNameEvent>('SetNameEvent');
 
 export interface TextCommandEvent {
   command: string;
   args: string[];
 }
+export const TextCommandEvent =
+  makeEventType<TextCommandEvent>('TextCommandEvent');
 
 export type TextComponents = (string | null | TextComponent)[];
 

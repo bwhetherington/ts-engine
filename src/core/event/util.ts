@@ -56,3 +56,25 @@ export interface EventData {
 export interface BatchEvent {
   events: GameEvent[];
 }
+
+export type EventType<T> = [string, T?];
+
+export function makeEventType<T>(name: string): EventType<T> {
+  return [name];
+}
+
+export function makeEvent<T extends EventData>(
+  type: EventType<T>,
+  data: T
+): Event<T> {
+  return {
+    type: type[0],
+    data,
+  };
+}
+
+export type TypeId<E extends EventData> = string | EventType<E>;
+
+export function getTypeId<E extends EventData>(type: TypeId<E>): string {
+  return typeof type === 'string' ? type : type[0];
+}

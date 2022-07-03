@@ -184,20 +184,18 @@ export class Chat extends Component<ChatProps, ChatState> {
   }
 
   public componentDidMount() {
-    this.streamEvents<TextMessageOutEvent>('TextMessageOutEvent').forEach(
-      ({data: {components}}) => {
-        const lines = concatLine(
-          this.state.lines,
-          components as TextComponents,
-          this.props.lineLimit
-        );
-        this.updateState({
-          lines,
-          lastFlash: EventManager.timeElapsed,
-          isFresh: true,
-        }).then(() => this.scrollToBottom());
-      }
-    );
+    this.streamEvents(TextMessageOutEvent).forEach(({data: {components}}) => {
+      const lines = concatLine(
+        this.state.lines,
+        components as TextComponents,
+        this.props.lineLimit
+      );
+      this.updateState({
+        lines,
+        lastFlash: EventManager.timeElapsed,
+        isFresh: true,
+      }).then(() => this.scrollToBottom());
+    });
 
     this.streamInterval(1)
       .filter(() => EventManager.timeElapsed - this.state.lastFlash >= 5)
@@ -309,11 +307,8 @@ export class Chat extends Component<ChatProps, ChatState> {
         },
       });
     } else {
-      NetworkManager.sendEvent<TextMessageInEvent>({
-        type: 'TextMessageInEvent',
-        data: {
-          content: message,
-        },
+      NetworkManager.sendTypedEvent(TextMessageInEvent, {
+        content: message,
       });
     }
     await this.updateState({

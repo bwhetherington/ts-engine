@@ -5,11 +5,9 @@ export class MetricsManager {
   private frameTimes: Queue<number> = new SizedQueue(100);
 
   public initialize() {
-    EventManager.streamEvents<StepEvent>('StepEvent').forEach(
-      ({data: {dt}}) => {
-        this.frameTimes.enqueue(dt);
-      }
-    );
+    EventManager.streamEvents(StepEvent).forEach(({data: {dt}}) => {
+      this.frameTimes.enqueue(dt);
+    });
   }
 
   public getAverageFPS(): number {

@@ -1,4 +1,5 @@
 import {UUID} from '@/core/uuid';
+import {makeEventType} from '../event';
 
 export interface MetricsEvent {
   tps: number;
@@ -9,8 +10,10 @@ export interface MetricsEvent {
   timeElapsed: number;
   pings: Record<UUID, number>;
 }
+export const MetricsEvent = makeEventType<MetricsEvent>('MetricsEvent');
 
 export interface PingEvent {
   playerID: UUID;
   ping: number;
 }
+export const PingEvent = makeEventType<PingEvent>('PingEvent');
