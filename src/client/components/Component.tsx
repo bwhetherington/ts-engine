@@ -6,6 +6,7 @@ import {
   StepEvent,
   Priority,
   EventType,
+  getTypeId,
 } from '@/core/event';
 import {AsyncIterator, iterateKeys} from '@/core/iterator';
 import {Props} from '@/client/components';
@@ -78,11 +79,11 @@ export class Component<P = Empty, S = Empty> extends React.Component<
   }
 
   public streamEvents<E extends EventData>(
-    type: string | EventType<E>,
+    typeId: string | EventType<E>,
     priority: Priority = Priority.Normal
   ): AsyncIterator<Event<E>> {
     let id: UUID;
-    const eventType = typeof type === 'string';
+    const type = getTypeId(typeId);
     const iter = AsyncIterator.from<Event<E>>(async ({$yield}) => {
       id = this.addListener<E>(
         type,

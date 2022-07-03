@@ -23,8 +23,8 @@ export class ThemeManager extends LoadingManager<Theme> {
     await this.loadAssetTemplates('templates/themes');
 
     if (NetworkManager.isClient()) {
-      EventManager.streamEvents<SetThemeEvent>('SetThemeEvent').forEach(
-        (event) => this.setTheme(event.data.theme)
+      EventManager.streamEvents(SetThemeEvent).forEach((event) =>
+        this.setTheme(event.data.theme)
       );
     }
   }

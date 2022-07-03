@@ -1,6 +1,7 @@
 import {Entity, Unit} from '@/core/entity';
 import {Rectangle, Vector, VectorLike} from '@/core/geometry';
 import {UUID} from '@/core/uuid';
+import {makeEventType} from '../event';
 
 export interface SpawnEntityEvent {
   entity: Entity;
@@ -24,6 +25,7 @@ export interface CollisionEvent {
   collider: Entity;
   collided?: Entity;
 }
+export const CollisionEvent = makeEventType<CollisionEvent>('CollisionEvent');
 
 export function shuntOutOf(entity: Entity, other: Rectangle) {
   const box = entity.boundingBox;
@@ -130,6 +132,7 @@ export interface DamageEvent {
   sourceID?: UUID;
   amount: number;
 }
+export const DamageEvent = makeEventType<DamageEvent>('DamageEvent');
 
 export interface KillEvent {
   targetID: UUID;
@@ -137,6 +140,7 @@ export interface KillEvent {
   sourceID?: UUID;
   source?: Unit;
 }
+export const KillEvent = makeEventType<KillEvent>('KillEvent');
 
 export interface RayCastResult {
   hit: Set<Entity>;
@@ -149,3 +153,5 @@ export interface DisplayRayEvent {
   sourceID: UUID;
   width: number;
 }
+export const DisplayRayEvent =
+  makeEventType<DisplayRayEvent>('DisplayRayEvent');

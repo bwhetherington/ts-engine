@@ -133,11 +133,7 @@ export class Server extends Node {
     });
     this.wsServer.on('close', () => {});
 
-    EventManager.streamEvents<PlayerInitializedEvent>(
-      'PlayerInitializedEvent',
-      Priority.Normal,
-      true
-    )
+    EventManager.streamEvents(PlayerInitializedEvent, Priority.Normal, true)
       .filterMap(({socket}) => (socket !== undefined ? socket : undefined))
       .forEach((socket) => this.initialSync(socket));
   }

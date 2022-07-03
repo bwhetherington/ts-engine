@@ -47,7 +47,7 @@ export class EventManager {
 
   public initialize() {
     // Handle all events in batch events
-    this.streamEvents<BatchEvent>('BatchEvent', Priority.Highest, true)
+    this.streamEvents(BatchEvent, Priority.Highest, true)
       .flatMap((event) => {
         const inner = Iterator.array(event.data.events).map<GameEvent>(
           (newEvent) => ({...newEvent, socket: event.socket})

@@ -43,7 +43,7 @@ export class BaseEnemy extends Tank {
           this.selectTarget();
         });
       });
-      this.streamEvents<KillEvent>('KillEvent')
+      this.streamEvents(KillEvent)
         .filter((event) => this.target?.id === event.data.targetID)
         .forEach(() => this.selectTarget());
     }

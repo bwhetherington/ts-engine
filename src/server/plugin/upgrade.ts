@@ -10,7 +10,7 @@ export class UpgradePlugin extends Plugin {
   public async initialize(server: Server): Promise<void> {
     await super.initialize(server);
 
-    this.streamEvents<LevelUpEvent>('LevelUpEvent')
+    this.streamEvents(LevelUpEvent)
       .filter(({data: {from, to}}) => to > from)
       .filterMap(({data: {from, to, id}}) => {
         const entity = WorldManager.getEntity(id);

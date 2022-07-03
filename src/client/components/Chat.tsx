@@ -201,8 +201,8 @@ export class Chat extends Component<ChatProps, ChatState> {
       .filter(() => EventManager.timeElapsed - this.state.lastFlash >= 5)
       .forEach(() => this.updateState({isFresh: false}));
 
-    this.streamEvents<KeyEvent>('KeyEvent')
-      .filter(({data: {action, key}}) => action === KeyAction.KeyDown)
+    this.streamEvents(KeyEvent)
+      .filter(({data: {action}}) => action === KeyAction.KeyDown)
       .forEach(({data: {key}}) => {
         if (key === Key.Enter) {
           this.inputRef?.current?.focus();

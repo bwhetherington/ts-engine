@@ -1,4 +1,5 @@
 import {SerializeManager} from '@/core/serialize/manager';
+import {makeEventType} from '../event';
 
 export interface Data {
   [key: string]: any;
@@ -22,6 +23,8 @@ export {SM as SerializeManager};
 export interface UpdateKeysEvent {
   keys: Record<string, number>;
 }
+export const UpdateKeysEvent =
+  makeEventType<UpdateKeysEvent>('UpdateKeysEvent');
 
 export * from '@/core/serialize/util';
 export * from '@/core/serialize/encoder';

@@ -1,3 +1,5 @@
+import {makeEventType} from '@/core/event';
+
 import {WeaponManager} from '@/core/weapon/manager';
 import {UUID} from '@/core/uuid';
 
@@ -11,6 +13,7 @@ export interface FireEvent {
   sourceID: UUID;
   cannonIndex: number;
 }
+export const FireEvent = makeEventType<FireEvent>('FireEvent');
 
 const manager = new WeaponManager();
 export {manager as WeaponManager};

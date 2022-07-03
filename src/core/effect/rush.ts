@@ -6,7 +6,7 @@ export class RushEffect extends Effect {
   public static typeName: string = 'RushEffect';
 
   public override onStart() {
-    this.streamEvents<KillEvent>('KillEvent')
+    this.streamEvents(KillEvent)
       .filter((event) => event.data.sourceID === this.target?.id)
       .filterMap((event) => {
         const target = WorldManager.getEntity(event.data.targetID);

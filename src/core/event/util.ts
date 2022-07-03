@@ -11,6 +11,20 @@ export type Handler<T extends EventData> = HandlerFunction<
 
 export type GameHandler = Handler<any>;
 
+export function makeEventType<T>(name: string): EventType<T> {
+  return [name];
+}
+
+export function makeEvent<T extends EventData>(
+  type: EventType<T>,
+  data: T
+): Event<T> {
+  return {
+    type: type[0],
+    data,
+  };
+}
+
 export interface Event<T extends EventData> {
   socket?: Socket;
   type: string;
@@ -56,22 +70,9 @@ export interface EventData {
 export interface BatchEvent {
   events: GameEvent[];
 }
+export const BatchEvent = makeEventType<BatchEvent>('BatchEvent');
 
 export type EventType<T> = [string, T?];
-
-export function makeEventType<T>(name: string): EventType<T> {
-  return [name];
-}
-
-export function makeEvent<T extends EventData>(
-  type: EventType<T>,
-  data: T
-): Event<T> {
-  return {
-    type: type[0],
-    data,
-  };
-}
 
 export type TypeId<E extends EventData> = string | EventType<E>;
 

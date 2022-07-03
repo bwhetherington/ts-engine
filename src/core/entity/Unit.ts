@@ -14,7 +14,7 @@ import {
 import {Data, deserializeMapNumber, serialize} from '@/core/serialize';
 import {Vector} from '@/core/geometry';
 import {clamp} from '@/core/util';
-import {Event, EventManager} from '@/core/event';
+import {Event, EventManager, makeEvent} from '@/core/event';
 import {NetworkManager} from '@/core/net';
 import {Color, COLOR_NAMES, reshade} from '@/core/graphics';
 import {TextColor} from '@/core/chat';
@@ -86,7 +86,7 @@ export class Unit extends Entity {
     if (!Unit.isTypeInitialized) {
       Unit.isTypeInitialized = true;
       if (NetworkManager.isClient()) {
-        EventManager.streamEvents<DamageEvent>('DamageEvent')
+        EventManager.streamEvents(DamageEvent)
           .filterMap((event) => WorldManager.getEntity(event.data.targetID))
           .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
           .forEach((unit) => unit.flash());
@@ -110,12 +110,9 @@ export class Unit extends Entity {
   }
 
   private updateEffectCount() {
-    EventManager.emit<UpdateEffectCountEvent>({
-      type: 'UpdateEffectCountEvent',
-      data: {
-        targetID: this.id,
-        effectCounts: serialize(this.effectCounts),
-      },
+    EventManager.emitEvent(UpdateEffectCountEvent, {
+      targetID: this.id,
+      effectCounts: serialize(this.effectCounts),
     });
   }
 
@@ -248,15 +245,12 @@ export class Unit extends Entity {
     }
 
     this.setLife(this.life - actualDamage, source);
-    const event = {
-      type: 'DamageEvent',
-      data: {
-        targetID: this.id,
-        sourceID: source?.id,
-        amount: actualDamage,
-      },
-    };
-    EventManager.emit<DamageEvent>(event);
+    const event = makeEvent(DamageEvent, {
+      targetID: this.id,
+      sourceID: source?.id,
+      amount: actualDamage,
+    });
+    EventManager.emit(event);
     WorldManager.batchDamageEvent(event.data);
 
     if (amount > 0) {

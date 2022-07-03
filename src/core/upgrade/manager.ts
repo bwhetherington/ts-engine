@@ -53,9 +53,7 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
       .toArray();
 
     if (NetworkManager.isServer()) {
-      EventManager.streamEventsForPlayer<RequestUpgradeEvent>(
-        'RequestUpgradeEvent'
-      )
+      EventManager.streamEventsForPlayer(RequestUpgradeEvent)
         .filterMap(({player, data: {hero}}) => {
           const entity = WorldManager.getEntity(hero);
           if (entity instanceof BaseHero) {
@@ -71,61 +69,56 @@ export class UpgradeManager extends LoadingManager<Upgrade> {
             id,
             upgrades,
           });
-          NetworkManager.sendEvent<OfferUpgradeEvent>(
+          NetworkManager.sendTypedEvent(
+            OfferUpgradeEvent,
             {
-              type: 'OfferUpgradeEvent',
-              data: {
-                id,
-                upgrades,
-              },
+              id,
+              upgrades,
             },
             player.socket
           );
         });
 
-      EventManager.streamEventsForPlayer<SelectUpgradeEvent>(
-        'SelectUpgradeEvent'
-      ).forEach(({data: {id, upgrade, hero}}) => {
-        const offer = this.offers.get(id);
-        if (!offer) {
-          log.error('offer not found: ' + id);
-          this.closeOffer(id);
-          return;
-        }
+      EventManager.streamEventsForPlayer(SelectUpgradeEvent).forEach(
+        ({data: {id, upgrade, hero}}) => {
+          const offer = this.offers.get(id);
+          if (!offer) {
+            log.error('offer not found: ' + id);
+            this.closeOffer(id);
+            return;
+          }
 
-        if (!offer.upgrades.includes(upgrade)) {
-          log.error('selected upgrade was not valid for offer');
-          this.closeOffer(id);
-          return;
-        }
+          if (!offer.upgrades.includes(upgrade)) {
+            log.error('selected upgrade was not valid for offer');
+            this.closeOffer(id);
+            return;
+          }
 
-        const heroEntity = WorldManager.getEntity(hero);
-        if (!(heroEntity instanceof BaseHero)) {
-          log.error('hero not found');
-          this.closeOffer(id);
-          return;
-        }
+          const heroEntity = WorldManager.getEntity(hero);
+          if (!(heroEntity instanceof BaseHero)) {
+            log.error('hero not found');
+            this.closeOffer(id);
+            return;
+          }
 
-        const instantiated = this.instantiate(upgrade);
-        if (!instantiated) {
-          log.error('failed to instantiate upgrade: ' + upgrade);
-          this.closeOffer(id);
-          return;
-        }
+          const instantiated = this.instantiate(upgrade);
+          if (!instantiated) {
+            log.error('failed to instantiate upgrade: ' + upgrade);
+            this.closeOffer(id);
+            return;
+          }
 
-        heroEntity.applyUpgrade(instantiated);
-        this.closeOffer(id);
-      });
+          heroEntity.applyUpgrade(instantiated);
+          this.closeOffer(id);
+        }
+      );
     }
   }
 
   private closeOffer(id: UUID) {
     UUIDManager.free(id);
     if (this.offers.delete(id)) {
-      NetworkManager.sendEvent<CloseOfferEvent>({
-        type: 'CloseOfferEvent',
-        data: {id},
-      });
+      NetworkManager.sendTypedEvent(CloseOfferEvent, {id});
     }
   }
 

@@ -1,3 +1,5 @@
+import {makeEventType} from '@/core/event';
+
 export * from '@/core/effect/effect';
 export * from '@/core/effect/interval';
 export * from '@/core/effect/dot';
@@ -13,6 +15,9 @@ export interface UpdateEffectCountEvent {
   targetID: UUID;
   effectCounts: Record<string, number>;
 }
+export const UpdateEffectCountEvent = makeEventType<UpdateEffectCountEvent>(
+  'UpdateEffectCountEvent'
+);
 
 import {EffectManager as EM} from '@/core/effect/manager';
 export const EffectManager = new EM();

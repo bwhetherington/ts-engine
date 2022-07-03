@@ -66,7 +66,7 @@ export const JOIN_FORM: Form = {
 };
 
 export function registerJoinForm() {
-  EventManager.streamEvents<ConnectEvent>('ConnectEvent')
+  EventManager.streamEvents(ConnectEvent)
     .filterMap(({data: {socket}}) => PlayerManager.getSocket(socket))
     .forEach((player) => {
       FormManager.sendForm(player, 'JoinForm');

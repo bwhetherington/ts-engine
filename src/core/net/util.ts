@@ -1,5 +1,5 @@
 import {LogManager} from '@/core/log';
-import {EventManager, GameEvent} from '@/core/event';
+import {EventManager, GameEvent, makeEventType} from '@/core/event';
 import {Data} from '@/core/serialize';
 import {UUID} from '@/core/uuid';
 
@@ -11,23 +11,62 @@ export interface Message {
 
 export type Socket = number;
 
+export interface ConnectEvent {
+  socket: Socket;
+}
+export const ConnectEvent = makeEventType<ConnectEvent>('ConnectEvent');
+
+export interface DisconnectEvent {
+  socket: Socket;
+}
+export const DisconnectEvent =
+  makeEventType<DisconnectEvent>('DisconnectEvent');
+
+export interface NetworkMessageEvent {
+  socket: Socket;
+  message: Message;
+}
+export const NetworkMessageEvent = makeEventType<NetworkMessageEvent>(
+  'NetworkMessageEvent'
+);
+
+export interface SyncEvent {
+  worldData: Data;
+  playerData: Data;
+}
+export const SyncEvent = makeEventType<SyncEvent>('SyncEvent');
+
+export interface InitialSyncEvent {
+  socket: Socket;
+  sync: SyncEvent;
+}
+export const InitialSyncEvent =
+  makeEventType<InitialSyncEvent>('InitialSyncEvent');
+
+export interface PlayerInitializedEvent {}
+export const PlayerInitializedEvent = makeEventType<PlayerInitializedEvent>(
+  'PlayerInitializedEvent'
+);
+
+export interface PingEvent {
+  id: UUID;
+}
+export const PingEvent = makeEventType<PingEvent>('PingEvent');
+
 export abstract class Node {
   public abstract send(msg: Message, socket: Socket): void;
 
   public abstract disconnect(socket: Socket): void;
 
   public onMessage(message: Message, socket: Socket) {
-    EventManager.emit<NetworkMessageEvent>({
-      type: 'NetworkMessageEvent',
-      data: {
-        socket,
-        message,
-      },
+    EventManager.emitEvent(NetworkMessageEvent, {
+      socket,
+      message,
     });
 
     // If the message is also a game event, mirror it
     if (typeof message.type === 'string' && typeof message.data === 'object') {
-      EventManager.emit<GameEvent>({
+      EventManager.emit({
         type: message.type,
         data: message.data,
         socket,
@@ -36,21 +75,11 @@ export abstract class Node {
   }
 
   public onConnect(socket: Socket) {
-    EventManager.emit<ConnectEvent>({
-      type: 'ConnectEvent',
-      data: {
-        socket,
-      },
-    });
+    EventManager.emitEvent(ConnectEvent, {socket});
   }
 
   public onDisconnect(socket: Socket) {
-    EventManager.emit<DisconnectEvent>({
-      type: 'DisconnectEvent',
-      data: {
-        socket,
-      },
-    });
+    EventManager.emitEvent(DisconnectEvent, {socket});
   }
 
   public isClient(): boolean {
@@ -84,33 +113,4 @@ export class DefaultNode extends Node {
   public override onDisconnect(_socket: Socket) {
     log.warn('default network node in use');
   }
-}
-
-export interface ConnectEvent {
-  socket: Socket;
-}
-
-export interface DisconnectEvent {
-  socket: Socket;
-}
-
-export interface NetworkMessageEvent {
-  socket: Socket;
-  message: Message;
-}
-
-export interface SyncEvent {
-  worldData: Data;
-  playerData: Data;
-}
-
-export interface InitialSyncEvent {
-  socket: Socket;
-  sync: SyncEvent;
-}
-
-export interface PlayerInitializedEvent {}
-
-export interface PingEvent {
-  id: UUID;
 }

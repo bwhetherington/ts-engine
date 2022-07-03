@@ -43,7 +43,7 @@ export class Ray extends Entity {
     if (!Ray.isTypeInitialized) {
       Ray.isTypeInitialized = true;
       if (NetworkManager.isClient()) {
-        EventManager.streamEvents<DisplayRayEvent>('DisplayRayEvent')
+        EventManager.streamEvents(DisplayRayEvent)
           .map((event) => event.data)
           .forEach(({start, stop, sourceID, width}) => {
             let color;

@@ -26,11 +26,7 @@ export class FormManager {
     log.debug('FormManager initialized');
 
     if (NetworkManager.isServer()) {
-      EventManager.streamEvents<FormSubmitEvent>(
-        'FormSubmitEvent',
-        Priority.Normal,
-        true
-      )
+      EventManager.streamEvents(FormSubmitEvent, Priority.Normal, true)
         .filterMap((event) => {
           const {name} = event.data;
           const handler = this.submitHandlers[name];
@@ -39,7 +35,7 @@ export class FormManager {
           }
         })
         .forEach(([event, handler]) => handler(event));
-      EventManager.streamEvents<FormRejectEvent>('FormRejectEvent')
+      EventManager.streamEvents(FormRejectEvent)
         .filterMap((event) => {
           const {name} = event.data;
           const handler = this.rejectHandlers[name];

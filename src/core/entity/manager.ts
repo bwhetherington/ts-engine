@@ -31,7 +31,7 @@ import {
   FlameProjectile,
 } from '@/core/entity';
 import {LogManager} from '@/core/log';
-import {EventManager, Priority, StepEvent} from '@/core/event';
+import {EventManager, makeEvent, Priority, StepEvent} from '@/core/event';
 import {Serializable, Data} from '@/core/serialize';
 import {Iterator, iterator} from '@/core/iterator';
 import {diff} from '@/core/util';
@@ -149,27 +149,21 @@ export class WorldManager
 
       // Record damage in
       if (totals.in > 0) {
-        const inEvent = {
-          type: 'DamageEvent',
-          data: {
-            targetID: heroId,
-            amount: totals.in,
-          },
-        };
-        NetworkManager.sendEvent<DamageEvent>(inEvent);
+        const inEvent = makeEvent(DamageEvent, {
+          targetID: heroId,
+          amount: totals.in,
+        });
+        NetworkManager.sendEvent(inEvent);
       }
 
       for (const [target, amount] of totals.out.entries()) {
         if (amount > 0) {
-          const outEvent = {
-            type: 'DamageEvent',
-            data: {
-              targetID: target,
-              sourceID: heroId,
-              amount,
-            },
-          };
-          NetworkManager.sendEvent<DamageEvent>(outEvent);
+          const outEvent = makeEvent(DamageEvent, {
+            targetID: target,
+            sourceID: heroId,
+            amount,
+          });
+          NetworkManager.sendEvent(outEvent);
         }
       }
     }
@@ -211,11 +205,9 @@ export class WorldManager
     await this.registerAllEntities();
 
     if (NetworkManager.isClient()) {
-      EventManager.streamEvents<SyncEvent>('SyncEvent').forEach(
-        ({data: {worldData}}) => {
-          this.deserialize(worldData);
-        }
-      );
+      EventManager.streamEvents(SyncEvent).forEach(({data: {worldData}}) => {
+        this.deserialize(worldData);
+      });
     }
 
     if (NetworkManager.isServer()) {

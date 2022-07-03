@@ -76,7 +76,7 @@ export class FormContainer extends Component<Empty, FormContainerState> {
         document.getElementById('game')?.focus();
       }
 
-      this.streamEvents<FormValidatedEvent>('FormValidatedEvent')
+      this.streamEvents(FormValidatedEvent)
         .filter((event) => event.data.id === form.id)
         .take(1)
         .forEach(async () => {
@@ -88,7 +88,7 @@ export class FormContainer extends Component<Empty, FormContainerState> {
   };
 
   public componentDidMount() {
-    this.streamEvents<FormShowEvent>('FormShowEvent').forEach((event) => {
+    this.streamEvents(FormShowEvent).forEach((event) => {
       this.showForm(event.data);
     });
   }

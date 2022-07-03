@@ -389,7 +389,7 @@ export class Entity
   public collide(_other?: Entity) {}
 
   public streamCollisions(): AsyncIterator<CollisionEvent> {
-    return this.streamEvents<CollisionEvent>('CollisionEvent')
+    return this.streamEvents(CollisionEvent)
       .map(({data}) => data)
       .filter(({collider}) => collider.id === this.id);
   }

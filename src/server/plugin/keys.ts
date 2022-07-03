@@ -20,7 +20,7 @@ export class LogKeysPlugin extends Plugin {
       flags: 'a',
     });
 
-    this.streamEvents<UpdateKeysEvent>('UpdateKeysEvent').forEach((event) => {
+    this.streamEvents(UpdateKeysEvent).forEach((event) => {
       const line = JSON.stringify(event.data.keys);
       this.writeLine(line);
     });

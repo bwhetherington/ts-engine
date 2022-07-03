@@ -1,3 +1,4 @@
+import {makeEventType} from '@/core/event';
 import {FormManager} from '@/core/form/manager';
 import {Data} from '@/core/serialize';
 import {Player} from '@/core/player';
@@ -55,6 +56,8 @@ export type FieldType = Field['type'];
 export interface FormValidatedEvent {
   id: UUID;
 }
+export const FormValidatedEvent =
+  makeEventType<FormValidatedEvent>('FormValidatedEvent');
 
 export interface StringEntry {
   type: 'text';
@@ -91,17 +94,22 @@ export interface FormSubmitEvent {
   method?: string;
   id: UUID;
 }
+export const FormSubmitEvent =
+  makeEventType<FormSubmitEvent>('FormSubmitEvent');
 
 export interface FormRejectEvent {
   player: Player;
   name: string;
   id: UUID;
 }
+export const FormRejectEvent =
+  makeEventType<FormRejectEvent>('FormRejectEvent');
 
 export interface FormShowEvent {
   form: Form;
   id: UUID;
 }
+export const FormShowEvent = makeEventType<FormShowEvent>('FormShowEvent');
 
 const FM = new FormManager();
 

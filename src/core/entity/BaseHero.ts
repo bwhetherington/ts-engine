@@ -16,7 +16,13 @@ import {
   MouseEvent,
   MovementDirection,
 } from '@/core/input';
-import {Event, EventData, EventManager, Priority} from '@/core/event';
+import {
+  Event,
+  EventData,
+  EventManager,
+  makeEventType,
+  Priority,
+} from '@/core/event';
 import {Data} from '@/core/serialize';
 import {Player, PlayerManager} from '@/core/player';
 import {NetworkManager} from '@/core/net';
@@ -39,10 +45,12 @@ export interface LevelUpEvent {
   from: number;
   to: number;
 }
+export const LevelUpEvent = makeEventType<LevelUpEvent>('LevelUpEvent');
 
 export interface SyncHeroEvent {
   hero: Data;
 }
+export const SyncHeroEvent = makeEventType<SyncHeroEvent>('SyncHeroEvent');
 
 export class BaseHero extends Tank {
   public static typeName: string = 'BaseHero';
@@ -93,7 +101,7 @@ export class BaseHero extends Tank {
     this.setLevelInternal(1);
     this.setExperience(0);
 
-    this.streamEvents<MouseEvent>('MouseEvent', Priority.Normal, true)
+    this.streamEvents(MouseEvent, Priority.Normal, true)
       .filter((event) => this.isEventSubject(event))
       .forEach(({data: {action, x, y, button}}) => {
         if (action === MouseAction.Move) {
@@ -113,7 +121,7 @@ export class BaseHero extends Tank {
         }
       });
 
-    this.streamEvents<KeyEvent>('KeyEvent', Priority.Normal, true)
+    this.streamEvents(KeyEvent, Priority.Normal, true)
       .filter((event) => this.isEventSubject(event))
       .forEach(({data: {action, key}}) => {
         const state = action === KeyAction.KeyDown;
@@ -136,7 +144,7 @@ export class BaseHero extends Tank {
     if (NetworkManager.isClient()) {
       this.label = WorldManager.spawn(Text, this.position);
 
-      this.streamEvents<DamageEvent>('DamageEvent')
+      this.streamEvents(DamageEvent)
         .map(({data: {targetID, sourceID, amount}}) => ({
           amount,
           target: WorldManager.getEntity(targetID),
@@ -173,7 +181,7 @@ export class BaseHero extends Tank {
   }
 
   public static initializeType() {
-    EventManager.streamEvents<SyncHeroEvent>('SyncHeroEvent')
+    EventManager.streamEvents(SyncHeroEvent)
       // .debounce(1 / 30)
       .forEach((event) => {
         NetworkManager.sendEvent(event);
@@ -184,12 +192,9 @@ export class BaseHero extends Tank {
     upgrade.applyTo(this);
     this.upgrades.push(upgrade.type);
     if (isNew) {
-      EventManager.emit<UpgradeEvent>({
-        type: 'UpgradeEvent',
-        data: {
-          hero: this,
-          upgrade,
-        },
+      EventManager.emitEvent(UpgradeEvent, {
+        hero: this,
+        upgrade,
       });
     }
   }
@@ -263,13 +268,10 @@ export class BaseHero extends Tank {
 
     if (this.getPlayer()?.isActivePlayer()) {
       const prevXp = this.experienceForLevel(this.level - 1);
-      EventManager.emit<BarUpdateEvent>({
-        type: 'BarUpdateEvent',
-        data: {
-          id: 'xp-bar',
-          value: this.xp - prevXp,
-          maxValue: this.experienceForLevel(this.level) - prevXp,
-        },
+      EventManager.emitEvent(BarUpdateEvent, {
+        id: 'xp-bar',
+        value: this.xp - prevXp,
+        maxValue: this.experienceForLevel(this.level) - prevXp,
       });
     }
   }
@@ -317,13 +319,10 @@ export class BaseHero extends Tank {
   public override setMaxLife(maxLife: number) {
     super.setMaxLife(maxLife);
     if (this.getPlayer()?.isActivePlayer?.()) {
-      EventManager.emit<BarUpdateEvent>({
-        type: 'BarUpdateEvent',
-        data: {
-          id: 'life-bar',
-          value: this.getLife(),
-          maxValue: this.getMaxLife(),
-        },
+      EventManager.emitEvent(BarUpdateEvent, {
+        id: 'life-bar',
+        value: this.getLife(),
+        maxValue: this.getMaxLife(),
       });
     }
   }
@@ -514,13 +513,10 @@ export class BaseHero extends Tank {
 
   public override cleanup() {
     if (this.getPlayer()?.isActivePlayer()) {
-      EventManager.emit<BarUpdateEvent>({
-        type: 'BarUpdateEvent',
-        data: {
-          id: 'life-bar',
-          value: 0,
-          maxValue: this.getMaxLife(),
-        },
+      EventManager.emitEvent(BarUpdateEvent, {
+        id: 'life-bar',
+        value: 0,
+        maxValue: this.getMaxLife(),
       });
     }
     super.cleanup();

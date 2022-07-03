@@ -1,8 +1,10 @@
+import {makeEventType} from '@/core/event';
+
 import {Queue, SizedQueue} from '@/core/util/queue';
 import {TimerHandler, AbstractTimer, sleep} from '@/core/util/time';
 import {diff} from '@/core/util/object';
 import {Data} from '@/core/serialize';
-import {StringBuffer} from './stringbuffer';
+import {StringBuffer} from '@/core/util/stringbuffer';
 
 export function clamp(x: number, low: number, high: number): number {
   return Math.max(low, Math.min(high, x));
@@ -36,21 +38,14 @@ export function formatData(data: Data): string {
   return new StringBuffer().formatData(data).toString();
 }
 
-interface BarUpdateEvent {
+export interface BarUpdateEvent {
   id: string;
   value?: number;
   maxValue?: number;
 }
+export const BarUpdateEvent = makeEventType<BarUpdateEvent>('BarUpdateEvent');
 
-export {
-  BarUpdateEvent,
-  Queue,
-  SizedQueue,
-  TimerHandler,
-  AbstractTimer,
-  sleep,
-  diff,
-};
+export {Queue, SizedQueue, TimerHandler, AbstractTimer, sleep, diff};
 
 export * from '@/core/util/heap';
 export * from '@/core/metrics';

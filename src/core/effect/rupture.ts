@@ -5,7 +5,7 @@ export class BaseRuptureEffect extends Effect {
   public static typeName: string = 'BaseRuptureEffect';
 
   public override onStart() {
-    this.streamEvents<KillEvent>('KillEvent')
+    this.streamEvents(KillEvent)
       .filter((event) => event.data.sourceID === this.target?.id)
       .filterMap((event) => {
         const target = WorldManager.getEntity(event.data.targetID);

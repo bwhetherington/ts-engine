@@ -6,7 +6,7 @@ export class BaseBurstEffect extends Effect {
   public static typeName: string = 'BaseBurstEffect';
 
   public override onStart() {
-    this.streamEvents<FireEvent>('FireEvent')
+    this.streamEvents(FireEvent)
       .filter((event) => event.data.sourceID === this.target?.id)
       .filterMap(() => this.target)
       .takeEachN(5)

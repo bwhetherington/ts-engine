@@ -25,10 +25,11 @@ export abstract class Observer {
   }
 
   public addListener<E extends EventData>(
-    type: string,
+    typeId: TypeId<E>,
     handler: Handler<E>,
     priority: Priority = Priority.Normal
   ): UUID {
+    const type = getTypeId(typeId);
     const id = EventManager.addListener(type, handler, priority);
     this.getHandlers(type).add(id);
     return id;

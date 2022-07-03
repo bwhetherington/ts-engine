@@ -18,7 +18,7 @@ export class EffectsContainer extends Component<Empty, EffectsContainerState> {
   }
 
   public override componentDidMount() {
-    this.streamEvents<UpdateEffectCountEvent>('UpdateEffectCountEvent')
+    this.streamEvents(UpdateEffectCountEvent)
       // Validate that we are only updating this for the active player's hero
       .filter((event) => {
         const heroId = PlayerManager.getActivePlayer()?.hero?.id;

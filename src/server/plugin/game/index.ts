@@ -184,7 +184,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
     this.takeDuringState(
       GameState.Running,
-      this.streamEvents<KillEvent>('KillEvent')
+      this.streamEvents(KillEvent)
     ).forEach((event) => {
       const {target, source} = event.data;
       if (!(target instanceof BaseHero && source instanceof Unit)) {
@@ -213,7 +213,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       });
 
     // Reset if all players are dead
-    const onKillEvent = this.streamEvents<KillEvent>('KillEvent');
+    const onKillEvent = this.streamEvents(KillEvent);
     this.takeDuringState(GameState.Running, onKillEvent)
       .filter(() => this.getTeamCount(Team.Blue) === 0)
       .forEach(() => {
@@ -234,10 +234,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     };
 
     // Distribute experience evenly among all players
-    this.takeDuringState(
-      GameState.Running,
-      this.streamEvents<KillEvent>('KillEvent')
-    )
+    this.takeDuringState(GameState.Running, this.streamEvents(KillEvent))
       .map((event) => {
         const {targetID, sourceID} = event.data;
         const target = WorldManager.getEntity(targetID);
@@ -261,10 +258,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       });
 
     // Respawn players
-    this.takeDuringState(
-      GameState.Running,
-      this.streamEvents<KillEvent>('KillEvent')
-    )
+    this.takeDuringState(GameState.Running, this.streamEvents(KillEvent))
       .filterMap((event) => {
         return PlayerManager.getPlayers()
           .map((player) => {
@@ -280,10 +274,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       });
 
     // Spawn units for joining players
-    this.takeDuringState(
-      GameState.Running,
-      this.streamEvents<PlayerJoinEvent>('PlayerJoinEvent')
-    )
+    this.takeDuringState(GameState.Running, this.streamEvents(PlayerJoinEvent))
       .map((event) => event.data.player)
       .forEach((player) => {
         player.spawnHero();

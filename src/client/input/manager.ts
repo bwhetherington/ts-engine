@@ -1,4 +1,10 @@
-import {EventManager, Event, BatchEvent, GameEvent} from '@/core/event';
+import {
+  EventManager,
+  Event,
+  BatchEvent,
+  GameEvent,
+  makeEvent,
+} from '@/core/event';
 import {LogManager} from '@/core/log';
 import {
   KEY_MAP,
@@ -63,16 +69,13 @@ export class InputManager {
     });
     this.element?.addEventListener('mousemove', (event) => {
       this.updateMousePosition(event);
-      const mouseEvent = {
-        type: 'MouseEvent',
-        data: {
-          action: MouseAction.Move,
-          x: this.mousePosition.x,
-          y: this.mousePosition.y,
-        },
-      };
-      EventManager.emit<MouseEvent>(mouseEvent);
-      NetworkManager.sendEvent<MouseEvent>(mouseEvent);
+      const mouseEvent = makeEvent(MouseEvent, {
+        action: MouseAction.Move,
+        x: this.mousePosition.x,
+        y: this.mousePosition.y,
+      });
+      EventManager.emit(mouseEvent);
+      NetworkManager.sendEvent(mouseEvent);
     });
     this.element?.addEventListener('keydown', (event) => {
       this.keyDown(event.code);
@@ -94,15 +97,12 @@ export class InputManager {
     if (key !== undefined) {
       if (!this.keyStates[key]) {
         this.keyStates[key] = true;
-        const keyEvent = {
-          type: 'KeyEvent',
-          data: {
-            action: KeyAction.KeyDown,
-            key,
-          },
-        };
-        EventManager.emit<KeyEvent>(keyEvent);
-        NetworkManager.sendEvent<KeyEvent>(keyEvent);
+        const keyEvent = makeEvent(KeyEvent, {
+          action: KeyAction.KeyDown,
+          key,
+        });
+        EventManager.emit(keyEvent);
+        NetworkManager.sendEvent(keyEvent);
       }
     } else {
       log.warn('unrecognized key: ' + code);
@@ -114,15 +114,12 @@ export class InputManager {
     if (key !== undefined) {
       if (this.keyStates[key]) {
         this.keyStates[key] = false;
-        const keyEvent = {
-          type: 'KeyEvent',
-          data: {
-            action: KeyAction.KeyUp,
-            key,
-          },
-        };
-        EventManager.emit<KeyEvent>(keyEvent);
-        NetworkManager.sendEvent<KeyEvent>(keyEvent);
+        const keyEvent = makeEvent(KeyEvent, {
+          action: KeyAction.KeyUp,
+          key,
+        });
+        EventManager.emit(keyEvent);
+        NetworkManager.sendEvent(keyEvent);
       }
     } else {
       log.warn('unrecognized key: ' + code);
@@ -134,17 +131,14 @@ export class InputManager {
     if (button !== undefined) {
       if (this.mouseButtonStates[button]) {
         this.mouseButtonStates[button] = false;
-        const buttonEvent = {
-          type: 'MouseEvent',
-          data: {
-            action: MouseAction.ButtonUp,
-            button,
-            x: this.mousePosition.x,
-            y: this.mousePosition.y,
-          },
-        };
-        EventManager.emit<MouseEvent>(buttonEvent);
-        NetworkManager.sendEvent<MouseEvent>(buttonEvent);
+        const buttonEvent = makeEvent(MouseEvent, {
+          action: MouseAction.ButtonUp,
+          button,
+          x: this.mousePosition.x,
+          y: this.mousePosition.y,
+        });
+        EventManager.emit(buttonEvent);
+        NetworkManager.sendEvent(buttonEvent);
       }
     } else {
       log.warn(`unrecognized button: ${code}`);
@@ -156,17 +150,14 @@ export class InputManager {
     if (button !== undefined) {
       if (!this.mouseButtonStates[button]) {
         this.mouseButtonStates[button] = true;
-        const buttonEvent = {
-          type: 'MouseEvent',
-          data: {
-            action: MouseAction.ButtonDown,
-            button,
-            x: this.mousePosition.x,
-            y: this.mousePosition.y,
-          },
-        };
-        EventManager.emit<MouseEvent>(buttonEvent);
-        NetworkManager.sendEvent<MouseEvent>(buttonEvent);
+        const buttonEvent = makeEvent(MouseEvent, {
+          action: MouseAction.ButtonDown,
+          button,
+          x: this.mousePosition.x,
+          y: this.mousePosition.y,
+        });
+        EventManager.emit(buttonEvent);
+        NetworkManager.sendEvent(buttonEvent);
       }
     } else {
       log.warn(`unrecognized button: ${code}`);
@@ -177,34 +168,29 @@ export class InputManager {
     const keyUpEvents: GameEvent[] = Iterator.array(this.keyStates)
       .enumerate()
       .map(([_state, key]) => key)
-      .map<Event<KeyEvent>>((key) => ({
-        type: 'KeyEvent',
-        data: {
+      .map((key) =>
+        makeEvent(KeyEvent, {
           action: KeyAction.KeyUp,
           key,
-        },
-      }))
+        })
+      )
       .toArray();
     const buttonUpEvents: GameEvent[] = Iterator.array(this.mouseButtonStates)
       .enumerate()
       .map(([_state, button]) => button)
-      .map<Event<MouseEvent>>((button) => ({
-        type: 'MouseEvent',
-        data: {
+      .map((button) =>
+        makeEvent(MouseEvent, {
           action: MouseAction.ButtonUp,
           button,
           x: this.mousePosition.x,
           y: this.mousePosition.y,
-        },
-      }))
+        })
+      )
       .toArray();
-    const event: Event<BatchEvent> = {
-      type: 'BatchEvent',
-      data: {
-        events: [...keyUpEvents, ...buttonUpEvents],
-      },
-    };
-    EventManager.emit(event);
-    NetworkManager.sendEvent(event);
+    const batchEvent = makeEvent(BatchEvent, {
+      events: [...keyUpEvents, ...buttonUpEvents],
+    });
+    EventManager.emit(batchEvent);
+    NetworkManager.sendEvent(batchEvent);
   }
 }

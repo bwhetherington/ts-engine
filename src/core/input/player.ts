@@ -12,35 +12,21 @@ export class PlayerController extends Controller {
   public attach(hero: BaseHero) {
     super.attach(hero);
 
-    this.mouseListenerID = hero.addListener<MouseEvent>(
-      'MouseEvent',
-      (event) => {
-        if (hero.isEventSubject(event)) {
-          const {action, x, y} = event.data;
-          if (action === MouseAction.Move) {
-            // Subtract our position from mouse position
-            Vector.BUFFER.setXY(x, y);
-            Vector.BUFFER.add(hero.position, -1);
-            hero.angle = Vector.BUFFER.angle;
-          } else if (action === MouseAction.ButtonDown) {
-            this.mouseDown = true;
-          } else if (action === MouseAction.ButtonUp) {
-            this.mouseDown = false;
-          }
+    this.mouseListenerID = hero.addListener(MouseEvent, (event) => {
+      if (hero.isEventSubject(event)) {
+        const {action, x, y} = event.data;
+        if (action === MouseAction.Move) {
+          // Subtract our position from mouse position
+          Vector.BUFFER.setXY(x, y);
+          Vector.BUFFER.add(hero.position, -1);
+          hero.angle = Vector.BUFFER.angle;
+        } else if (action === MouseAction.ButtonDown) {
+          this.mouseDown = true;
+        } else if (action === MouseAction.ButtonUp) {
+          this.mouseDown = false;
         }
       }
-    );
-
-    // this.keyListenerID = hero.addListener<KeyEvent>('KeyEvent', (event) => {
-    //   if (hero.isEventSubject(event)) {
-    //     const {action, key} = event.data;
-    //     const state = action === KeyAction.KeyDown;
-    //     const direction = MOVEMENT_DIRECTION_MAP[key];
-    //     if (direction !== undefined) {
-    //       hero.setMovement(direction, state);
-    //     }
-    //   }
-    // });
+    });
   }
 
   public detach() {

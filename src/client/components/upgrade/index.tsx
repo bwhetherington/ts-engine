@@ -36,22 +36,22 @@ export class UpgradeContainer extends Component<Empty, ContainerState> {
   }
 
   public componentDidMount() {
-    this.streamEvents<ChangeStoredUpgradeCountEvent>(
-      'ChangeStoredUpgradeCountEvent'
-    ).forEach(({data: {storedUpgrades}}) => {
-      this.updateState({
-        storedUpgrades,
-      });
-    });
+    this.streamEvents(ChangeStoredUpgradeCountEvent).forEach(
+      ({data: {storedUpgrades}}) => {
+        this.updateState({
+          storedUpgrades,
+        });
+      }
+    );
 
-    this.streamEvents<OfferUpgradeEvent>('OfferUpgradeEvent')
+    this.streamEvents(OfferUpgradeEvent)
       .map<Offer>(({data: {id, upgrades}}) => ({id, upgrades}))
       .forEach((offer) => {
         this.addOffer(offer);
       });
 
     // Remove all offers when player's hero is killed
-    this.streamEvents<KillEvent>('KillEvent')
+    this.streamEvents(KillEvent)
       .filter(
         (event) =>
           event.data.targetID === PlayerManager.getActivePlayer()?.hero?.id
@@ -61,7 +61,7 @@ export class UpgradeContainer extends Component<Empty, ContainerState> {
       });
 
     // Open the upgrade menu when pressing space
-    this.streamEvents<KeyEvent>('KeyEvent')
+    this.streamEvents(KeyEvent)
       .filter(
         ({data}) => data.key === Key.Space && data.action === KeyAction.KeyDown
       )
@@ -107,9 +107,8 @@ export class UpgradeContainer extends Component<Empty, ContainerState> {
     }
     const hero = PlayerManager.getActivePlayer()?.hero;
     if (hero) {
-      NetworkManager.sendEvent<RequestUpgradeEvent>({
-        type: 'RequestUpgradeEvent',
-        data: {hero: hero.id},
+      NetworkManager.sendTypedEvent(RequestUpgradeEvent, {
+        hero: hero.id,
       });
     }
   }
@@ -125,13 +124,10 @@ export class UpgradeContainer extends Component<Empty, ContainerState> {
       if (!hero) {
         return;
       }
-      NetworkManager.sendEvent<SelectUpgradeEvent>({
-        type: 'SelectUpgradeEvent',
-        data: {
-          id,
-          hero: hero.id,
-          upgrade: upgrade.type,
-        },
+      NetworkManager.sendTypedEvent(SelectUpgradeEvent, {
+        id,
+        hero: hero.id,
+        upgrade: upgrade.type,
       });
       await this.removeTopOffer();
     };

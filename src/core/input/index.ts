@@ -1,3 +1,5 @@
+import {makeEventType} from '@/core/event';
+
 export enum KeyAction {
   KeyDown,
   KeyUp,
@@ -115,6 +117,7 @@ export interface KeyEvent {
   action: KeyAction;
   key: Key;
 }
+export const KeyEvent = makeEventType<KeyEvent>('KeyEvent');
 
 export enum MouseAction {
   Move,
@@ -141,6 +144,7 @@ export interface MouseEvent {
   y: number;
   button?: MouseButton;
 }
+export const MouseEvent = makeEventType<MouseEvent>('MouseEvent');
 
 export enum MovementDirection {
   Up,

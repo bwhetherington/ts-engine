@@ -44,7 +44,7 @@ export class Client extends Node {
     this.socket = new WebSocket(connect);
     this.initializeSocket(this.socket);
 
-    EventManager.streamEvents<InitialSyncEvent>('InitialSyncEvent')
+    EventManager.streamEvents(InitialSyncEvent)
       .take(1)
       .forEach((event) => {
         log.debug('initial sync event');
