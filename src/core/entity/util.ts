@@ -6,7 +6,8 @@ import {makeEventType} from '../event';
 export interface SpawnEntityEvent {
   entity: Entity;
 }
-export const SpawnEntityEvent = makeEventType<SpawnEntityEvent>('SpawnEntityEvent');
+export const SpawnEntityEvent =
+  makeEventType<SpawnEntityEvent>('SpawnEntityEvent');
 
 export enum CollisionLayer {
   Geometry = 0,

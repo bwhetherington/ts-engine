@@ -6,12 +6,14 @@ import {isUUID, UUID, UUIDManager} from '@/core/uuid';
 export interface SpawnEffectEvent {
   effect: Effect;
 }
-export const SpawnEffectEvent = makeEventType<SpawnEffectEvent>('SpawnEffectEvent');
+export const SpawnEffectEvent =
+  makeEventType<SpawnEffectEvent>('SpawnEffectEvent');
 
 export interface DeleteEffectEvent {
   effect: Effect;
 }
-export const DeleteEffectEvent = makeEventType<DeleteEffectEvent>('DeleteEffectEvent');
+export const DeleteEffectEvent =
+  makeEventType<DeleteEffectEvent>('DeleteEffectEvent');
 
 export class Effect extends Observer implements Serializable {
   public static typeName: string = 'Effect';

@@ -1,7 +1,6 @@
 import React from 'react';
-import {Component} from '@/client/components';
+import {Component, Panel, PanelHeader} from '@/client/components';
 import {StepEvent} from '@/core/event';
-import {Panel, PanelHeader} from './common';
 import {HDCanvas} from '@/client/util';
 import {CollisionLayer, Entity, BaseHero, WorldManager} from '@/core/entity';
 import {Color, rgba, WHITE} from '@/core/graphics/color';

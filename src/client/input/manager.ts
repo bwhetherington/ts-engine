@@ -1,9 +1,4 @@
-import {
-  EventManager,
-  BatchEvent,
-  GameEvent,
-  makeEvent,
-} from '@/core/event';
+import {EventManager, BatchEvent, GameEvent, makeEvent} from '@/core/event';
 import {LogManager} from '@/core/log';
 import {
   KEY_MAP,

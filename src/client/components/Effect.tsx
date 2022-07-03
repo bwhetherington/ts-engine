@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Column} from '.';
+import {Column} from '@/client/components';
 
 const boonColor = 'rgba(32, 128, 192, 0.85)';
 const conditionColor = 'rgba(192, 32, 32, 0.85)';

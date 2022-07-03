@@ -29,6 +29,13 @@ import {
   SyncHeroEvent,
   Follow,
   FlameProjectile,
+  Trail,
+  ShatterProjectile,
+  DamageEvent,
+  SpawnEntityEvent,
+  Pickup,
+  UpgradePickup,
+  Aura,
 } from '@/core/entity';
 import {LogManager} from '@/core/log';
 import {EventManager, makeEvent, Priority, StepEvent} from '@/core/event';
@@ -47,15 +54,9 @@ import {
   LoadingManager,
 } from '@/core/assets';
 import {isUUID, UUID, UUIDManager} from '@/core/uuid';
-import {Trail} from './Trail';
-import {ShatterProjectile} from './ShatterProjectile';
 import {ThemeManager} from '@/core/theme';
-import {DamageEvent, SpawnEntityEvent} from './util';
-import {Pickup} from './Pickup';
-import {UpgradePickup} from './UpgradePickup';
-import {Aura} from './Aura';
 import {HeroModifier} from '@/core/upgrade';
-import {PlayerManager} from '../player';
+import {PlayerManager} from '@/core/player';
 
 const log = LogManager.forFile(__filename);
 
