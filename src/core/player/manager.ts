@@ -79,11 +79,8 @@ export class PlayerManager implements Serializable {
         delete this.socketMap[playerObj.socket];
       }
 
-      EventManager.emit<PlayerLeaveEvent>({
-        type: 'PlayerLeaveEvent',
-        data: {
-          player: playerObj,
-        },
+      EventManager.emitEvent(PlayerLeaveEvent, {
+        player: playerObj,
       });
 
       this.removed.push(playerObj.id);

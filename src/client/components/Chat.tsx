@@ -210,8 +210,9 @@ export class Chat extends Component<ChatProps, ChatState> {
           if (this.inputRef?.current) {
             this.updateState({
               message: '/',
+            }).then(() => {
+              this.inputRef?.current?.focus();
             });
-            this.inputRef.current.focus();
           }
         }
       });

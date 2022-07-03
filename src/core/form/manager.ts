@@ -115,9 +115,10 @@ export class FormManager {
       log.error(`form ${formName} not found`);
     }
 
-    EventManager.emit<FormRejectEvent>({
-      type: 'FormRejectEvent',
-      data: {player, id, name: formName},
+    EventManager.emitEvent(FormRejectEvent, {
+      player,
+      id,
+      name: formName,
     });
     return false;
   }

@@ -222,11 +222,8 @@ export const JoinFormEntry: FormEntry<JoinForm> = {
         handleNoAccount(player, response);
         break;
     }
-    EventManager.emit<PlayerJoinEvent>({
-      type: 'PlayerJoinEvent',
-      data: {
-        player,
-      },
+    EventManager.emitEvent(PlayerJoinEvent, {
+      player,
     });
     if (shouldSubmit) {
       await handleSubmit(player, response, data);

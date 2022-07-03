@@ -380,10 +380,7 @@ export class WorldManager
       this.shouldPopulateGraph = true;
     }
 
-    EventManager.emit<SpawnEntityEvent>({
-      type: 'SpawnEntityEvent',
-      data: {entity},
-    });
+    EventManager.emitEvent(SpawnEntityEvent, {entity});
   }
 
   public remove(entity: Entity | UUID) {
@@ -489,9 +486,8 @@ export class WorldManager
 
         if (didCollide) {
           entity.collide();
-          EventManager.emit<CollisionEvent>({
-            type: 'CollisionEvent',
-            data: {collider: entity},
+          EventManager.emitEvent(CollisionEvent, {
+            collider: entity,
           });
         }
 

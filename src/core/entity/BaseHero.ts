@@ -81,9 +81,8 @@ export class BaseHero extends Tank {
 
   public set storedUpgrades(val) {
     if (val !== this._storedUpgrades && this.getPlayer()?.isActivePlayer()) {
-      EventManager.emit<ChangeStoredUpgradeCountEvent>({
-        type: 'ChangeStoredUpgradeCountEvent',
-        data: {storedUpgrades: val},
+      EventManager.emitEvent(ChangeStoredUpgradeCountEvent, {
+        storedUpgrades: val,
       });
     }
     this._storedUpgrades = val;
@@ -248,13 +247,10 @@ export class BaseHero extends Tank {
       const oldLevel = this.level;
       this.setLevelInternal(this.level + 1);
       if (NetworkManager.isServer() && allowLevels) {
-        EventManager.emit<LevelUpEvent>({
-          type: 'LevelUpEvent',
-          data: {
-            id: this.id,
-            from: oldLevel,
-            to: this.level,
-          },
+        EventManager.emitEvent(LevelUpEvent, {
+          id: this.id,
+          from: oldLevel,
+          to: this.level,
         });
       }
     }
@@ -330,13 +326,10 @@ export class BaseHero extends Tank {
   public override setLife(life: number, source?: Unit) {
     super.setLife(life, source);
     if (this.getPlayer()?.isActivePlayer?.()) {
-      EventManager.emit<BarUpdateEvent>({
-        type: 'BarUpdateEvent',
-        data: {
-          id: 'life-bar',
-          value: this.getLife(),
-          maxValue: this.getMaxLife(),
-        },
+      EventManager.emitEvent(BarUpdateEvent, {
+        id: 'life-bar',
+        value: this.getLife(),
+        maxValue: this.getMaxLife(),
       });
     }
   }
@@ -476,11 +469,8 @@ export class BaseHero extends Tank {
 
       this.setPositionXY(oldX, oldY);
       this.velocity.setXY(oldVX, oldVY);
-      EventManager.emit<SyncHeroEvent>({
-        type: 'SyncHeroEvent',
-        data: {
-          hero: this.serialize(),
-        },
+      EventManager.emitEvent(SyncHeroEvent, {
+        hero: this.serialize(),
       });
     }
 

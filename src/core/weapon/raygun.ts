@@ -76,20 +76,17 @@ export class BaseRaygun extends Weapon {
         unit.damage(damage, DamageType.Energy, source);
       });
 
-    const event: Event<DisplayRayEvent> = {
-      type: 'DisplayRayEvent',
-      data: {
-        start: {x: start.x, y: start.y},
-        stop: {x: end.x, y: end.y},
-        sourceID: source.id,
-        width,
-      },
+    const event: DisplayRayEvent = {
+      start: {x: start.x, y: start.y},
+      stop: {x: end.x, y: end.y},
+      sourceID: source.id,
+      width,
     };
     if (NetworkManager.isServer()) {
-      NetworkManager.sendEvent<DisplayRayEvent>(event);
+      NetworkManager.sendTypedEvent(DisplayRayEvent, event);
     }
     if (NetworkManager.isClient()) {
-      EventManager.emit<DisplayRayEvent>(event);
+      EventManager.emitEvent(DisplayRayEvent, event);
     }
   }
 

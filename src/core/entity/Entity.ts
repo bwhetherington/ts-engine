@@ -192,12 +192,9 @@ export class Entity
 
           this.collide(candidate);
 
-          EventManager.emit<CollisionEvent>({
-            type: 'CollisionEvent',
-            data: {
-              collider: this,
-              collided: candidate,
-            },
+          EventManager.emitEvent(CollisionEvent, {
+            collider: this,
+            collided: candidate,
           });
         });
     }

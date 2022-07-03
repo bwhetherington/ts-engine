@@ -44,12 +44,9 @@ export class Scoreboard extends Component<Empty, Empty> {
         }))
         .take(10)
         .toArray();
-      EventManager.emit<TableEvent>({
-        type: 'TableEvent',
-        data: {
-          id: 'scoreboard',
-          data: rows,
-        },
+      EventManager.emitEvent(TableEvent, {
+        id: 'scoreboard',
+        data: rows,
       });
     });
   }

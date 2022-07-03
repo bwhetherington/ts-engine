@@ -121,11 +121,8 @@ export class SerializeManager {
   }
 
   private onChange() {
-    EventManager.emit<UpdateKeysEvent>({
-      type: 'UpdateKeysEvent',
-      data: {
-        keys: {...this.keys},
-      },
+    EventManager.emitEvent(UpdateKeysEvent, {
+      keys: {...this.keys},
     });
   }
 
