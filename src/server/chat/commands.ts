@@ -1,9 +1,8 @@
+import {CommandEntry, ChatManager} from '@/server/chat';
+import {PlayerManager} from '@/core/player';
+import {loadWorld} from '@/server/util';
 import {NetworkManager} from '@/core/net';
 import {isOk} from '@/core/net/http';
-import {PlayerManager} from '@/core/player';
-
-import {ChatManager, CommandEntry} from '@/server/chat';
-import {loadWorld} from '@/server/util';
 
 export const loadLevel: CommandEntry = {
   name: 'loadlevel',

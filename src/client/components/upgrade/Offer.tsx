@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 
-import {Iterator} from '@/core/iterator';
+import {UUID} from '@/core/uuid';
 import {
-  Offer,
-  OfferUpgradeEvent,
   Upgrade,
   UpgradeManager,
+  Offer,
+  OfferUpgradeEvent,
 } from '@/core/upgrade';
-import {UUID} from '@/core/uuid';
+import {Iterator} from '@/core/iterator';
 
 import {Row} from '@/client/components';
 import {UpgradeComponent} from '@/client/components/upgrade';

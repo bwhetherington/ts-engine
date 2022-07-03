@@ -1,5 +1,4 @@
 import {Data, UpdateKeysEvent} from '@/core/serialize';
-
 import {EventManager} from '../event';
 import {Iterator} from '../iterator';
 import {isUUID} from '../uuid';

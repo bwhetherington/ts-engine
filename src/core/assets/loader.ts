@@ -1,7 +1,7 @@
+import {Data, Serializable} from '@/core/serialize';
 import {AssetManager} from '@/core/assets';
 import {Iterator} from '@/core/iterator';
 import {LogManager} from '@/core/log';
-import {Data, Serializable} from '@/core/serialize';
 
 const log = LogManager.forFile(__filename);
 

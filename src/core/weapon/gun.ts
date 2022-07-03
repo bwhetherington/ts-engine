@@ -1,15 +1,14 @@
-import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
+import {Weapon} from '@/core/weapon';
 import {
-  Projectile,
-  ProjectileShape,
-  Tank,
   WorldManager,
+  Projectile,
+  Tank,
+  ProjectileShape,
   isProjectileShape,
 } from '@/core/entity';
 import {Data} from '@/core/serialize';
-import {Weapon} from '@/core/weapon';
-
 import {HeroModifier} from '../upgrade/modifier';
+import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
 
 export class BaseGun extends Weapon {
   public static typeName: string = 'BaseGun';

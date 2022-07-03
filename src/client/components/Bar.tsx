@@ -1,6 +1,5 @@
-import React from 'react';
-
 import {clamp} from '@/core/util';
+import React from 'react';
 
 export enum BarStyle {
   Life,

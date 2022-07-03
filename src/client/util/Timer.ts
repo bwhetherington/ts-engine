@@ -1,4 +1,4 @@
-import {AbstractTimer, TimerHandler} from '@/core/util';
+import {TimerHandler, AbstractTimer} from '@/core/util';
 
 const MAX_TIME = 4 / 60;
 

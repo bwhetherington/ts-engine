@@ -1,4 +1,4 @@
-import {Echo, Text, WorldManager} from '@/core/entity';
+import {Text, WorldManager, Echo} from '@/core/entity';
 import {EventManager} from '@/core/event';
 
 export class TimedText extends Text {

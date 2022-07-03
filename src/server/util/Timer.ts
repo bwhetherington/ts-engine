@@ -1,5 +1,5 @@
+import {TimerHandler, AbstractTimer, sleep} from '@/core/util';
 import {LogManager} from '@/core/log';
-import {AbstractTimer, TimerHandler, sleep} from '@/core/util';
 
 const log = LogManager.forFile(__filename);
 

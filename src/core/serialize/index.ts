@@ -1,5 +1,4 @@
 import {SerializeManager} from '@/core/serialize/manager';
-
 import {makeEventType} from '../event';
 
 export interface Data {

@@ -1,9 +1,8 @@
-import fetch from 'node-fetch';
-
 import {LogManager} from '@/core/log';
 import {HTTPClient, HTTPResponse, NetworkManager} from '@/core/net';
 import {BasicAuth} from '@/core/net/http';
 import {Data} from '@/core/serialize';
+import fetch from 'node-fetch';
 
 const log = LogManager.forFile(__filename);
 

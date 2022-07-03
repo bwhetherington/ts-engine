@@ -1,10 +1,10 @@
 import fs from 'fs';
 
 import {TextComponents, TextMessageOutEvent} from '@/core/chat';
-import {Priority} from '@/core/event';
 
 import {Server} from '@/server/net';
 import {Plugin} from '@/server/plugin';
+import {Priority} from '@/core/event';
 
 const LOG_FILE = 'chat.log';
 

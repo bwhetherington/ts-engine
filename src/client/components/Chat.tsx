@@ -1,21 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import {Component, Props} from '@/client/components';
+import {COLOR_MAPPING, toCss} from '@/core/graphics';
 import {
-  TextCommandEvent,
   TextComponent,
   TextComponents,
-  TextMessageInEvent,
   TextMessageOutEvent,
+  TextMessageInEvent,
+  TextCommandEvent,
 } from '@/core/chat';
-import {EventManager} from '@/core/event';
-import {COLOR_MAPPING, toCss} from '@/core/graphics';
-import {Key, KeyAction, KeyEvent} from '@/core/input';
 import {NetworkManager} from '@/core/net';
-import {clamp} from '@/core/util';
-
-import {Component, Props} from '@/client/components';
+import {EventManager} from '@/core/event';
+import {Key, KeyAction, KeyEvent} from '@/core/input';
 import {Column, PanelContainer, StringInput} from '@/client/components/common';
+import {clamp} from '@/core/util';
 
 type Lines = Readonly<TextComponents[]>;
 

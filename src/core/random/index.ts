@@ -1,6 +1,5 @@
 import {Rectangle, Vector} from '@/core/geometry';
 import {Iterator} from '@/core/iterator';
-import {RNGManager} from '@/core/random/manager';
 
 export interface RNG {
   seed(seed: number): void;
@@ -94,6 +93,7 @@ export abstract class AbstractRNG implements RNG {
 }
 
 export * from '@/core/random/basic';
+import {RNGManager} from '@/core/random/manager';
 
 const RM = new RNGManager();
 export {RM as RNGManager};

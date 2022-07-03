@@ -1,4 +1,4 @@
-import {BaseHero, LevelUpEvent, WorldManager} from '@/core/entity';
+import {LevelUpEvent, BaseHero, WorldManager} from '@/core/entity';
 import {UpgradeManager} from '@/core/upgrade';
 
 import {Server} from '@/server/net';

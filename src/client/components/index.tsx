@@ -1,10 +1,3 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-import {LogManager} from '@/core/log';
-
-import {App} from '@/client/components/App';
-
 export * from '@/client/components/Component';
 export * from '@/client/components/common';
 export * from '@/client/components/Bar';
@@ -18,6 +11,12 @@ export * from '@/client/components/upgrade';
 export * from '@/client/components/alert';
 export * from '@/client/components/Effect';
 export * from '@/client/components/Effects';
+
+import {App} from '@/client/components/App';
+import {LogManager} from '@/core/log';
+
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 export type Props<P> = {
   children?: React.ReactChildren;

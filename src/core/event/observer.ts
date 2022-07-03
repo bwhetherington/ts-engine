@@ -1,10 +1,10 @@
 import {
-  Event,
+  Handler,
   EventData,
   EventManager,
-  Handler,
-  Priority,
   StepEvent,
+  Event,
+  Priority,
   TypeId,
   getTypeId,
 } from '@/core/event';

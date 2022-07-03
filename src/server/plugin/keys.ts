@@ -1,9 +1,7 @@
 import fs from 'fs';
-
-import {UpdateKeysEvent} from '@/core/serialize';
-
 import {Server} from '@/server/net';
 import {Plugin} from '@/server/plugin';
+import {UpdateKeysEvent} from '@/core/serialize';
 
 const LOG_FILE = 'keys.log';
 

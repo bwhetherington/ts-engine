@@ -1,6 +1,6 @@
-import {CollisionLayer, Entity} from '@/core/entity';
-import {Vector} from '@/core/geometry';
+import {Entity, CollisionLayer} from '@/core/entity';
 import {clamp} from '@/core/util';
+import {Vector} from '@/core/geometry';
 
 const FOLLOW_SPEED: number = 20;
 const SNAP_DISTANCE: number = 0.25;

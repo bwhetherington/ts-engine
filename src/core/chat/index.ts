@@ -1,5 +1,4 @@
 import {makeEventType} from '@/core/event';
-
 export {TextFormatter} from '@/core/chat/format';
 export {ChatManager as CM} from '@/core/chat/manager';
 

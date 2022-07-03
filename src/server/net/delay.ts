@@ -1,6 +1,5 @@
 import {Socket} from '@/core/net';
 import {RNGManager} from '@/core/random';
-
 import {Server} from './Server';
 
 export class DelayServer extends Server {

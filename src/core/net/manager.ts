@@ -1,7 +1,7 @@
-import {Event, EventData, EventType, makeEvent} from '@/core/event';
+import {Message, Socket, Node, DefaultNode} from '@/core/net';
 import {LogManager} from '@/core/log';
-import {DefaultNode, Message, Node, Socket} from '@/core/net';
 import {HTTPClient} from '@/core/net/http';
+import {Event, EventData, EventType, makeEvent} from '@/core/event';
 
 const log = LogManager.forFile(__filename);
 

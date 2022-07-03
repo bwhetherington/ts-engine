@@ -2,21 +2,20 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {
-  AlertContainer,
-  BarStyle,
-  Chat,
-  Column,
   Debug,
-  EffectComponent,
+  Chat,
   EventBar,
-  FormContainer,
-  Panel,
-  Radar,
-  Row,
+  BarStyle,
   Scoreboard,
+  FormContainer,
   UpgradeContainer,
+  Radar,
+  Column,
+  Panel,
+  Row,
+  EffectComponent,
+  AlertContainer,
 } from '@/client/components';
-
 import {EffectsContainer} from './Effects';
 
 const UIContainer = styled.div`

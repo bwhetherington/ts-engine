@@ -1,10 +1,9 @@
-import {CollisionLayer, Entity} from '@/core/entity';
+import {Data} from '@/core/serialize';
 import {GraphicsContext} from '@/core/graphics';
 import {rgb} from '@/core/graphics/color';
+import {CollisionLayer, Entity} from '@/core/entity';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {Data} from '@/core/serialize';
 import {clamp} from '@/core/util';
-
 import {ConfigManager} from '../config';
 
 const BORDER_COLOR = rgb(0.25, 0.25, 0.25);

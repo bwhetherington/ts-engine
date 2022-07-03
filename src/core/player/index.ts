@@ -1,6 +1,5 @@
-import {PlayerManager} from '@/core/player/manager';
 import {Player} from '@/core/player/player';
-
+import {PlayerManager} from '@/core/player/manager';
 import {makeEventType} from '../event';
 
 const manager = new PlayerManager();

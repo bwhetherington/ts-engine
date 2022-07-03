@@ -1,10 +1,9 @@
-import {TextColor, isTextColor} from '@/core/chat';
-import {TextFormatter} from '@/core/chat/format';
-import {CollisionLayer, Entity} from '@/core/entity';
-import {GraphicsContext} from '@/core/graphics';
-import {GraphicsPipeline} from '@/core/graphics/pipe';
 import {Data} from '@/core/serialize';
-
+import {GraphicsContext} from '@/core/graphics';
+import {CollisionLayer, Entity} from '@/core/entity';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {TextFormatter} from '@/core/chat/format';
+import {isTextColor, TextColor} from '@/core/chat';
 import {Config, ConfigManager} from '../config';
 
 export class Text extends Entity {

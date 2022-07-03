@@ -1,9 +1,8 @@
-import yaml from 'js-yaml';
-
 import {AsyncIterator} from '@/core/iterator';
 import {LogManager} from '@/core/log';
 import {Data} from '@/core/serialize';
 import {BufferData} from '@/core/util';
+import yaml from 'js-yaml';
 
 const log = LogManager.forFile(__filename);
 

@@ -1,10 +1,8 @@
-import React from 'react';
-
 import {Entity} from '@/core/entity';
-import {GraphicsPipeline} from '@/core/graphics/pipe';
-
+import React from 'react';
 import {Component, Props} from '@/client/components';
 import {HDCanvas} from '@/client/util';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
 
 interface HeroPanelProps {
   type: string;

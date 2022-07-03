@@ -8,12 +8,12 @@ import {
   FormSubmitEvent,
   FormValidatedEvent,
 } from '@/core/form';
-import {Iterator} from '@/core/iterator';
 import {NetworkManager} from '@/core/net';
-import {Empty} from '@/core/util';
 import {UUID} from '@/core/uuid';
+import {Iterator} from '@/core/iterator';
 
-import {Background, Component, FormComponent, Props} from '@/client/components';
+import {Component, FormComponent, Background, Props} from '@/client/components';
+import {Empty} from '@/core/util';
 
 const Container = styled.div`
   pointer-events: auto;

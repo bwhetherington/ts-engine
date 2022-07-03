@@ -1,27 +1,27 @@
-import {isAssetIdentifier} from '@/core/assets';
-import {TextColor} from '@/core/chat';
-import {Effect, EffectManager, UpdateEffectCountEvent} from '@/core/effect';
 import {
   Aura,
-  Bar,
-  CollisionLayer,
-  DamageEvent,
-  DamageType,
-  Echo,
   Entity,
+  DamageEvent,
   KillEvent,
+  Bar,
   Text,
-  Trail,
   WorldManager,
+  Echo,
+  CollisionLayer,
+  Trail,
+  DamageType,
 } from '@/core/entity';
-import {Event, EventManager, makeEvent} from '@/core/event';
-import {Vector} from '@/core/geometry';
-import {COLOR_NAMES, Color, reshade} from '@/core/graphics';
-import {Iterator} from '@/core/iterator';
-import {NetworkManager} from '@/core/net';
 import {Data, deserializeMapNumber, serialize} from '@/core/serialize';
+import {Vector} from '@/core/geometry';
 import {clamp} from '@/core/util';
+import {Event, EventManager, makeEvent} from '@/core/event';
+import {NetworkManager} from '@/core/net';
+import {Color, COLOR_NAMES, reshade} from '@/core/graphics';
+import {TextColor} from '@/core/chat';
+import {Effect, EffectManager, UpdateEffectCountEvent} from '@/core/effect';
 import {UUID} from '@/core/uuid';
+import {Iterator} from '@/core/iterator';
+import {isAssetIdentifier} from '@/core/assets';
 
 const ACCELERATION = 2000;
 const FLASH_DURATION = 0.1;

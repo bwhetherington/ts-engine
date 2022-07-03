@@ -1,5 +1,5 @@
-import {LoadingManager} from '@/core/assets';
 import {Config} from '@/core/config/config';
+import {LoadingManager} from '@/core/assets';
 
 export class ConfigManager extends LoadingManager<Config> {
   private configMap: Map<string, Config> = new Map();

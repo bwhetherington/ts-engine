@@ -1,6 +1,6 @@
 import {IntervalEffect} from '@/core/effect';
-import {DamageType, Tank} from '@/core/entity';
 import {Data} from '@/core/serialize';
+import {DamageType, Tank} from '@/core/entity';
 
 export class DotEffect extends IntervalEffect {
   public static typeName: string = 'DotEffect';

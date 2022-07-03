@@ -1,13 +1,13 @@
-import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
-import {EffectManager} from '@/core/effect';
+import {Serializable, Data} from '@/core/serialize';
 import {Tank, Unit} from '@/core/entity';
 import {EventManager, StepEvent} from '@/core/event';
-import {NetworkManager} from '@/core/net';
-import {RNGManager} from '@/core/random';
-import {Data, Serializable} from '@/core/serialize';
-import {HeroModifier} from '@/core/upgrade';
 import {UUID} from '@/core/uuid';
 import {FireEvent} from '@/core/weapon';
+import {NetworkManager} from '@/core/net';
+import {RNGManager} from '@/core/random';
+import {HeroModifier} from '@/core/upgrade';
+import {EffectManager} from '@/core/effect';
+import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
 
 export abstract class Weapon implements Serializable {
   public static typeName: string = 'Weapon';

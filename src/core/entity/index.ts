@@ -1,6 +1,3 @@
-import {WorldManager} from '@/core/entity/manager';
-import {Rectangle} from '@/core/geometry';
-
 export * from '@/core/entity/damage';
 export * from '@/core/entity/Entity';
 export * from '@/core/entity/Unit';
@@ -24,6 +21,9 @@ export * from '@/core/entity/Pickup';
 export * from '@/core/entity/UpgradePickup';
 export * from '@/core/entity/Aura';
 export * from '@/core/entity/FlameProjectile';
+
+import {WorldManager} from '@/core/entity/manager';
+import {Rectangle} from '@/core/geometry';
 
 export * from '@/core/entity/util';
 

@@ -1,18 +1,17 @@
+import {Weapon} from '@/core/weapon';
 import {
-  DamageType,
-  DisplayRayEvent,
-  Entity,
-  Tank,
-  Unit,
   WorldManager,
+  Tank,
+  Entity,
+  Unit,
+  DisplayRayEvent,
+  DamageType,
 } from '@/core/entity';
-import {EventManager} from '@/core/event';
 import {Iterator} from '@/core/iterator';
+import {EventManager} from '@/core/event';
 import {NetworkManager} from '@/core/net';
 import {Data} from '@/core/serialize';
 import {HeroModifier} from '@/core/upgrade';
-import {Weapon} from '@/core/weapon';
-
 import {DotEffect, EffectManager} from '../effect';
 
 export class BaseRaygun extends Weapon {

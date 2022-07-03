@@ -1,4 +1,4 @@
-import {BaseHero, Pickup} from '@/core/entity';
+import {Pickup, BaseHero} from '@/core/entity';
 import {Data} from '@/core/serialize';
 import {UpgradeManager} from '@/core/upgrade';
 

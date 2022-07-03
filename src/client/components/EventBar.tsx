@@ -1,9 +1,7 @@
 import React from 'react';
-
-import {BarUpdateEvent} from '@/core/util';
-
-import {Bar, BarStyle} from '@/client/components/Bar';
 import {Component} from '@/client/components/Component';
+import {Bar, BarStyle} from '@/client/components/Bar';
+import {BarUpdateEvent} from '@/core/util';
 
 interface EventBarProps {
   id: string;

@@ -1,14 +1,12 @@
 import React from 'react';
-
-import {WorldManager} from '@/core/entity';
+import {Component, Panel, PanelHeader, Line, Props} from '@/client/components';
 import {EventManager, StepEvent} from '@/core/event';
+import {MetricsManager} from '@/client/metrics';
+import {WorldManager} from '@/core/entity';
 import {MetricsEvent} from '@/core/metrics';
 import {PlayerManager} from '@/core/player';
-import {Empty} from '@/core/util';
 import {UUIDManager} from '@/core/uuid';
-
-import {Component, Line, Panel, PanelHeader, Props} from '@/client/components';
-import {MetricsManager} from '@/client/metrics';
+import {Empty} from '@/core/util';
 
 interface DebugState {
   fps: number;

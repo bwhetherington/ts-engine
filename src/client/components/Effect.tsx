@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import {Column} from '@/client/components';
 
 const boonColor = 'rgba(32, 128, 192, 0.85)';

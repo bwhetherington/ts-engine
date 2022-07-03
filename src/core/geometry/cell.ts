@@ -1,5 +1,5 @@
-import {Bounded, Partioner, Rectangle} from '@/core/geometry';
 import {GraphicsContext} from '@/core/graphics';
+import {Rectangle, Partioner, Bounded} from '@/core/geometry';
 import {BLACK, WHITE} from '@/core/graphics/color';
 
 export class Cell<T extends Bounded> extends Partioner<T> {

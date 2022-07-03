@@ -1,8 +1,8 @@
 import {Projectile} from '@/core/entity';
 import {EventManager} from '@/core/event';
-import {Rectangle} from '@/core/geometry';
 import {GraphicsContext} from '@/core/graphics';
-import {clamp, smoothStep} from '@/core/util';
+import {smoothStep, clamp} from '@/core/util';
+import {Rectangle} from '@/core/geometry';
 
 export class FlameProjectile extends Projectile {
   public static override typeName: string = 'FlameProjectile';

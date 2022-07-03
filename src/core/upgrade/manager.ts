@@ -1,23 +1,23 @@
 import {LoadingManager} from '@/core/assets';
-import {BaseHero, WorldManager} from '@/core/entity';
 import {EventManager} from '@/core/event';
-import {Iterator} from '@/core/iterator';
-import {LogManager} from '@/core/log';
-import {NetworkManager} from '@/core/net';
 import {RNGManager} from '@/core/random';
 import {
   AuraUpgrade,
-  ClassUpgrade,
-  CloseOfferEvent,
-  EffectUpgrade,
-  ModifierUpgrade,
   Offer,
   OfferUpgradeEvent,
-  RequestUpgradeEvent,
   SelectUpgradeEvent,
   Upgrade,
+  ModifierUpgrade,
+  EffectUpgrade,
+  ClassUpgrade,
+  CloseOfferEvent,
+  RequestUpgradeEvent,
 } from '@/core/upgrade';
 import {UUID, UUIDManager} from '@/core/uuid';
+import {Iterator} from '@/core/iterator';
+import {BaseHero, WorldManager} from '@/core/entity';
+import {NetworkManager} from '@/core/net';
+import {LogManager} from '@/core/log';
 
 const log = LogManager.forFile(__filename);
 

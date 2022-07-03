@@ -1,7 +1,7 @@
-import {Unit, WorldManager} from '@/core/entity';
-import {EventManager, Observer, makeEventType} from '@/core/event';
 import {Data, Serializable} from '@/core/serialize';
-import {UUID, UUIDManager, isUUID} from '@/core/uuid';
+import {Unit, WorldManager} from '@/core/entity';
+import {EventManager, makeEventType, Observer} from '@/core/event';
+import {isUUID, UUID, UUIDManager} from '@/core/uuid';
 
 export interface SpawnEffectEvent {
   effect: Effect;
