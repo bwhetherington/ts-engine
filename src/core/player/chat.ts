@@ -1,5 +1,5 @@
 import {renderMessage, TextComponents, TextMessageOutEvent} from '@/core/chat';
-import {Event, EventManager, makeEvent} from '@/core/event';
+import {EventManager, makeEvent} from '@/core/event';
 import {NetworkManager} from '@/core/net';
 import {Player} from '@/core/player';
 

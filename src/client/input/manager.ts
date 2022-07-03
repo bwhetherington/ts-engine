@@ -1,6 +1,5 @@
 import {
   EventManager,
-  Event,
   BatchEvent,
   GameEvent,
   makeEvent,

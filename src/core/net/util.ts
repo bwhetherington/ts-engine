@@ -1,5 +1,5 @@
 import {LogManager} from '@/core/log';
-import {EventManager, GameEvent, makeEventType} from '@/core/event';
+import {EventManager, makeEventType} from '@/core/event';
 import {Data} from '@/core/serialize';
 import {UUID} from '@/core/uuid';
 

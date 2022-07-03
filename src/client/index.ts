@@ -1,5 +1,5 @@
 import {NetworkManager, PlayerInitializedEvent} from '@/core/net';
-import {EventManager, makeEvent} from '@/core/event';
+import {EventManager} from '@/core/event';
 import {LogManager} from '@/core/log';
 import {WorldManager} from '@/core/entity';
 import {

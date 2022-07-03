@@ -8,7 +8,7 @@ import {
   DamageType,
 } from '@/core/entity';
 import {Iterator} from '@/core/iterator';
-import {EventManager, Event} from '@/core/event';
+import {EventManager} from '@/core/event';
 import {NetworkManager} from '@/core/net';
 import {Data} from '@/core/serialize';
 import {HeroModifier} from '@/core/upgrade';

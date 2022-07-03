@@ -1,6 +1,6 @@
 import * as process from 'process';
 
-import {EventManager, Event, makeEvent} from '@/core/event';
+import {EventManager, makeEvent} from '@/core/event';
 import {NetworkManager} from '@/core/net';
 import {
   TextMessageInEvent,
