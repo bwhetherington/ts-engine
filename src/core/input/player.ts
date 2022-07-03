@@ -1,8 +1,8 @@
-import {Controller, MouseAction, MouseEvent} from '@/core/input';
 import {BaseHero} from '@/core/entity';
-import {UUID} from '@/core/uuid';
-import {NetworkManager} from '@/core/net';
 import {Vector} from '@/core/geometry';
+import {Controller, MouseAction, MouseEvent} from '@/core/input';
+import {NetworkManager} from '@/core/net';
+import {UUID} from '@/core/uuid';
 
 export class PlayerController extends Controller {
   private mouseDown: boolean = false;

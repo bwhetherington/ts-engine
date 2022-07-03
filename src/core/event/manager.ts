@@ -1,24 +1,24 @@
-import {Queue} from '@/core/util/queue';
 import {
+  BatchEvent,
   Event,
+  EventData,
   EventType,
   GameEvent,
   GameHandler,
   Handler,
-  EventData,
   PlayerEvent,
   Priority,
-  BatchEvent,
-  priorities,
-  getTypeId,
   TypeId,
-  makeEventType,
+  getTypeId,
   makeEvent,
+  makeEventType,
+  priorities,
 } from '@/core/event';
-import {UUID, UUIDManager} from '@/core/uuid';
-import {LogManager} from '@/core/log';
 import {AsyncIterator, Iterator} from '@/core/iterator';
+import {LogManager} from '@/core/log';
 import {PlayerManager} from '@/core/player';
+import {Queue} from '@/core/util/queue';
+import {UUID, UUIDManager} from '@/core/uuid';
 
 const log = LogManager.forFile(__filename);
 

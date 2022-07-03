@@ -1,5 +1,6 @@
 import {NetworkManager} from '@/core/net';
 import {SetThemeEvent} from '@/core/theme';
+
 import {ChatManager} from '@/server/chat';
 import {Server} from '@/server/net';
 import {Plugin} from '@/server/plugin';

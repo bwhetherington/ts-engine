@@ -1,9 +1,9 @@
 import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
 import {IntervalEffect} from '@/core/effect';
 import {Unit, WorldManager} from '@/core/entity';
+import {Vector} from '@/core/geometry';
 import {RNGManager} from '@/core/random';
 import {Data} from '@/core/serialize';
-import {Vector} from '@/core/geometry';
 
 export class SpawnEffect extends IntervalEffect {
   public static typeName: string = 'SpawnEffect';

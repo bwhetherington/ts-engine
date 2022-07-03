@@ -1,6 +1,6 @@
-import {Data, Serializable} from '@/core/serialize';
-import {VectorLike} from '@/core/geometry';
 import {DataBuffer, DataSerializable} from '@/core/buf';
+import {VectorLike} from '@/core/geometry';
+import {Data, Serializable} from '@/core/serialize';
 
 export interface RectangleLike {
   x: number;

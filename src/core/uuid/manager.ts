@@ -1,5 +1,5 @@
-import {UUID} from '@/core/uuid';
 import {NetworkManager} from '@/core/net';
+import {UUID} from '@/core/uuid';
 
 export class UUIDManager {
   private index: number = 0;

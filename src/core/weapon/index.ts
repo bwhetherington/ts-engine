@@ -1,7 +1,6 @@
 import {makeEventType} from '@/core/event';
-
-import {WeaponManager} from '@/core/weapon/manager';
 import {UUID} from '@/core/uuid';
+import {WeaponManager} from '@/core/weapon/manager';
 
 export * from '@/core/weapon/weapon';
 export * from '@/core/weapon/gun';

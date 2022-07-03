@@ -1,10 +1,11 @@
 import {CollisionLayer, Projectile, Unit, WorldManager} from '@/core/entity';
 import {EventManager} from '@/core/event';
 import {GraphicsContext} from '@/core/graphics';
-import {clamp, smoothStep} from '@/core/util';
-import {Data} from '../serialize';
 import {Iterator} from '@/core/iterator';
+import {clamp, smoothStep} from '@/core/util';
+
 import {NetworkManager} from '../net';
+import {Data} from '../serialize';
 
 const SHOCKWAVE_WIDTH = 30;
 

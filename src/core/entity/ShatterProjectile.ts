@@ -1,4 +1,4 @@
-import {Projectile, WorldManager, Unit} from '@/core/entity';
+import {Projectile, Unit, WorldManager} from '@/core/entity';
 import {NetworkManager} from '@/core/net';
 import {RNGManager} from '@/core/random';
 import {Data} from '@/core/serialize';

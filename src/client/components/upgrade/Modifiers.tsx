@@ -1,10 +1,10 @@
 import React from 'react';
-
-import {Column, Line} from '@/client/components';
+import styled from 'styled-components';
 
 import {Iterator} from '@/core/iterator';
 import {HeroModifier, MODIFIER_KEYS} from '@/core/upgrade';
-import styled from 'styled-components';
+
+import {Column, Line} from '@/client/components';
 
 interface ModifiersProps {
   modifiers: HeroModifier;

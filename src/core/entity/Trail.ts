@@ -1,9 +1,9 @@
-import {Entity, CollisionLayer} from '@/core/entity';
-import {Queue} from '@/core/util';
+import {CollisionLayer, Entity} from '@/core/entity';
 import {EventManager} from '@/core/event';
+import {VectorLike} from '@/core/geometry';
 import {GraphicsContext} from '@/core/graphics';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {VectorLike} from '@/core/geometry';
+import {Queue} from '@/core/util';
 
 const DURATION = 0.1;
 

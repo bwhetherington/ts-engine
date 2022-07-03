@@ -1,62 +1,62 @@
 import {
-  Rectangle,
-  QuadTree,
-  Bounded,
-  Vector,
-  Partioner,
-  VectorLike,
-} from '@/core/geometry';
-import {GraphicsContext, CameraManager, Renderable} from '@/core/graphics';
-import {
-  Entity,
-  Unit,
-  BaseHero,
-  Geometry,
-  Text,
-  TimedText,
-  Projectile,
-  Explosion,
-  CollisionEvent,
-  Tank,
-  BaseEnemy,
-  CollisionLayer,
-  Bar,
-  Echo,
-  Ray,
-  RayCastResult,
-  HomingProjectile,
-  Feed,
-  SyncHeroEvent,
-  Follow,
-  FlameProjectile,
-  Trail,
-  ShatterProjectile,
-  DamageEvent,
-  SpawnEntityEvent,
-  Pickup,
-  UpgradePickup,
-  Aura,
-} from '@/core/entity';
-import {LogManager} from '@/core/log';
-import {EventManager, makeEvent, Priority, StepEvent} from '@/core/event';
-import {Serializable, Data} from '@/core/serialize';
-import {Iterator, iterator} from '@/core/iterator';
-import {diff} from '@/core/util';
-import {NetworkManager, SyncEvent} from '@/core/net';
-import {reshade} from '@/core/graphics/color';
-import {Graph} from '@/core/entity/pathfinding';
-import {GraphicsPipeline} from '@/core/graphics/pipe';
-import {RNGManager} from '@/core/random';
-import {
   AssetIdentifier,
   AssetManager,
   AssetType,
   LoadingManager,
 } from '@/core/assets';
-import {isUUID, UUID, UUIDManager} from '@/core/uuid';
+import {
+  Aura,
+  Bar,
+  BaseEnemy,
+  BaseHero,
+  CollisionEvent,
+  CollisionLayer,
+  DamageEvent,
+  Echo,
+  Entity,
+  Explosion,
+  Feed,
+  FlameProjectile,
+  Follow,
+  Geometry,
+  HomingProjectile,
+  Pickup,
+  Projectile,
+  Ray,
+  RayCastResult,
+  ShatterProjectile,
+  SpawnEntityEvent,
+  SyncHeroEvent,
+  Tank,
+  Text,
+  TimedText,
+  Trail,
+  Unit,
+  UpgradePickup,
+} from '@/core/entity';
+import {Graph} from '@/core/entity/pathfinding';
+import {EventManager, Priority, StepEvent, makeEvent} from '@/core/event';
+import {
+  Bounded,
+  Partioner,
+  QuadTree,
+  Rectangle,
+  Vector,
+  VectorLike,
+} from '@/core/geometry';
+import {CameraManager, GraphicsContext, Renderable} from '@/core/graphics';
+import {reshade} from '@/core/graphics/color';
+import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {Iterator, iterator} from '@/core/iterator';
+import {LogManager} from '@/core/log';
+import {NetworkManager, SyncEvent} from '@/core/net';
+import {PlayerManager} from '@/core/player';
+import {RNGManager} from '@/core/random';
+import {Data, Serializable} from '@/core/serialize';
 import {ThemeManager} from '@/core/theme';
 import {HeroModifier} from '@/core/upgrade';
-import {PlayerManager} from '@/core/player';
+import {diff} from '@/core/util';
+import {UUID, UUIDManager, isUUID} from '@/core/uuid';
 
 const log = LogManager.forFile(__filename);
 

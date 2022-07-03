@@ -1,5 +1,6 @@
 import {Effect, EffectManager} from '@/core/effect';
 import {KillEvent, Unit, WorldManager} from '@/core/entity';
+
 import {ModifierEffect} from './modifier';
 
 export class RushEffect extends Effect {

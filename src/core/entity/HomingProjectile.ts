@@ -1,4 +1,4 @@
-import {Projectile, Entity, WorldManager, Unit} from '@/core/entity';
+import {Entity, Projectile, Unit, WorldManager} from '@/core/entity';
 import {EventManager} from '@/core/event';
 import {DirectionVector, Rectangle, Vector} from '@/core/geometry';
 import {NetworkManager} from '@/core/net';

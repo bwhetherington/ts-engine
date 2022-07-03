@@ -1,28 +1,28 @@
 import * as process from 'process';
 
-import {EventManager, makeEvent} from '@/core/event';
-import {NetworkManager} from '@/core/net';
 import {
-  TextMessageInEvent,
   SetNameEvent,
-  TextMessageOutEvent,
-  TextComponent,
   TextCommandEvent,
+  TextComponent,
   TextComponents,
+  TextMessageInEvent,
+  TextMessageOutEvent,
 } from '@/core/chat';
-import {LogManager} from '@/core/log';
-import {PlayerManager, Player} from '@/core/player';
-import {WorldManager, Unit, Feed, FeedVariant} from '@/core/entity';
-import {randomColor} from '@/core/graphics/color';
-import {FormManager} from '@/core/form';
-import {Iterator} from '@/core/iterator';
-import {RNGManager} from '@/core/random';
 import {TextFormatter} from '@/core/chat/format';
+import {Feed, FeedVariant, Unit, WorldManager} from '@/core/entity';
+import {EventManager, makeEvent} from '@/core/event';
+import {FormManager} from '@/core/form';
 import {Vector} from '@/core/geometry';
+import {randomColor} from '@/core/graphics/color';
+import {Iterator} from '@/core/iterator';
+import {LogManager} from '@/core/log';
+import {NetworkManager} from '@/core/net';
+import {Player, PlayerManager} from '@/core/player';
+import {RNGManager} from '@/core/random';
 
-import {TimerManager} from '@/server/util';
 import {CommandEntry} from '@/server/chat';
 import * as commands from '@/server/chat/commands';
+import {TimerManager} from '@/server/util';
 
 const log = LogManager.forFile(__filename);
 

@@ -1,20 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import {Entry, Field, Form} from '@/core/form';
+
 import {Component, Props} from '@/client/components';
 import {
-  StringInput,
-  FloatInput,
   BooleanInput,
-  Panel,
   Button,
   Column,
-  Row,
   FlexPadding,
+  FloatInput,
+  Panel,
   PanelHeader,
+  Row,
+  StringInput,
   UI_MARGIN,
 } from '@/client/components';
-import {Form, Field, Entry} from '@/core/form';
 
 const FieldContainer = styled.div`
   display: flex;

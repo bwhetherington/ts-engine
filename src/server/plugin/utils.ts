@@ -1,4 +1,5 @@
 import {Player} from '@/core/player';
+
 import {ChatManager} from '@/server/chat';
 import {Server} from '@/server/net';
 import {Plugin} from '@/server/plugin';

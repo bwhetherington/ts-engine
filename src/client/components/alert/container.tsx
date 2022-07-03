@@ -1,10 +1,12 @@
 import React from 'react';
-import {Column, Component, Props} from '@/client/components';
+
 import {AlertEvent} from '@/core/alert';
 import {EventManager, StepEvent} from '@/core/event';
-import {UUID, UUIDManager} from '@/core/uuid';
-import {AlertComponent} from '@/client/components/alert';
 import {Empty} from '@/core/util';
+import {UUID, UUIDManager} from '@/core/uuid';
+
+import {Column, Component, Props} from '@/client/components';
+import {AlertComponent} from '@/client/components/alert';
 
 interface AlertEntry {
   id: UUID;

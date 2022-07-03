@@ -1,4 +1,4 @@
-import {CollisionLayer, Entity, BaseHero} from '@/core/entity';
+import {BaseHero, CollisionLayer, Entity} from '@/core/entity';
 import {BLACK, Color, GraphicsContext, reshade} from '@/core/graphics';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
 import {LogManager} from '@/core/log';

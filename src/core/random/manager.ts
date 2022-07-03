@@ -1,4 +1,4 @@
-import {AbstractRNG, RNG, BasicRNG} from '@/core/random';
+import {AbstractRNG, BasicRNG, RNG} from '@/core/random';
 
 export class RNGManager extends AbstractRNG {
   private rng: RNG = new BasicRNG();

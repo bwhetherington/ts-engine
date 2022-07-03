@@ -1,17 +1,17 @@
+import {sanitize} from 'dompurify';
 import React from 'react';
 import styled from 'styled-components';
-import {sanitize} from 'dompurify';
 
 import {ClassUpgrade, ModifierUpgrade, Upgrade} from '@/core/upgrade';
 import {UUID} from '@/core/uuid';
 
 import {
+  BlueButton,
   Button,
   Column,
+  Minor,
   Panel,
   PanelHeader,
-  BlueButton,
-  Minor,
 } from '@/client/components';
 import {ModifiersComponent} from '@/client/components/upgrade/Modifiers';
 

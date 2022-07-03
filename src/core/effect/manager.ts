@@ -1,13 +1,13 @@
 import {AssetTemplate, LoadingManager} from '@/core/assets';
 import {
+  BaseBurstEffect,
+  BaseRuptureEffect,
+  DotEffect,
   Effect,
   IntervalEffect,
   ModifierEffect,
-  SpawnEffect,
-  DotEffect,
   RushEffect,
-  BaseBurstEffect,
-  BaseRuptureEffect,
+  SpawnEffect,
 } from '@/core/effect';
 
 interface EffectInfo {

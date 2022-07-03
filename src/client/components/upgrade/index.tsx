@@ -1,26 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {
-  Upgrade,
-  OfferUpgradeEvent,
-  Offer,
-  SelectUpgradeEvent,
-  RequestUpgradeEvent,
-  ChangeStoredUpgradeCountEvent,
-} from '@/core/upgrade';
-import {UUID} from '@/core/uuid';
-import {NetworkManager} from '@/core/net';
-
-import {Background, Component} from '@/client/components';
-export * from '@/client/components/upgrade/Upgrade';
-
-import {OfferComponent} from '@/client/components/upgrade/Offer';
-import {BlueButton} from '../common';
-import {PlayerManager} from '@/core/player';
 import {KillEvent} from '@/core/entity';
 import {Key, KeyAction, KeyEvent} from '@/core/input';
+import {NetworkManager} from '@/core/net';
+import {PlayerManager} from '@/core/player';
+import {
+  ChangeStoredUpgradeCountEvent,
+  Offer,
+  OfferUpgradeEvent,
+  RequestUpgradeEvent,
+  SelectUpgradeEvent,
+  Upgrade,
+} from '@/core/upgrade';
 import {Empty} from '@/core/util';
+import {UUID} from '@/core/uuid';
+
+import {Background, Component} from '@/client/components';
+import {OfferComponent} from '@/client/components/upgrade/Offer';
+
+import {BlueButton} from '../common';
+
+export * from '@/client/components/upgrade/Upgrade';
 
 interface ContainerState {
   offers: Offer[];

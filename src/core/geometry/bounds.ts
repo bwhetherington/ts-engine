@@ -1,4 +1,4 @@
-import {Bounded, Rectangle, Vector, Matrix3} from '@/core/geometry';
+import {Bounded, Matrix3, Rectangle, Vector} from '@/core/geometry';
 
 function maxAndMin(
   a: number,

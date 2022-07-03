@@ -1,10 +1,13 @@
-import path from 'path';
 import {readFile, readdir} from 'fs/promises';
-import {now, Timer} from '@/server/util/Timer';
-import {ServerLogger} from '@/server/util/ServerLogger';
-import {TimerManager} from '@/server/util/TimerManager';
+import path from 'path';
+
 import {Iterator} from '@/core/iterator';
 import {BufferData} from '@/core/util';
+
+import {ServerLogger} from '@/server/util/ServerLogger';
+import {Timer, now} from '@/server/util/Timer';
+import {TimerManager} from '@/server/util/TimerManager';
+
 export * from '@/server/util/world';
 
 function transformPath(url: string): string {

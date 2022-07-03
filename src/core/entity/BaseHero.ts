@@ -1,12 +1,22 @@
+import {TextColor} from '@/core/chat';
 import {
   DamageEvent,
   Entity,
   Tank,
+  Text,
   TimedText,
   Unit,
   WorldManager,
-  Text,
 } from '@/core/entity';
+import {
+  Event,
+  EventData,
+  EventManager,
+  Priority,
+  makeEventType,
+} from '@/core/event';
+import {Vector} from '@/core/geometry';
+import {CameraManager} from '@/core/graphics';
 import {
   Key,
   KeyAction,
@@ -16,29 +26,19 @@ import {
   MouseEvent,
   MovementDirection,
 } from '@/core/input';
-import {
-  Event,
-  EventData,
-  EventManager,
-  makeEventType,
-  Priority,
-} from '@/core/event';
-import {Data} from '@/core/serialize';
-import {Player, PlayerManager} from '@/core/player';
+import {Iterator} from '@/core/iterator';
 import {NetworkManager} from '@/core/net';
-import {CameraManager} from '@/core/graphics';
-import {BarUpdateEvent} from '@/core/util';
+import {Player, PlayerManager} from '@/core/player';
 import {RNGManager} from '@/core/random';
-import {TextColor} from '@/core/chat';
-import {isUUID, UUID} from '@/core/uuid';
+import {Data} from '@/core/serialize';
 import {
   ChangeStoredUpgradeCountEvent,
   Upgrade,
   UpgradeEvent,
   UpgradeManager,
 } from '@/core/upgrade';
-import {Iterator} from '@/core/iterator';
-import {Vector} from '@/core/geometry';
+import {BarUpdateEvent} from '@/core/util';
+import {UUID, isUUID} from '@/core/uuid';
 
 export interface LevelUpEvent {
   id: UUID;

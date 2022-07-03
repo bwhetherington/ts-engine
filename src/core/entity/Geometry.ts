@@ -1,4 +1,4 @@
-import {Entity, CollisionLayer} from '@/core/entity';
+import {CollisionLayer, Entity} from '@/core/entity';
 import {Rectangle} from '@/core/geometry';
 import {Color, GraphicsContext} from '@/core/graphics';
 import {GraphicsPipeline} from '@/core/graphics/pipe';

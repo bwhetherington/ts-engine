@@ -1,10 +1,10 @@
-import {WorldManager, CollisionLayer, Entity} from '@/core/entity';
+import {CollisionLayer, Entity, WorldManager} from '@/core/entity';
 import {Rectangle, Vector, VectorLike} from '@/core/geometry';
 import {GraphicsContext} from '@/core/graphics';
-import {WHITE, BLACK, rgb} from '@/core/graphics/color';
-import {Heap} from '@/core/util';
+import {BLACK, WHITE, rgb} from '@/core/graphics/color';
 import {Iterator} from '@/core/iterator';
 import {LogManager} from '@/core/log';
+import {Heap} from '@/core/util';
 
 const log = LogManager.forFile(__filename);
 

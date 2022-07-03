@@ -1,6 +1,6 @@
-import {Data, Serializable} from '@/core/serialize';
-import {Iterator} from '@/core/iterator';
 import {Asset} from '@/core/assets';
+import {Iterator} from '@/core/iterator';
+import {Data, Serializable} from '@/core/serialize';
 
 export class Config implements Asset, Serializable {
   public static typeName: string = 'Config';

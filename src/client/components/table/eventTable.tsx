@@ -1,7 +1,9 @@
 import React from 'react';
-import {ColumnInfo, Component, DataTable, Props} from '@/client/components';
+
 import {Data} from '@/core/serialize';
 import {TableEvent} from '@/core/table';
+
+import {ColumnInfo, Component, DataTable, Props} from '@/client/components';
 
 interface EventTableProps {
   id: string;

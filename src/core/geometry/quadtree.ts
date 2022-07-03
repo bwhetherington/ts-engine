@@ -1,4 +1,4 @@
-import {Rectangle, Bounded, Partioner} from '@/core/geometry';
+import {Bounded, Partioner, Rectangle} from '@/core/geometry';
 import {GraphicsContext} from '@/core/graphics';
 import {BLACK} from '@/core/graphics/color';
 import {GraphicsPipeline} from '@/core/graphics/pipe';

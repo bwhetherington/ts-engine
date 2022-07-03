@@ -1,4 +1,4 @@
-import {Data, SerializableType, Serializable} from '.';
+import {Data, Serializable, SerializableType} from '.';
 
 const PRIMITIVE_TYPES = new Set(['number', 'string', 'boolean']);
 

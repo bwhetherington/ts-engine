@@ -1,10 +1,10 @@
+import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
 import {Effect, EffectManager} from '@/core/effect';
-import {Entity, Unit, WorldManager, CollisionLayer} from '@/core/entity';
+import {CollisionLayer, Entity, Unit, WorldManager} from '@/core/entity';
 import {GraphicsContext} from '@/core/graphics';
-import {Data} from '@/core/serialize';
 import {Iterator} from '@/core/iterator';
 import {NetworkManager} from '@/core/net';
-import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
+import {Data} from '@/core/serialize';
 import {UUID} from '@/core/uuid';
 
 const AURA_WIDTH = 40;

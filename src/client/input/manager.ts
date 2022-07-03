@@ -1,19 +1,19 @@
-import {EventManager, BatchEvent, GameEvent, makeEvent} from '@/core/event';
-import {LogManager} from '@/core/log';
-import {
-  KEY_MAP,
-  KeyEvent,
-  KeyAction,
-  BUTTON_MAP,
-  MouseAction,
-  MouseEvent,
-  Key,
-  MouseButton,
-} from '@/core/input';
-import {CameraManager} from '@/core/graphics';
-import {NetworkManager} from '@/core/net';
-import {Iterator} from '@/core/iterator';
+import {BatchEvent, EventManager, GameEvent, makeEvent} from '@/core/event';
 import {Vector} from '@/core/geometry';
+import {CameraManager} from '@/core/graphics';
+import {
+  BUTTON_MAP,
+  KEY_MAP,
+  Key,
+  KeyAction,
+  KeyEvent,
+  MouseAction,
+  MouseButton,
+  MouseEvent,
+} from '@/core/input';
+import {Iterator} from '@/core/iterator';
+import {LogManager} from '@/core/log';
+import {NetworkManager} from '@/core/net';
 
 const log = LogManager.forFile(__filename);
 

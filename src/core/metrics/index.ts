@@ -1,4 +1,5 @@
 import {UUID} from '@/core/uuid';
+
 import {makeEventType} from '../event';
 
 export interface MetricsEvent {

@@ -1,19 +1,19 @@
 import {
+  CollisionLayer,
+  DamageType,
+  Echo,
+  EchoVariant,
   Entity,
   Trail,
   Unit,
   WorldManager,
-  Echo,
-  EchoVariant,
-  CollisionLayer,
-  DamageType,
 } from '@/core/entity';
-import {GraphicsContext, rgba} from '@/core/graphics';
-import {Data} from '@/core/serialize';
-import {NetworkManager} from '@/core/net';
-import {isUUID, UUID} from '@/core/uuid';
 import {EventManager} from '@/core/event';
+import {GraphicsContext, rgba} from '@/core/graphics';
 import {GraphicsPipeline} from '@/core/graphics/pipe';
+import {NetworkManager} from '@/core/net';
+import {Data} from '@/core/serialize';
+import {UUID, isUUID} from '@/core/uuid';
 
 const DURATION = 1.5;
 

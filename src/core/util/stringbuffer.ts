@@ -1,5 +1,6 @@
 import {Entity} from '@/core/entity';
 import {Data} from '@/core/serialize';
+
 import {ToString} from '.';
 
 export class StringBuffer implements ToString {

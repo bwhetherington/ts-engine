@@ -1,12 +1,12 @@
-import {
-  Weapon,
-  BaseGun,
-  BaseRaygun,
-  BaseHomingGun,
-  BaseBarrageGun,
-} from '@/core/weapon';
-import {LogManager} from '@/core/log';
 import {LoadingManager} from '@/core/assets';
+import {LogManager} from '@/core/log';
+import {
+  BaseBarrageGun,
+  BaseGun,
+  BaseHomingGun,
+  BaseRaygun,
+  Weapon,
+} from '@/core/weapon';
 
 const log = LogManager.forFile(__filename);
 

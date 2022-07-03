@@ -1,10 +1,9 @@
 import {makeEventType} from '@/core/event';
-
-import {Queue, SizedQueue} from '@/core/util/queue';
-import {TimerHandler, AbstractTimer, sleep} from '@/core/util/time';
-import {diff} from '@/core/util/object';
 import {Data} from '@/core/serialize';
+import {diff} from '@/core/util/object';
+import {Queue, SizedQueue} from '@/core/util/queue';
 import {StringBuffer} from '@/core/util/stringbuffer';
+import {AbstractTimer, TimerHandler, sleep} from '@/core/util/time';
 
 export function clamp(x: number, low: number, high: number): number {
   return Math.max(low, Math.min(high, x));

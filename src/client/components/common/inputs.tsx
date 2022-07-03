@@ -1,6 +1,7 @@
-import {InputManager} from '@/client/input';
 import React from 'react';
 import styled from 'styled-components';
+
+import {InputManager} from '@/client/input';
 
 const StyledInput = styled.input`
   margin: 2px;

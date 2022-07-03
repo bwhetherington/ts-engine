@@ -1,4 +1,5 @@
 import {Iterator} from '@/core/iterator';
+
 import {Server} from '@/server/net';
 import {Plugin} from '@/server/plugin';
 

@@ -1,4 +1,5 @@
 import {Data} from '@/core/serialize';
+
 import {makeEventType} from '../event';
 
 export interface TableEvent {

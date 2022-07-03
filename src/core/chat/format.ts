@@ -1,13 +1,13 @@
-import {Iterator} from '@/core/iterator';
-import {Data} from '@/core/serialize';
 import {
-  isTextColor,
-  isTextStyle,
   TextColor,
   TextComponent,
   TextComponents,
   TextStyle,
+  isTextColor,
+  isTextStyle,
 } from '@/core/chat';
+import {Iterator} from '@/core/iterator';
+import {Data} from '@/core/serialize';
 
 type ComponentFormatter = (
   input: Data

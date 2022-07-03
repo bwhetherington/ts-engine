@@ -1,7 +1,7 @@
+import {Effect} from '@/core/effect';
 import {Tank} from '@/core/entity';
 import {Data} from '@/core/serialize';
 import {HeroModifier} from '@/core/upgrade';
-import {Effect} from '@/core/effect';
 
 export class ModifierEffect extends Effect {
   public static typeName: string = 'ModifierEffect';

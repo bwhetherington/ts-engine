@@ -1,11 +1,11 @@
 import {
   Form,
-  FormManager,
-  StringEntry,
   FormEntry,
+  FormManager,
   FormResult,
+  StringEntry,
 } from '@/core/form';
-import {PlayerManager, Player} from '@/core/player';
+import {Player, PlayerManager} from '@/core/player';
 import {Data} from '@/core/serialize';
 import {capitalize} from '@/core/util';
 

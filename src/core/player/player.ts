@@ -1,15 +1,16 @@
-import {BaseHero, WorldManager} from '@/core/entity';
-import {Serializable, Data} from '@/core/serialize';
-import {Socket, NetworkManager} from '@/core/net';
-import {PlayerManager, Account} from '@/core/player';
-import {UUIDManager, UUID, isUUID} from '@/core/uuid';
-import {EventData, Event, Observer} from '@/core/event';
-import {capitalize} from '@/core/util';
-import {LogManager} from '@/core/log';
-import {BasicAuth} from '@/core/net/http';
-import {randomColor} from '@/core/graphics/color';
-import {PlayerChatManager} from './chat';
 import {TextColor} from '@/core/chat';
+import {BaseHero, WorldManager} from '@/core/entity';
+import {Event, EventData, Observer} from '@/core/event';
+import {randomColor} from '@/core/graphics/color';
+import {LogManager} from '@/core/log';
+import {NetworkManager, Socket} from '@/core/net';
+import {BasicAuth} from '@/core/net/http';
+import {Account, PlayerManager} from '@/core/player';
+import {Data, Serializable} from '@/core/serialize';
+import {capitalize} from '@/core/util';
+import {UUID, UUIDManager, isUUID} from '@/core/uuid';
+
+import {PlayerChatManager} from './chat';
 
 const log = LogManager.forFile(__filename);
 

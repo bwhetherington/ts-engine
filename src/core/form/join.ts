@@ -1,17 +1,17 @@
+import {EventManager} from '@/core/event';
 import {
   Form,
-  FormManager,
-  StringEntry,
   FormEntry,
+  FormManager,
   FormResult,
+  StringEntry,
 } from '@/core/form';
-import {EventManager} from '@/core/event';
-import {ConnectEvent, NetworkManager} from '@/core/net';
-import {PlayerManager, Player, PlayerJoinEvent} from '@/core/player';
-import {Data} from '@/core/serialize';
 import {LogManager} from '@/core/log';
-import {capitalize} from '@/core/util';
+import {ConnectEvent, NetworkManager} from '@/core/net';
 import {BasicAuth, isOk} from '@/core/net/http';
+import {Player, PlayerJoinEvent, PlayerManager} from '@/core/player';
+import {Data} from '@/core/serialize';
+import {capitalize} from '@/core/util';
 
 const log = LogManager.forFile(__filename);
 

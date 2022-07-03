@@ -1,18 +1,20 @@
+import React from 'react';
+
 import {
+  Event,
   EventData,
   EventManager,
-  Handler,
-  Event,
-  StepEvent,
-  Priority,
   EventType,
+  Handler,
+  Priority,
+  StepEvent,
   getTypeId,
 } from '@/core/event';
 import {AsyncIterator, iterateKeys} from '@/core/iterator';
-import {Props} from '@/client/components';
-import React from 'react';
-import {UUID, UUIDManager} from '@/core/uuid';
 import {Empty} from '@/core/util';
+import {UUID, UUIDManager} from '@/core/uuid';
+
+import {Props} from '@/client/components';
 
 type Handlers = Readonly<Record<string, Readonly<string[]>>>;
 

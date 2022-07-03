@@ -1,10 +1,13 @@
 import React from 'react';
-import {EffectComponent, Props, Row} from '@/client/components';
-import {Iterator} from '@/core/iterator';
-import {Component} from './Component';
-import {Empty} from '@/core/util';
+
 import {EffectManager, UpdateEffectCountEvent} from '@/core/effect';
+import {Iterator} from '@/core/iterator';
 import {PlayerManager} from '@/core/player';
+import {Empty} from '@/core/util';
+
+import {EffectComponent, Props, Row} from '@/client/components';
+
+import {Component} from './Component';
 
 interface EffectsContainerState {
   effectCounts: [string, number][];

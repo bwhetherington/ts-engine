@@ -1,5 +1,5 @@
-import {LogManager} from '@/core/log';
 import {EventManager, makeEventType} from '@/core/event';
+import {LogManager} from '@/core/log';
 import {Data} from '@/core/serialize';
 import {UUID} from '@/core/uuid';
 

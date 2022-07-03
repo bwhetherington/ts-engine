@@ -1,6 +1,7 @@
 import {Entity, Unit} from '@/core/entity';
 import {Rectangle, Vector, VectorLike} from '@/core/geometry';
 import {UUID} from '@/core/uuid';
+
 import {makeEventType} from '../event';
 
 export interface SpawnEntityEvent {

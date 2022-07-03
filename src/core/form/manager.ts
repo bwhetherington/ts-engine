@@ -1,15 +1,15 @@
-import {LogManager} from '@/core/log';
-import {Player, PlayerManager} from '@/core/player';
-import {Data} from '@/core/serialize';
 import {Event, EventManager, Priority} from '@/core/event';
 import {
-  FormSubmitEvent,
   Form,
-  FormShowEvent,
   FormEntry,
   FormRejectEvent,
+  FormShowEvent,
+  FormSubmitEvent,
 } from '@/core/form';
+import {LogManager} from '@/core/log';
 import {NetworkManager} from '@/core/net';
+import {Player, PlayerManager} from '@/core/player';
+import {Data} from '@/core/serialize';
 import {UUID, UUIDManager} from '@/core/uuid';
 
 const log = LogManager.forFile(__filename);

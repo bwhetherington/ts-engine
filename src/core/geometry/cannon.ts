@@ -1,4 +1,5 @@
 import {Data, Serializable} from '@/core/serialize';
+
 import {Vector} from './vector';
 
 export class CannonShape implements Serializable {

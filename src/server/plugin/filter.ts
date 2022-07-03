@@ -1,7 +1,7 @@
 import {TextMessageInEvent} from '@/core/chat';
 import {EventManager, Priority} from '@/core/event';
-import {ChatManager} from '@/server/chat';
 
+import {ChatManager} from '@/server/chat';
 import {Server} from '@/server/net';
 import {Plugin} from '@/server/plugin';
 

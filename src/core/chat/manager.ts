@@ -1,11 +1,11 @@
-import {Event, makeEvent} from '@/core/event';
 import {
-  TextMessageOutEvent,
   TextComponent,
+  TextMessageOutEvent,
+  renderError,
   renderInfo,
   renderWarn,
-  renderError,
 } from '@/core/chat';
+import {Event, makeEvent} from '@/core/event';
 import {LogManager} from '@/core/log';
 import {Player} from '@/core/player';
 

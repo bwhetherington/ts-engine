@@ -1,8 +1,9 @@
-import * as http from 'http';
 import * as fs from 'fs';
-import {stat, readFile, readdir} from 'fs/promises';
+import {readFile, readdir, stat} from 'fs/promises';
+import * as http from 'http';
 import * as mime from 'mime-types';
 import * as path from 'path';
+
 import {LogManager} from '@/core/log';
 
 const log = LogManager.forFile(__filename);

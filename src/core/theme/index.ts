@@ -1,6 +1,7 @@
-export * from '@/core/theme/theme';
-import {ThemeManager as TM} from '@/core/theme/manager';
 import {makeEventType} from '@/core/event';
+import {ThemeManager as TM} from '@/core/theme/manager';
+
+export * from '@/core/theme/theme';
 
 export interface SetThemeEvent {
   theme: string;

@@ -1,43 +1,44 @@
 import process from 'process';
 
-import {EventManager} from '@/core/event';
-import {LogManager} from '@/core/log';
-import {registerRenameForm} from '@/core/form/rename';
-import {RNGManager} from '@/core/random';
-import {BasicAuth} from '@/core/net/http';
+import {AlertEvent, AlertManager} from '@/core/alert';
 import {AssetManager} from '@/core/assets';
-import {NetworkManager} from '@/core/net';
+import {ConfigManager} from '@/core/config';
+import {EffectManager} from '@/core/effect';
 import {WorldManager} from '@/core/entity';
-import {PlayerManager} from '@/core/player';
+import {EventManager} from '@/core/event';
 import {FormManager} from '@/core/form';
 import {registerJoinForm} from '@/core/form';
+import {registerRenameForm} from '@/core/form/rename';
+import {LogManager} from '@/core/log';
+import {NetworkManager} from '@/core/net';
+import {BasicAuth} from '@/core/net/http';
+import {PlayerManager} from '@/core/player';
+import {RNGManager} from '@/core/random';
+import {SerializeManager} from '@/core/serialize';
+import {UpgradeManager} from '@/core/upgrade';
 import {WeaponManager} from '@/core/weapon';
 
-import {Server, createServer, ServerHTTPClient} from '@/server/net';
 import {ChatManager} from '@/server/chat';
-import {MetricsManager} from '@/server/metrics';
-import {PluginManager, ThemePlugin, UtilsPlugin} from '@/server/plugin';
-import {FilterPlugin} from '@/server/plugin/filter';
-import {LoaderPlugin} from '@/server/plugin/loader';
-import {
-  Timer,
-  ServerLogger,
-  TimerManager,
-  loadFile,
-  loadDirectory,
-} from '@/server/util';
-import {ChatLogPlugin} from '@/server/plugin/chatLog';
-import {GamePlugin} from '@/server/plugin/game';
-import {UpgradeManager} from '@/core/upgrade';
-import {UpgradePlugin} from '@/server/plugin/upgrade';
 import {Config} from '@/server/config';
+import {MetricsManager} from '@/server/metrics';
+import {Server, ServerHTTPClient, createServer} from '@/server/net';
+import {PluginManager, ThemePlugin, UtilsPlugin} from '@/server/plugin';
+import {ChatLogPlugin} from '@/server/plugin/chatLog';
+import {FilterPlugin} from '@/server/plugin/filter';
+import {GamePlugin} from '@/server/plugin/game';
+import {LoaderPlugin} from '@/server/plugin/loader';
 import {SpawnPlugin} from '@/server/plugin/spawn';
-import {SyncManager} from './syncManager';
-import {EffectManager} from '@/core/effect';
-import {AlertEvent, AlertManager} from '@/core/alert';
+import {UpgradePlugin} from '@/server/plugin/upgrade';
+import {
+  ServerLogger,
+  Timer,
+  TimerManager,
+  loadDirectory,
+  loadFile,
+} from '@/server/util';
+
 import {LogKeysPlugin} from './plugin/keys';
-import {SerializeManager} from '@/core/serialize';
-import {ConfigManager} from '@/core/config';
+import {SyncManager} from './syncManager';
 
 async function main(): Promise<void> {
   LogManager.initialize('debug', new ServerLogger());

@@ -1,7 +1,8 @@
+import {Player} from '@/core/player';
+
+import {ChatManager} from '@/server/chat';
 import {Server} from '@/server/net';
 import {Plugin, PluginManager} from '@/server/plugin';
-import {ChatManager} from '@/server/chat';
-import {Player} from '@/core/player';
 
 async function handleLoadPlugin(player: Player, name?: string): Promise<void> {
   if (name) {
