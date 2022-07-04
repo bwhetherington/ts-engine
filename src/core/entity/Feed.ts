@@ -10,7 +10,7 @@ export enum FeedVariant {
   Large = 2,
 }
 
-const SIDE_COUNTS = {
+const SIdE_COUNTS = {
   [FeedVariant.Small]: 3,
   [FeedVariant.Medium]: 4,
   [FeedVariant.Large]: 5,
@@ -88,7 +88,7 @@ export class Feed extends Unit {
         ctx.regularPolygon(
           0,
           0,
-          SIDE_COUNTS[this.variant],
+          SIdE_COUNTS[this.variant],
           width / 2,
           this.getColor()
         );

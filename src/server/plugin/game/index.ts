@@ -236,9 +236,9 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
     // Distribute experience evenly among all players
     this.takeDuringState(GameState.Running, this.streamEvents(KillEvent))
       .map((event) => {
-        const {targetID, sourceID} = event.data;
-        const target = WorldManager.getEntity(targetID);
-        const source = WorldManager.getEntity(sourceID);
+        const {targetId, sourceId} = event.data;
+        const target = WorldManager.getEntity(targetId);
+        const source = WorldManager.getEntity(sourceId);
         return {target, source};
       })
       .filterMap(({target, source}) =>
@@ -263,7 +263,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
         return PlayerManager.getPlayers()
           .map((player) => {
             const {hero} = player;
-            if (hero?.id === event.data.targetID) {
+            if (hero?.id === event.data.targetId) {
               return hero;
             }
           })

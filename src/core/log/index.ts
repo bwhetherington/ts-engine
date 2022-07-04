@@ -4,7 +4,7 @@ import {LogManager} from '@/core/log/manager';
 import {UUID} from '@/core/uuid';
 
 export interface ClientLogEvent {
-  playerID?: UUID;
+  playerId?: UUID;
   level: LogLevel;
   date: number;
   message: string;

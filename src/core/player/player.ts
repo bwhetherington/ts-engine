@@ -55,7 +55,7 @@ export class Player extends Observer implements Serializable {
   public serialize(): Data {
     return {
       name: this.name,
-      heroID: this.hero?.id ?? null,
+      heroId: this.hero?.id ?? null,
       socket: this.socket,
       score: this.score,
       hasJoined: this.hasJoined,
@@ -63,7 +63,7 @@ export class Player extends Observer implements Serializable {
   }
 
   public deserialize(data: Data) {
-    const {name, id, socket, heroID, score, hasJoined} = data;
+    const {name, id, socket, heroId, score, hasJoined} = data;
     if (isUUID(id)) {
       this.id = id;
     }
@@ -73,8 +73,8 @@ export class Player extends Observer implements Serializable {
     if (typeof socket === 'number') {
       this.socket = socket;
     }
-    if (isUUID(heroID)) {
-      const entity = WorldManager.getEntity(heroID);
+    if (isUUID(heroId)) {
+      const entity = WorldManager.getEntity(heroId);
       if (entity instanceof BaseHero) {
         this.setHero(entity);
       }

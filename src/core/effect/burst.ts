@@ -7,7 +7,7 @@ export class BaseBurstEffect extends Effect {
 
   public override onStart() {
     this.streamEvents(FireEvent)
-      .filter((event) => event.data.sourceID === this.target?.id)
+      .filter((event) => event.data.sourceId === this.target?.id)
       .filterMap(() => this.target)
       .takeEachN(5)
       .forEach((source) => {

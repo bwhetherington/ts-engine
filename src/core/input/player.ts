@@ -7,13 +7,13 @@ import {Vector} from '@/core/geometry';
 export class PlayerController extends Controller {
   private mouseDown: boolean = false;
 
-  private keyListenerID?: UUID;
-  private mouseListenerID?: UUID;
+  private keyListenerId?: UUID;
+  private mouseListenerId?: UUID;
 
   public attach(hero: BaseHero) {
     super.attach(hero);
 
-    this.mouseListenerID = hero.addListener(MouseEvent, (event) => {
+    this.mouseListenerId = hero.addListener(MouseEvent, (event) => {
       if (hero.isEventSubject(event)) {
         const {action, x, y} = event.data;
         if (action === MouseAction.Move) {
@@ -31,11 +31,11 @@ export class PlayerController extends Controller {
   }
 
   public detach() {
-    if (this.mouseListenerID) {
-      this.hero?.removeListener(MouseEvent, this.mouseListenerID);
+    if (this.mouseListenerId) {
+      this.hero?.removeListener(MouseEvent, this.mouseListenerId);
     }
-    if (this.keyListenerID) {
-      this.hero?.removeListener(KeyEvent, this.keyListenerID);
+    if (this.keyListenerId) {
+      this.hero?.removeListener(KeyEvent, this.keyListenerId);
     }
     super.detach();
   }

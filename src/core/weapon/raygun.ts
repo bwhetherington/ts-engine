@@ -79,7 +79,7 @@ export class BaseRaygun extends Weapon {
     const event: DisplayRayEvent = {
       start: {x: start.x, y: start.y},
       stop: {x: end.x, y: end.y},
-      sourceID: source.id,
+      sourceId: source.id,
       width,
     };
     if (NetworkManager.isServer()) {

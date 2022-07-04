@@ -64,20 +64,20 @@ export class FormManager {
 
     const promise = new Promise<Data>(async (resolve, reject) => {
       let hasResolved = false;
-      const listenerID = EventManager.addListener<FormSubmitEvent>(
+      const listenerId = EventManager.addListener<FormSubmitEvent>(
         'FormSubmitEvent',
-        (event, listenerID) => {
+        (event, listenerId) => {
           const {socket, data} = event;
           if (socket === player.socket) {
             resolve(data.data);
-            EventManager.removeListener('FormSubmitEvent', listenerID);
+            EventManager.removeListener('FormSubmitEvent', listenerId);
             hasResolved = true;
           }
         }
       );
       await EventManager.sleep(timeout);
       if (!hasResolved) {
-        EventManager.removeListener('FormSubmitEvent', listenerID);
+        EventManager.removeListener('FormSubmitEvent', listenerId);
         log.warn(`form [${id}] timed out`);
         reject(new Error('Timeout'));
 

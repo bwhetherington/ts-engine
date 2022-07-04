@@ -22,7 +22,7 @@ export class EffectsContainer extends Component<Empty, EffectsContainerState> {
       // Validate that we are only updating this for the active player's hero
       .filter((event) => {
         const heroId = PlayerManager.getActivePlayer()?.hero?.id;
-        return event.data.targetID === heroId;
+        return event.data.targetId === heroId;
       })
       .forEach((event) => {
         const effectsList = Iterator.entries(event.data.effectCounts)

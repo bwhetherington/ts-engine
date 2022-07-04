@@ -7,9 +7,9 @@ export class RushEffect extends Effect {
 
   public override onStart() {
     this.streamEvents(KillEvent)
-      .filter((event) => event.data.sourceID === this.target?.id)
+      .filter((event) => event.data.sourceId === this.target?.id)
       .filterMap((event) => {
-        const target = WorldManager.getEntity(event.data.targetID);
+        const target = WorldManager.getEntity(event.data.targetId);
         if (target instanceof Unit) {
           return target;
         }

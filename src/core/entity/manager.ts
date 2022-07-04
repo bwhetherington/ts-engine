@@ -122,7 +122,7 @@ export class WorldManager
           }
         })
         .filter(
-          ({heroId}) => event.sourceID === heroId || event.targetID === heroId
+          ({heroId}) => event.sourceId === heroId || event.targetId === heroId
         )
         .forEach(({playerId, heroId}) => {
           let batch = playerTotals.get(playerId);
@@ -133,9 +133,9 @@ export class WorldManager
             };
             playerTotals.set(playerId, batch);
           }
-          if (event.sourceID === heroId) {
-            const outBatch = batch.out.get(event.targetID) ?? 0;
-            batch.out.set(event.targetID, outBatch + event.amount);
+          if (event.sourceId === heroId) {
+            const outBatch = batch.out.get(event.targetId) ?? 0;
+            batch.out.set(event.targetId, outBatch + event.amount);
           } else {
             batch.in += event.amount;
           }
@@ -151,7 +151,7 @@ export class WorldManager
       // Record damage in
       if (totals.in > 0) {
         const inEvent = makeEvent(DamageEvent, {
-          targetID: heroId,
+          targetId: heroId,
           amount: totals.in,
         });
         NetworkManager.sendEvent(inEvent);
@@ -160,8 +160,8 @@ export class WorldManager
       for (const [target, amount] of totals.out.entries()) {
         if (amount > 0) {
           const outEvent = makeEvent(DamageEvent, {
-            targetID: target,
-            sourceID: heroId,
+            targetId: target,
+            sourceId: heroId,
             amount,
           });
           NetworkManager.sendEvent(outEvent);
@@ -239,7 +239,7 @@ export class WorldManager
   public render(ctx: GraphicsContext) {
     const wallColor = ThemeManager.current.foregroundColor;
     ctx.clear(wallColor);
-    const GRID_COLOR = reshade(wallColor, 0.05);
+    const GRId_COLOR = reshade(wallColor, 0.05);
     ctx.begin();
     ctx.resetTransform();
 
@@ -284,10 +284,10 @@ export class WorldManager
         const yStart = Math.max(this.boundingBox.y, bounds.y + yOffset);
 
         for (let x = xStart; x < maxX; x += stepSize) {
-          ctx.line(x, minY, x, maxY, GRID_COLOR);
+          ctx.line(x, minY, x, maxY, GRId_COLOR);
         }
         for (let y = yStart; y < maxY; y += stepSize) {
-          ctx.line(minX, y, maxX, y, GRID_COLOR);
+          ctx.line(minX, y, maxX, y, GRId_COLOR);
         }
       });
 

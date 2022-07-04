@@ -6,7 +6,7 @@ import {Data} from '../serialize';
 import {Iterator} from '@/core/iterator';
 import {NetworkManager} from '../net';
 
-const SHOCKWAVE_WIDTH = 30;
+const SHOCKWAVE_WIdTH = 30;
 
 export class Explosion extends Projectile {
   public static typeName: string = 'Explosion';
@@ -104,7 +104,7 @@ export class Explosion extends Projectile {
     ctx.gradientCircle(
       0,
       0,
-      Math.max(radius - SHOCKWAVE_WIDTH, 0),
+      Math.max(radius - SHOCKWAVE_WIdTH, 0),
       radius,
       center,
       color

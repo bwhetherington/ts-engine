@@ -12,7 +12,7 @@ export * from '@/core/effect/rupture';
 import {UUID} from '@/core/uuid';
 
 export interface UpdateEffectCountEvent {
-  targetID: UUID;
+  targetId: UUID;
   effectCounts: Record<string, number>;
 }
 export const UpdateEffectCountEvent = makeEventType<UpdateEffectCountEvent>(

@@ -13,7 +13,7 @@ export interface MetricsEvent {
 export const MetricsEvent = makeEventType<MetricsEvent>('MetricsEvent');
 
 export interface PingEvent {
-  playerID: UUID;
+  playerId: UUID;
   ping: number;
 }
 export const PingEvent = makeEventType<PingEvent>('PingEvent');

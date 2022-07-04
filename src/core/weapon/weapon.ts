@@ -76,7 +76,7 @@ export abstract class Weapon implements Serializable {
         );
       }
       const event: FireEvent = {
-        sourceID: source.id,
+        sourceId: source.id,
         cannonIndex: source.getCannonIndex(),
       };
       EventManager.emitEvent(FireEvent, event);

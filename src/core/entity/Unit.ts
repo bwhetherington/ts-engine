@@ -87,7 +87,7 @@ export class Unit extends Entity {
       Unit.isTypeInitialized = true;
       if (NetworkManager.isClient()) {
         EventManager.streamEvents(DamageEvent)
-          .filterMap((event) => WorldManager.getEntity(event.data.targetID))
+          .filterMap((event) => WorldManager.getEntity(event.data.targetId))
           .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
           .forEach((unit) => unit.flash());
       }
@@ -111,7 +111,7 @@ export class Unit extends Entity {
 
   private updateEffectCount() {
     EventManager.emitEvent(UpdateEffectCountEvent, {
-      targetID: this.id,
+      targetId: this.id,
       effectCounts: serialize(this.effectCounts),
     });
   }
@@ -246,8 +246,8 @@ export class Unit extends Entity {
 
     this.setLife(this.life - actualDamage, source);
     const event = makeEvent(DamageEvent, {
-      targetID: this.id,
-      sourceID: source?.id,
+      targetId: this.id,
+      sourceId: source?.id,
       amount: actualDamage,
     });
     EventManager.emit(event);
@@ -500,8 +500,8 @@ export class Unit extends Entity {
         const event: Event<KillEvent> = {
           type: 'KillEvent',
           data: {
-            targetID: this.id,
-            sourceID: source?.id,
+            targetId: this.id,
+            sourceId: source?.id,
           },
         };
         NetworkManager.sendEvent(event);

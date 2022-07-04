@@ -45,9 +45,9 @@ export class Ray extends Entity {
       if (NetworkManager.isClient()) {
         EventManager.streamEvents(DisplayRayEvent)
           .map((event) => event.data)
-          .forEach(({start, stop, sourceID, width}) => {
+          .forEach(({start, stop, sourceId, width}) => {
             let color;
-            const source = WorldManager.getEntity(sourceID);
+            const source = WorldManager.getEntity(sourceId);
             if (source instanceof Unit) {
               color = reshade(source.getBaseColor(), -0.35);
             } else {

@@ -144,10 +144,10 @@ export class BaseHero extends Tank {
       this.label = WorldManager.spawn(Text, this.position);
 
       this.streamEvents(DamageEvent)
-        .map(({data: {targetID, sourceID, amount}}) => ({
+        .map(({data: {targetId, sourceId, amount}}) => ({
           amount,
-          target: WorldManager.getEntity(targetID),
-          source: WorldManager.getEntity(sourceID),
+          target: WorldManager.getEntity(targetId),
+          source: WorldManager.getEntity(sourceId),
         }))
         .filterMap(({amount, target, source}) =>
           !!target &&
@@ -402,7 +402,7 @@ export class BaseHero extends Tank {
     return {
       ...super.serialize(),
       turning: this.turning,
-      playerID: this.player?.id,
+      playerId: this.player?.id,
       replacementId: this.replacementId,
       xp: this.xp,
       storedUpgrades: this.storedUpgrades,
@@ -418,7 +418,7 @@ export class BaseHero extends Tank {
       weaponAngle: oldWeaponAngle,
       targetAngle: oldTargetAngle,
     } = this;
-    const {playerID, xp, storedUpgrades, classTier} = data;
+    const {playerId, xp, storedUpgrades, classTier} = data;
 
     if (typeof classTier === 'number') {
       this.classTier = classTier;
@@ -452,8 +452,8 @@ export class BaseHero extends Tank {
       }
     }
 
-    if (playerID !== undefined) {
-      this.setPlayer(playerID);
+    if (playerId !== undefined) {
+      this.setPlayer(playerId);
       const player = this.getPlayer();
       if (player && player.hero !== this) {
         player.setHero(this);

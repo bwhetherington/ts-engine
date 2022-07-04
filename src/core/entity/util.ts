@@ -130,16 +130,16 @@ export function shuntOutOf(entity: Entity, other: Rectangle) {
 }
 
 export interface DamageEvent {
-  targetID: UUID;
-  sourceID?: UUID;
+  targetId: UUID;
+  sourceId?: UUID;
   amount: number;
 }
 export const DamageEvent = makeEventType<DamageEvent>('DamageEvent');
 
 export interface KillEvent {
-  targetID: UUID;
+  targetId: UUID;
   target?: Unit;
-  sourceID?: UUID;
+  sourceId?: UUID;
   source?: Unit;
 }
 export const KillEvent = makeEventType<KillEvent>('KillEvent');
@@ -152,7 +152,7 @@ export interface RayCastResult {
 export interface DisplayRayEvent {
   start: VectorLike;
   stop: VectorLike;
-  sourceID: UUID;
+  sourceId: UUID;
   width: number;
 }
 export const DisplayRayEvent =

@@ -54,7 +54,7 @@ export class UpgradeContainer extends Component<Empty, ContainerState> {
     this.streamEvents(KillEvent)
       .filter(
         (event) =>
-          event.data.targetID === PlayerManager.getActivePlayer()?.hero?.id
+          event.data.targetId === PlayerManager.getActivePlayer()?.hero?.id
       )
       .forEach(() => {
         this.removeOffers();

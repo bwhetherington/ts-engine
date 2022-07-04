@@ -89,7 +89,7 @@ export class Tank extends Unit {
 
     if (NetworkManager.isClient()) {
       this.streamEvents(FireEvent)
-        .filter(({data: {sourceID}}) => sourceID === this.id)
+        .filter(({data: {sourceId}}) => sourceId === this.id)
         .forEach(({data: {cannonIndex}}) => {
           this.cannons[cannonIndex].lastFired = EventManager.timeElapsed;
         });

@@ -88,14 +88,14 @@ export class HomingProjectile extends Projectile {
       ...super.serialize(),
       maxSpeed: this.maxSpeed,
       turnSpeed: this.turnSpeed,
-      targetID: this.target?.id,
+      targetId: this.target?.id,
     };
   }
 
   public override deserialize(data: Data) {
     super.deserialize(data);
 
-    const {maxSpeed, turnSpeed, targetID} = data;
+    const {maxSpeed, turnSpeed, targetId} = data;
 
     if (typeof maxSpeed === 'number') {
       this.maxSpeed = maxSpeed;
@@ -105,8 +105,8 @@ export class HomingProjectile extends Projectile {
       this.turnSpeed = turnSpeed;
     }
 
-    if (isUUID(targetID)) {
-      this.target = WorldManager.getEntity(targetID);
+    if (isUUID(targetId)) {
+      this.target = WorldManager.getEntity(targetId);
     }
   }
 }

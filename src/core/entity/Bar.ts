@@ -11,7 +11,7 @@ const BAR_COLOR = rgb(0.2, 0.9, 0.2);
 const FOLLOW_COLOR = rgb(0.85, 1, 0.85);
 
 export const BAR_HEIGHT = 12;
-export const BAR_WIDTH = 70;
+export const BAR_WIdTH = 70;
 
 export class Bar extends Entity {
   public static typeName: string = 'Bar';

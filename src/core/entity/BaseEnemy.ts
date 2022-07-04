@@ -44,7 +44,7 @@ export class BaseEnemy extends Tank {
         });
       });
       this.streamEvents(KillEvent)
-        .filter((event) => this.target?.id === event.data.targetID)
+        .filter((event) => this.target?.id === event.data.targetId)
         .forEach(() => this.selectTarget());
     }
   }

@@ -187,7 +187,7 @@ export class Projectile extends Entity {
     return {
       ...super.serialize(),
       damage: this.damage,
-      parentID: this.parent?.id,
+      parentId: this.parent?.id,
       hitEntities: [...this.hitEntities],
       ignoreEntities: [...this.ignoreEntities],
       pierce: this.pierce,
@@ -204,7 +204,7 @@ export class Projectile extends Entity {
 
     const {
       damage,
-      parentID,
+      parentId,
       hitEntities,
       ignoreEntities,
       pierce,
@@ -230,8 +230,8 @@ export class Projectile extends Entity {
       this.pierce = pierce;
     }
 
-    if (isUUID(parentID)) {
-      const parent = WorldManager.getEntity(parentID);
+    if (isUUID(parentId)) {
+      const parent = WorldManager.getEntity(parentId);
       if (parent instanceof Unit) {
         this.parent = parent;
         this.setColor(parent.getBaseColor());

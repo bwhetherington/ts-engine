@@ -7,7 +7,7 @@ import {NetworkManager} from '@/core/net';
 import {AssetIdentifier, isAssetIdentifier} from '@/core/assets';
 import {UUID} from '@/core/uuid';
 
-const AURA_WIDTH = 40;
+const AURA_WIdTH = 40;
 
 export class Aura extends Entity {
   public static override typeName: string = 'Aura';
@@ -149,7 +149,7 @@ export class Aura extends Entity {
     ctx.gradientCircle(
       0,
       0,
-      Math.max(this.radius - AURA_WIDTH, 0),
+      Math.max(this.radius - AURA_WIdTH, 0),
       this.radius,
       center,
       color

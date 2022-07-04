@@ -10,7 +10,7 @@ export * from '@/core/weapon/homing';
 export * from '@/core/weapon/barrage';
 
 export interface FireEvent {
-  sourceID: UUID;
+  sourceId: UUID;
   cannonIndex: number;
 }
 export const FireEvent = makeEventType<FireEvent>('FireEvent');
