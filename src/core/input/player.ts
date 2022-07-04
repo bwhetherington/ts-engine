@@ -1,4 +1,4 @@
-import {Controller, MouseAction, MouseEvent} from '@/core/input';
+import {Controller, KeyEvent, MouseAction, MouseEvent} from '@/core/input';
 import {BaseHero} from '@/core/entity';
 import {UUID} from '@/core/uuid';
 import {NetworkManager} from '@/core/net';
@@ -6,6 +6,7 @@ import {Vector} from '@/core/geometry';
 
 export class PlayerController extends Controller {
   private mouseDown: boolean = false;
+
   private keyListenerID?: UUID;
   private mouseListenerID?: UUID;
 
@@ -31,10 +32,10 @@ export class PlayerController extends Controller {
 
   public detach() {
     if (this.mouseListenerID) {
-      this.hero?.removeListener('MouseEvent', this.mouseListenerID);
+      this.hero?.removeListener(MouseEvent, this.mouseListenerID);
     }
     if (this.keyListenerID) {
-      this.hero?.removeListener('KeyEvent', this.keyListenerID);
+      this.hero?.removeListener(KeyEvent, this.keyListenerID);
     }
     super.detach();
   }

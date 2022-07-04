@@ -35,7 +35,8 @@ export abstract class Observer {
     return id;
   }
 
-  public removeListener(type: string, id: UUID): boolean {
+  public removeListener<E extends EventData>(typeId: TypeId<E>, id: UUID): boolean {
+    const type = getTypeId(typeId);
     return (
       this.getHandlers(type)?.delete(id) &&
       EventManager.removeListener(type, id)

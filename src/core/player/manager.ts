@@ -21,7 +21,7 @@ export class PlayerManager implements Serializable {
   public initialize() {
     log.debug('PlayerManager initialized');
 
-    EventManager.addListener<SyncEvent>('SyncEvent', (event) => {
+    EventManager.streamEvents(SyncEvent).forEach((event) => {
       this.deserialize(event.data.playerData);
     });
 
