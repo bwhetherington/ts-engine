@@ -14,9 +14,9 @@ export abstract class FsmPlugin<
   S extends number,
   A extends number
 > extends Plugin {
-  public static typeName: string = 'SoccerPlugin';
+  public static typeName = 'FsmPlugin';
 
-  private transitionEventName: string = '';
+  private transitionEventName = '';
 
   private machine: StateMachine<S, A> = this.createMachine();
 
@@ -49,7 +49,7 @@ export abstract class FsmPlugin<
       .join(this.streamEvents<TransitionEvent<A>>(this.transitionEventName))
       .takeWhile(() => this.machine.getState() === state)
       .filter((val) => {
-        return !(val && (val as Data).type === this.transitionEventName);
+        return (val as Data)?.type !== this.transitionEventName;
       })
       .map((val) => val as T);
   }

@@ -13,7 +13,6 @@ import {
   Column,
   Panel,
   Row,
-  EffectComponent,
   AlertContainer,
 } from '@/client/components';
 import {EffectsContainer} from './Effects';
