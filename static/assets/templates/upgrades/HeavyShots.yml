@@ -1,0 +1,8 @@
+type: HeavyShots
+extends: ModifierUpgrade
+name: Heavy Shots
+description: Increase your weapon damage at the cost of fire rate.
+modifiers:
+  rate: -0.2
+  weaponDamage: 0.3
+  isRepeatable: true
