@@ -60,6 +60,8 @@ export class Tank extends Unit {
   private smoothWeaponAngle: number = 0;
   public turnSpeed: number = Math.PI * 1000;
   public modifiers: HeroModifier = new HeroModifier();
+  public baseModifiers: HeroModifier = new HeroModifier();
+  public modifierSources: HeroModifier[] = [];
   private lastFire: number = 0;
 
   private thrustTime: number = 0;
@@ -132,10 +134,10 @@ export class Tank extends Unit {
     }
     // Apply armor reduction to physical damage
     if (type === DamageType.Physical) {
-      const armor = this.modifiers.get('armor') - 1 + this.armor;
+      const armor = this.modifiers.get('armor') + this.armor;
       amount -= armor;
     }
-    const adjusted = amount * (2 - this.modifiers.get('absorption'));
+    const adjusted = amount * this.modifiers.get('absorption');
     return Math.max(1, adjusted);
   }
 
@@ -353,6 +355,7 @@ export class Tank extends Unit {
       targetAngle: this.targetAngle,
       weaponAngle: this.weaponAngle,
       weapon: this.weapon?.serialize(),
+      baseModifiers: this.baseModifiers.serialize(),
       modifiers: this.modifiers.serialize(),
       armor: this.armor,
     };
@@ -367,16 +370,17 @@ export class Tank extends Unit {
       weapon,
       weaponAngle,
       targetAngle,
+      baseModifiers,
       modifiers,
       armor,
     } = data;
 
+    if (baseModifiers) {
+      this.baseModifiers.deserialize(baseModifiers);
+    }
+
     if (modifiers) {
       this.modifiers.deserialize(modifiers);
-      this.setMaxLife(this.getMaxLife());
-      if (setInitialized) {
-        this.setLife(this.getMaxLife());
-      }
     }
 
     if (cannons instanceof Array) {
@@ -523,21 +527,32 @@ export class Tank extends Unit {
     super.setMaxLife(life);
   }
 
-  private getBaseMaxLife() {
-    const maxLife = this.getMaxLife();
-    const lifeMod = this.modifiers.get('life');
-    if (lifeMod < 0) {
-      return 0;
-    }
-    return Math.round(maxLife / lifeMod);
+  public override getMaxLife(): number {
+    return super.getMaxLife() * this.modifiers.get('life');
   }
 
-  public composeModifiers(modifier: HeroModifier, isInverted: boolean = false) {
-    const oldMaxLife = this.getBaseMaxLife();
-    this.modifiers.compose(modifier, isInverted);
-    if (modifier.has('life')) {
-      this.setMaxLife(oldMaxLife);
+  private computeModifiers() {
+    this.modifiers.reset();
+    this.modifiers.compose(this.baseModifiers);
+    for (const modifier of this.modifierSources.values()) {
+      this.modifiers.compose(modifier);
     }
+  }
+
+  public addModifiers(modifier: HeroModifier) {
+    this.modifierSources.push(modifier);
+    this.computeModifiers();
+  }
+
+  public removeModifiers(toRemove: HeroModifier) {
+    for (let i = 0; i < this.modifierSources.length; i += 1) {
+      const modifier = this.modifierSources[i];
+      if (modifier.equals(toRemove)) {
+        this.modifierSources.splice(i, 1);
+        break;
+      }
+    }
+    this.computeModifiers();
   }
 
   protected override calculateDamageOut(amount: number): number {

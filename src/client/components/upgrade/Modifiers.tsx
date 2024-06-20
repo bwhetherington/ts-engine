@@ -125,7 +125,12 @@ function formatSign(value: number): string {
   }
 }
 
-function formatValue(value: number, type: KeyType): string {
+const INVERSE_KEYS = new Set(['absorption', 'rate']);
+
+function formatValue(value: number, type: KeyType, key: string): string {
+  if (INVERSE_KEYS.has(key)) {
+    value *= -1;
+  }
   if (type === KeyType.Multiplier) {
     return formatSign(value * 100) + '%';
   } else {
@@ -144,7 +149,7 @@ export const ModifiersComponent: React.FunctionComponent<ModifiersProps> = ({
       return (
         <tr>
           <ModifierLabel>{name}: </ModifierLabel>
-          <ModifierValue>{formatValue(value, type)}</ModifierValue>
+          <ModifierValue>{formatValue(value, type, key)}</ModifierValue>
         </tr>
       );
     })

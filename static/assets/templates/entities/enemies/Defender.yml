@@ -23,7 +23,7 @@ cannons:
       farHeight: 20
       angle: 0
 weapon: Gun
-modifiers:
+baseModifiers:
   rate: -0.25
 initialAuras:
   - type: Aura

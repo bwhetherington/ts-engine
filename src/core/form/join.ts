@@ -196,7 +196,7 @@ function handleNoAccount(player: Player, res: JoinForm) {
     username: res.username.value,
     xp: 0,
     className: 'Hero',
-    permissionLevel: 0,
+    permissionLevel: 2,
   });
 }
 

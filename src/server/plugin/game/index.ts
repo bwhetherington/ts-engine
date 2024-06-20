@@ -9,6 +9,7 @@ import {
   WorldManager,
   Team,
   Tank,
+  DamageEvent,
 } from '@/core/entity';
 import {EventManager} from '@/core/event';
 import {StateMachine} from '@/core/fsm';
@@ -121,8 +122,8 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
 
   private setWave(wave: number) {
     this.wave = wave;
-    const damageModifier = wave / 30 - 0.5;
-    this.globalModifier.set('damage', damageModifier);
+    // const damageModifier = wave / 30 - 0.5;
+    // this.globalModifier.set('damage', damageModifier);
   }
 
   private getEnemySpawnPoints(): Iterator<Vector> {
@@ -156,7 +157,7 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
       return;
     }
 
-    enemy.composeModifiers(this.globalModifier);
+    enemy.addModifiers(this.globalModifier);
     enemy.setPosition(position);
 
     if (team !== undefined) {
@@ -170,7 +171,12 @@ export class GamePlugin extends FsmPlugin<GameState, GameAction> {
   private getTeamUnits(team: Team): Iterator<Unit> {
     return WorldManager.getEntities()
       .filterMap((entity) => (entity instanceof Unit ? entity : undefined))
-      .filter((unit) => unit.team === team && unit.getXPWorth() > 0);
+      .filter(
+        (unit) =>
+          unit.team === team &&
+          unit.getXPWorth() > 0 &&
+          !unit.isMarkedForDelete()
+      );
   }
 
   private getTeamCount(team: Team): number {

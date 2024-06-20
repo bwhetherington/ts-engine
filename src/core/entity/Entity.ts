@@ -379,6 +379,10 @@ export class Entity
     this.markedForDelete = true;
   }
 
+  public isMarkedForDelete(): boolean {
+    return this.markedForDelete;
+  }
+
   public override toString(): string {
     return `${this.type}[${this.id}]`;
   }

@@ -24,13 +24,13 @@ export class ModifierEffect extends Effect {
 
   public override onStart() {
     if (this.target instanceof Tank) {
-      this.target.composeModifiers(this.modifiers);
+      this.target.addModifiers(this.modifiers);
     }
   }
 
   public override onEnd() {
     if (this.target instanceof Tank) {
-      this.target.composeModifiers(this.modifiers, true);
+      this.target.removeModifiers(this.modifiers);
     }
   }
 }

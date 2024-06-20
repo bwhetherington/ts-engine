@@ -2,6 +2,9 @@ import {Data, Serializable} from '@/core/serialize';
 import {Upgrade} from '@/core/upgrade';
 import {BaseHero} from '@/core/entity';
 import {Iterator} from '@/core/iterator';
+import {LogManager} from '@/core/log';
+
+const log = LogManager.forFile(__filename);
 
 type Modifiers = Record<string, number>;
 
@@ -30,6 +33,59 @@ export const MODIFIER_KEYS = [
   'lifeSteal',
 ];
 
+type Composition = (previous: number, amount: number) => number;
+
+const multiplicativeComposition: Composition = (previous, amount) => {
+  return previous * (1 + amount);
+};
+
+const inverseMultiplicativeComposition: Composition = (previous, amount) => {
+  return previous * (1 - amount);
+};
+
+const additiveComposition: Composition = (previous, amount) => {
+  return previous + amount;
+};
+
+interface KeyInfo {
+  composition: Composition;
+  default: number;
+}
+
+const multiplicative: KeyInfo = {
+  composition: multiplicativeComposition,
+  default: 1,
+};
+
+const additive: KeyInfo = {
+  composition: additiveComposition,
+  default: 0,
+};
+
+const KEY_COMPOSE_MAP = new Map<string, KeyInfo>([
+  ['life', multiplicative],
+  ['lifeRegen', multiplicative],
+  ['lifeRegenDelay', multiplicative],
+  ['speed', multiplicative],
+  ['friction', multiplicative],
+  ['mass', multiplicative],
+  ['armor', additive],
+  ['damage', multiplicative],
+  ['weaponDamage', multiplicative],
+  ['pierce', additive],
+  ['rate', {composition: inverseMultiplicativeComposition, default: 1}],
+  ['shotCount', additive],
+  ['shotSpread', multiplicative],
+  ['shotInaccuracy', multiplicative],
+  ['burstCount', additive],
+  ['projectileSpeed', multiplicative],
+  ['projectileDuration', multiplicative],
+  ['projectileSpread', multiplicative],
+  ['reflection', multiplicative],
+  ['absorption', {composition: inverseMultiplicativeComposition, default: 1}],
+  ['lifeSteal', multiplicative],
+]);
+
 export class HeroModifier implements Serializable {
   public modifiers: Modifiers;
 
@@ -56,43 +112,59 @@ export class HeroModifier implements Serializable {
       });
   }
 
+  public equals(other: HeroModifier): boolean {
+    const aEntries = Iterator.entries(this.modifiers).toArray();
+    const bCount = Iterator.entries(other.modifiers).count();
+
+    if (aEntries.length !== bCount) {
+      return false;
+    }
+
+    for (const [aKey, aValue] of aEntries) {
+      const bValue = other.get(aKey);
+      if (bValue !== aValue) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   public has(key: string): boolean {
     return this.modifiers.hasOwnProperty(key);
   }
 
   public get(key: string): number {
-    return this.modifiers[key] ?? 1;
+    return this.modifiers[key] ?? KEY_COMPOSE_MAP.get(key)?.default ?? 0;
   }
 
   public set(key: string, value: number) {
     this.modifiers[key] = value;
   }
 
-  private composeKey(key: string, other: Modifiers, invert: boolean = false) {
-    let existing = this.modifiers[key] ?? 1;
-    const target = other[key];
-    if (target) {
-      if (invert) {
-        existing = existing - target;
-      } else {
-        existing = existing + target;
-      }
+  public reset() {
+    this.modifiers = {};
+  }
+
+  private composeKey(key: string, target: number) {
+    const info = KEY_COMPOSE_MAP.get(key);
+    if (!info) {
+      log.warn('unknown key: ' + key);
+      return;
     }
-    this.modifiers[key] = existing;
+    const existing = this.get(key);
+    const newValue = info.composition(existing, target);
+    this.modifiers[key] = newValue;
   }
 
-  public compose(other: HeroModifier, invert: boolean = false) {
-    this.composeModifiers(other.modifiers, invert);
+  public compose(other: HeroModifier) {
+    this.composeModifiers(other.modifiers);
   }
 
-  public composeModifiers(other: Modifiers, invert: boolean = false) {
-    Iterator.array(MODIFIER_KEYS)
-      .filter(
-        (key) => this.modifiers.hasOwnProperty(key) || other.hasOwnProperty(key)
-      )
-      .forEach((key) => {
-        this.composeKey(key, other, invert);
-      });
+  public composeModifiers(other: Modifiers) {
+    Iterator.entries(other).forEach(([key, value]) =>
+      this.composeKey(key, value)
+    );
   }
 }
 
@@ -109,7 +181,7 @@ export class ModifierUpgrade extends Upgrade {
   }
 
   public applyTo(hero: BaseHero) {
-    hero.composeModifiers(this.modifiers);
+    hero.addModifiers(this.modifiers);
   }
 
   public serialize(): Data {

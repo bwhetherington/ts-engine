@@ -6,4 +6,4 @@ requires:
   - PowerfulShots
 modifiers:
   damage: 0.25
-  life: -0.5
+  life: -0.25

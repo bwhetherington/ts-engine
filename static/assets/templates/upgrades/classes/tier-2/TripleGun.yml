@@ -1,0 +1,9 @@
+type: TripleGun
+extends: ClassUpgrade
+name: Triple Gun
+description: Change to a triple gun tank, with an even faster fire rate.
+className: TripleGunHero
+requires:
+  - DoubleGun
+  - MultiShot
+tier: 2

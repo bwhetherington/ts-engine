@@ -38,7 +38,7 @@ cannons:
       height: 10
       farHeight: 20
       angle: 270
-modifiers:
+baseModifiers:
   life: 1.5  # +50% life
   armor: 3 # +0.5 armor
 weapon: SwarmGun

@@ -203,7 +203,7 @@ export class Unit extends Entity {
   }
 
   public setLife(life: number, source?: Unit) {
-    this.life = clamp(life, 0, this.maxLife);
+    this.life = clamp(life, 0, this.getMaxLife());
     if (this.life <= 0) {
       this.kill(source);
     }

@@ -20,9 +20,9 @@ export class BaseRuptureEffect extends Effect {
           target.position
         ) as Explosion;
         explosion.parent = this.target;
-        explosion.duration = 1.5;
+        explosion.duration = 0.75;
         explosion.radius = target.boundingBox.width * 5;
-        explosion.damage = target.getMaxLife() * 3;
+        explosion.damage = target.getMaxLife() * 0.25;
         explosion.pierce = 100;
       });
   }

@@ -17,7 +17,7 @@ const DEFAULT_ACCOUNT = {
   username: 'Username',
   xp: 0,
   className: 'Hero',
-  permissionLevel: 0,
+  permissionLevel: 2,
 };
 
 export class Player extends Observer implements Serializable {
@@ -218,7 +218,7 @@ export class Player extends Observer implements Serializable {
   }
 
   public getNameColor(): TextColor {
-    return this.isAdmin() ? 'blue' : 'none';
+    return 'none';
   }
 
   public override toString(): string {

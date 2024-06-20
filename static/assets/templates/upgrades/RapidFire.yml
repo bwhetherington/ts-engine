@@ -4,5 +4,5 @@ name: Rapid Fire
 description: Increase your fire rate at the cost of accuracy.
 modifiers: 
   rate: 0.2
-  shotInaccuracy: -0.15
+  shotInaccuracy: 0.15
 isRepeatable: true

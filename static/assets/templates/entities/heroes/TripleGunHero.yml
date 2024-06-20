@@ -1,4 +1,4 @@
-type: MachineGunHero
+type: TripleGunHero
 extends: BaseHero
 weapon: MachineGun
 cannons:
@@ -7,10 +7,16 @@ cannons:
     length: 25
     height: 10
     offset:
-      y: -7.5
+      y: -9
 - key: 1
   shape:
     length: 25
     height: 10
     offset:
-      y: 7.5
+      y: 9
+- key: 2
+  shape:
+    length: 30
+    height: 10
+baseModifiers:
+  rate: -0.25

@@ -32,7 +32,7 @@ export class BaseGun extends Weapon {
     let {pierce, projectileSpeed, projectileDuration} = this;
 
     if (modifier) {
-      pierce = modifier.get('pierce') - 1 + pierce;
+      pierce = modifier.get('pierce') + pierce;
       projectileSpeed = modifier.get('projectileSpeed') * projectileSpeed;
       projectileDuration =
         modifier.get('projectileDuration') * projectileDuration;

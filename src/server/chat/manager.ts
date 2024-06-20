@@ -158,6 +158,9 @@ export class ServerChatManager {
                   color: 'yellow',
                 },
               },
+              {
+                content: '\n',
+              },
             ])
           )
           .toArray();
